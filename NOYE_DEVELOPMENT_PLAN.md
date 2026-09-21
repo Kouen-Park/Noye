@@ -14,8 +14,6 @@ longer-term direction established so far.
 
 ------------------------------------------------------------------------
 
-# 
-
 # 0. AI Agent Operating Rules
 
 > **This section is mandatory for every AI coding agent working on
