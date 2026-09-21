@@ -1234,21 +1234,52 @@ Lecture-07.pdf — page 12
 Citation mapping must originate from retrieved chunk metadata rather
 than asking the LLM to invent citations.
 
-### Phase 1 exit condition
+### Implemented design
+
+`build_citations(results, *, file_names=None)` and
+`format_citations(citations)` in `backend/app/services/citations.py`.
+
+-   **Citations are computed, not generated.** They derive entirely from the
+    provenance attached at index time, so a citation can be wrong only if the
+    index is wrong — never because a model guessed a plausible page number.
+-   **Chunks sharing a file and page collapse into one citation**, since
+    several retrieved chunks routinely come from the same page and a user does
+    not want "page 34" listed three times. Each citation keeps its
+    `chunk_indexes`, so the exact passages stay inspectable.
+-   **Ordered by best score within each group**, so the citation list mirrors
+    how relevant each source was; ties break on file then page for
+    determinism.
+-   `file_name` is optional and supplied through a `file_names` map, because
+    the display name belongs to SQLite file metadata that does not exist yet.
+    An unknown id keeps the id as its label rather than raising.
+-   `format_citations` returns an empty string for no citations, so an
+    ungrounded answer shows no stray "Sources:" heading.
+
+### Phase 1 exit condition — met
+
+`backend/app/tests/test_citations.py` ends with a test that runs the entire
+pipeline against a PDF written during the test: a three-page document whose
+answer appears only on page 2. Extraction, chunking, embedding, indexing,
+search, generation and citation all run for real, and the resulting citation
+reads `graphs.pdf — page 2`.
 
 From the backend alone:
 
-1.  Give Noye a PDF.
-2.  Extract it.
-3.  Chunk it.
-4.  Embed it.
-5.  Index it.
-6.  Ask a question.
-7.  Retrieve relevant chunks.
-8.  Generate an answer.
-9.  Return correct source/page citations.
+1.  [x] Give Noye a PDF.
+2.  [x] Extract it.
+3.  [x] Chunk it.
+4.  [x] Embed it.
+5.  [x] Index it.
+6.  [x] Ask a question.
+7.  [x] Retrieve relevant chunks.
+8.  [x] Generate an answer.
+9.  [x] Return correct source/page citations.
 
 If this works, the core of Noye works.
+
+What remains before a person can use it: SQLite file metadata (so a citation
+can show a file name instead of an id), an upload API, visible processing
+states, and the UI. Those are Phase 2 onward.
 
 ------------------------------------------------------------------------
 
