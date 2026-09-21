@@ -1,6 +1,8 @@
 services:
   qdrant:
-    image: qdrant/qdrant:latest
+    # Pinned: the vector index and its API behavior must stay reproducible
+    # across machines. Bump deliberately, then re-verify the collection setup.
+    image: qdrant/qdrant:v1.19.1
     ports:
       - "6333:6333"
       - "6334:6334"
