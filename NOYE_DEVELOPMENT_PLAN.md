@@ -952,6 +952,12 @@ Two consequences for implementation:
 
 ## 9.4 Qdrant Indexing
 
+Qdrant runs from `docker-compose.yml` with its image **pinned** to
+`qdrant/qdrant:v1.19.1` (the version this setup was verified against).
+Keep it pinned rather than tracking `latest`: a future release can change
+API or collection behavior and silently break a local index. Bump the pin
+deliberately and re-verify collection creation when doing so.
+
 Store each chunk vector in Qdrant.
 
 Payload should include enough provenance to recover the original source.
