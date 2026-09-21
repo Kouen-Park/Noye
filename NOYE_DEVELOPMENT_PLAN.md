@@ -753,9 +753,9 @@ Goal: create a reliable local development environment.
 -   [x] Verify `/health` returns `{"status":"ok"}`
 -   [ ] Install/start Docker
 -   [ ] Start Qdrant
--   [ ] Install/configure Ollama
--   [ ] Select embedding model
--   [ ] Select initial local generation model
+-   [x] Install/configure Ollama
+-   [x] Select embedding model
+-   [x] Select initial local generation model
 -   [ ] Bootstrap Next.js frontend
 
 ### Phase 0 exit condition
@@ -922,6 +922,31 @@ Requirements:
 -   [ ] Configure model using environment variables
 
 Avoid hardcoding model names throughout the application.
+
+### Selected local models (verified 2026-09-21)
+
+Measured on an Apple M2 (Metal, 5.3 GiB usable VRAM) with Ollama 0.34.2:
+
+  ------------------------------------------------------------------------
+  Role            Model               Notes
+  --------------- ------------------- ------------------------------------
+  Embeddings      `embeddinggemma`    621 MB, **768 dimensions**,
+                                      100+ languages -- suits mixed
+                                      Korean/English sources
+
+  Generation      `qwen3.5:4b`        3.4 GB, ~22 tokens/sec
+  ------------------------------------------------------------------------
+
+Two consequences for implementation:
+
+1.  `QDRANT_VECTOR_SIZE=768` must match the embedding model. Switching
+    embedding models requires recreating the Qdrant collection and
+    re-embedding every chunk.
+2.  `qwen3.5` is a reasoning model. Thinking must be **disabled** for RAG
+    answers by passing `"think": false` to the Ollama API. With thinking
+    enabled, a one-sentence answer cost ~1550 tokens / 82s; with it
+    disabled, ~30 tokens / 3s. A Korean RAG-style prompt answered
+    correctly from the supplied excerpt in ~6s.
 
 ------------------------------------------------------------------------
 
