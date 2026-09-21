@@ -1055,7 +1055,7 @@ Requirements:
 
 -   [x] Create Noye collection
 -   [x] Insert vectors
--   [ ] Retrieve vectors — search lands in section 9.5
+-   [x] Retrieve vectors — search implemented in section 9.5
 -   [x] Delete vectors belonging to a file
 -   [x] Recreate/rebuild collection
 
@@ -1125,6 +1125,35 @@ Initial goal:
 
 > Ask a question about a known PDF and see the correct section among the
 > top results.
+
+### Implemented design
+
+`search(query, *, limit=5, file_ids=None, min_score=None)` in
+`backend/app/services/retrieval.py`, returning `SearchResult` objects ordered
+by descending similarity.
+
+-   **`file_name` is deliberately not returned.** The human-readable name
+    belongs to the file metadata in SQLite, which does not exist yet; callers
+    join on `file_id` once it does. Copying the name into the vector payload
+    would leave stale duplicates behind after a rename.
+-   **`min_score` exists because vector search always answers.** A nearest
+    neighbour is returned even when nothing in the index is relevant, so a
+    threshold is how "we don't know" becomes representable.
+-   `file_ids` scopes a search to chosen sources, which also lets tests share
+    one collection without interfering.
+
+### Test
+
+`backend/app/tests/test_retrieval.py` (17 tests). Unit tests stub the query
+embedding and use unit axis vectors so ranking is exactly predictable;
+integration tests run the real pipeline and confirm that
+
+-   a question retrieves the correct page (34) rather than a nearby one;
+-   a question sharing no keywords with the passage still finds it — "negative
+    costs" retrieves the Bellman-Ford page (41);
+-   **a Korean question retrieves the right page of an English document**,
+    which is the cross-language behavior `embeddinggemma` was chosen for;
+-   an unrelated passage ranks last.
 
 ------------------------------------------------------------------------
 
