@@ -1180,6 +1180,37 @@ Generation rules should encourage the model to:
 -   say when retrieved context is insufficient;
 -   preserve source relationships.
 
+### Implemented design
+
+`answer_question(question, *, limit, file_ids, min_score)` in
+`backend/app/services/generation.py`, returning an `Answer` with `text` and the
+`sources` it was grounded in.
+
+-   **The model never writes citations.** The system prompt forbids a source
+    list, and `Answer.sources` is the retrieval result rather than anything the
+    model reported. A model allowed to cite will eventually produce a page
+    number that looks entirely plausible and is wrong.
+-   **No results means the model is not called at all.** A fixed
+    `NO_CONTEXT_ANSWER` is returned instead. Handing a model an empty context
+    and asking it to answer is precisely how ungrounded answers are produced.
+-   **Thinking is off**, taken from `OLLAMA_THINKING`. Locally, thinking cost
+    roughly thirty times the latency for no gain at answer length.
+-   Excerpts are numbered and labelled with their page so the model can reason
+    about them; the label is context, not permission to cite.
+-   Failures raise `GenerationError`, never an httpx exception, with distinct
+    messages for an unreachable Ollama and a model that was never pulled.
+
+### Test
+
+`backend/app/tests/test_generation.py` (19 tests). Unit tests assert prompt
+construction, the `think: false` payload, and every failure path. Integration
+tests against the real model confirm that
+
+-   an answer uses the retrieved passage rather than model knowledge;
+-   **the model declines when the excerpts do not contain the answer** — the
+    behavior separating a knowledge tool from a chatbot;
+-   a Korean question is answered in Korean from English source text.
+
 ------------------------------------------------------------------------
 
 ## 9.7 Citation Mapping
