@@ -749,8 +749,8 @@ Goal: create a reliable local development environment.
 
 ### Next
 
--   [ ] Run FastAPI locally
--   [ ] Verify `/health` returns `{"status":"ok"}`
+-   [x] Run FastAPI locally
+-   [x] Verify `/health` returns `{"status":"ok"}`
 -   [ ] Install/start Docker
 -   [ ] Start Qdrant
 -   [ ] Install/configure Ollama
@@ -2000,10 +2000,10 @@ The repository foundation now exists.
 
 Work next in this exact order:
 
--   [ ] Start backend virtual environment
--   [ ] Install backend requirements
--   [ ] Run FastAPI
--   [ ] Confirm `/health`
+-   [x] Start backend virtual environment
+-   [x] Install backend requirements
+-   [x] Run FastAPI
+-   [x] Confirm `/health`
 -   [ ] Run Qdrant with Docker
 -   [ ] Confirm Qdrant is reachable
 -   [ ] Install/configure Ollama
