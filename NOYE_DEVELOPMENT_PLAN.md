@@ -971,13 +971,36 @@ embedding vector
 
 Requirements:
 
--   [ ] Connect FastAPI backend to Ollama
--   [ ] Embed a single text string
--   [ ] Embed document chunks
--   [ ] Handle Ollama connection errors
--   [ ] Configure model using environment variables
+-   [x] Connect FastAPI backend to Ollama
+-   [x] Embed a single text string
+-   [x] Embed document chunks
+-   [x] Handle Ollama connection errors
+-   [x] Configure model using environment variables
 
 Avoid hardcoding model names throughout the application.
+
+### Implemented design
+
+`embed_text(text)`, `embed_texts(texts)`, and `embed_chunks(chunks)` in
+`backend/app/services/embeddings.py`, returning one vector per input in input
+order. Configuration comes from `app/config.py` (`pydantic-settings`), which
+reads the project `.env`; no model name appears in application code.
+
+-   **Batched.** Ollama's `/api/embed` accepts a list and returns embeddings in
+    order, so texts are sent 16 at a time. The cap keeps a large document from
+    becoming one enormous request.
+-   **Dimension is verified on every response.** A vector whose length differs
+    from `QDRANT_VECTOR_SIZE` raises `EmbeddingError` naming the remediation.
+    Without this check, swapping the embedding model would surface later as a
+    rejected Qdrant insert or, worse, as silently meaningless search results.
+-   **Empty text is refused** rather than embedded. A zero-ish vector for an
+    empty string would match everything and pollute retrieval.
+-   **Failures raise `EmbeddingError`, never an httpx exception**, so callers
+    can map them to `FAILED` without depending on the HTTP library. An
+    unreachable Ollama and a model that was never pulled produce distinct
+    messages, the latter naming the `ollama pull` command.
+-   The default timeout is 120 seconds; local embedding is far slower than
+    httpx's 5-second default.
 
 ### Selected local models (verified 2026-09-21)
 
