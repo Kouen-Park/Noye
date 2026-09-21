@@ -1053,11 +1053,41 @@ content
 
 Requirements:
 
--   [ ] Create Noye collection
--   [ ] Insert vectors
--   [ ] Retrieve vectors
--   [ ] Delete vectors belonging to a file
--   [ ] Recreate/rebuild collection
+-   [x] Create Noye collection
+-   [x] Insert vectors
+-   [ ] Retrieve vectors — search lands in section 9.5
+-   [x] Delete vectors belonging to a file
+-   [x] Recreate/rebuild collection
+
+### Implemented design
+
+`backend/app/services/indexing.py`: `ensure_collection`,
+`recreate_collection`, `index_chunks`, `delete_file_chunks`, `count_chunks`.
+
+-   **Point IDs are deterministic**, derived as UUID5 of
+    `"{file_id}:{chunk_index}"`. Re-indexing a file therefore overwrites its
+    points instead of duplicating them, which makes ingestion safe to retry
+    and the rebuild-index flow idempotent. The namespace UUID must never
+    change: doing so would orphan every stored point.
+-   **The payload carries `file_id`, `page_number`, `chunk_index`, and
+    `content`**, so a search result can be cited and displayed without a
+    second lookup. Payload keys are module constants so indexing and
+    retrieval cannot drift apart.
+-   **Vector/chunk misalignment raises before anything is written.** Storing a
+    vector against the wrong chunk's text would produce citations pointing at
+    unrelated pages — a silent correctness failure, so it is a hard error.
+-   **`ensure_collection` never destroys an index**; the destructive path is
+    the separately named `recreate_collection`, for rebuilds and embedding
+    model changes.
+-   Deletion is filtered on `file_id`. Leaving vectors behind after a source
+    is deleted would let a removed document keep answering questions.
+
+### Test
+
+`backend/app/tests/test_indexing.py` (20 tests) runs against
+qdrant-client's in-memory mode — real Qdrant behavior without Docker — plus
+two integration tests against the running server that clean up after
+themselves.
 
 ------------------------------------------------------------------------
 
