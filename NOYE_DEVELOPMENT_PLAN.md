@@ -751,8 +751,8 @@ Goal: create a reliable local development environment.
 
 -   [x] Run FastAPI locally
 -   [x] Verify `/health` returns `{"status":"ok"}`
--   [ ] Install/start Docker
--   [ ] Start Qdrant
+-   [x] Install/start Docker
+-   [x] Start Qdrant
 -   [x] Install/configure Ollama
 -   [x] Select embedding model
 -   [x] Select initial local generation model
@@ -2029,10 +2029,10 @@ Work next in this exact order:
 -   [x] Install backend requirements
 -   [x] Run FastAPI
 -   [x] Confirm `/health`
--   [ ] Run Qdrant with Docker
--   [ ] Confirm Qdrant is reachable
--   [ ] Install/configure Ollama
--   [ ] Choose embedding model
+-   [x] Run Qdrant with Docker
+-   [x] Confirm Qdrant is reachable
+-   [x] Install/configure Ollama
+-   [x] Choose embedding model
 -   [ ] Add PyMuPDF dependency
 -   [ ] Implement `extraction.py`
 -   [ ] Write extraction tests
