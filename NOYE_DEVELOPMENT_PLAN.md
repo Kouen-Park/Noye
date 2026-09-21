@@ -1785,6 +1785,73 @@ How was it tested?
 Any limitations or follow-up work?
 ```
 
+### PR title style
+
+Use the same Conventional Commit prefix as the branch's work, in the
+imperative, lowercase after the prefix, no trailing period, and under
+70 characters:
+
+``` text
+chore: set up local backend environment
+feat: extract PDF text with page provenance
+fix: clean up Qdrant vectors when a source is deleted
+```
+
+Do not use a bare branch name or a vague title such as
+`update files` or `backend work`.
+
+### PR description style
+
+Every Noye PR description uses the same six sections, in this order.
+Omit a section only when it genuinely does not apply.
+
+``` text
+## Summary
+## Changes
+## Validated
+## Not validated
+## Notes
+## Roadmap
+```
+
+  ------------------------------------------------------------------------
+  Section           Content
+  ----------------- ------------------------------------------------------
+  `## Summary`      Two or three sentences: what this PR accomplishes and
+                    why it exists. No implementation detail.
+
+  `## Changes`      Bullet list, one line per meaningful change, grouped
+                    by area when the PR is large. Reference file paths
+                    where it helps a reviewer navigate.
+
+  `## Validated`    Exactly what was actually run or observed, with real
+                    results -- commands, endpoints, measured numbers.
+                    Never list something that was not executed.
+
+  `## Not           Anything intentionally unverified, blocked, or left to
+  validated`        the user, and why. This section is mandatory whenever
+                    such items exist; an empty claim of full verification
+                    is not acceptable.
+
+  `## Notes`        Decisions a reviewer would otherwise question:
+                    non-obvious dependencies, deviations from this plan,
+                    findings that affect later phases.
+
+  `## Roadmap`      Which phase and milestone this PR belongs to, and what
+                    it unblocks next.
+  ------------------------------------------------------------------------
+
+Rules for the description:
+
+-   State facts, not intentions. Describe what the branch does, not what
+    someone should do later, except in `## Notes` and `## Roadmap`.
+-   Put measured numbers in `## Validated` rather than adjectives
+    ("fast", "works well").
+-   Never claim a test or command was run when it was not.
+-   Keep it scannable: short bullets over paragraphs.
+-   Write the description in English so the repository history stays
+    consistent for a portfolio reader.
+
 Before merge:
 
 -   [ ] Requested scope is complete
