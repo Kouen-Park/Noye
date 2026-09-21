@@ -125,8 +125,8 @@ noye/
 - [x] Repository created
 - [x] Initial project structure
 - [x] Backend health endpoint
-- [ ] Frontend bootstrap
-- [ ] Docker development environment
+- [x] Frontend bootstrap
+- [x] Docker development environment
 
 ### Phase 1 — Knowledge Engine
 
@@ -178,6 +178,8 @@ noye/
 
 ## Development
 
+### Backend
+
 The backend currently provides a minimal FastAPI health endpoint.
 
 ```bash
@@ -195,6 +197,31 @@ Expected response:
 ```json
 {"status":"ok"}
 ```
+
+### Frontend
+
+Next.js 16 with TypeScript, Tailwind CSS 4, and the App Router.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open `http://localhost:3000`.
+
+### Supporting services
+
+Qdrant runs in Docker; Ollama runs on the host.
+
+```bash
+docker compose up -d          # Qdrant on :6333
+brew services start ollama    # Ollama on :11434
+ollama pull embeddinggemma    # embeddings, 768 dimensions
+ollama pull qwen3.5:4b        # generation
+```
+
+Copy `.env.example` to `.env` before running the backend against these services.
 
 ## License
 
