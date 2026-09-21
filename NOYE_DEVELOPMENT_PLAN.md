@@ -820,16 +820,26 @@ backend/app/services/extraction.py
 
 Use PyMuPDF.
 
+Import it as `import pymupdf`. The older `import fitz` alias still works but
+is deprecated and warns on use.
+
 Requirements:
 
--   [ ] Accept PDF path
--   [ ] Open PDF
--   [ ] Iterate through pages
--   [ ] Extract page text
--   [ ] Preserve page number
--   [ ] Handle empty pages
--   [ ] Handle invalid/corrupt PDF
--   [ ] Return structured extraction result
+-   [x] Accept PDF path
+-   [x] Open PDF
+-   [x] Iterate through pages
+-   [x] Extract page text
+-   [x] Preserve page number
+-   [x] Handle empty pages
+-   [x] Handle invalid/corrupt PDF
+-   [x] Return structured extraction result
+
+Implemented as `extract_pdf(path) -> list[ExtractedPage]`, where
+`ExtractedPage` carries a 1-based `page_number` and stripped `content`.
+Empty pages are returned with empty content rather than dropped, so a page
+number always refers to the same physical page. Every failure path raises
+`ExtractionError` instead of leaking a PyMuPDF exception type, which lets
+callers map failures to the `FAILED` processing state.
 
 Example internal result:
 
@@ -848,10 +858,13 @@ Example internal result:
 
 ### Test
 
--   [ ] Known PDF produces expected page count
--   [ ] Page numbers are correct
--   [ ] Extracted text is non-empty where expected
--   [ ] Invalid PDF produces controlled error
+-   [x] Known PDF produces expected page count
+-   [x] Page numbers are correct
+-   [x] Extracted text is non-empty where expected
+-   [x] Invalid PDF produces controlled error
+
+Covered by `backend/app/tests/test_extraction.py` (13 tests). Fixture PDFs
+are generated at test time with PyMuPDF rather than committed as binaries.
 
 ------------------------------------------------------------------------
 
@@ -2119,9 +2132,9 @@ Work next in this exact order:
 -   [x] Confirm Qdrant is reachable
 -   [x] Install/configure Ollama
 -   [x] Choose embedding model
--   [ ] Add PyMuPDF dependency
--   [ ] Implement `extraction.py`
--   [ ] Write extraction tests
+-   [x] Add PyMuPDF dependency
+-   [x] Implement `extraction.py`
+-   [x] Write extraction tests
 -   [ ] Implement `chunking.py`
 -   [ ] Write chunking tests
 -   [ ] Commit the first real knowledge-engine feature

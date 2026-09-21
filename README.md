@@ -198,6 +198,13 @@ Expected response:
 {"status":"ok"}
 ```
 
+Run the tests:
+
+```bash
+pip install -r requirements-dev.txt
+pytest app/tests/
+```
+
 ### Frontend
 
 Next.js 16 with TypeScript, Tailwind CSS 4, and the App Router.
