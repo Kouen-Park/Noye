@@ -1,3 +1,4 @@
-fastapi
-uvicorn[standard]
-pydantic-settings
+# Pinned to the versions verified working on Python 3.14 (macOS arm64).
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+pydantic-settings==2.15.0
