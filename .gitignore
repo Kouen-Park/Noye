@@ -29,9 +29,10 @@ data/app.db
 data/uploads/
 qdrant_storage/
 
-# IDE
+# IDE / local agent tooling
 .idea/
 .vscode/
+.kiro/
 
 # Logs
 *.log
