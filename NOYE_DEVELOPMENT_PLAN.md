@@ -910,14 +910,44 @@ Algorithms.pdf
 
 Requirements:
 
--   [ ] Define chunk size
--   [ ] Define overlap
--   [ ] Avoid losing page provenance
--   [ ] Produce deterministic chunk ordering
+-   [x] Define chunk size
+-   [x] Define overlap
+-   [x] Avoid losing page provenance
+-   [x] Produce deterministic chunk ordering
 
 Do not over-engineer sophisticated semantic chunking initially.
 
 Start simple, measure retrieval quality, then improve.
+
+### Implemented design
+
+`chunk_pages(pages, *, file_id, chunk_size, overlap) -> list[Chunk]`, where
+`Chunk` carries `file_id`, `page_number`, `chunk_index`, and `content`.
+
+-   **Chunks never span two pages.** Each page is split independently. A chunk
+    covering the end of page 3 and the start of page 4 could not be cited as
+    either page, so page-level citation requires this. The cost is that a
+    sentence straddling a page break is divided.
+-   **`chunk_index` counts across the whole file**, not per page, so it
+    identifies a chunk within the file on its own. Page-local ordering is
+    recoverable by grouping on `page_number`.
+-   **Defaults: 1000 characters with 150 overlap.** The size is bounded by the
+    embedding model rather than by taste: `embeddinggemma` has a 2048-token
+    context and truncates silently past it, which would drop the tail of an
+    oversized chunk from the index with no error. 1000 characters stays inside
+    that limit even for Korean, which spends far more tokens per character
+    than English.
+-   **Boundaries snap to the nearest paragraph, line, or sentence break** in
+    the last 40% of the window, falling back to a hard cut for unbroken text
+    such as a long URL or table row. Full-width CJK punctuation is included,
+    since those sentences end without a following space.
+-   **Empty pages produce no chunks** but do not disturb later page numbers.
+
+### Test
+
+Covered by `backend/app/tests/test_chunking.py` (27 tests), including that
+chunks are verbatim slices of the page advancing without gaps, that no chunk
+mixes text from two pages, and that Korean text chunks correctly.
 
 ------------------------------------------------------------------------
 
@@ -2135,9 +2165,9 @@ Work next in this exact order:
 -   [x] Add PyMuPDF dependency
 -   [x] Implement `extraction.py`
 -   [x] Write extraction tests
--   [ ] Implement `chunking.py`
--   [ ] Write chunking tests
--   [ ] Commit the first real knowledge-engine feature
+-   [x] Implement `chunking.py`
+-   [x] Write chunking tests
+-   [x] Commit the first real knowledge-engine feature
 
 ### First meaningful milestone
 
