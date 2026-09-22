@@ -27,6 +27,32 @@ export default function LibraryPage() {
     cardRefs.current.get(library.lastAddedId)?.focus();
   }, [library.lastAddedId]);
 
+  // Catch a drop anywhere on the page, not only inside the zone.
+  //
+  // Two reasons. A drop that lands just outside the target would otherwise do
+  // nothing, with no way for the person to tell a near-miss from a broken
+  // feature. And the browser's default action for a file dropped on a document
+  // is to NAVIGATE to it, which would throw the page away mid-session.
+  const { addFiles } = library;
+  useEffect(() => {
+    const swallow = (event: DragEvent) => event.preventDefault();
+    const onDrop = (event: DragEvent) => {
+      event.preventDefault();
+      const dropped = event.dataTransfer?.files;
+      if (dropped && dropped.length > 0) {
+        void addFiles(Array.from(dropped));
+      }
+    };
+    window.addEventListener("dragover", swallow);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragover", swallow);
+      window.removeEventListener("drop", onDrop);
+    };
+    // addFiles is a stable callback; the hook's returned object is not, so
+    // depending on it here would resubscribe on every render.
+  }, [addFiles]);
+
   const grouped = useMemo(() => {
     return GROUPS.map((group) => ({
       ...group,

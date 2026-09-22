@@ -206,6 +206,28 @@ export function useLibrary(): Library {
     setRejected((current) => current.filter((item) => item.key !== key));
   }, []);
 
+  // Re-list when the tab regains focus. Ingestion can be started from another
+  // tab, a second window, or the API directly, and without this the list only
+  // ever reflects what this tab did itself. Quiet on purpose: it replaces the
+  // list in place rather than showing the loading state again.
+  useEffect(() => {
+    const onFocus = () => {
+      listFiles().then(
+        (listed) => {
+          setFiles(listed);
+          setPhase("ready");
+          setLoadError(null);
+        },
+        () => {
+          // A failed background refresh leaves the last known list alone. The
+          // next deliberate action reports the failure loudly enough.
+        },
+      );
+    };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
   const reload = useCallback(() => {
     setPhase("loading");
     listFiles().then(applyList, applyLoadFailure);
