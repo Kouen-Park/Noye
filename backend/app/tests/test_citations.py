@@ -130,6 +130,65 @@ def test_format_citations_is_empty_without_citations() -> None:
     assert format_citations([]) == ""
 
 
+# --- pageless sources --------------------------------------------------------
+
+
+def pageless(file_id: str = "notes", chunk_index: int = 0, score: float = 0.9) -> SearchResult:
+    return SearchResult(
+        content="text from a markdown file",
+        file_id=file_id,
+        page_number=None,
+        chunk_index=chunk_index,
+        score=score,
+    )
+
+
+def test_pageless_citation_names_the_file_only() -> None:
+    citations = build_citations([pageless()], file_names={"notes": "study-notes.md"})
+
+    assert citations[0].page_number is None
+    # Inventing "page 1" here would point at a location the user cannot check.
+    assert citations[0].label == "study-notes.md"
+
+
+def test_pageless_citation_falls_back_to_the_id() -> None:
+    assert build_citations([pageless()])[0].label == "notes"
+
+
+def test_pageless_chunks_from_one_file_collapse_into_one_citation() -> None:
+    citations = build_citations(
+        [pageless(chunk_index=0, score=0.9), pageless(chunk_index=1, score=0.6)]
+    )
+
+    assert len(citations) == 1
+    assert citations[0].chunk_indexes == (0, 1)
+    assert citations[0].best_score == 0.9
+
+
+def test_format_citations_mixes_paged_and_pageless_sources() -> None:
+    citations = build_citations(
+        [result(34, file_id="algo", score=0.95), pageless(file_id="notes", score=0.8)],
+        file_names={"algo": "Algorithms.pdf", "notes": "study-notes.md"},
+    )
+
+    assert format_citations(citations) == (
+        "Sources:\nAlgorithms.pdf — page 34\nstudy-notes.md"
+    )
+
+
+def test_mixed_sources_sort_without_comparing_none_to_a_number() -> None:
+    # Equal scores force the tiebreakers to run, where None vs int would raise.
+    citations = build_citations(
+        [
+            pageless(file_id="notes", score=0.5),
+            result(3, file_id="algo", score=0.5),
+            result(1, file_id="algo", score=0.5),
+        ]
+    )
+
+    assert [c.label for c in citations] == ["algo — page 1", "algo — page 3", "notes"]
+
+
 # --- Integration: the whole Phase 1 pipeline ---------------------------------
 
 
