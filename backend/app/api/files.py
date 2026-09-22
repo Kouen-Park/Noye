@@ -1,4 +1,4 @@
-"""File APIs: upload, list, status, delete.
+"""File APIs: upload, list, status, retry, cancel, delete.
 
 Upload returns as soon as the file is on disk and its row exists; ingestion runs
 in a background task and the client polls `GET /files/{id}` for the status. A
@@ -25,7 +25,10 @@ from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
-from app.services.ingestion import ingest_file
+from app.services.ingestion import (
+    AlreadyIngesting, cancel_ingestion, cancel_orphaned_file, ingest_file, release_file,
+    reserve_delete, reserve_ingestion,
+)
 
 router = APIRouter(prefix="/files", tags=["files"])
 
@@ -94,10 +97,18 @@ def _ingest_in_background(file_id: str) -> None:
     The request's connection is closed as soon as the response is sent, and this
     runs on a different thread, so it must not borrow it.
     """
-    connection = connect()
     try:
-        init_schema(connection)
-        ingest_file(connection, file_id)
+        connection = connect()
+    except Exception:
+        release_file(file_id)
+        raise
+    try:
+        try:
+            init_schema(connection)
+        except Exception:
+            release_file(file_id)
+            raise
+        ingest_file(connection, file_id, reserved=True)
     finally:
         connection.close()
 
@@ -144,17 +155,22 @@ def upload_file(
             status_code=status.HTTP_400_BAD_REQUEST, detail="The uploaded file is empty"
         )
 
-    record = file_store.create_file(
-        db,
-        name=Path(file.filename).name,
-        file_type=file_type,
-        path=str(target),
-        size=size,
-        file_id=file_id,
-    )
-
-    background.add_task(_ingest_in_background, record.id)
-    return FileOut.of(record)
+    reserve_ingestion(file_id)
+    try:
+        record = file_store.create_file(
+            db,
+            name=Path(file.filename).name,
+            file_type=file_type,
+            path=str(target),
+            size=size,
+            file_id=file_id,
+        )
+        background.add_task(_ingest_in_background, record.id)
+        return FileOut.of(record)
+    except BaseException:
+        release_file(file_id)
+        target.unlink(missing_ok=True)
+        raise
 
 
 @router.get("", response_model=list[FileOut])
@@ -172,6 +188,78 @@ def get_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileOut:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
+@router.post("/{file_id}/reingest", response_model=FileOut, status_code=status.HTTP_202_ACCEPTED)
+def reingest_file(
+    file_id: str,
+    background: BackgroundTasks,
+    db: sqlite3.Connection = Depends(get_db),
+) -> FileOut:
+    """Run an already-uploaded file through the pipeline again.
+
+    This is the answer to a FAILED file, which was otherwise a dead end: the only
+    move was to delete it and upload the same bytes a second time. A scanned PDF
+    is still a scanned PDF, but an encoding problem, an unreachable Ollama, or a
+    Qdrant that was down are all fixable without the original file leaving the
+    machine.
+
+    Allowed on a READY file too — re-indexing after a chunking or embedding
+    change is the same operation.
+
+    Returns 202 with the file back in ``UPLOADING``; poll ``GET /files/{id}`` as
+    with an upload.
+    """
+    try:
+        reserve_ingestion(file_id)
+    except AlreadyIngesting as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This file is already being processed. Wait for it to finish.",
+        ) from exc
+
+    try:
+        try:
+            record = file_store.get_file(db, file_id)
+        except file_store.FileRecordNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        if not Path(record.path).exists():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="The original file is missing from disk. Upload it again to retry.",
+            )
+        file_store.reset_counts(db, file_id)
+        record = file_store.set_status(db, file_id, FileStatus.UPLOADING)
+        background.add_task(_ingest_in_background, file_id)
+        return FileOut.of(record)
+    except BaseException:
+        release_file(file_id)
+        raise
+
+
+@router.post("/{file_id}/cancel", response_model=FileOut, status_code=status.HTTP_202_ACCEPTED)
+def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileOut:
+    """Request cancellation; poll the file until it reaches FAILED."""
+    try:
+        record = file_store.get_file(db, file_id)
+    except file_store.FileRecordNotFound as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    if cancel_ingestion(file_id):
+        return FileOut.of(record)
+    try:
+        reserve_ingestion(file_id)
+    except AlreadyIngesting as exc:
+        raise HTTPException(status_code=409, detail="This file is busy.") from exc
+    try:
+        try:
+            record = file_store.get_file(db, file_id)
+        except file_store.FileRecordNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        if not record.status.is_processing:
+            raise HTTPException(status_code=409, detail="This file is not being processed.")
+        return FileOut.of(cancel_orphaned_file(db, file_id))
+    finally:
+        release_file(file_id)
+
+
 @router.delete("/{file_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     """Delete a source completely: vectors, original file, and metadata.
@@ -182,17 +270,30 @@ def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     failed delete they can retry.
     """
     try:
-        record = file_store.get_file(db, file_id)
-    except file_store.FileRecordNotFound as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
-
-    try:
-        delete_file_chunks(record.id)
-    except IndexingError as exc:
+        reserve_delete(file_id)
+    except AlreadyIngesting as exc:
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Could not remove this file's vectors, so nothing was deleted: {exc}",
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This file is being processed. Cancel it and wait for processing to stop before removing it.",
         ) from exc
-
-    Path(record.path).unlink(missing_ok=True)
-    file_store.delete_file(db, record.id)
+    try:
+        try:
+            record = file_store.get_file(db, file_id)
+        except file_store.FileRecordNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        if record.status.is_processing:
+            raise HTTPException(
+                status_code=409,
+                detail="This file is still processing. Stop it before removing it.",
+            )
+        try:
+            delete_file_chunks(record.id)
+        except IndexingError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Could not remove this file's vectors, so nothing was deleted: {exc}",
+            ) from exc
+        Path(record.path).unlink(missing_ok=True)
+        file_store.delete_file(db, record.id)
+    finally:
+        release_file(file_id)

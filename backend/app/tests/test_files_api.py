@@ -23,6 +23,7 @@ from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.main import app
 from app.models.files import FileStatus, FileType
+from app.services import ingestion
 
 
 def write_pdf(path: Path, page_texts: list[str]) -> Path:
@@ -55,14 +56,20 @@ def scheduled() -> list[str]:
 
 
 @pytest.fixture
+def uploads(tmp_path: Path) -> Path:
+    """Where uploads land during a test, in place of the real sources dir."""
+    directory = tmp_path / "sources"
+    directory.mkdir()
+    return directory
+
+
+@pytest.fixture
 def client(
     db: sqlite3.Connection,
-    tmp_path: Path,
+    uploads: Path,
     scheduled: list[str],
     monkeypatch: pytest.MonkeyPatch,
 ) -> TestClient:
-    uploads = tmp_path / "sources"
-    uploads.mkdir()
     monkeypatch.setattr(files_api, "sources_dir", lambda: uploads)
     monkeypatch.setattr(files_api, "_ingest_in_background", scheduled.append)
     monkeypatch.setattr(files_api, "delete_file_chunks", lambda file_id, **kwargs: None)
@@ -70,7 +77,15 @@ def client(
     app.dependency_overrides[files_api.get_db] = lambda: db
     with TestClient(app) as test_client:
         yield test_client
+    for file_id in scheduled:
+        ingestion.release_file(file_id)
     app.dependency_overrides.clear()
+
+
+def finish_scheduled(db: sqlite3.Connection, file_id: str) -> None:
+    """The test's background stub records the task without running it."""
+    ingestion.release_file(file_id)
+    file_store.set_status(db, file_id, FileStatus.READY)
 
 
 def upload(client: TestClient, name: str = "doc.pdf", content: bytes | None = None, tmp_path: Path | None = None):
@@ -243,6 +258,7 @@ def test_polling_surfaces_the_failure_reason(client, db, tmp_path) -> None:
 
 def test_delete_removes_row_and_original(client, db, tmp_path) -> None:
     file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    finish_scheduled(db, file_id)
     stored = Path(file_store.get_file(db, file_id).path)
 
     response = client.delete(f"/files/{file_id}")
@@ -253,10 +269,11 @@ def test_delete_removes_row_and_original(client, db, tmp_path) -> None:
         file_store.get_file(db, file_id)
 
 
-def test_delete_removes_the_vectors(client, tmp_path, monkeypatch) -> None:
+def test_delete_removes_the_vectors(client, db, tmp_path, monkeypatch) -> None:
     removed: list[str] = []
     monkeypatch.setattr(files_api, "delete_file_chunks", lambda file_id, **kw: removed.append(file_id))
     file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    finish_scheduled(db, file_id)
 
     client.delete(f"/files/{file_id}")
 
@@ -266,6 +283,7 @@ def test_delete_removes_the_vectors(client, tmp_path, monkeypatch) -> None:
 def test_delete_leaves_other_files_alone(client, db, tmp_path) -> None:
     keep = upload(client, "keep.pdf", tmp_path=tmp_path).json()["id"]
     remove = upload(client, "remove.pdf", tmp_path=tmp_path).json()["id"]
+    finish_scheduled(db, remove)
     kept_path = Path(file_store.get_file(db, keep).path)
 
     client.delete(f"/files/{remove}")
@@ -285,6 +303,7 @@ def test_delete_keeps_everything_when_vectors_cannot_be_removed(
     from app.services.indexing import IndexingError
 
     file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    finish_scheduled(db, file_id)
     stored = Path(file_store.get_file(db, file_id).path)
 
     def failing(file_id: str, **kwargs):
@@ -302,6 +321,7 @@ def test_delete_keeps_everything_when_vectors_cannot_be_removed(
 
 def test_delete_tolerates_an_already_missing_original(client, db, tmp_path) -> None:
     file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    finish_scheduled(db, file_id)
     Path(file_store.get_file(db, file_id).path).unlink()
 
     assert client.delete(f"/files/{file_id}").status_code == 204
@@ -391,3 +411,165 @@ def test_real_upload_ingests_and_becomes_ready(tmp_path: Path) -> None:
             if file_id:
                 assert client.delete(f"/files/{file_id}").status_code == 204
                 assert client.get(f"/files/{file_id}").status_code == 404
+
+
+# --- re-ingesting ------------------------------------------------------------
+
+
+def make_stored_file(
+    db: sqlite3.Connection,
+    uploads: Path,
+    *,
+    status: FileStatus = FileStatus.FAILED,
+    error: str | None = "No extractable text found.",
+    name: str = "doc.pdf",
+) -> str:
+    """A file row whose original really is on disk, in the given state."""
+    file_id = file_store.new_file_id()
+    path = uploads / f"{file_id}__{name}"
+    write_pdf(path, ["Dijkstra picks the smallest distance estimate."])
+    file_store.create_file(
+        db,
+        name=name,
+        file_type=FileType.PDF,
+        path=str(path),
+        size=path.stat().st_size,
+        file_id=file_id,
+    )
+    file_store.set_status(db, file_id, status, error=error)
+    return file_id
+
+
+def test_reingest_accepts_a_failed_file(client, db, uploads, scheduled) -> None:
+    file_id = make_stored_file(db, uploads)
+
+    response = client.post(f"/files/{file_id}/reingest")
+
+    assert response.status_code == 202
+    body = response.json()
+    assert body["status"] == "UPLOADING"
+    assert body["error"] is None
+    assert scheduled == [file_id]
+
+
+def test_reingest_clears_the_previous_runs_counts(client, db, uploads) -> None:
+    file_id = make_stored_file(db, uploads)
+    file_store.set_counts(db, file_id, page_count=9, chunk_count=30)
+
+    body = client.post(f"/files/{file_id}/reingest").json()
+
+    assert body["page_count"] is None
+    assert body["chunk_count"] == 0
+
+
+def test_reingest_is_allowed_on_a_ready_file(client, db, uploads, scheduled) -> None:
+    """Re-indexing after a chunking change is the same operation."""
+    file_id = make_stored_file(db, uploads, status=FileStatus.READY, error=None)
+
+    response = client.post(f"/files/{file_id}/reingest")
+
+    assert response.status_code == 202
+    assert scheduled == [file_id]
+
+
+def test_reingest_of_an_unknown_file_is_404(client) -> None:
+    response = client.post("/files/does-not-exist/reingest")
+    assert response.status_code == 404
+
+
+def test_reingest_is_refused_while_the_file_is_being_processed(
+    client, db, uploads, scheduled, monkeypatch
+) -> None:
+    file_id = make_stored_file(db, uploads)
+    ingestion.reserve_ingestion(file_id)
+
+    response = client.post(f"/files/{file_id}/reingest")
+
+    assert response.status_code == 409
+    assert "already being processed" in response.json()["detail"]
+    assert scheduled == []
+    ingestion.release_file(file_id)
+
+
+def test_reingest_is_refused_when_the_original_is_gone(
+    client, db, uploads, scheduled
+) -> None:
+    """Everything else is derived from the original, so without it there is
+    nothing to re-read."""
+    file_id = make_stored_file(db, uploads)
+    Path(file_store.get_file(db, file_id).path).unlink()
+
+    response = client.post(f"/files/{file_id}/reingest")
+
+    assert response.status_code == 409
+    assert "missing from disk" in response.json()["detail"]
+    assert scheduled == []
+
+
+def test_reingest_leaves_a_refused_file_untouched(client, db, uploads) -> None:
+    file_id = make_stored_file(db, uploads)
+    file_store.set_counts(db, file_id, page_count=4, chunk_count=11)
+    Path(file_store.get_file(db, file_id).path).unlink()
+
+    client.post(f"/files/{file_id}/reingest")
+
+    record = file_store.get_file(db, file_id)
+    assert record.status is FileStatus.FAILED
+    assert record.chunk_count == 11
+    assert record.page_count == 4
+
+
+def test_reingest_appears_in_the_openapi_schema(client) -> None:
+    paths = client.get("/openapi.json").json()["paths"]
+    assert "/files/{file_id}/reingest" in paths
+    assert "post" in paths["/files/{file_id}/reingest"]
+
+
+def test_delete_refuses_a_queued_ingestion(client, db, tmp_path) -> None:
+    file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    original = Path(file_store.get_file(db, file_id).path)
+
+    response = client.delete(f"/files/{file_id}")
+
+    assert response.status_code == 409
+    assert original.exists()
+    assert file_store.get_file(db, file_id).id == file_id
+
+
+def test_cancel_stops_a_queued_ingestion_and_allows_retry(
+    client, db, tmp_path, monkeypatch
+) -> None:
+    file_id = upload(client, tmp_path=tmp_path).json()["id"]
+    monkeypatch.setattr(ingestion, "delete_file_chunks", lambda *args, **kwargs: None)
+
+    response = client.post(f"/files/{file_id}/cancel")
+    assert response.status_code == 202
+    assert client.delete(f"/files/{file_id}").status_code == 409
+
+    stopped = ingestion.ingest_file(db, file_id, reserved=True)
+    assert stopped.status is FileStatus.FAILED
+    assert stopped.error == "Processing was cancelled."
+    assert ingestion.is_ingesting(file_id) is False
+    assert client.post(f"/files/{file_id}/reingest").status_code == 202
+
+
+def test_cancel_idle_file_is_conflict(client, db, uploads) -> None:
+    file_id = make_stored_file(db, uploads)
+    assert client.post(f"/files/{file_id}/cancel").status_code == 409
+
+
+def test_orphaned_processing_row_can_be_stopped_then_deleted(client, db, uploads, monkeypatch) -> None:
+    file_id = make_stored_file(db, uploads, status=FileStatus.EMBEDDING, error=None)
+    monkeypatch.setattr(ingestion, "delete_file_chunks", lambda *args, **kwargs: None)
+    assert client.delete(f"/files/{file_id}").status_code == 409
+    response = client.post(f"/files/{file_id}/cancel")
+    assert response.status_code == 202
+    assert response.json()["status"] == "FAILED"
+    assert response.json()["error"] == "Processing was interrupted."
+    assert client.delete(f"/files/{file_id}").status_code == 204
+
+
+def test_second_reingest_is_refused_before_background_start(client, db, uploads) -> None:
+    file_id = make_stored_file(db, uploads)
+    assert client.post(f"/files/{file_id}/reingest").status_code == 202
+    assert client.post(f"/files/{file_id}/reingest").status_code == 409
