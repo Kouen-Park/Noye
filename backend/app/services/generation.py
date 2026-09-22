@@ -119,9 +119,14 @@ def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
     """
     excerpts = []
     for position, result in enumerate(results, start=1):
-        excerpts.append(
-            f"[Excerpt {position} — page {result.page_number}]\n{result.content}"
+        # Markdown and text sources have no page; labelling one would suggest a
+        # location the model could repeat and the user could not verify.
+        label = (
+            f"Excerpt {position}"
+            if result.page_number is None
+            else f"Excerpt {position} — page {result.page_number}"
         )
+        excerpts.append(f"[{label}]\n{result.content}")
 
     joined = "\n\n".join(excerpts)
     return (

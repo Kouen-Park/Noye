@@ -100,6 +100,23 @@ def test_system_prompt_forbids_inventing_sources() -> None:
     assert "only the numbered excerpts" in SYSTEM_PROMPT
 
 
+def test_pageless_excerpt_is_labelled_without_a_page() -> None:
+    pageless = SearchResult(
+        content="Markdown content.",
+        file_id="notes",
+        page_number=None,
+        chunk_index=0,
+        score=0.9,
+    )
+
+    prompt = build_prompt("q", [pageless])
+
+    assert "[Excerpt 1]" in prompt
+    # A page label here would invite the model to repeat a location that does
+    # not exist in the source.
+    assert "page" not in prompt.split("Question:")[0]
+
+
 def test_generate_returns_the_model_text() -> None:
     handler = responder("  Dijkstra picks the smallest estimate.  ")
 

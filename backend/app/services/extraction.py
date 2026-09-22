@@ -1,10 +1,13 @@
-"""PDF text extraction with page provenance.
+"""Text extraction with page provenance.
 
 Noye's citations are only trustworthy if every piece of retrieved text can be
-traced back to the page it came from, so extraction returns one result per
-page instead of concatenating the document into a single string. The page
-number travels with the text from here all the way to the citation shown to
-the user.
+traced back to where it came from, so extraction returns one result per page
+instead of concatenating a document into a single string. The page number
+travels with the text from here all the way to the citation shown to the user.
+
+PDFs are page-aware. Markdown and text files are not, so they come back as one
+"page" whose number ingestion discards — a citation for them names the file
+only, rather than inventing a page a reader could not verify.
 """
 
 from __future__ import annotations
@@ -13,6 +16,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pymupdf
+
+from app.models.files import FileType
 
 
 class ExtractionError(Exception):
@@ -84,3 +89,59 @@ def extract_pdf(path: str | Path) -> list[ExtractedPage]:
             pages.append(ExtractedPage(page_number=page_number, content=text.strip()))
 
     return pages
+
+
+def extract_text_file(path: str | Path) -> list[ExtractedPage]:
+    """Extract a Markdown or plain-text file as a single unit.
+
+    These formats have no pages, so the whole file is returned as one
+    :class:`ExtractedPage` with ``page_number=1``. That number is a placeholder:
+    ingestion discards it for formats whose ``FileType.has_pages`` is false, so a
+    citation reads ``notes.md`` rather than inventing a page a reader could not
+    verify.
+
+    Returning one page rather than slicing the file into artificial pages also
+    keeps chunk overlap flowing across the whole document instead of resetting
+    at boundaries that do not exist in the source.
+
+    Line endings are normalised to ``\\n`` so CRLF files do not carry stray
+    carriage returns into chunk text and citations.
+
+    Raises:
+        ExtractionError: the file is missing, unreadable, or not valid UTF-8.
+    """
+    text_path = Path(path)
+
+    if not text_path.is_file():
+        raise ExtractionError(f"File not found: {text_path}")
+
+    try:
+        raw = text_path.read_bytes()
+    except OSError as exc:
+        raise ExtractionError(f"Could not read {text_path.name}: {exc}") from exc
+
+    try:
+        # utf-8-sig also decodes plain UTF-8, and strips a byte-order mark that
+        # would otherwise become an invisible character at the start of chunk 0.
+        content = raw.decode("utf-8-sig")
+    except UnicodeDecodeError as exc:
+        raise ExtractionError(
+            f"{text_path.name} is not valid UTF-8 text. Re-save it as UTF-8 and "
+            "upload it again."
+        ) from exc
+
+    normalised = content.replace("\r\n", "\n").replace("\r", "\n").strip()
+    return [ExtractedPage(page_number=1, content=normalised)]
+
+
+def extract_file(path: str | Path, file_type: FileType) -> list[ExtractedPage]:
+    """Extract any supported file, dispatching on its type.
+
+    Raises:
+        ExtractionError: extraction failed, or the type has no extractor.
+    """
+    if file_type is FileType.PDF:
+        return extract_pdf(path)
+    if file_type in (FileType.MARKDOWN, FileType.TEXT):
+        return extract_text_file(path)
+    raise ExtractionError(f"No extractor for {file_type.value} files")

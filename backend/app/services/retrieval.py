@@ -34,15 +34,18 @@ DEFAULT_LIMIT = 5
 class SearchResult:
     """One retrieved chunk and where it came from.
 
+    ``page_number`` is ``None`` for sources that have no pages, such as Markdown
+    and text files.
+
     ``file_name`` is deliberately absent: the human-readable name lives in
-    SQLite alongside the rest of the file metadata, which does not exist yet.
-    Callers join on ``file_id`` once it does. Storing the name in the vector
-    payload would duplicate it and let a rename leave stale copies behind.
+    SQLite alongside the rest of the file metadata. Callers join on ``file_id``.
+    Storing the name in the vector payload would duplicate it and let a rename
+    leave stale copies behind.
     """
 
     content: str
     file_id: str
-    page_number: int
+    page_number: int | None
     chunk_index: int
     score: float
 
@@ -99,7 +102,8 @@ def _to_result(point) -> SearchResult:
     return SearchResult(
         content=payload.get(CONTENT, ""),
         file_id=payload.get(FILE_ID, ""),
-        page_number=payload.get(PAGE_NUMBER, 0),
+        # Absent for pageless sources; 0 would read as a real page.
+        page_number=payload.get(PAGE_NUMBER),
         chunk_index=payload.get(CHUNK_INDEX, 0),
         score=point.score,
     )

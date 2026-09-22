@@ -166,13 +166,18 @@ def test_empty_upload_is_rejected(client, db, tmp_path) -> None:
     assert list((tmp_path / "sources").iterdir()) == []
 
 
-def test_markdown_is_accepted_at_the_api_boundary(client) -> None:
-    # Ingestion still fails it for now, but the API must not reject a format
-    # the MVP scope includes.
+def test_markdown_is_accepted(client) -> None:
     response = client.post("/files", files={"file": ("notes.md", b"# Notes\n", "text/markdown")})
 
     assert response.status_code == 201
     assert response.json()["file_type"] == FileType.MARKDOWN.value
+
+
+def test_text_file_is_accepted(client) -> None:
+    response = client.post("/files", files={"file": ("log.txt", b"Plain text.\n", "text/plain")})
+
+    assert response.status_code == 201
+    assert response.json()["file_type"] == FileType.TEXT.value
 
 
 # --- list and read -----------------------------------------------------------

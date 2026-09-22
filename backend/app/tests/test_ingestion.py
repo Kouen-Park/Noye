@@ -264,9 +264,9 @@ def test_failure_after_a_successful_run_clears_the_old_index(db, qdrant, tmp_pat
     assert file_store.count_chunks(db, record.id) == 0
 
 
-def test_unsupported_type_fails_with_a_clear_message(db, tmp_path, qdrant) -> None:
+def test_markdown_is_ingested_without_page_numbers(db, qdrant, tmp_path) -> None:
     path = tmp_path / "notes.md"
-    path.write_text("# Notes\n\nSome markdown content.")
+    path.write_text("# Notes\n\n" + sentences(60, "Markdown"))
     record = file_store.create_file(
         db, name="notes.md", file_type=FileType.MARKDOWN, path=str(path), size=path.stat().st_size
     )
@@ -274,8 +274,70 @@ def test_unsupported_type_fails_with_a_clear_message(db, tmp_path, qdrant) -> No
     with ollama_client() as http:
         result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
 
+    assert result.status is FileStatus.READY
+    assert result.chunk_count > 0
+    # Pageless format: a page number here would be one a reader could not verify.
+    assert all(row.page_number is None for row in file_store.list_chunks(db, record.id))
+    # And no page count is reported, since "1 page" would be noise.
+    assert result.page_count is None
+
+
+def test_text_file_is_ingested(db, qdrant, tmp_path) -> None:
+    path = tmp_path / "log.txt"
+    path.write_text(sentences(40, "Plain"))
+    record = file_store.create_file(
+        db, name="log.txt", file_type=FileType.TEXT, path=str(path), size=path.stat().st_size
+    )
+
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    assert result.status is FileStatus.READY
+    assert count_vectors(file_id=record.id, client=qdrant) == result.chunk_count
+
+
+def test_korean_markdown_is_ingested(db, qdrant, tmp_path) -> None:
+    path = tmp_path / "한글노트.md"
+    path.write_text("# 알고리즘 정리\n\n" + "다익스트라는 거리 추정값이 가장 작은 정점을 선택한다. " * 40)
+    record = file_store.create_file(
+        db, name="한글노트.md", file_type=FileType.MARKDOWN, path=str(path), size=path.stat().st_size
+    )
+
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    assert result.status is FileStatus.READY
+    assert "다익스트라" in file_store.list_chunks(db, record.id)[0].content
+
+
+def test_whitespace_only_text_file_fails_without_mentioning_ocr(db, qdrant, tmp_path) -> None:
+    path = tmp_path / "blank.txt"
+    path.write_text("   \n\n\t  \n")
+    record = file_store.create_file(
+        db, name="blank.txt", file_type=FileType.TEXT, path=str(path), size=path.stat().st_size
+    )
+
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
     assert result.status is FileStatus.FAILED
-    assert "not supported yet" in result.error
+    assert "no text to index" in result.error
+    # OCR is irrelevant to a text file; the message must not suggest it.
+    assert "OCR" not in result.error
+
+
+def test_non_utf8_text_file_fails_with_guidance(db, qdrant, tmp_path) -> None:
+    path = tmp_path / "legacy.txt"
+    path.write_bytes("다익스트라 알고리즘".encode("cp949"))
+    record = file_store.create_file(
+        db, name="legacy.txt", file_type=FileType.TEXT, path=str(path), size=path.stat().st_size
+    )
+
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    assert result.status is FileStatus.FAILED
+    assert "not valid UTF-8" in result.error
 
 
 def test_failure_does_not_touch_another_file(db, qdrant, tmp_path) -> None:
