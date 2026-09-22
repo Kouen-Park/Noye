@@ -26,6 +26,9 @@ coverage/
 
 # Local application data
 data/app.db
+# WAL journal mode (see app/db/database.py) creates these alongside the db.
+data/app.db-wal
+data/app.db-shm
 data/uploads/
 qdrant_storage/
 

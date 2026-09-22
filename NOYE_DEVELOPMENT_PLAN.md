@@ -739,6 +739,44 @@ created_at
 updated_at
 ```
 
+### Implemented data layer
+
+`File` and `Chunk` exist in `backend/app/models/files.py`, with persistence in
+`backend/app/db/`. `Conversation`, `Message`, and `Document` are deliberately
+not implemented yet — nothing uses them until Phases 4 and 5.
+
+Three decisions, settled 2026-09-22:
+
+-   **Standard-library `sqlite3`, not an ORM.** The schema is two tables and one
+    relationship, so an ORM would add a dependency and a mapping layer without
+    removing work. Persistence is thin functions over SQL, each taking its
+    connection explicitly so a request handler, the background ingestion task,
+    and a test can pass their own.
+-   **Ingestion runs in the background; the client polls.** `POST /files`
+    returns immediately with a file id in `UPLOADING`, and the pipeline advances
+    the status behind it. A synchronous upload would hold an HTTP request open
+    for minutes on a large PDF, and the plan's staged processing UI only means
+    anything if the stages are observable while they happen.
+-   **Markdown and text files cite by filename, with no page.** They have no
+    pages, so `Chunk.page_number` is nullable and a citation reads `notes.md`
+    rather than inventing a page number a reader could not verify.
+
+Beyond the plan's field list, `File` also carries:
+
+-   `error` — why a `FAILED` file failed. Setting `FAILED` without a message
+    raises, because a failure the UI cannot explain is worse than none; any
+    other status clears it, so a retried file shows no stale reason.
+-   `page_count` and `chunk_count` — extraction and chunking results, for
+    display.
+
+Storage details that protect the index: `PRAGMA foreign_keys` is enabled (off
+by default in SQLite), so deleting a file cascades to its chunk rows instead of
+orphaning them; `(file_id, chunk_index)` is UNIQUE, so two chunks cannot claim
+the same position; chunk writes replace rather than append, matching the
+deterministic Qdrant point ids so re-ingestion stays idempotent; and WAL
+journal mode lets the background task write while a request reads the file
+list.
+
 ------------------------------------------------------------------------
 
 # 8. Development Roadmap
