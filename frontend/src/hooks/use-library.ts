@@ -14,11 +14,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ApiError,
+  cancelFile as cancelFileRequest,
   deleteFile as deleteFileRequest,
   getFile,
   isProcessing,
   listFiles,
   rejectionFor,
+  reingestFile as reingestFileRequest,
   type StoredFile,
   uploadFile,
 } from "@/lib/api";
@@ -42,6 +44,8 @@ export interface Library {
   loadError: string | null;
   /** Uploads in flight, by display name, so the drop zone can report them. */
   uploading: string[];
+  /** Files whose Stop request is waiting for a terminal status. */
+  stoppingIds: string[];
   rejected: RejectedUpload[];
   /** The most recent thing worth announcing to a screen reader. */
   announcement: string;
@@ -50,6 +54,8 @@ export interface Library {
   reload: () => void;
   addFiles: (selected: File[]) => Promise<void>;
   removeFile: (id: string) => Promise<void>;
+  retryFile: (id: string) => Promise<void>;
+  cancelFile: (id: string) => Promise<void>;
   dismissRejection: (key: string) => void;
 }
 
@@ -58,6 +64,7 @@ export function useLibrary(): Library {
   const [phase, setPhase] = useState<LoadPhase>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string[]>([]);
+  const [stoppingIds, setStoppingIds] = useState<string[]>([]);
   const [rejected, setRejected] = useState<RejectedUpload[]>([]);
   const [announcement, setAnnouncement] = useState("");
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
@@ -70,6 +77,7 @@ export function useLibrary(): Library {
    *  inside an effect body, which cascades renders. */
   const applyList = useCallback((listed: StoredFile[]) => {
     setFiles(listed);
+    setStoppingIds((current) => current.filter((id) => listed.some((file) => file.id === id && isProcessing(file.status))));
     setPhase("ready");
     setLoadError(null);
   }, []);
@@ -120,6 +128,10 @@ export function useLibrary(): Library {
           )
           .map((result) => result.value);
         if (fresh.length === 0) return;
+
+        setStoppingIds((current) =>
+          current.filter((id) => !fresh.some((file) => file.id === id && !isProcessing(file.status))),
+        );
 
         setFiles((current) => {
           const byId = new Map(fresh.map((file) => [file.id, file]));
@@ -223,6 +235,40 @@ export function useLibrary(): Library {
     [files],
   );
 
+  const retryFile = useCallback(async (id: string) => {
+    const target = files.find((file) => file.id === id);
+    try {
+      const updated = await reingestFileRequest(id);
+      setStoppingIds((current) => current.filter((item) => item !== id));
+      setFiles((current) => current.map((file) => file.id === id ? updated : file));
+      setAnnouncement(`${updated.name} is being indexed again.`);
+    } catch (error) {
+      const message = error instanceof ApiError ? error.message : "Could not retry this file.";
+      setRejected((current) => [...current, { key: `retry-${id}-${Date.now()}`, name: target?.name ?? "This file", message }]);
+      setAnnouncement(`${target?.name ?? "The file"} was not retried. ${message}`);
+    }
+  }, [files]);
+
+  const cancelFile = useCallback(async (id: string) => {
+    const target = files.find((file) => file.id === id);
+    setStoppingIds((current) => current.includes(id) ? current : [...current, id]);
+    try {
+      const updated = await cancelFileRequest(id);
+      if (!isProcessing(updated.status)) {
+        setFiles((current) => current.map((file) => file.id === id ? updated : file));
+        setStoppingIds((current) => current.filter((item) => item !== id));
+        setAnnouncement(completionAnnouncement(updated) ?? `${updated.name} was stopped.`);
+      } else {
+        setAnnouncement(`Stopping ${target?.name ?? "the file"}.`);
+      }
+    } catch (error) {
+      setStoppingIds((current) => current.filter((item) => item !== id));
+      const message = error instanceof ApiError ? error.message : "Could not stop this file.";
+      setRejected((current) => [...current, { key: `cancel-${id}-${Date.now()}`, name: target?.name ?? "This file", message }]);
+      setAnnouncement(`${target?.name ?? "The file"} was not stopped. ${message}`);
+    }
+  }, [files]);
+
   const dismissRejection = useCallback((key: string) => {
     setRejected((current) => current.filter((item) => item.key !== key));
   }, []);
@@ -236,6 +282,7 @@ export function useLibrary(): Library {
       listFiles().then(
         (listed) => {
           setFiles(listed);
+          setStoppingIds((current) => current.filter((id) => listed.some((file) => file.id === id && isProcessing(file.status))));
           setPhase("ready");
           setLoadError(null);
         },
@@ -259,12 +306,15 @@ export function useLibrary(): Library {
     phase,
     loadError,
     uploading,
+    stoppingIds,
     rejected,
     announcement,
     lastAddedId,
     reload,
     addFiles,
     removeFile,
+    retryFile,
+    cancelFile,
     dismissRejection,
   };
 }

@@ -54,10 +54,22 @@ export function isStalled(file: StoredFile, now: number = Date.now()): boolean {
   return now - touched > STALL_AFTER_MS;
 }
 
+/** Stopping and an interrupted run need different copy from extraction failure. */
+export function stoppedReason(error: string | null): "cancelled" | "interrupted" | null {
+  if (error === "Processing was cancelled.") return "cancelled";
+  if (error === "Processing was interrupted.") return "interrupted";
+  return null;
+}
+
 /** The short word on the status pill. */
-export function statusWord(status: FileStatus): string {
+export function statusWord(status: FileStatus, error: string | null = null): string {
   if (status === "READY") return "Ready";
-  if (status === "FAILED") return "Could not read";
+  if (status === "FAILED") {
+    const reason = stoppedReason(error);
+    if (reason === "cancelled") return "Stopped";
+    if (reason === "interrupted") return "Interrupted";
+    return "Needs attention";
+  }
   return "Indexing";
 }
 
@@ -129,6 +141,9 @@ export function completionAnnouncement(file: StoredFile): string | null {
     return `${file.name} is ready to search.`;
   }
   if (file.status === "FAILED") {
+    const reason = stoppedReason(file.error);
+    if (reason === "cancelled") return `${file.name} was stopped.`;
+    if (reason === "interrupted") return `${file.name} was interrupted. You can retry it.`;
     return `${file.name} could not be read. ${file.error ?? ""}`.trim();
   }
   return null;

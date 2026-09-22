@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 import { StageBar, StatusPill } from "@/components/library/status-indicators";
 import { isProcessing, type StoredFile } from "@/lib/api";
-import { factsLine, isStalled, typeLabel } from "@/lib/status";
+import { factsLine, isStalled, stoppedReason, typeLabel } from "@/lib/status";
 
 /**
  * One file in the library.
@@ -22,34 +22,34 @@ import { factsLine, isStalled, typeLabel } from "@/lib/status";
 interface FileCardProps {
   file: StoredFile;
   onRemove: (id: string) => void;
+  onRetry: (id: string) => void;
+  onCancel: (id: string) => void;
+  stopping: boolean;
   /** Lets the page move focus to this card after it is added. */
   registerRef?: (element: HTMLLIElement | null) => void;
 }
 
-export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
+export function FileCard({ file, onRemove, onRetry, onCancel, stopping, registerRef }: FileCardProps) {
   const [confirming, setConfirming] = useState(false);
   const removeButtonRef = useRef<HTMLButtonElement>(null);
   const failed = file.status === "FAILED";
+  const stopped = failed ? stoppedReason(file.error) : null;
+  const extractionFailed = failed && stopped === null;
   const working = isProcessing(file.status);
-  // A file that has sat in one stage past the threshold has stalled. Removal is
-  // blocked during normal processing because it races the background task still
-  // writing this file's rows — but a file that never finishes would otherwise be
-  // unremovable forever, which is worse than that race.
   const stalled = isStalled(file);
-  const removable = !working || stalled;
 
   return (
     <li
       ref={registerRef}
       tabIndex={-1}
-      className={`mb-2.5 flex items-start gap-3 rounded-lg border border-edge-strong bg-card px-4 py-3.5 ${
-        failed ? "border-l-[3px] border-l-fail" : ""
+      className={`mb-2.5 flex flex-wrap items-start gap-x-3 gap-y-2 rounded-lg border border-edge-strong bg-card px-4 py-3.5 sm:flex-nowrap ${
+        extractionFailed ? "border-l-[3px] border-l-fail" : ""
       }`}
     >
       <span
         aria-hidden="true"
         className={`grid h-11 w-[34px] shrink-0 place-items-center border border-edge-strong bg-canvas text-[9px] font-bold tracking-wider text-ink-soft [border-radius:var(--radius-spine)] ${
-          failed ? "border-l-[3px] border-l-fail" : "border-l-[3px] border-l-accent"
+          extractionFailed ? "border-l-[3px] border-l-fail" : "border-l-[3px] border-l-accent"
         }`}
       >
         {typeLabel(file.file_type)}
@@ -60,7 +60,7 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
           <span className="truncate font-semibold" title={file.name}>
             {file.name}
           </span>
-          <StatusPill status={file.status} />
+          <StatusPill status={file.status} error={file.error} />
         </div>
 
         <p className="mt-0.5 text-[12.5px] text-ink-soft">
@@ -69,24 +69,27 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
 
         {working && <StageBar status={file.status} />}
 
-        {stalled && (
+        {stalled && !stopping && (
           <p className="mt-2 rounded-md border border-edge-strong px-2.5 py-2 text-[12.5px] text-ink-soft">
-            This is taking longer than usual. You can remove it and try again.
+            This is taking longer than usual. You can stop it, then retry.
           </p>
         )}
 
         {failed && file.error && (
-          <p className="mt-2 rounded-md bg-fail-wash px-2.5 py-2 text-[12.5px] text-fail">
+          <p className={`mt-2 rounded-md px-2.5 py-2 text-[12.5px] ${
+            stopped ? "border border-edge-strong text-ink-soft" : "bg-fail-wash text-fail"
+          }`}>
             {file.error}
           </p>
         )}
 
         {failed && (
-          // There is no retry endpoint, so "Remove" is the whole set of moves.
-          // Saying so turns a dead end into a deliberate next step.
           <p className="mt-1.5 text-[12.5px] text-ink-soft">
-            Noye cannot retry this file. Remove it, then add it again once the
-            problem is fixed.
+            {stopped === "cancelled"
+              ? "Retry whenever you're ready."
+              : stopped === "interrupted"
+                ? "Retry to finish indexing this file."
+                : "Fix the problem, then retry this file."}
           </p>
         )}
 
@@ -94,7 +97,6 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
           <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-md bg-fail-wash px-2.5 py-2">
             <p className="text-[12.5px] text-fail">
               Remove {file.name}? This cannot be undone.
-              {stalled && " It may not have finished indexing, so some of its work could be left behind."}
             </p>
             <div className="ml-auto flex gap-2">
               <button
@@ -121,28 +123,37 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
       </div>
 
       {!confirming && (
-        <button
-          ref={removeButtonRef}
-          type="button"
-          aria-disabled={!removable}
-          onClick={() => {
-            if (!removable) return;
-            setConfirming(true);
-          }}
-          className={`min-h-11 shrink-0 rounded-md border border-edge-strong px-2.5 text-[12.5px] md:min-h-0 md:py-1.5 ${
-            removable
-              ? "text-ink-soft hover:border-fail hover:bg-fail-wash hover:text-fail"
-              : "cursor-not-allowed text-ink-faint"
-          }`}
-        >
-          {removable ? (
-            "Remove"
-          ) : (
-            <>
-              Remove<span className="sr-only"> — available once indexing finishes</span>
-            </>
+        <div className="flex w-full justify-end gap-2 pl-[46px] sm:w-auto sm:pl-0">
+          {failed && (
+            <button
+              type="button"
+              onClick={() => onRetry(file.id)}
+              className="min-h-11 rounded-md border border-edge-strong px-2.5 text-[12.5px] font-semibold text-accent-ink hover:bg-brand-wash md:min-h-0 md:py-1.5"
+            >
+              Retry
+            </button>
           )}
-        </button>
+          {working && (
+            <button
+              type="button"
+              onClick={() => onCancel(file.id)}
+              disabled={stopping}
+              className="min-h-11 rounded-md border border-edge-strong px-2.5 text-[12.5px] text-ink-soft hover:bg-brand-wash disabled:cursor-wait disabled:opacity-60 md:min-h-0 md:py-1.5"
+            >
+              {stopping ? "Stopping…" : "Stop"}
+            </button>
+          )}
+          {!working && (
+            <button
+              ref={removeButtonRef}
+              type="button"
+              onClick={() => setConfirming(true)}
+              className="min-h-11 rounded-md border border-edge-strong px-2.5 text-[12.5px] text-ink-soft hover:border-fail hover:bg-fail-wash hover:text-fail md:min-h-0 md:py-1.5"
+            >
+              Remove
+            </button>
+          )}
+        </div>
       )}
     </li>
   );
