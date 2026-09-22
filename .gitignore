@@ -29,7 +29,15 @@ data/app.db
 # WAL journal mode (see app/db/database.py) creates these alongside the db.
 data/app.db-wal
 data/app.db-shm
-data/uploads/
+
+# Uploaded sources and generated documents are the user's own files. They are
+# never committed — the directories are kept, their contents are not. The old
+# rule here named data/uploads/, a path the code does not use, so every upload
+# was in fact trackable.
+data/sources/*
+!data/sources/.gitkeep
+data/documents/*
+!data/documents/.gitkeep
 qdrant_storage/
 
 # IDE / local agent tooling
