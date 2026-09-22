@@ -39,3 +39,6 @@ qdrant_storage/
 
 # Logs
 *.log
+
+# Throwaway design mockups
+.mockups/
