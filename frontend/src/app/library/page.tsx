@@ -80,9 +80,15 @@ export default function LibraryPage() {
       </p>
 
       <h1 className="text-[27px]">Library</h1>
-      <p className="mb-6 mt-1 max-w-[60ch] text-ink-soft">
+      <p className="mt-1 max-w-[60ch] text-ink-soft">
         Anything you add here becomes searchable by meaning — and every answer points back to
         the page it came from.
+      </p>
+      {/* The one claim that is the product's reason to exist. It was previously
+          stated only inside the backend-unreachable error, which most people
+          will never see. */}
+      <p className="mb-6 mt-1 text-[13px] text-ink-faint">
+        Everything stays on this machine. Nothing is uploaded anywhere.
       </p>
 
       <DropZone

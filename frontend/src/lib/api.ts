@@ -45,6 +45,44 @@ export function isProcessing(status: FileStatus): boolean {
 }
 
 /**
+ * What Noye can read, in one place.
+ *
+ * The file input's `accept` only filters the picker — it does nothing for a
+ * dragged file. So the same list drives both the attribute and the check below,
+ * and a dropped `.docx` is refused here rather than making a round trip to be
+ * refused there.
+ */
+export const ACCEPTED_EXTENSIONS: readonly string[] = [
+  "pdf",
+  "md",
+  "markdown",
+  "txt",
+  "text",
+];
+
+export const ACCEPT_ATTRIBUTE = ACCEPTED_EXTENSIONS.map((ext) => `.${ext}`).join(",");
+
+/**
+ * Why Noye will not take this file, or null if it will.
+ *
+ * Checked before uploading so the first error a person sees is written for them,
+ * naming what Noye does read, rather than being whatever the API happened to
+ * say.
+ */
+export function rejectionFor(file: File): string | null {
+  const extension = file.name.includes(".")
+    ? file.name.split(".").pop()!.toLowerCase()
+    : "";
+  if (!ACCEPTED_EXTENSIONS.includes(extension)) {
+    return "Noye reads PDF, Markdown, and plain text files. This one isn't one of those.";
+  }
+  if (file.size === 0) {
+    return "This file is empty, so there is nothing to index.";
+  }
+  return null;
+}
+
+/**
  * A failed request, carrying the backend's own explanation.
  *
  * The backend writes its `detail` messages for a person to read, so they are

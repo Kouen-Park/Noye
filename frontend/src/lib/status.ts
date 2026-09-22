@@ -27,10 +27,31 @@ export function stageLabel(status: FileStatus): string {
     UPLOADING: "Saving the file",
     EXTRACTING: "Reading the text",
     CHUNKING: "Splitting into passages",
-    EMBEDDING: "Creating embeddings",
+    // Not "Creating embeddings". Three of these four stages are already in plain
+    // language; that one word was the only place the pipeline's vocabulary
+    // leaked into a sentence a person is meant to read while waiting.
+    EMBEDDING: "Making it searchable",
   };
   if (step === null) return "";
   return `${what[status]} — step ${step} of ${STAGE_COUNT}`;
+}
+
+/**
+ * How long a file may sit in one stage before the UI stops pretending it is fine.
+ *
+ * The backend touches `updated_at` on every status change, so a processing file
+ * whose timestamp has gone quiet for this long has stalled. Using the server's
+ * own clock avoids the client keeping its own bookkeeping across reloads.
+ */
+export const STALL_AFTER_MS = 60_000;
+
+export function isStalled(file: StoredFile, now: number = Date.now()): boolean {
+  if (!["UPLOADING", "EXTRACTING", "CHUNKING", "EMBEDDING"].includes(file.status)) {
+    return false;
+  }
+  const touched = Date.parse(file.updated_at);
+  if (Number.isNaN(touched)) return false;
+  return now - touched > STALL_AFTER_MS;
 }
 
 /** The short word on the status pill. */

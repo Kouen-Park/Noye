@@ -62,9 +62,10 @@ export function AppShell({ children, current, passageCount, fileCount }: AppShel
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {label}
-                      <span className="ml-auto hidden text-[10px] tracking-widest md:inline">
-                        SOON
-                      </span>
+                      {/* Visible at every width: below md this used to be
+                          hidden, leaving a greyed-out item with no explanation
+                          for why it does nothing. */}
+                      <span className="ml-auto text-[10px] tracking-widest">SOON</span>
                     </span>
                   </li>
                 );
@@ -97,7 +98,7 @@ export function AppShell({ children, current, passageCount, fileCount }: AppShel
               <span className="font-mono text-accent-ink tabular-nums">
                 {passageCount.toLocaleString()}
               </span>{" "}
-              <span className="text-ink">passages</span>
+              <span className="text-ink">searchable passages</span>
             </p>
             <p className="text-xs text-ink-soft">
               indexed across {fileCount} {fileCount === 1 ? "file" : "files"}

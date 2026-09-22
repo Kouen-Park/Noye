@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 import { StageBar, StatusPill } from "@/components/library/status-indicators";
 import { isProcessing, type StoredFile } from "@/lib/api";
-import { factsLine, typeLabel } from "@/lib/status";
+import { factsLine, isStalled, typeLabel } from "@/lib/status";
 
 /**
  * One file in the library.
@@ -31,6 +31,12 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
   const removeButtonRef = useRef<HTMLButtonElement>(null);
   const failed = file.status === "FAILED";
   const working = isProcessing(file.status);
+  // A file that has sat in one stage past the threshold has stalled. Removal is
+  // blocked during normal processing because it races the background task still
+  // writing this file's rows — but a file that never finishes would otherwise be
+  // unremovable forever, which is worse than that race.
+  const stalled = isStalled(file);
+  const removable = !working || stalled;
 
   return (
     <li
@@ -63,9 +69,24 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
 
         {working && <StageBar status={file.status} />}
 
+        {stalled && (
+          <p className="mt-2 rounded-md border border-edge-strong px-2.5 py-2 text-[12.5px] text-ink-soft">
+            This is taking longer than usual. You can remove it and try again.
+          </p>
+        )}
+
         {failed && file.error && (
           <p className="mt-2 rounded-md bg-fail-wash px-2.5 py-2 text-[12.5px] text-fail">
             {file.error}
+          </p>
+        )}
+
+        {failed && (
+          // There is no retry endpoint, so "Remove" is the whole set of moves.
+          // Saying so turns a dead end into a deliberate next step.
+          <p className="mt-1.5 text-[12.5px] text-ink-soft">
+            Noye cannot retry this file. Remove it, then add it again once the
+            problem is fixed.
           </p>
         )}
 
@@ -73,6 +94,7 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
           <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-md bg-fail-wash px-2.5 py-2">
             <p className="text-[12.5px] text-fail">
               Remove {file.name}? This cannot be undone.
+              {stalled && " It may not have finished indexing, so some of its work could be left behind."}
             </p>
             <div className="ml-auto flex gap-2">
               <button
@@ -102,26 +124,23 @@ export function FileCard({ file, onRemove, registerRef }: FileCardProps) {
         <button
           ref={removeButtonRef}
           type="button"
-          // Deleting mid-ingestion would race the background task that is still
-          // writing this file's rows, and the backend has no cancel endpoint to
-          // stop it. The button stays focusable so the reason is discoverable.
-          aria-disabled={working}
+          aria-disabled={!removable}
           onClick={() => {
-            if (working) return;
+            if (!removable) return;
             setConfirming(true);
           }}
           className={`min-h-11 shrink-0 rounded-md border border-edge-strong px-2.5 text-[12.5px] md:min-h-0 md:py-1.5 ${
-            working
-              ? "cursor-not-allowed text-ink-faint"
-              : "text-ink-soft hover:border-fail hover:bg-fail-wash hover:text-fail"
+            removable
+              ? "text-ink-soft hover:border-fail hover:bg-fail-wash hover:text-fail"
+              : "cursor-not-allowed text-ink-faint"
           }`}
         >
-          {working ? (
+          {removable ? (
+            "Remove"
+          ) : (
             <>
               Remove<span className="sr-only"> — available once indexing finishes</span>
             </>
-          ) : (
-            "Remove"
           )}
         </button>
       )}

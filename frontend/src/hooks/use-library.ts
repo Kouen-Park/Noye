@@ -18,6 +18,7 @@ import {
   getFile,
   isProcessing,
   listFiles,
+  rejectionFor,
   type StoredFile,
   uploadFile,
 } from "@/lib/api";
@@ -152,9 +153,29 @@ export function useLibrary(): Library {
 
   const addFiles = useCallback(async (selected: File[]) => {
     if (selected.length === 0) return;
-    setUploading((current) => [...current, ...selected.map((file) => file.name)]);
 
+    // Refuse what Noye cannot read before sending it. A dragged file never went
+    // through the picker's `accept` filter, so without this the first error a
+    // person sees is the API's wording rather than ours.
+    const acceptable: File[] = [];
+    const refused: RejectedUpload[] = [];
     for (const file of selected) {
+      const reason = rejectionFor(file);
+      if (reason) {
+        refused.push({ key: `${file.name}-${Date.now()}-${refused.length}`, name: file.name, message: reason });
+      } else {
+        acceptable.push(file);
+      }
+    }
+    if (refused.length > 0) {
+      setRejected((current) => [...current, ...refused]);
+      setAnnouncement(`${refused[0].name} was not added. ${refused[0].message}`);
+    }
+    if (acceptable.length === 0) return;
+
+    setUploading((current) => [...current, ...acceptable.map((file) => file.name)]);
+
+    for (const file of acceptable) {
       try {
         const created = await uploadFile(file);
         setFiles((current) => [created, ...current]);

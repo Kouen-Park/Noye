@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 
 import { PlusIcon } from "@/components/icons";
+import { ACCEPT_ATTRIBUTE } from "@/lib/api";
 
 /**
  * The way files get into the library.
@@ -32,8 +33,6 @@ import { PlusIcon } from "@/components/icons";
  * It is hidden with `sr-only`, which keeps it focusable — `display: none` would
  * take it out of the tab order.
  */
-
-const ACCEPT = ".pdf,.md,.markdown,.txt,.text";
 
 interface DropZoneProps {
   onFiles: (files: File[]) => void;
@@ -65,7 +64,7 @@ export function DropZone({ onFiles, uploading, disabled = false }: DropZoneProps
         id={inputId}
         type="file"
         multiple
-        accept={ACCEPT}
+        accept={ACCEPT_ATTRIBUTE}
         disabled={disabled}
         // Clearing on the way in means picking the same file twice in a row
         // still produces a change event.
