@@ -1,0 +1,136 @@
+/**
+ * Client for the Noye backend.
+ *
+ * Calls go straight from the browser to FastAPI rather than through a Next
+ * rewrite. Two reasons: it keeps exercising the backend's CORS allow-list,
+ * which is the real protection on a server that has no authentication; and in
+ * Phase 5 the desktop build talks directly to a local backend, so a proxy hop
+ * here would be a development-only fiction.
+ *
+ * Types mirror `FileOut` in backend/app/api/files.py. When that changes, this
+ * changes with it.
+ */
+
+/** Where a file is in the ingestion pipeline. Mirrors `FileStatus`. */
+export type FileStatus =
+  | "UPLOADING"
+  | "EXTRACTING"
+  | "CHUNKING"
+  | "EMBEDDING"
+  | "READY"
+  | "FAILED";
+
+/** Supported source formats. Mirrors `FileType`. */
+export type FileType = "pdf" | "md" | "txt";
+
+/** A file as the API reports it. `path` is deliberately absent server-side. */
+export interface StoredFile {
+  id: string;
+  name: string;
+  file_type: FileType;
+  size: number;
+  status: FileStatus;
+  error: string | null;
+  /** Null for formats without pages, and until extraction has run. */
+  page_count: number | null;
+  chunk_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export const TERMINAL_STATUSES: readonly FileStatus[] = ["READY", "FAILED"];
+
+export function isProcessing(status: FileStatus): boolean {
+  return !TERMINAL_STATUSES.includes(status);
+}
+
+/**
+ * A failed request, carrying the backend's own explanation.
+ *
+ * The backend writes its `detail` messages for a person to read, so they are
+ * surfaced as-is rather than replaced with a generic message.
+ */
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+
+  /** True when the backend could not be reached at all. */
+  get isOffline(): boolean {
+    return this.status === 0;
+  }
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+
+async function request(path: string, init?: RequestInit): Promise<Response> {
+  let response: Response;
+  try {
+    response = await fetch(`${BASE_URL}${path}`, init);
+  } catch {
+    // A network-level failure is the common case in local development: the
+    // backend simply is not running. Status 0 marks that apart from an HTTP
+    // error so the UI can tell the user which one happened.
+    throw new ApiError(0, "Could not reach Noye's backend.");
+  }
+
+  if (!response.ok) {
+    throw new ApiError(response.status, await readDetail(response));
+  }
+  return response;
+}
+
+/** Pull FastAPI's `detail` out of an error body, falling back to the status. */
+async function readDetail(response: Response): Promise<string> {
+  try {
+    const body: unknown = await response.json();
+    if (body && typeof body === "object" && "detail" in body) {
+      const detail = (body as { detail: unknown }).detail;
+      if (typeof detail === "string" && detail.length > 0) return detail;
+    }
+  } catch {
+    // Not JSON, or an empty body. Fall through to the generic message.
+  }
+  return `The request failed (${response.status}).`;
+}
+
+/** Every file, newest first. */
+export async function listFiles(signal?: AbortSignal): Promise<StoredFile[]> {
+  const response = await request("/files", { signal });
+  return (await response.json()) as StoredFile[];
+}
+
+/** One file's current state. This is the polling endpoint. */
+export async function getFile(id: string, signal?: AbortSignal): Promise<StoredFile> {
+  const response = await request(`/files/${encodeURIComponent(id)}`, { signal });
+  return (await response.json()) as StoredFile;
+}
+
+/**
+ * Upload a file and start ingesting it.
+ *
+ * Returns as soon as the file is on disk, with the record in `UPLOADING`.
+ * Progress is observed by polling {@link getFile}.
+ */
+export async function uploadFile(file: File, signal?: AbortSignal): Promise<StoredFile> {
+  const body = new FormData();
+  body.append("file", file);
+  // Content-Type is deliberately unset: the browser must add the multipart
+  // boundary itself.
+  const response = await request("/files", { method: "POST", body, signal });
+  return (await response.json()) as StoredFile;
+}
+
+/**
+ * Delete a source completely — vectors, original, and metadata.
+ *
+ * Irreversible. The backend removes vectors first and fails the whole request
+ * if that step fails, so a rejected delete leaves the file usable.
+ */
+export async function deleteFile(id: string, signal?: AbortSignal): Promise<void> {
+  await request(`/files/${encodeURIComponent(id)}`, { method: "DELETE", signal });
+}
