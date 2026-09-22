@@ -449,9 +449,9 @@ Example Noye use cases:
 -   [ ] Preview Markdown
 -   [ ] Export Markdown
 -   [ ] Export PDF
--   [ ] Visible processing states
+-   [x] Visible processing states
 -   [x] Delete files and associated vectors
--   [ ] Basic error handling
+-   [x] Basic error handling
 
 ### Explicitly out of scope for the first MVP
 
@@ -1363,17 +1363,17 @@ Route:
 
 ## Features
 
--   [ ] Drag-and-drop upload
--   [ ] File picker
--   [ ] PDF support
--   [ ] Markdown support
--   [ ] TXT support
--   [ ] File list
--   [ ] File type
--   [ ] File size
--   [ ] Processing status
--   [ ] Delete file
--   [ ] Failure state
+-   [x] Drag-and-drop upload
+-   [x] File picker
+-   [x] PDF support
+-   [x] Markdown support
+-   [x] TXT support
+-   [x] File list
+-   [x] File type
+-   [x] File size
+-   [x] Processing status
+-   [x] Delete file
+-   [x] Failure state
 
 Suggested processing UI:
 
@@ -1525,6 +1525,84 @@ Qdrant vectors
 ```
 
 ------------------------------------------------------------------------
+
+## Implemented UI
+
+Built in `feat/library-ui`. The visual system is recorded separately in
+`DESIGN.md`; this section records what the library page does and why.
+
+### Design tokens, not `dark:` variants
+
+`frontend/src/styles/tokens.css` declares every colour once with CSS
+`light-dark()`, and `globals.css` maps those onto Tailwind names with
+`@theme inline`. A component writes `bg-card` and gets the right fill in either
+mode, so there are no dark-mode colour variants anywhere in the components. If a
+`dark:` variant ever seems necessary, the token set is missing a role.
+
+Turbopack compiles this with Lightning CSS, which downlevels `light-dark()` into
+a pair of guard variables plus the companion rules — verified in the served
+stylesheet, including the `[data-theme]` overrides that a future theme toggle
+needs. So the browser floor is not raised by using it.
+
+### The API is reached directly from the browser
+
+Not through a Next rewrite. Two reasons: it keeps the backend's CORS allow-list
+exercised, which is the only real protection on a server with no
+authentication; and in Phase 5 the desktop build talks straight to a local
+backend, so a development-only proxy would be a fiction. `multipart/form-data`
+is CORS-safelisted, so an upload makes no preflight request — confirmed against
+the running backend.
+
+### Status is never carried by colour alone
+
+Measured on the Phase 2 palette, the failure oxblood and the brand green differ
+by 1.01:1 in luminance, and red-against-green is the worst pair for the
+commonest colour blindness. So every state carries an icon and a word, and
+colour is reinforcement only. Ready deliberately carries no colour at all: it is
+the resting state of nearly every file, and colouring it would drown the one
+card that needs a decision.
+
+### Polling, and only where it is needed
+
+Files still being ingested are polled individually on `GET /files/{id}` every
+two seconds; a settled library makes no requests. The list is re-fetched when
+the tab regains focus, so ingestion started elsewhere becomes visible without a
+reload. Only terminal transitions are announced to a screen reader — narrating
+every stage would talk over someone reading the page.
+
+### Gaps this UI exposed in the API
+
+Building the screen surfaced three shortfalls worth their own work:
+
+-   There is no cancel endpoint, so an ingestion cannot be stopped once
+    started. The card's Remove control is inert while a file is processing,
+    because deleting mid-ingestion also races the background task still writing
+    that file's rows. The race should be refused by the API, not only avoided by
+    this client.
+-   There is no retry or re-ingest endpoint, so a FAILED file is a dead end: the
+    only action is to remove it and upload again.
+-   Nothing serialises work per file.
+
+### Verified
+
+-   `tsc --noEmit`, `eslint`, and `next build` all pass.
+-   A 24-page PDF uploaded **from a browser** reached `READY` with 24 chunks,
+    and Qdrant reports 25 points across the two indexed files. This closes the
+    multipart-over-a-real-socket gap left open in the API work, and exercises
+    the CORS path at the same time.
+-   The served HTML and stylesheet carry the tokens, `role="status"`,
+    `aria-live`, `aria-current`, the focus ring, `sr-only`, and the
+    reduced-motion rules.
+
+### Not verified
+
+-   Visual judgement. No screenshot was captured: the machine had too little
+    free memory to launch a browser under automation.
+-   `next dev` did not hydrate the page during this work while the production
+    build did, with the HMR websocket failing in the browser but upgrading
+    correctly from curl. The cause was not established; memory was critically
+    low throughout. Re-check the dev server before assuming it is healthy.
+
 
 # 11. Phase 3 --- Search
 

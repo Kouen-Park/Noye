@@ -130,21 +130,21 @@ noye/
 
 ### Phase 1 — Knowledge Engine
 
-- [ ] PDF text extraction
-- [ ] Page-aware chunking
-- [ ] Local embeddings
-- [ ] Qdrant indexing
-- [ ] Semantic retrieval
-- [ ] Local LLM generation
-- [ ] Citation mapping
+- [x] PDF text extraction
+- [x] Page-aware chunking
+- [x] Local embeddings
+- [x] Qdrant indexing
+- [x] Semantic retrieval
+- [x] Local LLM generation
+- [x] Citation mapping
 
 ### Phase 2 — Library
 
-- [ ] Drag-and-drop upload
-- [ ] Processing states
-- [ ] File management
+- [x] Drag-and-drop upload
+- [x] Processing states
+- [x] File management
 - [ ] Duplicate detection
-- [ ] Vector cleanup on deletion
+- [x] Vector cleanup on deletion
 
 ### Phase 3 — Chat
 
@@ -227,10 +227,26 @@ Next.js 16 with TypeScript, Tailwind CSS 4, and the App Router.
 ```bash
 cd frontend
 npm install
+cp .env.example .env.local   # optional; the default already points at :8000
 npm run dev
 ```
 
-Then open `http://localhost:3000`.
+Then open `http://localhost:3000`, which redirects to `/library`.
+
+The library is the only built surface so far: drag files in or pick them, watch
+each one move through the four ingestion stages, and remove what you no longer
+want indexed. It talks to the backend directly, so the backend has to be running
+and its `FRONTEND_ORIGINS` has to include the address you loaded the page from.
+
+`NEXT_PUBLIC_API_BASE_URL` is baked into the browser bundle at build time, so
+changing it needs a rebuild rather than just a restart.
+
+The visual system — palette, measured contrast, the status rules, and the two
+things that are easy to get wrong — is documented in
+[`DESIGN.md`](DESIGN.md). Colours live in `frontend/src/styles/tokens.css` as
+plain custom properties with no framework dependency; components never hardcode
+a colour, and never need a `dark:` variant, because each token resolves itself
+per colour scheme.
 
 ### Supporting services
 
