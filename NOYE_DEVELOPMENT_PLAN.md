@@ -1439,6 +1439,52 @@ the first point at which citations show a filename instead of a UUID.
 
 ## Delete behavior
 
+### Implemented API
+
+`backend/app/api/files.py`, mounted in `app/main.py`:
+
+  ------------------------------------------------------------------------
+  Route                      Behavior
+  -------------------------- ---------------------------------------------
+  `POST /files`              Saves the upload, creates the row, schedules
+                             background ingestion, returns 201 with the
+                             file in `UPLOADING`
+
+  `GET /files`               Every file, newest first
+
+  `GET /files/{id}`          One file — the polling endpoint
+
+  `DELETE /files/{id}`       Vectors, original, and metadata; 204
+  ------------------------------------------------------------------------
+
+Decisions taken here:
+
+-   **Uploads are stored as `{file_id}__{filename}`.** Two uploads of the same
+    name would otherwise overwrite each other. `File.name` keeps the original
+    for display. Duplicate *detection* is Phase 6; silently destroying the
+    first upload is not an acceptable stand-in for it.
+-   **The response never includes `path`.** A server filesystem path is of no
+    use to a client and invites being treated as a URL.
+-   **Delete removes vectors first, and aborts the whole delete if that
+    fails** (503). A half-deleted source whose vectors survive would keep
+    answering questions about a document the user believes is gone — worse than
+    a failed delete they can retry. A missing original file is tolerated.
+-   **An empty upload is rejected** (400) and nothing is kept: a zero-byte row
+    could never reach `READY` and would sit in the library forever.
+-   **Markdown and text are accepted at the API boundary** even though
+    ingestion still fails them, because the MVP scope includes those formats
+    and the API should not be the thing that rejects them.
+-   **The background task opens its own database connection.** The request's
+    connection is closed when the response is sent, and the task runs on
+    another thread.
+
+CORS allows only `FRONTEND_ORIGINS` (default `localhost:3000` and
+`127.0.0.1:3000`), since the Next.js dev server is a different origin.
+
+**There is no authentication, by design** (see MVP scope). Anyone who can reach
+this port can read and delete the user's documents, so the server binds to
+`127.0.0.1` and must not be exposed on a network interface until auth exists.
+
 Deleting a source must clean up:
 
 ``` text

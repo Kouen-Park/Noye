@@ -32,6 +32,10 @@ class Settings(BaseSettings):
 
     backend_host: str = "127.0.0.1"
     backend_port: int = 8000
+    #: Origins allowed to call the API from a browser. The Next.js dev server
+    #: runs on a different port, so without this every request from it is
+    #: blocked by the browser before it reaches FastAPI.
+    frontend_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3.5:4b"
@@ -47,8 +51,31 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./data/app.db"
 
+    @property
+    def allowed_origins(self) -> list[str]:
+        """The CORS origin list, parsed from the comma-separated setting."""
+        return [origin.strip() for origin in self.frontend_origins.split(",") if origin.strip()]
+
 
 @lru_cache
 def get_settings() -> Settings:
     """Return the process-wide settings, read from the environment once."""
     return Settings()
+
+
+def sources_dir() -> Path:
+    """Where original uploads are stored. Created on demand.
+
+    These files are Noye's source of truth: the SQLite metadata and the Qdrant
+    index are both derived from them and can be rebuilt.
+    """
+    path = PROJECT_ROOT / "data" / "sources"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def documents_dir() -> Path:
+    """Where generated, user-editable documents are stored. Created on demand."""
+    path = PROJECT_ROOT / "data" / "documents"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
