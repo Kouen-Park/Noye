@@ -113,7 +113,8 @@ only reinforcement:
 | --- | --- | --- | --- |
 | Uploading / extracting / chunking / embedding | brass | spinner | "Indexing" + the step |
 | Ready | *none* | check | "Ready" |
-| Failed | oxblood + 3px left border on the card | cross | "Could not read" |
+| Failed extraction or indexing | oxblood + 3px left border on the card | cross | "Needs attention" |
+| Stopped or interrupted | neutral border and ink | cross | "Stopped" or "Interrupted" |
 
 **Ready is deliberately colourless.** It is the resting state of almost every
 file; colouring it would drown the one card that needs attention.
@@ -204,7 +205,8 @@ describe what happened to *their file*, not what the pipeline did.
 | Don't | Do |
 | --- | --- |
 | `EMBEDDING` | "Creating embeddings — step 3 of 4" |
-| `FAILED` | "Could not read" |
+| `FAILED` after an extraction error | "Needs attention" with the reason below |
+| A cancelled ingestion | "Stopped" and "Retry whenever you're ready" |
 | "Error: no text extracted" | "No text found in this file. It looks like a scan." |
 | "Submit" | "Add files" |
 | "No items" | "Nothing on the shelf yet" |

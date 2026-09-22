@@ -1484,7 +1484,12 @@ the first point at which citations show a filename instead of a UUID.
 
   `GET /files/{id}`          One file — the polling endpoint
 
-  `DELETE /files/{id}`       Vectors, original, and metadata; 204
+  `POST /files/{id}/reingest` Retry or re-index the saved original; 202
+
+  `POST /files/{id}/cancel`   Stop active or interrupted processing; 202
+
+  `DELETE /files/{id}`       Vectors, original, and metadata; 204,
+                             or 409 while processing
   ------------------------------------------------------------------------
 
 Decisions taken here:
@@ -1570,18 +1575,16 @@ the tab regains focus, so ingestion started elsewhere becomes visible without a
 reload. Only terminal transitions are announced to a screen reader — narrating
 every stage would talk over someone reading the page.
 
-### Gaps this UI exposed in the API
+### Retry, cancellation, and per-file serialization
 
-Building the screen surfaced three shortfalls worth their own work:
-
--   There is no cancel endpoint, so an ingestion cannot be stopped once
-    started. The card's Remove control is inert while a file is processing,
-    because deleting mid-ingestion also races the background task still writing
-    that file's rows. The race should be refused by the API, not only avoided by
-    this client.
--   There is no retry or re-ingest endpoint, so a FAILED file is a dead end: the
-    only action is to remove it and upload again.
--   Nothing serialises work per file.
+The library can retry a failed file from its saved original and stop a queued
+or running ingestion. The API reserves each file before scheduling background
+work, so a second ingestion or deletion gets 409 while it is busy. Cancellation
+is cooperative: the pipeline checks between stages and after embedding before
+indexing, cleans up derived data, and settles the file as `FAILED` with a clear
+reason. A processing row left behind by a server restart can also be stopped;
+this clears its derived data and lets the user retry or remove it. The UI no
+longer treats a 60-second stall as permission to delete a live ingestion.
 
 ### Verified
 
