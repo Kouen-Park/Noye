@@ -50,10 +50,14 @@ class Chunk:
     ``chunk_index`` is 0-based and counts across the whole file in reading
     order, not per page, so it identifies a chunk within the file on its own.
     Page-local ordering is still recoverable by grouping on ``page_number``.
+
+    ``page_number`` is ``None`` for formats that have no pages — Markdown and
+    text. Citations for those name the file only, rather than inventing a page
+    a reader could not verify.
     """
 
     file_id: str
-    page_number: int
+    page_number: int | None
     chunk_index: int
     content: str
 
