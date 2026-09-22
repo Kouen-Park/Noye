@@ -252,6 +252,18 @@ npm run dev
 
 Then open `http://localhost:3000`, which redirects to `/library`.
 
+Run the frontend tests:
+
+```bash
+npm test          # once
+npm run test:watch
+```
+
+Vitest with Testing Library, in jsdom. The tests cover the presentation layer
+and the components' accessible surface — the label/input association on the drop
+zone, the status word on every pill, and the stage exposed as a real
+progressbar — because those are the parts that fail silently when they break.
+
 The library is the only built surface so far: drag files in or pick them, watch
 each one move through the four ingestion stages, and remove what you no longer
 want indexed. It talks to the backend directly, so the backend has to be running
