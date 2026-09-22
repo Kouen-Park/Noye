@@ -1389,6 +1389,54 @@ Qdrant
 READY
 ```
 
+### Implemented pipeline
+
+`ingest_file(connection, file_id)` in `backend/app/services/ingestion.py` owns
+everything from `extract` to `READY`. The API layer's job is the first three
+steps — save the upload and create the row — then hand the id over.
+
+It runs in the background, so the status written at each stage is the only way
+the user learns where a file is:
+
+``` text
+EXTRACTING -> CHUNKING -> EMBEDDING -> READY
+                                    \-> FAILED (with a reason)
+```
+
+Guarantees that matter more than the happy path:
+
+-   **A failure never leaves a partial index.** If embedding or indexing dies
+    part-way, the file's vectors and chunk rows are deleted before it is marked
+    FAILED. Otherwise a file the library shows as broken would still answer
+    questions using half its content.
+-   **Re-ingestion is safe and complete.** Vectors are cleared before new ones
+    are written. Chunk rows are replaced wholesale, but vectors are keyed by
+    chunk index, so a second, shorter run would otherwise leave the tail of the
+    first run searchable — tested explicitly by re-ingesting a shrunk document.
+-   **Ingestion failures do not raise.** The failure *is* the outcome, recorded
+    on the file for the library to display. Only a bad `file_id` raises, since
+    that is a caller error rather than a user-visible failure.
+-   **A file always reaches a terminal state.** Even an unexpected exception is
+    caught, its type preserved in the message; a row stuck in `EMBEDDING`
+    forever would be worse than an ugly error string.
+
+Two product decisions are settled here:
+
+-   **A PDF with no extractable text FAILS rather than going READY**, with a
+    message naming OCR. A scan indexed as zero chunks would look searchable in
+    the library and silently never match anything.
+-   **Non-PDF uploads fail with "not supported yet"** until Markdown and text
+    ingestion lands, rather than being stored as unsearchable files.
+
+### Test
+
+`backend/app/tests/test_ingestion.py` (17 tests). Unit tests use an in-memory
+database, an in-memory Qdrant, and a mocked Ollama, and assert the exact status
+sequence, that chunk rows carry the vector id actually stored for them, and
+every failure path. The integration test ingests a real three-page PDF and then
+asks a question about it, checking the citation reads `<filename> — page 2` —
+the first point at which citations show a filename instead of a UUID.
+
 ## Delete behavior
 
 Deleting a source must clean up:
