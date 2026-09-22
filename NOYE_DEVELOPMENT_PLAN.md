@@ -1646,6 +1646,76 @@ Features:
 This is useful both as a user feature and as a debugging tool for RAG
 quality.
 
+## 11.1 Starting point and scope
+
+`backend/app/services/retrieval.py` already embeds a query and returns ranked
+chunks with content, file id, page number, chunk index, and similarity score.
+SQLite owns the human-readable file name. There is currently no search API,
+source-opening route, or `/search` page. Phase 3 connects those pieces; it
+does not add chat, conversation storage, or a new retrieval algorithm.
+
+The first usable result is a person entering a query, reading a relevant
+passage with its source name and optional page, then opening that original
+source. PDF pages must come from stored provenance. Markdown and text files
+have no page number and must not be labelled as page 1.
+
+## 11.2 Branch and PR sequence
+
+Use three focused branches, each created from an updated `main` after the
+previous PR merges. Keep implementation and tests together in meaningful
+commits; do not collect all of Phase 3 into one branch.
+
+1.  `feat/search-api` — expose the existing retrieval service through
+    `GET /search`. Return a typed result with snippet content, file id, file
+    name joined from SQLite, nullable page number, chunk index, and score.
+    Search only `READY` files, so an in-progress or failed source cannot be
+    presented as searchable. Validate an empty query and the result limit;
+    bound the limit rather than permitting an unbounded Qdrant response.
+    Return a clear service error when embedding or vector search is
+    unavailable. Cover ranking, metadata joins, page-free formats, empty
+    library/results, validation, and upstream failures in API tests.
+2.  `feat/source-reference` — add a read-only route such as
+    `GET /files/{id}/source` that serves the saved original identified by its
+    database row. Open PDFs inline so the client can append `#page=N`; open
+    Markdown and text as text without inventing a page. Return 404 for an
+    unknown row or missing original. Never accept a filesystem path from the
+    request. Test file type, content, missing files, and path safety.
+3.  `feat/search-ui` — build `/search` with a labelled input, submit action,
+    ranked snippet cards, file name, optional page, and an Open source link.
+    Activate Search in the application shell. Keep the query in the URL so a
+    result can be revisited with Back or a copied link. Show distinct states
+    for no indexed files, no matches, a pending search, and an unavailable
+    backend. Reuse the Phase 2 tokens and citation treatment; verify keyboard
+    operation, responsive layout, and both colour schemes.
+
+The API may return a score for diagnosis, but the first UI need not display
+it: similarity is model-dependent and lacks a user-facing interpretation
+until a threshold or label is calibrated on real documents. Do not impose a
+hard relevance threshold without measuring representative queries. Keep the
+first result count modest (default five, with a bounded maximum); pagination
+and source filters can follow evidence of need.
+
+## 11.3 Acceptance and validation
+
+-   A known PDF query returns the relevant passage, its actual file name and
+    page number; Open source displays that PDF at the cited page.
+-   A Markdown or text hit displays its file name and passage, with no page
+    number, and opens the saved original.
+-   Searches never show sources that are not `READY`. Empty libraries, no
+    matches, invalid input, and unavailable Ollama/Qdrant produce distinct,
+    understandable outcomes rather than a blank results area.
+-   Backend unit/API tests cover the contracts above using the existing
+    in-memory Qdrant and mocked embedding approach. A live-service smoke
+    check is recorded separately when Ollama and Qdrant are available.
+-   Frontend lint, TypeScript, and production build pass. Browser checks cover
+    desktop and 390px layouts in light and dark schemes, Enter-key search,
+    loading/error states, Back navigation, and opening a source. Record any
+    check that could not run under `Not validated` in the PR.
+
+After each merge, update the roadmap checkboxes only for behavior that was
+actually implemented and verified. Correct the older README phase labels
+when the Search page lands: this plan's Phase 3 is Search, Phase 4 is Chat.
+
 ------------------------------------------------------------------------
 
 # 12. Phase 4 --- Chat
