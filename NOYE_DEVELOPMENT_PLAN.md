@@ -430,19 +430,19 @@ Example Noye use cases:
 
 ### Included
 
--   [ ] Upload PDF files
--   [ ] Upload Markdown files
--   [ ] Upload TXT files
--   [ ] Extract text
--   [ ] Preserve PDF page numbers
--   [ ] Chunk extracted content
--   [ ] Generate embeddings locally
--   [ ] Store vectors in Qdrant
--   [ ] Semantic search
--   [ ] Ask questions over indexed knowledge
--   [ ] Local LLM generation through Ollama
--   [ ] File citations
--   [ ] Page citations
+-   [x] Upload PDF files
+-   [x] Upload Markdown files
+-   [x] Upload TXT files
+-   [x] Extract text
+-   [x] Preserve PDF page numbers
+-   [x] Chunk extracted content
+-   [x] Generate embeddings locally
+-   [x] Store vectors in Qdrant
+-   [x] Semantic search
+-   [x] Ask questions over indexed knowledge
+-   [x] Local LLM generation through Ollama
+-   [x] File citations
+-   [x] Page citations
 -   [ ] Conversation history
 -   [ ] Generate Markdown documents from answers/retrieved knowledge
 -   [ ] Edit generated Markdown
@@ -450,7 +450,7 @@ Example Noye use cases:
 -   [ ] Export Markdown
 -   [ ] Export PDF
 -   [ ] Visible processing states
--   [ ] Delete files and associated vectors
+-   [x] Delete files and associated vectors
 -   [ ] Basic error handling
 
 ### Explicitly out of scope for the first MVP
@@ -903,6 +903,36 @@ Example internal result:
 
 Covered by `backend/app/tests/test_extraction.py` (13 tests). Fixture PDFs
 are generated at test time with PyMuPDF rather than committed as binaries.
+
+### Markdown and text extraction
+
+`extract_text_file(path)` returns the whole file as a **single**
+`ExtractedPage`, and `extract_file(path, file_type)` dispatches between it and
+`extract_pdf`.
+
+-   **One page, not artificial pages.** Slicing a text file into fixed-length
+    "pages" would reset chunk overlap at boundaries the source does not have,
+    and would attach page numbers no reader could verify.
+-   **The page number is a placeholder that never escapes ingestion.** For a
+    format whose `FileType.has_pages` is false, ingestion rewrites every chunk
+    with `page_number=None` *before* embedding, so the Qdrant payload — which
+    is what citations are built from — carries no page either. Clearing it only
+    in the database rows is not enough: the first implementation did exactly
+    that and still produced `study-notes.md — page 1`.
+-   **UTF-8 only, with the BOM stripped.** A byte-order mark would otherwise
+    become an invisible character at the head of chunk 0. Anything that is not
+    valid UTF-8 fails with a message telling the user to re-save the file
+    rather than being decoded into mojibake that would poison retrieval
+    silently.
+-   **CRLF and lone CR are normalised to LF**, so Windows files do not carry
+    stray carriage returns into chunk text and citations.
+-   `page_count` is left unset for these formats; reporting "1 page" would be
+    noise.
+-   A whitespace-only file fails with "The file contains no text to index" —
+    the OCR wording is reserved for PDFs, where it is the likely cause.
+
+Covered by `backend/app/tests/test_extraction_text.py` (17 tests), including
+Korean content, a CP949 file that must fail, and the dispatcher.
 
 ------------------------------------------------------------------------
 
