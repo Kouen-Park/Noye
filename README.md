@@ -205,6 +205,21 @@ pip install -r requirements-dev.txt
 pytest app/tests/
 ```
 
+Available endpoints:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | Liveness check |
+| `POST` | `/files` | Upload a file; ingestion runs in the background |
+| `GET` | `/files` | List files, newest first |
+| `GET` | `/files/{id}` | Poll one file's processing status |
+| `DELETE` | `/files/{id}` | Delete the original, its metadata and its vectors |
+
+Interactive docs are at `http://127.0.0.1:8000/docs`.
+
+The API has **no authentication** — Noye is local and single-user, so the server
+binds to `127.0.0.1`. Do not expose it on a network interface.
+
 ### Frontend
 
 Next.js 16 with TypeScript, Tailwind CSS 4, and the App Router.
