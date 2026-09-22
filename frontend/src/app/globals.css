@@ -1,26 +1,109 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Map the design tokens onto Tailwind colour/radius names so utilities such as
+   bg-card, text-ink-soft, border-edge-strong resolve from tokens.css.
+   `inline` keeps the var() reference, so light-dark() still resolves at runtime
+   and no `dark:` variant is ever needed for colour. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-canvas: var(--canvas);
+  --color-card: var(--card);
+  --color-sunken: var(--sunken);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-ink-display: var(--ink-display);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-wash: var(--brand-wash);
+
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+  --color-ink-on-accent: var(--ink-on-accent);
+
+  --color-busy: var(--busy);
+  --color-busy-wash: var(--busy-wash);
+  --color-fail: var(--fail);
+  --color-fail-wash: var(--fail-wash);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  /* The scaffold set `font-family: Arial` here, which silently overrode the
+     Geist faces loaded in layout.tsx. */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Display face is used with restraint: headings only, never body copy. */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  color: var(--ink-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* A visible focus ring is part of the accessibility floor in DESIGN.md §9.
+   :focus-visible only, so a mouse click does not draw one. */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* The two pieces of motion in the library: the indexing ring and the pulse on
+   the active stage segment. Both are ambient — they say "still working" — and
+   neither carries information that the accompanying word does not. */
+@keyframes noye-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes noye-pulse {
+  50% {
+    opacity: 0.28;
+  }
+}
+
+.noye-spin {
+  animation: noye-spin 0.85s linear infinite;
+}
+
+.noye-pulse {
+  animation: noye-pulse 1.2s ease-in-out infinite;
+}
+
+/* Status is carried by icon and text as well as colour, so removing motion
+   loses no meaning. The two animations are stopped outright rather than
+   time-compressed: a clamped iteration count can leave a spinner parked at a
+   half-rotation, which reads as broken rather than as still. */
+@media (prefers-reduced-motion: reduce) {
+  .noye-spin,
+  .noye-pulse {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
