@@ -5,3 +5,4 @@ pydantic-settings==2.15.0
 pymupdf==1.28.2
 httpx==0.28.1
 qdrant-client==1.19.1
+python-multipart==0.0.32
