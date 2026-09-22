@@ -143,29 +143,46 @@ noye/
 - [x] Drag-and-drop upload
 - [x] Processing states
 - [x] File management
-- [ ] Duplicate detection
+- [x] Retry a failed file
+- [x] Stop a file that is processing
 - [x] Vector cleanup on deletion
 
-### Phase 3 — Chat
+### Phase 3 — Search
+
+- [ ] Search input
+- [ ] Ranked passage snippets
+- [ ] Source file names
+- [ ] Page numbers where the format has them
+- [ ] Open the original source
+
+### Phase 4 — Chat
 
 - [ ] Knowledge-base chat
 - [ ] Source citations
 - [ ] Conversation history
 - [ ] Persistent messages
 
-### Phase 4 — Documents
+### Phase 5 — Document Workspace
 
 - [ ] Generate documents from retrieved knowledge
 - [ ] Markdown editor and preview
 - [ ] Markdown export
 - [ ] PDF export
 
-### Phase 5 — Desktop
+### Phase 6 — Reliability and Quality
+
+- [ ] Upload size limits
+- [ ] Duplicate detection
+- [ ] Stale vector detection
+- [ ] Rebuild the index on demand
+- [ ] Handle a change of embedding model
+
+### Phase 7 — Desktop Application
 
 - [ ] Tauri integration
+- [ ] Start and manage the backend
 - [ ] macOS packaging
 - [ ] Folder watching
-- [ ] Rebuild vector index
 - [ ] Windows support
 
 ## Privacy Philosophy
@@ -234,6 +251,18 @@ npm run dev
 ```
 
 Then open `http://localhost:3000`, which redirects to `/library`.
+
+Run the frontend tests:
+
+```bash
+npm test          # once
+npm run test:watch
+```
+
+Vitest with Testing Library, in jsdom. The tests cover the presentation layer
+and the components' accessible surface — the label/input association on the drop
+zone, the status word on every pill, and the stage exposed as a real
+progressbar — because those are the parts that fail silently when they break.
 
 The library is the only built surface so far: drag files in or pick them, watch
 each one move through the four ingestion stages, and remove what you no longer
