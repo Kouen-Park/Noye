@@ -2251,8 +2251,16 @@ Do not use a bare branch name or a vague title such as
 
 ### PR description style
 
-Every Noye PR description uses the same six sections, in this order.
-Omit a section only when it genuinely does not apply.
+Use the following sections, in this order. The Phase 2 library PR is the
+reference for their level of specificity: it explains what changed, why the
+choice was made, what was actually observed, and what remains uncertain.
+Scale the length to the work; a small PR does not need a long essay. Omit a
+section only when it genuinely does not apply. Include `Review` when a
+separate design, usability, documentation, or code review pass took place.
+PR #14 (`feat: build the library UI with a measured design system`) is the
+worked example: it ties specific files to behavior, reports measured contrast
+and a real browser upload, records that visual judgement and dev hydration
+were unresolved, and explains which review findings changed the UI.
 
 ``` text
 ## Summary
@@ -2260,18 +2268,20 @@ Omit a section only when it genuinely does not apply.
 ## Validated
 ## Not validated
 ## Notes
+## Review
 ## Roadmap
 ```
 
   ------------------------------------------------------------------------
   Section           Content
   ----------------- ------------------------------------------------------
-  `## Summary`      Two or three sentences: what this PR accomplishes and
-                    why it exists. No implementation detail.
+  `## Summary`      What the PR accomplishes and why it exists. Give the
+                    reader the product or engineering context before the
+                    implementation details.
 
-  `## Changes`      Bullet list, one line per meaningful change, grouped
-                    by area when the PR is large. Reference file paths
-                    where it helps a reviewer navigate.
+  `## Changes`      Name the meaningful files or groups and say what each
+                    contributes. Use short paragraphs or a list according
+                    to the size of the change; do not merely repeat names.
 
   `## Validated`    Exactly what was actually run or observed, with real
                     results -- commands, endpoints, measured numbers.
@@ -2282,9 +2292,14 @@ Omit a section only when it genuinely does not apply.
                     such items exist; an empty claim of full verification
                     is not acceptable.
 
-  `## Notes`        Decisions a reviewer would otherwise question:
-                    non-obvious dependencies, deviations from this plan,
-                    findings that affect later phases.
+  `## Notes`        Explain decisions a reviewer might question and the
+                    tradeoffs behind them. Include limits that affect later
+                    phases or clients.
+
+  `## Review`       Name the review passes actually performed, their most
+                    useful findings, what changed because of them, and any
+                    suggestion deliberately declined with a reason. Do not
+                    imply independent review when none happened.
 
   `## Roadmap`      Which phase and milestone this PR belongs to, and what
                     it unblocks next.
@@ -2297,7 +2312,11 @@ Rules for the description:
 -   Put measured numbers in `## Validated` rather than adjectives
     ("fast", "works well").
 -   Never claim a test or command was run when it was not.
--   Keep it scannable: short bullets over paragraphs.
+-   Distinguish a browser observation, an automated test, a code inspection,
+    and an inference. Record failed or blocked validation under
+    `## Not validated` with its cause, if known.
+-   Keep it scannable with concrete paragraphs or short bullets. Preserve
+    the reasoning when a decision or review finding needs more than one line.
 -   Write the description in English so the repository history stays
     consistent for a portfolio reader.
 
