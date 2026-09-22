@@ -251,10 +251,21 @@ it is not part of the design system yet.
 **Theme control:** `:root` follows the system. `[data-theme="light"]` and
 `[data-theme="dark"]` on `<html>` override it. That is the whole mechanism.
 
-**Browser floor:** `light-dark()` needs Safari 17.5+ / Chrome 123+ / Firefox
-120+. Tailwind 4 already requires Safari 16.4+ / Chrome 111+, so this raises the
-floor slightly. Acceptable for a local-first app the owner runs on their own
-machine; revisit before any broad distribution.
+**Browser floor: not raised.** `light-dark()` itself needs Safari 17.5+ /
+Chrome 123+, but Turbopack compiles the CSS with Lightning CSS, which downlevels
+it to a pair of guard variables and emits the companion rules automatically:
+
+```css
+:root { --lightningcss-light: initial; --lightningcss-dark: ; color-scheme: light dark; }
+@media (prefers-color-scheme: dark) { :root { --lightningcss-light: ; --lightningcss-dark: initial; } }
+[data-theme="dark"] { --lightningcss-light: ; --lightningcss-dark: initial; color-scheme: dark; }
+```
+
+Verified in the served stylesheet, including the `[data-theme]` overrides — the
+theme switch works because those selectors set `color-scheme`, which is the only
+input the polyfill reads. So the effective floor stays Tailwind 4's own
+(Safari 16.4+ / Chrome 111+). If the build ever moves off Lightning CSS, re-check
+this before assuming the tokens still resolve.
 
 ---
 
