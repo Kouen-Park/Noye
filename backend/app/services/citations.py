@@ -21,12 +21,15 @@ from app.services.retrieval import SearchResult
 
 @dataclass(frozen=True)
 class Citation:
-    """One source a user can follow: a file, and a page inside it.
+    """One source a user can follow: a file, and a page inside it when there is
+    one.
+
+    ``page_number`` is ``None`` for Markdown and text files, which have no
+    pages. The label then names the file alone rather than inventing a page the
+    user could not check against the document.
 
     ``file_name`` is optional because the display name lives in SQLite file
-    metadata, which does not exist yet. Until it does, callers render
-    ``file_id``; once it does, they pass a name map to
-    :func:`build_citations` and the citation reads as the user expects.
+    metadata; callers pass a name map to :func:`build_citations`.
 
     ``chunk_indexes`` records every retrieved chunk that contributed, so the
     exact passages behind a citation stay inspectable rather than being
@@ -34,15 +37,22 @@ class Citation:
     """
 
     file_id: str
-    page_number: int
+    page_number: int | None
     chunk_indexes: tuple[int, ...]
     best_score: float
     file_name: str | None = None
 
     @property
     def label(self) -> str:
-        """Human-readable citation, e.g. ``Algorithms.pdf — page 34``."""
-        return f"{self.file_name or self.file_id} — page {self.page_number}"
+        """Human-readable citation.
+
+        ``Algorithms.pdf — page 34`` for a paged source, ``notes.md`` for one
+        without pages.
+        """
+        source = self.file_name or self.file_id
+        if self.page_number is None:
+            return source
+        return f"{source} — page {self.page_number}"
 
 
 def build_citations(
@@ -76,7 +86,16 @@ def build_citations(
         for (file_id, page_number), items in grouped.items()
     ]
 
-    citations.sort(key=lambda citation: (-citation.best_score, citation.file_id, citation.page_number))
+    # Strongest match first; file then page break ties so the result is stable.
+    # A missing page sorts before numbered ones and never compares None to int.
+    citations.sort(
+        key=lambda citation: (
+            -citation.best_score,
+            citation.file_id,
+            citation.page_number is not None,
+            citation.page_number or 0,
+        )
+    )
     return citations
 
 
