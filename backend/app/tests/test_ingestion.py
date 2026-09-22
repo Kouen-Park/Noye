@@ -23,6 +23,7 @@ from app.db.database import connect, init_schema
 from app.models.files import FileStatus, FileType
 from app.services.indexing import count_chunks as count_vectors
 from app.services.indexing import delete_file_chunks, point_id
+from app.services import ingestion
 from app.services.ingestion import ingest_file
 
 VECTOR_SIZE = get_settings().qdrant_vector_size
@@ -421,3 +422,99 @@ def test_real_ingestion_makes_a_document_searchable_and_citable(db, tmp_path) ->
     finally:
         delete_file_chunks(record.id, client=client)
         client.close()
+
+
+# --- one pipeline per file ---------------------------------------------------
+
+
+def test_a_file_is_not_in_flight_when_idle(db, tmp_path) -> None:
+    record = add_pdf(db, tmp_path, ["Only page."])
+    assert ingestion.is_ingesting(record.id) is False
+
+
+def test_a_second_run_on_a_busy_file_is_refused(db, qdrant, tmp_path, monkeypatch) -> None:
+    """Two pipelines on one file would interleave writes to the same rows."""
+    record = add_pdf(db, tmp_path, ["Dijkstra picks the smallest estimate."])
+
+    observed: list[bool] = []
+    real_chunk = ingestion._chunk
+
+    def chunk_and_reenter(connection, rec, pages):
+        # Mid-pipeline the file must report busy, and a nested run must be
+        # refused rather than allowed to interleave.
+        observed.append(ingestion.is_ingesting(rec.id))
+        with pytest.raises(ingestion.AlreadyIngesting):
+            ingest_file(
+                connection, rec.id, qdrant_client=qdrant, http_client=ollama_client()
+            )
+        return real_chunk(connection, rec, pages)
+
+    monkeypatch.setattr(ingestion, "_chunk", chunk_and_reenter)
+    ingest_file(db, record.id, qdrant_client=qdrant, http_client=ollama_client())
+
+    assert observed == [True]
+
+
+def test_the_in_flight_slot_is_released_after_a_failure(db, qdrant, tmp_path) -> None:
+    """A failed run must not leave the file permanently marked busy."""
+    record = add_pdf(db, tmp_path, [None])  # scanned: no extractable text
+    result = ingest_file(
+        db, record.id, qdrant_client=qdrant, http_client=ollama_client()
+    )
+    assert result.status is FileStatus.FAILED
+    assert ingestion.is_ingesting(record.id) is False
+
+
+def test_finished_run_does_not_release_a_new_reservation(db, qdrant, tmp_path, monkeypatch) -> None:
+    record = add_pdf(db, tmp_path, [sentences(8)])
+    real_release = ingestion._release
+
+    def claim_before_finally_releases(file_id, cancellation):
+        # READY frees the old slot before finally runs. Another request can
+        # claim it in that gap, and the old run must leave the new claim alone.
+        ingestion.reserve_ingestion(file_id)
+        real_release(file_id, cancellation)
+
+    monkeypatch.setattr(ingestion, "_release", claim_before_finally_releases)
+    try:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=ollama_client())
+        assert result.status is FileStatus.READY
+        assert ingestion.is_ingesting(record.id)
+    finally:
+        ingestion.release_file(record.id)
+
+
+def test_cancellation_during_embedding_never_indexes(db, qdrant, tmp_path, monkeypatch) -> None:
+    record = add_pdf(db, tmp_path, [sentences(8)])
+    indexed = []
+    monkeypatch.setattr(ingestion, "delete_file_chunks", lambda *args, **kwargs: None)
+    monkeypatch.setattr(ingestion, "index_chunks", lambda *args, **kwargs: indexed.append(True))
+
+    def cancel_while_embedding(chunks, *, client):
+        assert ingestion.cancel_ingestion(record.id)
+        return [[0.0] * 4 for _ in chunks]
+
+    monkeypatch.setattr(ingestion, "embed_chunks", cancel_while_embedding)
+    result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=ollama_client())
+
+    assert result.status is FileStatus.FAILED
+    assert result.error == "Processing was cancelled."
+    assert indexed == []
+    assert ingestion.is_ingesting(record.id) is False
+
+
+def test_failure_clears_the_chunk_count_it_no_longer_has(db, qdrant, tmp_path) -> None:
+    """A file that chunked and then failed must not advertise those passages."""
+    record = add_pdf(db, tmp_path, [sentences(8)])
+    result = ingest_file(
+        db,
+        record.id,
+        qdrant_client=qdrant,
+        http_client=ollama_client(fail=True),  # dies during embedding
+    )
+
+    assert result.status is FileStatus.FAILED
+    assert result.chunk_count == 0
+    assert file_store.count_chunks(db, record.id) == 0
+    # The pages really were read, so that number stays true.
+    assert result.page_count == 1
