@@ -66,9 +66,39 @@ h2,
   outline-offset: var(--focus-offset);
 }
 
+/* The two pieces of motion in the library: the indexing ring and the pulse on
+   the active stage segment. Both are ambient — they say "still working" — and
+   neither carries information that the accompanying word does not. */
+@keyframes noye-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes noye-pulse {
+  50% {
+    opacity: 0.28;
+  }
+}
+
+.noye-spin {
+  animation: noye-spin 0.85s linear infinite;
+}
+
+.noye-pulse {
+  animation: noye-pulse 1.2s ease-in-out infinite;
+}
+
 /* Status is carried by icon and text as well as colour, so removing motion
-   loses no meaning. */
+   loses no meaning. The two animations are stopped outright rather than
+   time-compressed: a clamped iteration count can leave a spinner parked at a
+   half-rotation, which reads as broken rather than as still. */
 @media (prefers-reduced-motion: reduce) {
+  .noye-spin,
+  .noye-pulse {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {

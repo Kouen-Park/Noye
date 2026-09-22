@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +23,15 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "Noye",
   description: "A local-first workspace that turns your files into searchable knowledge.",
+};
+
+// Browser chrome should match the page's own ground in each mode, so the app
+// does not sit in a white frame on a dark canvas. Values are the --canvas token.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4efe6" },
+    { media: "(prefers-color-scheme: dark)", color: "#121714" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
