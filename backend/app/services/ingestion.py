@@ -20,16 +20,17 @@ matter more than the happy path:
 from __future__ import annotations
 
 import sqlite3
+from dataclasses import replace
 
 import httpx
 from qdrant_client import QdrantClient
 
 from app.db import files as file_store
 from app.models.files import Chunk as ChunkRow
-from app.models.files import File, FileStatus, FileType
+from app.models.files import File, FileStatus
 from app.services.chunking import chunk_pages
 from app.services.embeddings import embed_chunks
-from app.services.extraction import ExtractedPage, extract_pdf
+from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
 
 
@@ -88,18 +89,15 @@ def ingest_file(
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
 
-    if record.file_type is not FileType.PDF:
-        raise IngestionError(
-            f"{record.file_type.value.upper()} files are not supported yet. "
-            "Only PDF files can be processed at the moment."
-        )
-
     try:
-        pages = extract_pdf(record.path)
+        pages = extract_file(record.path, record.file_type)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
-    file_store.set_counts(connection, record.id, page_count=len(pages))
+    # Only meaningful for page-aware formats; Markdown and text come back as a
+    # single placeholder page, and reporting "1 page" for them would be noise.
+    if record.file_type.has_pages:
+        file_store.set_counts(connection, record.id, page_count=len(pages))
     return pages
 
 
@@ -110,16 +108,25 @@ def _chunk(
 
     chunks = chunk_pages(pages, file_id=record.id)
 
+    if not record.file_type.has_pages:
+        # Drop the placeholder page number here, before anything downstream sees
+        # it. Citations are built from the Qdrant payload, so clearing it only in
+        # the database rows would still leak "page 1" into every citation for a
+        # Markdown or text file.
+        chunks = [replace(chunk, page_number=None) for chunk in chunks]
+
     if not chunks:
-        # Every page was empty. For a PDF this almost always means a scan with
-        # no text layer: extraction succeeded, but there is nothing to search.
-        # Marking it READY would leave a document that looks indexed and never
-        # matches anything, so it fails with an explanation instead. OCR is out
-        # of MVP scope.
-        raise IngestionError(
-            "No extractable text found. If this is a scanned document, it needs "
-            "OCR, which Noye does not do yet."
-        )
+        # Nothing to search. For a PDF this almost always means a scan with no
+        # text layer; for a text file it means the file held only whitespace.
+        # Marking either READY would leave a document that looks indexed and
+        # never matches anything, so it fails with an explanation instead. OCR
+        # is out of MVP scope.
+        if record.file_type.has_pages:
+            raise IngestionError(
+                "No extractable text found. If this is a scanned document, it "
+                "needs OCR, which Noye does not do yet."
+            )
+        raise IngestionError("The file contains no text to index.")
 
     file_store.set_counts(connection, record.id, chunk_count=len(chunks))
     return chunks
@@ -155,7 +162,7 @@ def _embed_and_index(
             file_id=record.id,
             chunk_index=chunk.chunk_index,
             content=chunk.content,
-            page_number=chunk.page_number if record.file_type.has_pages else None,
+            page_number=chunk.page_number,
             vector_id=point_id(record.id, chunk.chunk_index),
         )
         for chunk in chunks
