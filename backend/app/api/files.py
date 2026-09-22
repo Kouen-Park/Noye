@@ -14,12 +14,12 @@ from __future__ import annotations
 
 import shutil
 import sqlite3
-from collections.abc import Iterator
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
 from pydantic import BaseModel
 
+from app.api.deps import get_db
 from app.config import sources_dir
 from app.db import files as file_store
 from app.db.database import connect, init_schema
@@ -68,16 +68,6 @@ class FileOut(BaseModel):
 
     # `path` is deliberately absent: the client has no use for a server
     # filesystem path, and exposing one invites it to be treated as a URL.
-
-
-def get_db() -> Iterator[sqlite3.Connection]:
-    """Per-request database connection."""
-    connection = connect()
-    try:
-        init_schema(connection)
-        yield connection
-    finally:
-        connection.close()
 
 
 def stored_path(file_id: str, name: str) -> Path:
