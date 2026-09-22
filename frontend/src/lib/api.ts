@@ -172,3 +172,15 @@ export async function uploadFile(file: File, signal?: AbortSignal): Promise<Stor
 export async function deleteFile(id: string, signal?: AbortSignal): Promise<void> {
   await request(`/files/${encodeURIComponent(id)}`, { method: "DELETE", signal });
 }
+
+/** Start processing the saved original again. */
+export async function reingestFile(id: string): Promise<StoredFile> {
+  const response = await request(`/files/${encodeURIComponent(id)}/reingest`, { method: "POST" });
+  return (await response.json()) as StoredFile;
+}
+
+/** Ask the backend to stop a queued or running ingestion. */
+export async function cancelFile(id: string): Promise<StoredFile> {
+  const response = await request(`/files/${encodeURIComponent(id)}/cancel`, { method: "POST" });
+  return (await response.json()) as StoredFile;
+}

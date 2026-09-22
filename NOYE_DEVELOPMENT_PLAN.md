@@ -1484,7 +1484,12 @@ the first point at which citations show a filename instead of a UUID.
 
   `GET /files/{id}`          One file — the polling endpoint
 
-  `DELETE /files/{id}`       Vectors, original, and metadata; 204
+  `POST /files/{id}/reingest` Retry or re-index the saved original; 202
+
+  `POST /files/{id}/cancel`   Stop active or interrupted processing; 202
+
+  `DELETE /files/{id}`       Vectors, original, and metadata; 204,
+                             or 409 while processing
   ------------------------------------------------------------------------
 
 Decisions taken here:
@@ -1570,18 +1575,16 @@ the tab regains focus, so ingestion started elsewhere becomes visible without a
 reload. Only terminal transitions are announced to a screen reader — narrating
 every stage would talk over someone reading the page.
 
-### Gaps this UI exposed in the API
+### Retry, cancellation, and per-file serialization
 
-Building the screen surfaced three shortfalls worth their own work:
-
--   There is no cancel endpoint, so an ingestion cannot be stopped once
-    started. The card's Remove control is inert while a file is processing,
-    because deleting mid-ingestion also races the background task still writing
-    that file's rows. The race should be refused by the API, not only avoided by
-    this client.
--   There is no retry or re-ingest endpoint, so a FAILED file is a dead end: the
-    only action is to remove it and upload again.
--   Nothing serialises work per file.
+The library can retry a failed file from its saved original and stop a queued
+or running ingestion. The API reserves each file before scheduling background
+work, so a second ingestion or deletion gets 409 while it is busy. Cancellation
+is cooperative: the pipeline checks between stages and after embedding before
+indexing, cleans up derived data, and settles the file as `FAILED` with a clear
+reason. A processing row left behind by a server restart can also be stopped;
+this clears its derived data and lets the user retry or remove it. The UI no
+longer treats a 60-second stall as permission to delete a live ingestion.
 
 ### Verified
 
@@ -2248,8 +2251,16 @@ Do not use a bare branch name or a vague title such as
 
 ### PR description style
 
-Every Noye PR description uses the same six sections, in this order.
-Omit a section only when it genuinely does not apply.
+Use the following sections, in this order. The Phase 2 library PR is the
+reference for their level of specificity: it explains what changed, why the
+choice was made, what was actually observed, and what remains uncertain.
+Scale the length to the work; a small PR does not need a long essay. Omit a
+section only when it genuinely does not apply. Include `Review` when a
+separate design, usability, documentation, or code review pass took place.
+PR #14 (`feat: build the library UI with a measured design system`) is the
+worked example: it ties specific files to behavior, reports measured contrast
+and a real browser upload, records that visual judgement and dev hydration
+were unresolved, and explains which review findings changed the UI.
 
 ``` text
 ## Summary
@@ -2257,18 +2268,20 @@ Omit a section only when it genuinely does not apply.
 ## Validated
 ## Not validated
 ## Notes
+## Review
 ## Roadmap
 ```
 
   ------------------------------------------------------------------------
   Section           Content
   ----------------- ------------------------------------------------------
-  `## Summary`      Two or three sentences: what this PR accomplishes and
-                    why it exists. No implementation detail.
+  `## Summary`      What the PR accomplishes and why it exists. Give the
+                    reader the product or engineering context before the
+                    implementation details.
 
-  `## Changes`      Bullet list, one line per meaningful change, grouped
-                    by area when the PR is large. Reference file paths
-                    where it helps a reviewer navigate.
+  `## Changes`      Name the meaningful files or groups and say what each
+                    contributes. Use short paragraphs or a list according
+                    to the size of the change; do not merely repeat names.
 
   `## Validated`    Exactly what was actually run or observed, with real
                     results -- commands, endpoints, measured numbers.
@@ -2279,9 +2292,14 @@ Omit a section only when it genuinely does not apply.
                     such items exist; an empty claim of full verification
                     is not acceptable.
 
-  `## Notes`        Decisions a reviewer would otherwise question:
-                    non-obvious dependencies, deviations from this plan,
-                    findings that affect later phases.
+  `## Notes`        Explain decisions a reviewer might question and the
+                    tradeoffs behind them. Include limits that affect later
+                    phases or clients.
+
+  `## Review`       Name the review passes actually performed, their most
+                    useful findings, what changed because of them, and any
+                    suggestion deliberately declined with a reason. Do not
+                    imply independent review when none happened.
 
   `## Roadmap`      Which phase and milestone this PR belongs to, and what
                     it unblocks next.
@@ -2294,7 +2312,11 @@ Rules for the description:
 -   Put measured numbers in `## Validated` rather than adjectives
     ("fast", "works well").
 -   Never claim a test or command was run when it was not.
--   Keep it scannable: short bullets over paragraphs.
+-   Distinguish a browser observation, an automated test, a code inspection,
+    and an inference. Record failed or blocked validation under
+    `## Not validated` with its cause, if known.
+-   Keep it scannable with concrete paragraphs or short bullets. Preserve
+    the reasoning when a decision or review finding needs more than one line.
 -   Write the description in English so the repository history stays
     consistent for a portfolio reader.
 

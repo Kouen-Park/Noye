@@ -213,7 +213,9 @@ Available endpoints:
 | `POST` | `/files` | Upload a file; ingestion runs in the background |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
-| `DELETE` | `/files/{id}` | Delete the original, its metadata and its vectors |
+| `POST` | `/files/{id}/reingest` | Retry or re-index the saved original; returns 202 |
+| `POST` | `/files/{id}/cancel` | Stop processing; returns 202 |
+| `DELETE` | `/files/{id}` | Delete the original, metadata and vectors; returns 409 while processing |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 

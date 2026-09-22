@@ -10,6 +10,7 @@ import sqlite3
 
 import pytest
 
+from app.db import files as file_store
 from app.db.database import connect, database_path, init_schema
 from app.db.files import (
     FileRecordNotFound,
@@ -352,3 +353,42 @@ def test_deleting_one_file_leaves_others_intact(db: sqlite3.Connection) -> None:
 def test_deleting_a_missing_file_raises(db: sqlite3.Connection) -> None:
     with pytest.raises(FileRecordNotFound):
         delete_file(db, "absent")
+
+
+# --- resetting counts --------------------------------------------------------
+
+
+def test_reset_counts_clears_both(db) -> None:
+    record = file_store.create_file(
+        db, name="doc.pdf", file_type=FileType.PDF, path="/tmp/doc.pdf", size=10
+    )
+    file_store.set_counts(db, record.id, page_count=12, chunk_count=40)
+
+    reset = file_store.reset_counts(db, record.id)
+
+    assert reset.page_count is None
+    assert reset.chunk_count == 0
+
+
+def test_reset_counts_touches_updated_at(db) -> None:
+    record = file_store.create_file(
+        db, name="doc.pdf", file_type=FileType.PDF, path="/tmp/doc.pdf", size=10
+    )
+    before = file_store.get_file(db, record.id).updated_at
+    reset = file_store.reset_counts(db, record.id)
+    assert reset.updated_at >= before
+
+
+def test_reset_counts_on_a_missing_file_raises(db) -> None:
+    with pytest.raises(file_store.FileRecordNotFound):
+        file_store.reset_counts(db, "nope")
+
+
+def test_set_counts_cannot_clear_a_value(db) -> None:
+    """The reason reset_counts exists: None means 'leave alone' here."""
+    record = file_store.create_file(
+        db, name="doc.pdf", file_type=FileType.PDF, path="/tmp/doc.pdf", size=10
+    )
+    file_store.set_counts(db, record.id, page_count=7)
+    unchanged = file_store.set_counts(db, record.id, page_count=None)
+    assert unchanged.page_count == 7

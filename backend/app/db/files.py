@@ -192,6 +192,27 @@ def set_counts(
     return get_file(connection, file_id)
 
 
+def reset_counts(connection: sqlite3.Connection, file_id: str) -> File:
+    """Forget a file's page and chunk counts.
+
+    Needed because :func:`set_counts` treats ``None`` as "leave alone", so it
+    cannot clear a value. Re-ingesting uses this: if the second run dies during
+    extraction, the counts from the first run would otherwise still be on
+    display, describing an index that no longer exists.
+
+    Raises:
+        FileRecordNotFound: no such id.
+    """
+    with connection:
+        cursor = connection.execute(
+            "UPDATE files SET page_count = NULL, chunk_count = 0, updated_at = ? WHERE id = ?",
+            (_now_iso(), file_id),
+        )
+    if cursor.rowcount == 0:
+        raise FileRecordNotFound(f"No file with id {file_id}")
+    return get_file(connection, file_id)
+
+
 def delete_file(connection: sqlite3.Connection, file_id: str) -> None:
     """Delete a file row and, by cascade, its chunk rows.
 

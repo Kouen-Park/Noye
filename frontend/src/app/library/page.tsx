@@ -60,10 +60,11 @@ export default function LibraryPage() {
     })).filter((group) => group.files.length > 0);
   }, [library.files]);
 
-  const passageCount = useMemo(
-    () => library.files.reduce((total, file) => total + file.chunk_count, 0),
+  const indexedFiles = useMemo(
+    () => library.files.filter((file) => file.status === "READY"),
     [library.files],
   );
+  const passageCount = indexedFiles.reduce((total, file) => total + file.chunk_count, 0);
 
   const isEmpty = library.phase === "ready" && library.files.length === 0;
 
@@ -71,7 +72,7 @@ export default function LibraryPage() {
     <AppShell
       current="Library"
       passageCount={library.phase === "ready" ? passageCount : undefined}
-      fileCount={library.files.length}
+      fileCount={indexedFiles.length}
     >
       {/* Ingestion finishes without any page change, so transitions are
           announced here instead. Polite, so it waits for a natural pause. */}
@@ -166,6 +167,9 @@ export default function LibraryPage() {
                 key={file.id}
                 file={file}
                 onRemove={(id) => void library.removeFile(id)}
+                onRetry={(id) => void library.retryFile(id)}
+                onCancel={(id) => void library.cancelFile(id)}
+                stopping={library.stoppingIds.includes(file.id)}
                 registerRef={(element) => {
                   if (element) cardRefs.current.set(file.id, element);
                   else cardRefs.current.delete(file.id);

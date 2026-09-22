@@ -15,11 +15,15 @@ matter more than the happy path:
 * **Re-ingesting is safe.** The file's vectors and chunk rows are cleared
   before new ones are written, so a retried upload cannot leave stale chunks
   from a previous run behind.
+* **One pipeline per file.** A second run on a file already being ingested is
+  refused outright rather than interleaved, because both would write the same
+  chunk rows and the same Qdrant point ids.
 """
 
 from __future__ import annotations
 
 import sqlite3
+import threading
 from dataclasses import replace
 
 import httpx
@@ -42,12 +46,96 @@ class IngestionError(Exception):
     """
 
 
+class AlreadyIngesting(RuntimeError):
+    """This file is being ingested right now, so a second run was refused.
+
+    Raised rather than ignored: two pipelines on one file would interleave their
+    writes to the same chunk rows and the same Qdrant point ids, and the loser
+    would leave a half-replaced index behind. A caller that hits this has a bug
+    or a user double-clicked, and either way the right answer is to say no.
+    """
+
+
+# Which files are being ingested in this process, right now.
+#
+# This is the only reliable answer to "is this file busy?". A row's status
+# cannot answer it: a file left in EMBEDDING by a server that restarted
+# mid-ingestion looks busy forever, and a large file embedding for minutes
+# without a status write looks idle to any timeout-based guess. Membership here
+# is the truth, which also means an orphaned row is correctly re-ingestable.
+#
+# Per-process, which matches how Noye runs: one local uvicorn, one user. A
+# multi-process deployment would need this in SQLite instead.
+_in_flight: dict[str, threading.Event | None] = {}
+_in_flight_lock = threading.Lock()
+
+
+def is_ingesting(file_id: str) -> bool:
+    """Whether this file is being ingested right now."""
+    with _in_flight_lock:
+        return file_id in _in_flight
+
+
+def _claim(file_id: str, cancellation: threading.Event | None = None) -> None:
+    with _in_flight_lock:
+        if file_id in _in_flight:
+            raise AlreadyIngesting(f"File {file_id} is already being ingested")
+        _in_flight[file_id] = cancellation
+
+
+def reserve_ingestion(file_id: str) -> None:
+    """Reserve a file before its background task is scheduled."""
+    _claim(file_id, threading.Event())
+
+
+def reserve_delete(file_id: str) -> None:
+    """Keep ingestion and a second delete out until deletion finishes."""
+    _claim(file_id)
+
+
+def cancel_ingestion(file_id: str) -> bool:
+    """Ask a queued or running pipeline to stop at its next safe checkpoint."""
+    with _in_flight_lock:
+        cancellation = _in_flight.get(file_id)
+        if cancellation is None:
+            return False
+        cancellation.set()
+        return True
+
+
+def release_file(file_id: str) -> None:
+    with _in_flight_lock:
+        _in_flight.pop(file_id, None)
+
+
+def _release(file_id: str, cancellation: threading.Event) -> None:
+    with _in_flight_lock:
+        if _in_flight.get(file_id) is cancellation:
+            _in_flight.pop(file_id, None)
+
+
+def _check_cancel(cancellation: threading.Event) -> None:
+    if cancellation.is_set():
+        raise IngestionError("Processing was cancelled.")
+
+
+def cancel_orphaned_file(connection: sqlite3.Connection, file_id: str) -> File:
+    """Settle a processing row left behind when the server stopped mid-run.
+
+    The caller must first reserve this file, so no new ingestion can begin
+    during cleanup.
+    """
+    record = file_store.get_file(connection, file_id)
+    return _fail(connection, record, "Processing was interrupted.", qdrant_client=None)
+
+
 def ingest_file(
     connection: sqlite3.Connection,
     file_id: str,
     *,
     qdrant_client: QdrantClient | None = None,
     http_client: httpx.Client | None = None,
+    reserved: bool = False,
 ) -> File:
     """Process an uploaded file into searchable, citable chunks.
 
@@ -56,34 +144,59 @@ def ingest_file(
     success, FAILED with a reason on any failure.
 
     Does not raise for ingestion failures: the failure is the outcome, recorded
-    on the file so the library can display it. Only a missing file row raises,
-    since that means the caller passed a bad id.
+    on the file so the library can display it. Only a missing file row or an
+    already-running ingestion raises, since both mean the caller is wrong.
 
     Raises:
         FileRecordNotFound: no file row with ``file_id``.
+        AlreadyIngesting: this file is being ingested already.
     """
     record = file_store.get_file(connection, file_id)
 
+    if reserved:
+        with _in_flight_lock:
+            cancellation = _in_flight.get(file_id)
+        if cancellation is None:
+            raise AlreadyIngesting(f"File {file_id} has no ingestion reservation")
+    else:
+        cancellation = threading.Event()
+        _claim(file_id, cancellation)
     try:
-        pages = _extract(connection, record)
-        chunks = _chunk(connection, record, pages)
-        _embed_and_index(
-            connection, record, chunks, qdrant_client=qdrant_client, http_client=http_client
-        )
-    except IngestionError as exc:
-        return _fail(connection, record, str(exc), qdrant_client=qdrant_client)
-    except Exception as exc:  # noqa: BLE001 - last resort, see below
-        # An unexpected error must still leave the file in a terminal state with
-        # a reason; a row stuck in EMBEDDING forever is worse than an ugly
-        # message, and the original type is preserved in the text.
-        return _fail(
-            connection,
-            record,
-            f"Unexpected {type(exc).__name__} during ingestion: {exc}",
-            qdrant_client=qdrant_client,
-        )
+        try:
+            _check_cancel(cancellation)
+            pages = _extract(connection, record)
+            _check_cancel(cancellation)
+            chunks = _chunk(connection, record, pages)
+            _check_cancel(cancellation)
+            _embed_and_index(
+                connection, record, chunks, qdrant_client=qdrant_client, http_client=http_client,
+                cancellation=cancellation,
+            )
+            _check_cancel(cancellation)
+        except IngestionError as exc:
+            return _fail(connection, record, str(exc), qdrant_client=qdrant_client)
+        except Exception as exc:  # noqa: BLE001 - last resort, see below
+            # An unexpected error must still leave the file in a terminal state
+            # with a reason; a row stuck in EMBEDDING forever is worse than an
+            # ugly message, and the original type is preserved in the text.
+            return _fail(
+                connection,
+                record,
+                f"Unexpected {type(exc).__name__} during ingestion: {exc}",
+                qdrant_client=qdrant_client,
+            )
 
-    return file_store.set_status(connection, file_id, FileStatus.READY)
+        # Commit READY while holding the same lock used by cancellation. A
+        # successful cancel request must never race past the final checkpoint.
+        with _in_flight_lock:
+            cancelled = cancellation.is_set()
+            if not cancelled:
+                result = file_store.set_status(connection, file_id, FileStatus.READY)
+                _in_flight.pop(file_id, None)
+                return result
+        return _fail(connection, record, "Processing was cancelled.", qdrant_client=qdrant_client)
+    finally:
+        _release(file_id, cancellation)
 
 
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
@@ -139,6 +252,7 @@ def _embed_and_index(
     *,
     qdrant_client: QdrantClient | None,
     http_client: httpx.Client | None,
+    cancellation: threading.Event,
 ) -> None:
     file_store.set_status(connection, record.id, FileStatus.EMBEDDING)
 
@@ -151,8 +265,11 @@ def _embed_and_index(
     # but vectors are keyed by chunk index, so a shorter second run would
     # otherwise leave the tail of the first run searchable.
     try:
+        _check_cancel(cancellation)
         delete_file_chunks(record.id, client=qdrant_client)
+        _check_cancel(cancellation)
         index_chunks(chunks, vectors, client=qdrant_client)
+        _check_cancel(cancellation)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -186,4 +303,9 @@ def _fail(
         pass
 
     file_store.replace_chunks(connection, record.id, [])
+    # The chunk rows are gone, so the count must go with them. Leaving it behind
+    # made a file that chunked and then failed at embedding advertise passages it
+    # no longer had — the library showed "24 passages" beside "Could not read".
+    # page_count is left alone: the pages really were read, and that stays true.
+    file_store.set_counts(connection, record.id, chunk_count=0)
     return file_store.set_status(connection, record.id, FileStatus.FAILED, error=reason)
