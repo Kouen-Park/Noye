@@ -443,7 +443,8 @@ Example Noye use cases:
 -   [x] Local LLM generation through Ollama
 -   [x] File citations
 -   [x] Page citations
--   [ ] Conversation history
+-   [x] Conversation history — stored and re-readable; the model does not
+    receive earlier turns (see §12.6)
 -   [ ] Generate Markdown documents from answers/retrieved knowledge
 -   [ ] Edit generated Markdown
 -   [ ] Preview Markdown
@@ -1823,14 +1824,15 @@ Citations
 
 Features:
 
--   [ ] New conversation
--   [ ] User messages
--   [ ] AI messages
--   [ ] Citations below AI answer
--   [ ] Persistent conversation history
--   [ ] Conversation titles
--   [ ] Loading state
--   [ ] Retrieval/generation errors
+-   [x] New conversation
+-   [x] User messages
+-   [x] AI messages
+-   [x] Citations below AI answer
+-   [x] Persistent conversation history — stored and re-readable. **The model is
+    not aware of earlier turns**; see §12.6.
+-   [x] Conversation titles
+-   [x] Loading state
+-   [x] Retrieval/generation errors
 
 Store conversations and messages in SQLite.
 
@@ -1929,6 +1931,86 @@ should do it regardless. Do not add a threshold without the measurement.
     existing in-memory Qdrant and mocked-Ollama approach. Frontend lint,
     TypeScript, tests and production build pass. Record any browser check that
     could not run under `Not validated`.
+
+
+## 12.6 What "conversation history" does and does not mean
+
+Conversations are stored, titled, listed by recent activity, re-readable with
+their citations intact, renameable and deletable. That is the roadmap item, and
+it is done.
+
+**The model does not receive earlier turns.** Each question is answered from
+retrieval alone, so asking "and what about the second one?" will not resolve
+against the previous answer — the retrieval step sees only those words.
+
+This is unresolved rather than decided. The cost of fixing it is real: history
+competes with retrieved passages for a local model's context, and `qwen3.5` on
+this hardware is already the slow step. Options, in rising cost:
+
+1.  **Rewrite the follow-up question** using the last turn or two before
+    retrieval, and keep the prompt as it is. Cheap, and it fixes the common case
+    of a pronoun referring to the previous answer.
+2.  **Include the last N turns in the prompt** alongside the excerpts. Simple,
+    but it spends the context the passages need, and the trade gets worse as a
+    conversation grows.
+3.  **Summarise the conversation** and carry the summary. Most capable, and the
+    most machinery, including a second model call per turn.
+
+Do not pick one without measuring what it costs in answer quality and latency on
+this hardware. Option 1 is the one to try first.
+
+## 12.7 Implemented
+
+Built across three branches: `feat/chat-persistence`, `feat/chat-api`,
+`feat/chat-ui`.
+
+### Citations are written down, not recomputed
+
+Re-running retrieval to re-render an old answer would show sources that were
+never the ones behind it, because the index changes as files are added,
+re-ingested and removed. The file name is copied onto each stored citation, so an
+answer keeps naming what it was based on after that file is deleted; the file id
+is kept too, so the original can still be opened while it exists.
+
+### A failed answer is a turn, not a lost question
+
+The user's question is written before the model is called, and a failure —
+unreachable Ollama, unsearchable index, an embedding that could not be made — is
+recorded against the assistant's turn. The UI renders that as a notice carrying
+the reason rather than an empty bubble, so someone returning to a conversation can
+see what went unanswered and why.
+
+### They are "passages consulted", not "sources"
+
+The plan's §12.4 question was answered by framing, and the framing is load-bearing
+rather than cosmetic. Vector search always returns its nearest neighbours, so a
+question the documents do not cover still retrieves passages while the model
+correctly declines. "Passages consulted" is true either way; "Sources" would claim
+support nobody has verified. A test asserts the word does not ship.
+
+They are collapsed by default so an answer reads as prose, and expandable because
+this phase's own requirement is that sources be easy to inspect rather than
+hidden. Each names its file and page and opens the original at that page, reusing
+Phase 3's `sourceUrl`.
+
+### Verified
+
+-   Backend: 352 tests, 0 skipped, including an end-to-end run against the real
+    local model. Frontend: 96 tests, plus `tsc`, `eslint` and a production build.
+-   A real answer over a real socket: "What does OFFSET do in a SQL query?"
+    returned "OFFSET skips rows (k rows) before returning rows when used with
+    LIMIT" citing page 18 of the indexed PDF.
+-   The shipped client bundle carries every state string, and `"Sources"` appears
+    zero times in it.
+
+### Not verified
+
+-   No screenshot or automated browser check: this machine could not launch a
+    browser. The responsive layout and both colour schemes are unconfirmed.
+-   Long conversations render every message with no virtualisation, and a
+    conversation is read whole in two queries. Both are right for a local
+    single-user app and unmeasured past a handful of turns.
+-   Concurrent asking in two tabs of one conversation is not handled.
 
 
 # 13. Phase 5 --- Document Workspace

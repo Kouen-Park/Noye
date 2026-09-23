@@ -182,6 +182,118 @@ export function sourceUrl(fileId: string, pageNumber: number | null = null): str
   return pageNumber === null ? base : `${base}#page=${pageNumber}`;
 }
 
+// --- chat --------------------------------------------------------------------
+
+export type Role = "user" | "assistant";
+
+/**
+ * One passage that was given to the model as context for an answer.
+ *
+ * Deliberately not "a source that supports the answer". Vector search always
+ * returns its nearest neighbours, so a question the documents do not cover still
+ * retrieves passages and the model then declines — correctly — while these remain
+ * attached. The UI must say what these are rather than implying they prove
+ * anything.
+ */
+export interface ChatCitation {
+  file_id: string;
+  file_name: string;
+  page_number: number | null;
+  /** The retrieved chunks behind this citation, so the passages stay inspectable. */
+  chunk_indexes: number[];
+  score: number;
+  /** "Algorithms.pdf — page 34", or just the file name. */
+  label: string;
+}
+
+/** One turn. `error` is set when answering failed; the question is still stored. */
+export interface ChatMessage {
+  id: string;
+  role: Role;
+  content: string;
+  error: string | null;
+  citations: ChatCitation[];
+  created_at: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  messages: ChatMessage[];
+}
+
+/** A conversation in the sidebar. Carries no messages — they are not shown there. */
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+}
+
+export interface AskResponse {
+  conversation_id: string;
+  conversation_title: string;
+  question: ChatMessage;
+  answer: ChatMessage;
+  /** Zero means nothing has finished indexing — different from finding no passage. */
+  searched_files: number;
+}
+
+/**
+ * Ask a question, optionally continuing a conversation.
+ *
+ * No AbortSignal: a local model can take minutes, and abandoning the request
+ * would not stop the work or prevent the turn being recorded. The answer is
+ * fetched again on the next read either way.
+ */
+export async function askQuestion(
+  question: string,
+  conversationId?: string,
+): Promise<AskResponse> {
+  const response = await request("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(
+      conversationId === undefined
+        ? { question }
+        : { question, conversation_id: conversationId },
+    ),
+  });
+  return (await response.json()) as AskResponse;
+}
+
+/** Conversations, most recently active first. */
+export async function listConversations(signal?: AbortSignal): Promise<ConversationSummary[]> {
+  const response = await request("/chat/conversations", { signal });
+  return (await response.json()) as ConversationSummary[];
+}
+
+/** One conversation with its messages and their stored citations. */
+export async function readConversation(
+  id: string,
+  signal?: AbortSignal,
+): Promise<ChatConversation> {
+  const response = await request(`/chat/conversations/${encodeURIComponent(id)}`, { signal });
+  return (await response.json()) as ChatConversation;
+}
+
+export async function renameConversation(id: string, title: string): Promise<ChatConversation> {
+  const response = await request(`/chat/conversations/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  return (await response.json()) as ChatConversation;
+}
+
+/** Delete a conversation. The documents it drew on are untouched. */
+export async function deleteConversation(id: string): Promise<void> {
+  await request(`/chat/conversations/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
 /** Every file, newest first. */
 export async function listFiles(signal?: AbortSignal): Promise<StoredFile[]> {
   const response = await request("/files", { signal });

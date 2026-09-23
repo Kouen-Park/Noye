@@ -157,10 +157,10 @@ noye/
 
 ### Phase 4 — Chat
 
-- [ ] Knowledge-base chat
-- [ ] Source citations
-- [ ] Conversation history
-- [ ] Persistent messages
+- [x] Knowledge-base chat
+- [x] Inspectable passages behind every answer
+- [x] Conversation history
+- [x] Persistent messages
 
 ### Phase 5 — Document Workspace
 
@@ -235,6 +235,11 @@ Available endpoints:
 | `DELETE` | `/files/{id}` | Delete the original, metadata and vectors; returns 409 while processing |
 | `GET` | `/files/{id}/source` | Serve the saved original, inline, for opening a citation |
 | `GET` | `/search` | Search finished sources by meaning; `?q=` and optional `?limit=` |
+| `POST` | `/chat` | Ask a question; creates a conversation when none is given |
+| `GET` | `/chat/conversations` | List conversations, most recently active first |
+| `GET` | `/chat/conversations/{id}` | Read one conversation with its messages |
+| `PATCH` | `/chat/conversations/{id}` | Rename a conversation |
+| `DELETE` | `/chat/conversations/{id}` | Delete a conversation; documents are untouched |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
@@ -266,15 +271,24 @@ and the components' accessible surface — the label/input association on the dr
 zone, the status word on every pill, and the stage exposed as a real
 progressbar — because those are the parts that fail silently when they break.
 
-Two surfaces are built. The **library** takes files — drag them in or pick them,
+Three surfaces are built. The **library** takes files — drag them in or pick them,
 watch each move through the four ingestion stages, retry one that failed, stop one
 mid-flight, and remove what you no longer want indexed. **Search** takes a
 question in plain language and returns the passages that match it by meaning, each
 naming its file and page, with a link that opens the original at that page.
+**Chat** answers a question from those files and keeps the conversation.
 
-Search covers files that have finished indexing, so a half-processed document is
-never presented as a whole one. The query is kept in the URL, so Back returns to
-the previous search and a result can be shared as a link.
+Search and chat cover files that have finished indexing, so a half-processed
+document is never presented as a whole one. The query or open conversation is kept
+in the URL, so Back works and a result can be shared as a link.
+
+An answer shows the **passages consulted** rather than a list called "Sources".
+That wording is deliberate: a vector search always returns its nearest
+neighbours, so a question your documents do not cover still retrieves passages
+while the model correctly says it cannot answer. "Passages consulted" is true
+either way, and each one opens the original at its page so you can judge it
+yourself. The model never writes its own citations — they are built from the
+index.
 
 Both talk to the backend directly, so it has to be running and its
 `FRONTEND_ORIGINS` has to include the address you loaded the page from.
