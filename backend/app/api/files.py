@@ -17,6 +17,7 @@ import sqlite3
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.api.deps import get_db
@@ -248,6 +249,72 @@ def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileO
         return FileOut.of(cancel_orphaned_file(db, file_id))
     finally:
         release_file(file_id)
+
+
+#: How each format is served back to the browser.
+#:
+#: PDFs keep their own type so the browser's viewer renders them and a
+#: `#page=N` fragment lands on the cited page. Markdown and text are served as
+#: plain text rather than `text/markdown`, because browsers download the latter
+#: instead of displaying it — and a source you cannot look at is not a source
+#: reference.
+SOURCE_MEDIA_TYPES: dict[FileType, str] = {
+    FileType.PDF: "application/pdf",
+    FileType.MARKDOWN: "text/plain; charset=utf-8",
+    FileType.TEXT: "text/plain; charset=utf-8",
+}
+
+
+@router.get("/{file_id}/source")
+def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileResponse:
+    """Serve a file's saved original, for opening a search hit at its source.
+
+    The path comes from the database row, never from the request: the only thing
+    a caller supplies is an id. That is what keeps this route from becoming a way
+    to read arbitrary files off the machine, and it is re-checked below in case a
+    row ever holds a path outside the sources directory.
+
+    Served inline so a PDF opens in the browser's viewer, where the client can
+    append `#page=N` from a citation. Markdown and text open as text; neither has
+    pages, and this route does not invent one.
+    """
+    try:
+        record = file_store.get_file(db, file_id)
+    except file_store.FileRecordNotFound as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+    path = Path(record.path)
+
+    # Defence in depth. The row is written by this application, so a path outside
+    # the sources directory means the database was edited or corrupted — and
+    # serving whatever it points at would turn an id into a file-read primitive.
+    try:
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(sources_dir().resolve())
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The original file is no longer on disk.",
+        ) from exc
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This file's stored location is not somewhere Noye serves from.",
+        ) from exc
+
+    if not resolved.is_file():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The original file is no longer on disk.",
+        )
+
+    return FileResponse(
+        resolved,
+        media_type=SOURCE_MEDIA_TYPES[record.file_type],
+        # The display name, not the `{id}__{name}` used on disk.
+        filename=record.name,
+        content_disposition_type="inline",
+    )
 
 
 @router.delete("/{file_id}", status_code=status.HTTP_204_NO_CONTENT)
