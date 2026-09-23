@@ -573,3 +573,168 @@ def test_second_reingest_is_refused_before_background_start(client, db, uploads)
     file_id = make_stored_file(db, uploads)
     assert client.post(f"/files/{file_id}/reingest").status_code == 202
     assert client.post(f"/files/{file_id}/reingest").status_code == 409
+
+
+# --- serving the original source --------------------------------------------
+
+
+def store_source(
+    db: sqlite3.Connection,
+    uploads: Path,
+    *,
+    name: str,
+    file_type: FileType,
+    body: bytes,
+) -> str:
+    """A file row whose original really is on disk, in the uploads directory."""
+    file_id = file_store.new_file_id()
+    path = uploads / f"{file_id}__{name}"
+    path.write_bytes(body)
+    file_store.create_file(
+        db,
+        name=name,
+        file_type=file_type,
+        path=str(path),
+        size=path.stat().st_size,
+        file_id=file_id,
+    )
+    return file_id
+
+
+def test_source_serves_a_pdf_for_the_browser_viewer(client, db, uploads, tmp_path) -> None:
+    """Inline with the PDF type, so `#page=N` from a citation lands correctly."""
+    pdf = write_pdf(tmp_path / "src.pdf", ["Page one about graphs."])
+    file_id = store_source(
+        db, uploads, name="lecture.pdf", file_type=FileType.PDF, body=pdf.read_bytes()
+    )
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert "inline" in response.headers["content-disposition"]
+    assert response.content.startswith(b"%PDF")
+
+
+def test_source_names_the_file_as_the_user_knows_it(client, db, uploads, tmp_path) -> None:
+    """Not the `{id}__{name}` form used on disk."""
+    pdf = write_pdf(tmp_path / "src.pdf", ["Text."])
+    file_id = store_source(
+        db, uploads, name="lecture.pdf", file_type=FileType.PDF, body=pdf.read_bytes()
+    )
+
+    disposition = client.get(f"/files/{file_id}/source").headers["content-disposition"]
+
+    assert "lecture.pdf" in disposition
+    assert file_id not in disposition
+
+
+def test_source_serves_markdown_as_readable_text(client, db, uploads) -> None:
+    """text/markdown downloads in browsers instead of displaying."""
+    file_id = store_source(
+        db,
+        uploads,
+        name="notes.md",
+        file_type=FileType.MARKDOWN,
+        body=b"# Shortest paths\n\nDijkstra uses a priority queue.\n",
+    )
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/plain; charset=utf-8"
+    assert "priority queue" in response.text
+
+
+def test_source_serves_plain_text(client, db, uploads) -> None:
+    file_id = store_source(
+        db, uploads, name="log.txt", file_type=FileType.TEXT, body=b"Meeting notes.\n"
+    )
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 200
+    assert response.text == "Meeting notes.\n"
+
+
+def test_source_preserves_non_ascii_content(client, db, uploads) -> None:
+    file_id = store_source(
+        db,
+        uploads,
+        name="한글.md",
+        file_type=FileType.MARKDOWN,
+        body="# 최단 경로\n\n우선순위 큐를 사용한다.\n".encode(),
+    )
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 200
+    assert "우선순위 큐" in response.text
+
+
+def test_source_of_an_unknown_file_is_404(client) -> None:
+    assert client.get("/files/not-a-real-id/source").status_code == 404
+
+
+def test_source_is_404_when_the_original_is_gone(client, db, uploads) -> None:
+    file_id = store_source(
+        db, uploads, name="notes.md", file_type=FileType.MARKDOWN, body=b"text"
+    )
+    Path(file_store.get_file(db, file_id).path).unlink()
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 404
+    assert "no longer on disk" in response.json()["detail"]
+
+
+def test_source_refuses_a_row_pointing_outside_the_sources_directory(
+    client, db, uploads, tmp_path
+) -> None:
+    """The row is written by this app, so a path outside means a tampered or
+    corrupted database — and serving it would turn an id into a file read."""
+    outside = tmp_path / "secret.txt"
+    outside.write_text("not for serving", encoding="utf-8")
+    file_id = file_store.new_file_id()
+    file_store.create_file(
+        db,
+        name="secret.txt",
+        file_type=FileType.TEXT,
+        path=str(outside),
+        size=outside.stat().st_size,
+        file_id=file_id,
+    )
+
+    response = client.get(f"/files/{file_id}/source")
+
+    assert response.status_code == 404
+    assert "not somewhere Noye serves from" in response.json()["detail"]
+    assert "not for serving" not in response.text
+
+
+def test_source_refuses_a_traversal_path_in_the_row(client, db, uploads) -> None:
+    """A row whose path escapes the sources directory with `..` resolves outside
+    it, and is refused on that basis rather than on the spelling."""
+    file_id = file_store.new_file_id()
+    file_store.create_file(
+        db,
+        name="escape.txt",
+        file_type=FileType.TEXT,
+        path=str(uploads / ".." / ".." / "etc" / "hosts"),
+        size=1,
+        file_id=file_id,
+    )
+
+    assert client.get(f"/files/{file_id}/source").status_code == 404
+
+
+def test_source_takes_no_path_from_the_request(client, db, uploads) -> None:
+    """The only input is an id; a path-shaped id is just an unknown id."""
+    for probe in ["../../../etc/hosts", "..%2F..%2Fetc%2Fhosts", "%2Fetc%2Fhosts"]:
+        assert client.get(f"/files/{probe}/source").status_code in (404, 422)
+
+
+def test_source_appears_in_the_openapi_schema(client) -> None:
+    paths = client.get("/openapi.json").json()["paths"]
+    assert "/files/{file_id}/source" in paths
+    assert "get" in paths["/files/{file_id}/source"]
