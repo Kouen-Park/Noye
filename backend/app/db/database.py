@@ -49,6 +49,57 @@ CREATE INDEX IF NOT EXISTS idx_chunks_file_id ON chunks(file_id);
 
 -- The library lists newest first.
 CREATE INDEX IF NOT EXISTS idx_files_created_at ON files(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS conversations (
+    id          TEXT PRIMARY KEY,
+    title       TEXT NOT NULL,
+    created_at  TEXT NOT NULL,
+    updated_at  TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id               TEXT PRIMARY KEY,
+    conversation_id  TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    role             TEXT NOT NULL,
+    content          TEXT NOT NULL,
+    -- Set when answering failed, so the user's question stays in the
+    -- conversation with the reason attached instead of the turn being lost.
+    error            TEXT,
+    created_at       TEXT NOT NULL
+);
+
+-- Citations are STORED rather than recomputed at display time. Re-running
+-- retrieval to re-render an old answer would show sources that were never the
+-- ones behind it, because the index changes as files are added, re-ingested and
+-- removed. `file_name` is copied in so a past answer keeps naming what it was
+-- based on even after that file is deleted; `file_id` is kept as well so the
+-- source can still be opened while it does exist.
+CREATE TABLE IF NOT EXISTS message_citations (
+    id           TEXT PRIMARY KEY,
+    message_id   TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+    position     INTEGER NOT NULL,
+    file_id      TEXT NOT NULL,
+    file_name    TEXT NOT NULL,
+    page_number  INTEGER,
+    -- The retrieved chunk indexes behind this citation, comma-separated, so the
+    -- exact passages stay inspectable. A join table for a handful of integers
+    -- that are only ever read together would cost more than it explains.
+    chunk_indexes TEXT NOT NULL,
+    best_score   REAL NOT NULL,
+    UNIQUE (message_id, position)
+);
+
+-- A conversation is always read as a whole, in order.
+CREATE INDEX IF NOT EXISTS idx_messages_conversation
+    ON messages(conversation_id, created_at);
+
+-- Citations are always read for a message, in display order.
+CREATE INDEX IF NOT EXISTS idx_citations_message
+    ON message_citations(message_id, position);
+
+-- The conversation list is by most recent activity.
+CREATE INDEX IF NOT EXISTS idx_conversations_updated_at
+    ON conversations(updated_at DESC);
 """
 
 

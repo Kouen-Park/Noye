@@ -1840,6 +1840,74 @@ A key UI requirement:
 
 ------------------------------------------------------------------------
 
+## 12.1 Starting point and scope
+
+The answering machinery already exists. `app.services.generation.answer_question`
+retrieves passages and produces grounded prose; `app.services.citations` turns the
+retrieval metadata into citations. Neither is reachable over HTTP, and nothing is
+stored: every question would vanish with the page.
+
+Phase 4 adds the two missing things — persistence for conversations and messages,
+and a chat surface — and changes nothing about how an answer is produced. In
+particular the model still never writes its own citations.
+
+## 12.2 What persistence has to get right
+
+Three decisions belong here rather than in the UI.
+
+**A message's citations are stored, not recomputed.** Re-running retrieval to
+re-display an old answer would show sources that were never the ones behind it —
+the index changes as files are added, re-ingested and removed. A conversation is a
+record of what was said, so the citations are written down with the answer.
+
+**A citation survives its source file being deleted.** Storing only a `file_id`
+would make an old answer silently lose its provenance the moment the user cleans
+up their library. The file name is copied onto the stored citation so a past
+answer keeps naming what it was based on, and the `file_id` is kept as well so the
+source can still be opened when it does still exist.
+
+**A failed answer is a message, not a lost turn.** If Ollama is down, the user's
+question stays in the conversation with the failure recorded against it. Anything
+else loses what they typed.
+
+## 12.3 Branch and PR sequence
+
+Three branches, each cut from an updated `main` after the previous merges.
+
+1.  `feat/chat-persistence` — schema, models, and the SQLite layer for
+    conversations, messages and message citations. Cascade deletes so removing a
+    conversation removes its messages and their citations. A conversation's title
+    is derived from its first question rather than asked for. Ordering is by
+    creation, and the conversation list is by most recent activity. No API.
+2.  `feat/chat-api` — `POST /chat` to ask inside a conversation (creating one if
+    none is given), plus routes to list conversations, read one's messages, and
+    delete one. The answer comes from the existing generation service; citations
+    from the existing citation service. Unreachable Ollama, unsearchable index and
+    an empty question each produce their own outcome. A question that retrieves
+    nothing is answered honestly without calling the model, as generation already
+    does.
+3.  `feat/chat-ui` — `/chat` with a message list, a composer, per-message
+    citations, and a conversation sidebar. Citations are **inspectable rather than
+    hidden**: the plan's own UI requirement for this phase. Reuse the Phase 3
+    result-card treatment and the Open-source link so a citation behaves the same
+    way in both surfaces.
+
+## 12.4 Acceptance and validation
+
+-   Asking a question about an indexed document returns a grounded answer whose
+    citations name the real file and page, and those citations are still correct
+    after a reload.
+-   Deleting a cited file leaves the old answer's citation readable, with the
+    file name intact, and the Open-source link absent or clearly unavailable.
+-   A conversation survives a restart. Its title reflects its first question.
+-   Ollama being down produces a recorded failure against the user's question,
+    not a lost message.
+-   Backend tests cover the persistence contracts and the API's outcomes using the
+    existing in-memory Qdrant and mocked-Ollama approach. Frontend lint,
+    TypeScript, tests and production build pass. Record any browser check that
+    could not run under `Not validated`.
+
+
 # 13. Phase 5 --- Document Workspace
 
 This is one of Noye's strongest differentiators.
