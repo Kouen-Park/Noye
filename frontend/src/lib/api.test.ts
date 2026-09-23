@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { ACCEPTED_EXTENSIONS, ACCEPT_ATTRIBUTE, isProcessing, rejectionFor } from "@/lib/api";
+import {
+  ACCEPTED_EXTENSIONS,
+  ACCEPT_ATTRIBUTE,
+  isProcessing,
+  rejectionFor,
+  sourceUrl,
+} from "@/lib/api";
 
 function upload(name: string, size = 10): File {
   return new File([new Uint8Array(size)], name);
@@ -50,5 +56,24 @@ describe("isProcessing", () => {
     expect(isProcessing("EMBEDDING")).toBe(true);
     expect(isProcessing("READY")).toBe(false);
     expect(isProcessing("FAILED")).toBe(false);
+  });
+});
+
+describe("sourceUrl", () => {
+  it("points at the file's source route", () => {
+    expect(sourceUrl("abc-123")).toContain("/files/abc-123/source");
+  });
+
+  it("appends the cited page as a fragment, for the PDF viewer", () => {
+    expect(sourceUrl("abc-123", 34)).toContain("#page=34");
+  });
+
+  it("adds no fragment for a format with no pages", () => {
+    // A made-up "#page=1" would point somewhere that does not exist.
+    expect(sourceUrl("abc-123", null)).not.toContain("#page");
+  });
+
+  it("escapes an id rather than interpolating it raw", () => {
+    expect(sourceUrl("a/b")).toContain("a%2Fb");
   });
 });
