@@ -149,11 +149,11 @@ noye/
 
 ### Phase 3 — Search
 
-- [ ] Search input
-- [ ] Ranked passage snippets
-- [ ] Source file names
-- [ ] Page numbers where the format has them
-- [ ] Open the original source
+- [x] Search input
+- [x] Ranked passage snippets
+- [x] Source file names
+- [x] Page numbers where the format has them
+- [x] Open the original source
 
 ### Phase 4 — Chat
 
@@ -233,6 +233,8 @@ Available endpoints:
 | `POST` | `/files/{id}/reingest` | Retry or re-index the saved original; returns 202 |
 | `POST` | `/files/{id}/cancel` | Stop processing; returns 202 |
 | `DELETE` | `/files/{id}` | Delete the original, metadata and vectors; returns 409 while processing |
+| `GET` | `/files/{id}/source` | Serve the saved original, inline, for opening a citation |
+| `GET` | `/search` | Search finished sources by meaning; `?q=` and optional `?limit=` |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
@@ -264,10 +266,18 @@ and the components' accessible surface — the label/input association on the dr
 zone, the status word on every pill, and the stage exposed as a real
 progressbar — because those are the parts that fail silently when they break.
 
-The library is the only built surface so far: drag files in or pick them, watch
-each one move through the four ingestion stages, and remove what you no longer
-want indexed. It talks to the backend directly, so the backend has to be running
-and its `FRONTEND_ORIGINS` has to include the address you loaded the page from.
+Two surfaces are built. The **library** takes files — drag them in or pick them,
+watch each move through the four ingestion stages, retry one that failed, stop one
+mid-flight, and remove what you no longer want indexed. **Search** takes a
+question in plain language and returns the passages that match it by meaning, each
+naming its file and page, with a link that opens the original at that page.
+
+Search covers files that have finished indexing, so a half-processed document is
+never presented as a whole one. The query is kept in the URL, so Back returns to
+the previous search and a result can be shared as a link.
+
+Both talk to the backend directly, so it has to be running and its
+`FRONTEND_ORIGINS` has to include the address you loaded the page from.
 
 `NEXT_PUBLIC_API_BASE_URL` is baked into the browser bundle at build time, so
 changing it needs a rebuild rather than just a restart.
