@@ -1892,7 +1892,30 @@ Three branches, each cut from an updated `main` after the previous merges.
     result-card treatment and the Open-source link so a citation behaves the same
     way in both surfaces.
 
-## 12.4 Acceptance and validation
+## 12.4 An open question the UI has to answer
+
+Measured on a live run: asking about something the indexed document does not
+cover produced an answer that correctly said the excerpts did not contain it —
+with five citations attached. Vector search always returns its nearest
+neighbours, so passages are retrieved regardless, and `Answer.is_grounded` only
+tells us retrieval returned something, not that the model used it.
+
+So a stored citation is precisely "a passage given to the model as context", not
+"a source supporting this answer". Three ways to close the gap, none free:
+
+1.  **A calibrated relevance threshold.** Evidence so far is 0.675 for a covered
+    question and 0.52 for an uncovered one against the same document — two
+    points, not a boundary. Needs measurement across several documents first.
+2.  **A signal from the model**, e.g. asking it to state whether the excerpts
+    answered the question. Adds a parsing step and a way for the model to be
+    wrong about itself.
+3.  **Honest framing in the UI**: label them as the passages consulted, and show
+    the answer's own words about whether they sufficed.
+
+Option 3 costs nothing and is not exclusive with the others, so the chat UI
+should do it regardless. Do not add a threshold without the measurement.
+
+## 12.5 Acceptance and validation
 
 -   Asking a question about an indexed document returns a grounded answer whose
     citations name the real file and page, and those citations are still correct

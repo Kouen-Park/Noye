@@ -10,7 +10,7 @@ without adding authentication first.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import files, search
+from app.api import chat, files, search
 from app.config import get_settings
 
 app = FastAPI(
@@ -26,12 +26,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 app.include_router(files.router)
 app.include_router(search.router)
+app.include_router(chat.router)
 
 
 @app.get("/health")
