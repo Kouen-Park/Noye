@@ -136,6 +136,52 @@ async function readDetail(response: Response): Promise<string> {
   return `The request failed (${response.status}).`;
 }
 
+/** One matching passage and where it came from. Mirrors `SearchHit`. */
+export interface SearchHit {
+  content: string;
+  file_id: string;
+  file_name: string;
+  /** Null for formats without pages. Never 0 — that would read as a real page. */
+  page_number: number | null;
+  chunk_index: number;
+  score: number;
+}
+
+/** Results for one query. Mirrors `SearchResponse`. */
+export interface SearchResponse {
+  query: string;
+  results: SearchHit[];
+  /**
+   * How many sources the query could match against. Zero means nothing has
+   * finished indexing, which needs different words on screen from a query that
+   * simply found nothing.
+   */
+  searched_files: number;
+}
+
+/** Find passages whose meaning matches the query. Searches READY files only. */
+export async function searchKnowledge(
+  query: string,
+  options: { limit?: number; signal?: AbortSignal } = {},
+): Promise<SearchResponse> {
+  const params = new URLSearchParams({ q: query });
+  if (options.limit !== undefined) params.set("limit", String(options.limit));
+  const response = await request(`/search?${params}`, { signal: options.signal });
+  return (await response.json()) as SearchResponse;
+}
+
+/**
+ * Where to open a file's saved original.
+ *
+ * A plain URL rather than a fetch, because the point is to hand it to the
+ * browser: a PDF opens in its viewer, and the `#page=N` fragment lands on the
+ * cited page. Pageless formats get no fragment rather than a made-up one.
+ */
+export function sourceUrl(fileId: string, pageNumber: number | null = null): string {
+  const base = `${BASE_URL}/files/${encodeURIComponent(fileId)}/source`;
+  return pageNumber === null ? base : `${base}#page=${pageNumber}`;
+}
+
 /** Every file, newest first. */
 export async function listFiles(signal?: AbortSignal): Promise<StoredFile[]> {
   const response = await request("/files", { signal });

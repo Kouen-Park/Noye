@@ -1636,12 +1636,18 @@ Page 12
 
 Features:
 
--   [ ] Search input
--   [ ] Relevant snippets
--   [ ] File names
--   [ ] Page numbers
+-   [x] Search input
+-   [x] Relevant snippets
+-   [x] File names
+-   [x] Page numbers
 -   [ ] Similarity scores if useful
--   [ ] Open source reference
+-   [x] Open source reference
+
+The score is returned by the API but deliberately not displayed, so that item
+stays unchecked rather than being claimed. "If useful" has not been established:
+similarity is model-dependent, and until a threshold is calibrated on real
+documents a bare 0.37 invites the reader to interpret a number nobody can
+explain. Revisit it with evidence, not by adding the field.
 
 This is useful both as a user feature and as a debugging tool for RAG
 quality.
@@ -1717,6 +1723,75 @@ actually implemented and verified. Correct the older README phase labels
 when the Search page lands: this plan's Phase 3 is Search, Phase 4 is Chat.
 
 ------------------------------------------------------------------------
+
+## 11.4 Implemented
+
+Built across three branches as planned: `feat/search-api`, then
+`feat/source-reference`, then `feat/search-ui`.
+
+### The API searches only finished sources
+
+`GET /search?q=…&limit=…` is thin over the existing retrieval service, adding the
+two things retrieval leaves out on purpose: the human-readable file name, joined
+from SQLite, and a restriction to `READY` files.
+
+The restriction is the substantive behaviour. A file mid-ingestion has some of its
+passages in the index and not others, and a `FAILED` one may have none; presenting
+either as a result would show a partial document without saying so.
+
+`searched_files` is on the response because "nothing is indexed yet" and "your
+query matched nothing" need different words on screen, and an empty array cannot
+tell them apart. An empty library returns before embedding anything. The limit is
+bounded at 20 because it is passed straight to Qdrant.
+
+### The source route takes an id, never a path
+
+`GET /files/{id}/source` serves the saved original. The path comes from the
+database row, and the resolved path is re-checked against the sources directory
+anyway — a row pointing elsewhere would mean a tampered database, and serving
+whatever it pointed at would turn an id into an arbitrary file read.
+
+PDFs go out inline with their own media type so the browser's viewer renders them
+and the client can append `#page=N`. Markdown and text are served as `text/plain`,
+not `text/markdown`, which browsers download instead of displaying — a source you
+cannot look at is not a source reference.
+
+### The page keeps the query in the URL
+
+Submitting navigates rather than fetching, so Back returns to the previous search,
+a link can be copied, and a reload reproduces the results.
+
+Four outcomes are kept distinct: nothing indexed yet (with a route to the
+library), no matches (reporting how many files were searched), searching, and
+backend unreachable. One blank results area would have conflated them.
+
+Two React 19 constraints shaped the structure by rejecting the obvious code.
+Syncing URL to state in an effect is refused by `set-state-in-effect`, so the
+query is derived at render time; the form's field follows the URL by being
+remounted on a `key` instead. Separately, `useSearchParams` fails the BUILD
+without a Suspense boundary, so the part reading the URL is its own component —
+which means the prerendered HTML is only a fallback, and a hydration failure
+leaves this page blank rather than partly useful.
+
+### Verified
+
+-   Backend: 300+ tests. Live search returned page 18 at 0.652 for "how do I
+    limit and skip rows" against an indexed 24-page PDF, versus 0.370 for an
+    unrelated query — so ranking is meaningful, not merely responsive.
+-   The source route returned the PDF byte-identical to the file on disk, inline,
+    named as the user knows it rather than the `{id}__{name}` form on disk.
+-   Frontend: 61 tests, plus `tsc`, `eslint` and a production build.
+-   The project owner confirmed the page in a browser against a running backend.
+
+### Not verified
+
+-   No screenshot or automated browser check. That a PDF lands on the cited page
+    from `#page=N`, the 390px layout, both colour schemes, and Back/Forward
+    navigation were confirmed by a person, not by a test.
+-   No relevance threshold is calibrated; see the note on similarity scores above.
+-   Range requests are not handled on the source route, so a viewer seeking
+    within a large PDF fetches the whole file. Largest tested: 2.1 MB.
+
 
 # 12. Phase 4 --- Chat
 
