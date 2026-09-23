@@ -23,7 +23,7 @@ import {
 
 const NAV = [
   { label: "Library", Icon: ShelfIcon, href: "/library", soon: false },
-  { label: "Search", Icon: SearchIcon, href: "/search", soon: true },
+  { label: "Search", Icon: SearchIcon, href: "/search", soon: false },
   { label: "Chat", Icon: ChatIcon, href: "/chat", soon: true },
   { label: "Documents", Icon: DocumentIcon, href: "/documents", soon: true },
 ] as const;
