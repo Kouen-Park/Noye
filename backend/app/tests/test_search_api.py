@@ -53,10 +53,13 @@ def add_file(
     name: str,
     status: FileStatus = FileStatus.READY,
     file_type: FileType = FileType.PDF,
+    embedding_model: str | None = None,
 ) -> str:
     record = file_store.create_file(
         db, name=name, file_type=file_type, path=f"/tmp/{name}", size=1024
     )
+    if embedding_model is not None:
+        file_store.set_embedding_model(db, record.id, embedding_model)
     file_store.set_status(
         db, record.id, status, error="boom" if status is FileStatus.FAILED else None
     )
@@ -150,6 +153,40 @@ def test_only_ready_files_are_searched(client, db, monkeypatch) -> None:
 
     assert captured["file_ids"] == [ready]
     assert body["searched_files"] == 1
+
+
+def test_a_file_from_a_superseded_embedding_model_is_not_searched(
+    client, db, monkeypatch
+) -> None:
+    """READY is necessary but not sufficient.
+
+    A cosine score between two embedding spaces is meaningless, so including such a
+    file would rank confidently and wrongly — and a plausible passage list is exactly
+    what a working search looks like, so the user could not tell.
+    """
+    current = add_file(db, name="current.pdf", embedding_model="embeddinggemma")
+    add_file(db, name="from-old-model.pdf", embedding_model="nomic-embed-text")
+    captured: dict = {}
+    stub_search(monkeypatch, [hit(current)], captured)
+
+    body = client.get("/search", params={"q": "x"}).json()
+
+    assert captured["file_ids"] == [current]
+    assert body["searched_files"] == 1
+
+
+def test_a_file_with_no_recorded_model_is_still_searched(client, db, monkeypatch) -> None:
+    """NULL means unknown, not mismatched.
+
+    Excluding it would make an existing library unsearchable on upgrade alone.
+    """
+    older = add_file(db, name="indexed-before-noye-recorded-it.pdf")
+    captured: dict = {}
+    stub_search(monkeypatch, [hit(older)], captured)
+
+    client.get("/search", params={"q": "x"})
+
+    assert captured["file_ids"] == [older]
 
 
 def test_an_empty_library_returns_no_results_without_searching(client, db, monkeypatch) -> None:
