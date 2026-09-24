@@ -23,11 +23,11 @@ from pydantic import BaseModel, Field
 from app.api.deps import get_db
 from app.db import conversations as conversation_store
 from app.db import documents as document_store
+from app.logging_config import get_logger
 from app.models.conversations import Role
 from app.models.documents import Document
 from app.services.documents import draft_document
 from app.services.generation import GenerationError
-from app.logging_config import get_logger
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -61,7 +61,7 @@ class DocumentOut(BaseModel):
     updated_at: str
 
     @classmethod
-    def of(cls, document: Document) -> "DocumentOut":
+    def of(cls, document: Document) -> DocumentOut:
         return cls(
             id=document.id,
             title=document.title,
@@ -97,7 +97,7 @@ class DocumentSummary(BaseModel):
     updated_at: str
 
     @classmethod
-    def of(cls, document: Document) -> "DocumentSummary":
+    def of(cls, document: Document) -> DocumentSummary:
         collapsed = " ".join(document.content.split())
         return cls(
             id=document.id,

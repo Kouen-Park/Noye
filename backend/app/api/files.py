@@ -27,8 +27,13 @@ from app.db.database import connect, init_schema
 from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
 from app.services.ingestion import (
-    AlreadyIngesting, cancel_ingestion, cancel_orphaned_file, ingest_file, release_file,
-    reserve_delete, reserve_ingestion,
+    AlreadyIngesting,
+    cancel_ingestion,
+    cancel_orphaned_file,
+    ingest_file,
+    release_file,
+    reserve_delete,
+    reserve_ingestion,
 )
 
 router = APIRouter(prefix="/files", tags=["files"])
@@ -53,7 +58,7 @@ class FileOut(BaseModel):
     updated_at: str
 
     @classmethod
-    def of(cls, record: File) -> "FileOut":
+    def of(cls, record: File) -> FileOut:
         return cls(
             id=record.id,
             name=record.name,
@@ -331,7 +336,10 @@ def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     except AlreadyIngesting as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="This file is being processed. Cancel it and wait for processing to stop before removing it.",
+            detail=(
+                "This file is being processed. Cancel it and wait for "
+                "processing to stop before removing it."
+            ),
         ) from exc
     try:
         try:

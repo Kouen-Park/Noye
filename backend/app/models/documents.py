@@ -13,7 +13,7 @@ the file it names — and a second identical type would only let the two drift.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.conversations import MessageCitation
 
@@ -25,7 +25,7 @@ UNTITLED = "Untitled document"
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 @dataclass

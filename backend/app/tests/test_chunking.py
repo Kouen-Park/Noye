@@ -185,7 +185,9 @@ def test_file_id_is_attached_to_every_chunk() -> None:
 
 
 def test_korean_text_is_chunked_without_losing_characters() -> None:
-    korean = "다익스트라 알고리즘은 방문하지 않은 정점 중 거리 추정값이 가장 작은 정점을 선택한다. " * 30
+    korean = (
+        "다익스트라 알고리즘은 방문하지 않은 정점 중 거리 추정값이 가장 작은 정점을 선택한다. " * 30
+    )
 
     chunks = chunk_pages([page(7, korean)], file_id=FILE_ID)
 

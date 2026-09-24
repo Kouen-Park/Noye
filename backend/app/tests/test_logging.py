@@ -139,8 +139,8 @@ class TestNoUserContentIsLogged:
 
     def test_ingestion_logs_no_document_text(self, captured, tmp_path, monkeypatch):
         """The whole ingestion pipeline, over a file whose text is a sentinel."""
-        from app.db.database import connect, init_schema
         from app.db import files as file_store
+        from app.db.database import connect, init_schema
         from app.models.files import FileType
         from app.services import ingestion
 
@@ -232,8 +232,8 @@ class TestReadability:
         For Markdown the number is meaningless, which is a different and much less
         alarming thing.
         """
-        from app.db.database import connect, init_schema
         from app.db import files as file_store
+        from app.db.database import connect, init_schema
         from app.models.files import FileType
         from app.services import ingestion
 

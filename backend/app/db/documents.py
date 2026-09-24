@@ -16,7 +16,7 @@ from __future__ import annotations
 import sqlite3
 import uuid
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.conversations import MessageCitation
 from app.models.documents import Document, derive_title
@@ -31,7 +31,7 @@ def new_id() -> str:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _to_document(row: sqlite3.Row) -> Document:

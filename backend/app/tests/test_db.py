@@ -109,7 +109,10 @@ def test_init_schema_is_idempotent(db: sqlite3.Connection) -> None:
     init_schema(db)
     init_schema(db)
 
-    tables = {row["name"] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    tables = {
+        row["name"]
+        for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    }
     assert {"files", "chunks"} <= tables
 
 

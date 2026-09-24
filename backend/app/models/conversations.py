@@ -8,7 +8,7 @@ code-design rules ask for the simplest thing that works. Persistence lives in
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 #: A title is derived from the first question rather than asked for, and a long
@@ -30,7 +30,7 @@ class Role(str, Enum):
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 @dataclass(frozen=True)

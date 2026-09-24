@@ -130,7 +130,12 @@ def index_chunks(
 
     settings = get_settings()
     expected = settings.qdrant_vector_size
-    for chunk, vector in zip(chunks, vectors):
+    # strict=True rather than strict=False. The length guard above already raises,
+    # so neither can truncate today — but the guard is fifteen lines away, and
+    # strict=True states the invariant where it is relied on. Truncating silently
+    # here would write fewer points than SQLite records chunks, which is one of the
+    # index-staleness cases Phase 6 has to detect; better that it cannot happen.
+    for chunk, vector in zip(chunks, vectors, strict=True):
         if len(vector) != expected:
             raise ValueError(
                 f"Chunk {chunk.chunk_index} of file {chunk.file_id} has "
@@ -151,7 +156,7 @@ def index_chunks(
                 CONTENT: chunk.content,
             },
         )
-        for chunk, vector in zip(chunks, vectors)
+        for chunk, vector in zip(chunks, vectors, strict=True)
     ]
 
     try:
