@@ -258,6 +258,33 @@ def upload_file(
             ),
         )
 
+    # A duplicate is the same BYTES, not the same name. The same name in two
+    # folders is legitimately two files, and a renamed copy is still the one the
+    # user already has — which is why this compares the hash computed above.
+    #
+    # Refused rather than accepted-and-linked. Pointing two rows at one blob would
+    # save disk but make deletion ambiguous: removing one file would have to know
+    # the other still needs the bytes. And the user's real question is "do I
+    # already have this?", whose useful answer is a name they recognise.
+    #
+    # A pre-Phase-6 file has content_hash NULL and so is never matched. That is
+    # unavoidable — its bytes were never hashed — and the failure is the safe
+    # direction: a missed duplicate, not a wrongly refused upload.
+    existing = file_store.find_by_content_hash(db, content_hash)
+    if existing is not None:
+        target.unlink(missing_ok=True)
+        logger.info(
+            "Upload refused, duplicate of file=%s", existing.id
+        )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"You already have this file, as \u201c{existing.name}\u201d. "
+                "Delete that one first if you want to replace it, or re-index it "
+                "from the library if it needs another attempt."
+            ),
+        )
+
     reserve_ingestion(file_id)
     try:
         record = file_store.create_file(
