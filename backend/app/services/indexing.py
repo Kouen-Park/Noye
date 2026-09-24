@@ -84,6 +84,42 @@ def ensure_collection(client: QdrantClient | None = None) -> None:
         ) from exc
 
 
+def collection_vector_size(client: QdrantClient | None = None) -> int | None:
+    """The dimension the live collection was created with, or None if there is none.
+
+    Nothing else reads this, and that is the gap it exists to close.
+    ``ensure_collection`` deliberately does not touch a collection that already
+    exists, so changing ``qdrant_vector_size`` — which happens whenever the embedding
+    model changes to one with a different output width — leaves a collection
+    configured for the old dimension. ``index_chunks`` validates each vector against
+    the *setting*, not against the collection, so it passes its own check and Qdrant
+    rejects the write.
+
+    Returns None rather than raising when the collection is absent: that is an
+    ordinary state before the first ingestion, not an error.
+
+    Raises:
+        IndexingError: Qdrant could not be reached.
+    """
+    settings = get_settings()
+    client = client or get_client()
+
+    try:
+        if not client.collection_exists(settings.qdrant_collection):
+            return None
+        info = client.get_collection(settings.qdrant_collection)
+    except (ApiException, OSError, ValueError) as exc:
+        raise IndexingError(
+            f"Could not read Qdrant collection '{settings.qdrant_collection}': {exc}"
+        ) from exc
+
+    params = info.config.params.vectors
+    # A collection can carry named vectors, in which case `vectors` is a mapping.
+    # Noye only ever creates the unnamed form, so anything else is not a collection
+    # this code made and its width is not ours to interpret.
+    return getattr(params, "size", None)
+
+
 def recreate_collection(client: QdrantClient | None = None) -> None:
     """Drop the collection and create it empty.
 
