@@ -59,6 +59,12 @@ class Settings(BaseSettings):
     #: assert on handler output rather than on a file.
     log_to_file: bool = True
 
+    #: Upload ceiling in megabytes. This is a local single-user application, so the
+    #: risk is not abuse but accident — dragging a video into the drop zone. The
+    #: limit's job is to fail fast and leave nothing on disk, rather than to defend
+    #: against anyone. 100 MB clears a large scanned textbook.
+    max_upload_mb: int = 100
+
     @property
     def allowed_origins(self) -> list[str]:
         """The CORS origin list, parsed from the comma-separated setting."""

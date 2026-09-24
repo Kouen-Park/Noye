@@ -98,6 +98,18 @@ class File:
     error: str | None = None
     page_count: int | None = None
     chunk_count: int = 0
+    #: sha256 of the file's bytes, computed while the upload was written. Identifies
+    #: a duplicate — not the filename, since the same name in two folders is
+    #: legitimately two files and a renamed copy is still the same file — and
+    #: detects a source edited on disk after it was indexed.
+    #:
+    #: None for a file indexed before Noye recorded it. That means *unknown*, not
+    #: *unchanged*: reading it as a mismatch would make an existing library look
+    #: broken on upgrade alone.
+    content_hash: str | None = None
+    #: The embedding model whose vectors are in the index for this file. Written by
+    #: ingestion, not by upload, because that is when the vectors are made.
+    embedding_model: str | None = None
     created_at: datetime = field(default_factory=_now)
     updated_at: datetime = field(default_factory=_now)
 

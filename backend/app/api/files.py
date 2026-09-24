@@ -12,7 +12,7 @@ status code. The work lives in `app.services.ingestion`.
 
 from __future__ import annotations
 
-import shutil
+import hashlib
 import sqlite3
 from pathlib import Path
 
@@ -21,9 +21,10 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.api.deps import get_db
-from app.config import sources_dir
+from app.config import get_settings, sources_dir
 from app.db import files as file_store
 from app.db.database import connect, init_schema
+from app.logging_config import get_logger
 from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
 from app.services.ingestion import (
@@ -37,6 +38,80 @@ from app.services.ingestion import (
 )
 
 router = APIRouter(prefix="/files", tags=["files"])
+
+logger = get_logger("api.files")
+
+#: How much is read per iteration while saving an upload. Large enough that a
+#: 100 MB file is a few hundred reads rather than tens of thousands, small enough
+#: that the limit check happens long before a runaway upload matters.
+_COPY_CHUNK = 1024 * 1024
+
+#: PDF's magic bytes. A PDF that does not start with these is not a PDF, whatever
+#: its name says.
+_PDF_MAGIC = b"%PDF-"
+
+
+class UploadTooLarge(Exception):
+    """The upload passed the configured limit and was abandoned part-written."""
+
+    def __init__(self, limit_bytes: int) -> None:
+        self.limit_bytes = limit_bytes
+        super().__init__(f"Upload exceeds the {limit_bytes} byte limit")
+
+
+def _starts_with(path: Path, prefix: bytes) -> bool:
+    """Whether a file's first bytes are ``prefix``.
+
+    Read from the saved file rather than kept from the copy: the first chunk is
+    already gone by then, and a few bytes off a file just written is a page cache
+    hit, not disk I/O.
+    """
+    try:
+        with path.open("rb") as handle:
+            return handle.read(len(prefix)) == prefix
+    except OSError:
+        # If it cannot be read back, let extraction produce the error — it says
+        # more about why than a guess here could.
+        return True
+
+
+def _save_upload(source, target: Path, *, limit_bytes: int) -> tuple[int, str]:
+    """Stream an upload to ``target``, returning its size and sha256.
+
+    Two things happen in this one pass, both deliberately:
+
+    **The limit is enforced while writing, not after.** Checking
+    ``target.stat().st_size`` once the copy finished — which is what this replaced
+    — means a 4 GB file is already on the disk by the time it is rejected. On a
+    machine whose whole point is holding the user's own documents, filling the disk
+    to then say "too large" is the failure the limit exists to prevent. So the copy
+    stops at the first chunk that crosses the limit and the partial file is removed.
+
+    **The hash is computed from the bytes already in hand.** Re-reading a 100 MB PDF
+    to hash it afterwards would double the I/O for a value this pass could produce
+    for free. The hash is what identifies a duplicate and what detects a source
+    edited on disk after indexing — see the ``content_hash`` column.
+
+    Raises:
+        UploadTooLarge: the limit was crossed; nothing is left on disk.
+        OSError: the write failed.
+    """
+    digest = hashlib.sha256()
+    size = 0
+
+    try:
+        with target.open("wb") as destination:
+            while chunk := source.read(_COPY_CHUNK):
+                size += len(chunk)
+                if size > limit_bytes:
+                    raise UploadTooLarge(limit_bytes)
+                digest.update(chunk)
+                destination.write(chunk)
+    except BaseException:
+        target.unlink(missing_ok=True)
+        raise
+
+    return size, digest.hexdigest()
 
 
 class FileOut(BaseModel):
@@ -132,23 +207,55 @@ def upload_file(
 
     file_id = file_store.new_file_id()
     target = stored_path(file_id, file.filename)
+    settings = get_settings()
+    limit_bytes = settings.max_upload_mb * 1024 * 1024
 
     try:
-        with target.open("wb") as destination:
-            shutil.copyfileobj(file.file, destination)
+        size, content_hash = _save_upload(file.file, target, limit_bytes=limit_bytes)
+    except UploadTooLarge:
+        logger.info(
+            "Upload refused, over limit name=%s limit_mb=%d",
+            Path(file.filename).name,
+            settings.max_upload_mb,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail=(
+                f"That file is larger than the {settings.max_upload_mb} MB limit. "
+                "Split it, or raise MAX_UPLOAD_MB if you meant to index something "
+                "this big."
+            ),
+        ) from None
     except OSError as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Could not save the upload: {exc}",
         ) from exc
 
-    size = target.stat().st_size
     if size == 0:
         # Nothing to extract, and an empty row would sit in the library as a
         # file that can never become READY.
         target.unlink(missing_ok=True)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="The uploaded file is empty"
+        )
+
+    # A renamed file is the commonest corrupt upload there is, and the cheapest to
+    # catch: extraction already fails on it with a clear reason, but only after the
+    # file is stored and a row exists, leaving the user a FAILED entry to clean up.
+    # Refusing it here makes it an error they can act on instead.
+    #
+    # Only PDF is checked. Markdown and text have no magic bytes — anything that
+    # decodes as UTF-8 is legitimately text — and extraction already rejects what
+    # does not decode, with a message that says how to fix it.
+    if file_type is FileType.PDF and not _starts_with(target, _PDF_MAGIC):
+        target.unlink(missing_ok=True)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"{Path(file.filename).name} is named as a PDF but its contents are "
+                "not one. If it was renamed, give it back its real extension."
+            ),
         )
 
     reserve_ingestion(file_id)
@@ -160,6 +267,7 @@ def upload_file(
             path=str(target),
             size=size,
             file_id=file_id,
+            content_hash=content_hash,
         )
         background.add_task(_ingest_in_background, record.id)
         return FileOut.of(record)

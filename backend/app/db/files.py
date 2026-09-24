@@ -47,6 +47,8 @@ def _to_file(row: sqlite3.Row) -> File:
         error=row["error"],
         page_count=row["page_count"],
         chunk_count=row["chunk_count"],
+        content_hash=row["content_hash"],
+        embedding_model=row["embedding_model"],
         created_at=datetime.fromisoformat(row["created_at"]),
         updated_at=datetime.fromisoformat(row["updated_at"]),
     )
@@ -74,21 +76,29 @@ def create_file(
     path: str,
     size: int,
     file_id: str | None = None,
+    content_hash: str | None = None,
 ) -> File:
-    """Insert a file in ``UPLOADING`` state and return it."""
+    """Insert a file in ``UPLOADING`` state and return it.
+
+    ``content_hash`` is optional so a caller that has not computed one — a
+    test, or a future importer — is not forced to invent a value. Upload always
+    passes it, since it has the bytes in hand.
+    """
     record = File(
         id=file_id or new_file_id(),
         name=name,
         file_type=file_type,
         path=path,
         size=size,
+        content_hash=content_hash,
     )
     with connection:
         connection.execute(
             """
             INSERT INTO files (id, name, file_type, path, size, status, error,
-                               page_count, chunk_count, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, 0, ?, ?)
+                               page_count, chunk_count, content_hash,
+                               embedding_model, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, 0, ?, NULL, ?, ?)
             """,
             (
                 record.id,
@@ -97,6 +107,7 @@ def create_file(
                 record.path,
                 record.size,
                 record.status.value,
+                record.content_hash,
                 record.created_at.isoformat(),
                 record.updated_at.isoformat(),
             ),
@@ -153,6 +164,33 @@ def set_status(
         cursor = connection.execute(
             "UPDATE files SET status = ?, error = ?, updated_at = ? WHERE id = ?",
             (status.value, stored_error, _now_iso(), file_id),
+        )
+    if cursor.rowcount == 0:
+        raise FileRecordNotFound(f"No file with id {file_id}")
+    return get_file(connection, file_id)
+
+
+def set_embedding_model(
+    connection: sqlite3.Connection, file_id: str, model: str | None
+) -> File:
+    """Record which embedding model produced this file's vectors.
+
+    Its own function rather than a parameter on ``set_counts``, because it is
+    written at a different moment and means something different: the counts are for
+    display, and this is what search correctness depends on. A cosine score between
+    two embedding spaces is meaningless, so a ranking that mixes them is confidently
+    wrong — which is worse than empty, because the wrongness is invisible.
+
+    ``None`` clears it, which is what a failed or cleared index needs: claiming a
+    model for vectors that are not there would be the same lie in reverse.
+
+    Raises:
+        FileRecordNotFound: no such id.
+    """
+    with connection:
+        cursor = connection.execute(
+            "UPDATE files SET embedding_model = ?, updated_at = ? WHERE id = ?",
+            (model, _now_iso(), file_id),
         )
     if cursor.rowcount == 0:
         raise FileRecordNotFound(f"No file with id {file_id}")
