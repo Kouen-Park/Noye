@@ -1,0 +1,60 @@
+[tool.ruff]
+# The codebase's own style, measured rather than chosen: p95 is 81 characters and
+# p99 is 92. Ruff's default 88 would have flagged 168 lines that are fine, which
+# is how a linter gets switched off.
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+# Chosen to catch BUGS, not to enforce taste. The branch exists because a
+# NameError shipped in a log line that only ran on a failure path, and F821 finds
+# exactly that.
+#
+#   E, W  pycodestyle       — real syntax-adjacent problems plus line length
+#   F     pyflakes          — undefined names, unused imports. The load-bearing one
+#   I     isort             — import order, mechanical and diff-reducing
+#   B     flake8-bugbear    — mutable defaults, silent zip truncation, and friends
+#   BLE   blind-except      — the codebase already carries `noqa: BLE001`, written
+#                             before any linter existed to read them. Selecting it
+#                             makes those comments mean something again
+#   UP    pyupgrade         — this targets one Python version, so old idioms are
+#                             just noise
+#   RUF   ruff's own        — unused noqa, unsorted __all__
+select = ["E", "W", "F", "I", "B", "BLE", "UP", "RUF"]
+
+# Deliberately NOT selected, with reasons, so the next person does not have to
+# re-derive them:
+#
+#   N818  would rename ConversationNotFound to ConversationNotFoundError and four
+#         others. The `NotFound` names are a choice this codebase made and they
+#         read better at the call site; renaming five exceptions across every
+#         caller is a refactor, not linting.
+#   TRY, EM, ARG, SIM  71, 72, 41 and 19 findings respectively, essentially all of
+#         them style preferences about how to phrase a raise or name an unused
+#         argument. Enabling them here would bury the rules above in a 200-line
+#         diff. Worth revisiting deliberately, as its own decision.
+
+ignore = [
+    # FastAPI's dependency injection IS a function call in an argument default:
+    # `db: Connection = Depends(get_db)`. The framework is built on the pattern
+    # this rule exists to prevent, so it fires on every single route.
+    "B008",
+    # chunking.py matches CJK sentence endings, which need the fullwidth ？ and ！.
+    # They are not typos; they are the characters being matched.
+    "RUF001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# A test may bind a value only to show it exists, and may import a symbol purely
+# to assert the import works.
+"app/tests/*" = ["F401", "F811"]
+# The drafting prompt is a triple-quoted string sent verbatim to the model, so the
+# over-long line is inside it and there is nowhere to put a `noqa`. Reflowing it
+# would edit the prompt, and this project treats that text as load-bearing — the
+# rule about never writing page references lives in it. The cost of this exemption
+# is that a genuinely long line of *code* in this file goes unflagged; the file is
+# 100 lines and almost all prompt, so that is a small surface.
+"app/services/documents.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
