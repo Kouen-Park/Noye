@@ -445,11 +445,13 @@ Example Noye use cases:
 -   [x] Page citations
 -   [x] Conversation history — stored and re-readable; the model does not
     receive earlier turns (see §12.6)
--   [ ] Generate Markdown documents from answers/retrieved knowledge
--   [ ] Edit generated Markdown
--   [ ] Preview Markdown
--   [ ] Export Markdown
--   [ ] Export PDF
+-   [x] Generate Markdown documents from answers/retrieved knowledge
+-   [x] Edit generated Markdown
+-   [x] Preview Markdown
+-   [x] Export Markdown
+-   [x] Export PDF — via the browser's print path; the print stylesheet is
+    written and its opt-in attribute is tested, but nobody has inspected an
+    actual printed page (see §13.6)
 -   [x] Visible processing states
 -   [x] Delete files and associated vectors
 -   [x] Basic error handling
@@ -2045,15 +2047,16 @@ Route:
 
 Features:
 
--   [ ] Create document
--   [ ] Generate from chat answer
--   [ ] Markdown editor
--   [ ] Markdown preview
--   [ ] Save
--   [ ] Rename
--   [ ] Delete
--   [ ] Export `.md`
--   [ ] Export PDF
+-   [x] Create document
+-   [x] Generate from chat answer
+-   [x] Markdown editor
+-   [x] Markdown preview
+-   [x] Save — manual, with an explicit state, `Cmd/Ctrl-S`, and an unload
+    warning while edits are unsaved. Autosave was rejected; see §13.6
+-   [x] Rename — the title field, saved with the body
+-   [x] Delete
+-   [x] Export `.md`
+-   [x] Export PDF — implemented, output not yet inspected (§13.6)
 
 Example use:
 
@@ -2155,6 +2158,60 @@ someone wrote. Generating again creates a new document.
     existing mocked-Ollama approach. Frontend lint, TypeScript, tests and
     production build pass. Record any browser check that could not run under
     `Not validated`.
+
+
+## 13.6 What was built, and the decisions taken along the way
+
+Three branches, merged as #24 (persistence), #25 (API) and #26 (UI). Frontend
+tests went from 96 to 115; the backend suite collects 420, the documents tests
+among them.
+
+**One acceptance criterion in §13.5 is not met.** "PDF export produces the
+document, not the application chrome around it" is unverified: the print
+stylesheet exists and a test asserts the preview carries the `data-print`
+attribute it depends on, but no printed page has been inspected, because Chromium
+cannot launch at this machine's available memory. The checkboxes above say so
+rather than claiming it. This is the cost §13.2 accepted when it chose the
+browser's print path — weak control over output — and it should be confirmed by
+eye before Phase 6.
+
+**The print stylesheet is a whitelist.** Only `data-print="document"` and its
+ancestors survive printing. A blacklist would need every future control
+remembering, and its failure mode is a stray sidebar inside someone's PDF; a
+whitelist fails as a missing element instead, which is noticed at once.
+
+**Autosave was rejected.** A local model's output is long and edits to it are
+wholesale rather than incremental, so an autosave firing mid-thought would make
+undo the user's problem. What autosave usually protects against — losing work by
+navigating away — is handled by a `beforeunload` warning, which costs nothing.
+
+**PDF export is disabled outside the Preview tab.** Printing the Write tab would
+put raw Markdown into the PDF. The control explains why rather than silently
+producing a bad export.
+
+**The `react-markdown` decision from §13.2 held, and is now tested rather than
+asserted.** A test feeds `<script>` and `<img onerror>` into the preview and
+checks that neither element reaches the DOM, and a second checks raw HTML appears
+as text rather than vanishing — silently dropping a line would leave someone
+hunting for it.
+
+**A test-infrastructure change came out of the UI work.** Adding `useRouter` to
+the message bubble broke three unrelated chat tests with "invariant expected app
+router to be mounted". `next/navigation` is now mocked in the test setup rather
+than per file, so the next component that navigates does not repeat it.
+
+**Three defects were caught by checking rather than by a test failing**, which is
+worth noting because none of them would have failed a test. A string replacement
+inserting the print stylesheet orphaned the `prefers-reduced-motion` block's body.
+Seven `data-print-hide` attributes were dead code, naming a mechanism the
+stylesheet does not use. And one existing chat test asserted "no button at all" as
+a proxy for "no passages panel", which the new action quietly made false — a
+proxy assertion outlives the assumption it was standing in for.
+
+**§12.6 is now more visible, not less.** Phase 5 makes chat the route into
+documents, so the fact that the model does not receive earlier conversation turns
+is easier to run into. Its cheapest option — rewriting a follow-up question
+before retrieval — is worth taking before or alongside Phase 6.
 
 
 # 14. Phase 6 --- Reliability and Quality

@@ -164,10 +164,10 @@ noye/
 
 ### Phase 5 — Document Workspace
 
-- [ ] Generate documents from retrieved knowledge
-- [ ] Markdown editor and preview
-- [ ] Markdown export
-- [ ] PDF export
+- [x] Generate documents from retrieved knowledge
+- [x] Markdown editor and preview
+- [x] Markdown export
+- [x] PDF export *(via your browser's print dialog)*
 
 ### Phase 6 — Reliability and Quality
 
@@ -197,7 +197,9 @@ noye/
 
 ### Backend
 
-The backend currently provides a minimal FastAPI health endpoint.
+The backend serves ingestion, search, chat and documents over the routes listed
+below. Everything runs against local services — Qdrant and Ollama — so both have
+to be up for anything beyond `/health`.
 
 ```bash
 cd backend
@@ -240,6 +242,13 @@ Available endpoints:
 | `GET` | `/chat/conversations/{id}` | Read one conversation with its messages |
 | `PATCH` | `/chat/conversations/{id}` | Rename a conversation |
 | `DELETE` | `/chat/conversations/{id}` | Delete a conversation; documents are untouched |
+| `GET` | `/documents` | List documents, most recently edited first |
+| `POST` | `/documents` | Create an empty document, or one from text you have |
+| `POST` | `/documents/generate` | Draft a document from a stored answer and an instruction |
+| `GET` | `/documents/{id}` | Read one document with its citations |
+| `PATCH` | `/documents/{id}` | Save a title or body edit |
+| `DELETE` | `/documents/{id}` | Delete a document |
+| `GET` | `/documents/{id}/export.md` | Download the stored Markdown |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
@@ -271,12 +280,28 @@ and the components' accessible surface — the label/input association on the dr
 zone, the status word on every pill, and the stage exposed as a real
 progressbar — because those are the parts that fail silently when they break.
 
-Three surfaces are built. The **library** takes files — drag them in or pick them,
+Four surfaces are built. The **library** takes files — drag them in or pick them,
 watch each move through the four ingestion stages, retry one that failed, stop one
 mid-flight, and remove what you no longer want indexed. **Search** takes a
 question in plain language and returns the passages that match it by meaning, each
 naming its file and page, with a link that opens the original at that page.
 **Chat** answers a question from those files and keeps the conversation.
+**Documents** is where an answer becomes yours: press *Create document* on an
+answer, say what it should become, and edit the draft as Markdown with a rendered
+preview beside it.
+
+A document is stored text, not a cached generation — nothing regenerates behind
+you, and the citations shown describe the first draft rather than what you have
+written since. Saving is deliberate: there is a Save button and `Cmd/Ctrl-S`, and
+the browser warns before you navigate away with unsaved edits. Autosave is
+deliberately absent, because edits to a generated draft tend to be wholesale
+rather than incremental and one firing mid-thought would make undo your problem.
+
+Markdown export downloads exactly what is stored. PDF export uses your browser's
+own print dialog — choose *Save as PDF* — so Noye needs no extra system libraries
+to produce one. A print stylesheet hides the application so the page that reaches
+the PDF is the document; it is available from the Preview tab, since printing the
+raw Markdown you are editing is not what anyone wants on paper.
 
 Search and chat cover files that have finished indexing, so a half-processed
 document is never presented as a whole one. The query or open conversation is kept
