@@ -242,7 +242,7 @@ Available endpoints:
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
-| `POST` | `/files` | Upload a file; ingestion runs in the background |
+| `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
 | `POST` | `/files/{id}/reingest` | Retry or re-index the saved original; returns 202 |
