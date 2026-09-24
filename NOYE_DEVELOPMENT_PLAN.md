@@ -2216,38 +2216,215 @@ before retrieval — is worth taking before or alongside Phase 6.
 
 # 14. Phase 6 --- Reliability and Quality
 
-Once the complete workflow works, improve reliability.
+The workflow is complete: a file becomes searchable knowledge, an answer cites its
+sources, and a document outlives both. Phase 6 is about what happens when that
+workflow meets a library that has been used for a while --- a file that changed on
+disk, the same PDF uploaded twice, an embedding model swapped out, a Qdrant volume
+that was deleted. None of those are hypothetical; all of them are silent today.
 
-## File handling
+## 14.1 What the original checklist got wrong
 
+The lists below were written before Phases 2--5 existed, and several of their items
+were delivered on the way. They should be **verified and ticked, not built**:
+
+-   *Delete vectors when source is deleted* --- Phase 2. Deletion removes the
+    original, the metadata and the vectors.
+-   *File type validation* --- `FileType.from_filename` rejects an unknown
+    extension at upload with a 400, server-side. The frontend's `rejectionFor`
+    is a courtesy on top, not the enforcement.
+-   *Empty-document handling* --- upload deletes and rejects a zero-byte file
+    rather than leaving a row that can never become READY.
+-   *The whole UX group* --- empty, loading, error and processing states, source
+    display and keyboard usability were built across Phases 2--5 against
+    `DESIGN.md`'s floor, on all four surfaces.
+
+What genuinely remains is narrower and sharper than the list suggests: **size
+limits, duplicate detection, corrupt-file handling, the three kinds of index
+staleness, rebuilding on demand, and the whole of logging.**
+
+Two items carry over from earlier phases and belong here:
+
+-   **§12.6** --- the model still does not receive earlier conversation turns.
+    Phase 5 made chat the route into documents, so this is now easier to run into.
+    Its cheapest option (rewrite a follow-up question before retrieval) is one
+    prompt and one model call.
+-   **§13.6** --- nobody has inspected a printed PDF. That check is two minutes
+    and could invalidate a claim already shipped in the README, so it should
+    happen **before** Phase 6 work starts rather than after.
+
+## 14.2 The schema problem that comes first
+
+Every phase so far only ever **added tables**, and `CREATE TABLE IF NOT EXISTS` is
+enough for that. Phase 6 is the first phase that must **add columns to an existing
+table**: `files` needs at least the embedding model that produced its vectors, and
+a content hash.
+
+There is no migration mechanism --- verified: nothing in `app/db/` contains
+`ALTER`, `user_version`, or anything resembling a migration. And the failure mode
+is silent, which is what makes it dangerous. Re-running a `CREATE TABLE IF NOT
+EXISTS` that now names a new column against a database where the table already
+exists is a **no-op**; the column does not appear. Confirmed empirically rather
+than assumed. A user with an existing `data/app.db` would therefore get code
+expecting a column that is not there, and the first query would fail at runtime
+rather than at startup.
+
+So the migration runner is branch one, and nothing else in Phase 6 can land before
+it.
+
+**Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
+in order at startup.** Not Alembic --- that is a second dependency, a config file
+and a migrations directory for what will be a handful of `ALTER TABLE` statements
+on a single-user local SQLite database, and Noye's claim is that it works without
+setup. Reconsider if the schema ever starts changing *shape* rather than growing.
+
+**The requirement that matters: a migration must never lose the user's data.**
+Original files are the source of truth and the vector index is rebuildable, but
+SQLite holds the things that are *not* derived --- conversations and documents,
+which are the user's own questions and writing. So migrations are additive only,
+and any step that would drop or rewrite a column takes a file copy of the database
+first.
+
+## 14.3 Four decisions to take up front
+
+**What "duplicate" means.** Not the filename: the same name in two folders is
+legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
+the bytes**, computed while the upload is being written, stored on the row.
+
+The choice to make is what a duplicate *does*. Accepting it and pointing two rows
+at one blob saves disk but makes deletion ambiguous --- deleting one file would
+have to know the other still needs the bytes. **Refuse it, with a 409 naming the
+existing file**, because the user's actual question is "do I already have this?"
+and the answer should be a name they recognise. The hash earns its place twice
+over: it also detects a source file that changed since it was indexed.
+
+**What "stale" means.** Three distinct failures are currently indistinguishable,
+and each needs a different remedy, so each has to be detected separately rather
+than collapsed into one flag:
+
+1.  The **source changed on disk** since it was indexed --- the stored hash no
+    longer matches the file. Remedy: re-ingest that one file.
+2.  The **embedding model changed** --- the vectors are from a different space.
+    Detectable cheaply by comparing the stored model name against the
+    configuration; no Qdrant call needed.
+3.  The **index lost points SQLite says exist** --- a dropped collection, a
+    deleted Docker volume. Needs an actual count comparison against Qdrant, so it
+    is the expensive check and should not run on every request.
+
+**What a model change should do.** Not silently re-embed: on this machine a
+re-index of a real library is minutes to hours of local inference, and the user
+should choose when to pay that. Detect it, say so plainly, and offer the rebuild.
+
+The rule that makes this a correctness issue rather than a tidiness one:
+**search and chat must never mix vectors from two embedding spaces.** A cosine
+score between them is meaningless, so the ranking would be confidently wrong ---
+which is worse than returning nothing, because nothing is visible and a bad
+ranking is not. A file whose vectors are from a superseded model therefore leaves
+the searchable set, with a stated reason, exactly as a file mid-ingestion already
+does.
+
+**What logging may and may not record.** There is none today --- zero
+`import logging` in the backend, verified. Two rules before any is added:
+
+-   **Never log file contents, a chunk, or a question's text.** This is a private
+    knowledge base whose whole claim is that it stays on the user's machine, and a
+    log file is the one place its contents would leak *outside* the files the user
+    chose to put there. A test should assert this rather than a comment asking for
+    it.
+-   **Log the pipeline's decisions and every failure's cause.** The ingestion
+    error already reaches SQLite for the UI; the log is for whoever is debugging,
+    so it carries what the UI deliberately withholds --- timings, stack traces,
+    which model answered, how many chunks, which Qdrant call failed.
+
+Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
+No new dependency, and structured enough to grep.
+
+## 14.4 Branch and PR sequence
+
+```text
+1. feat/schema-migrations      user_version runner; unblocks everything
+2. feat/backend-logging        independent, and makes 3-7 debuggable
+3. feat/upload-limits          size cap, content hash, corrupt files      (needs 1)
+4. feat/duplicate-detection    the 409 path and its wording               (needs 3)
+5. feat/index-integrity        the three staleness checks, /index/status   (needs 1)
+6. feat/rebuild-index          rebuild endpoint and action                (needs 5)
+7. feat/library-integrity-ui   the surface for all of it                  (needs 4,6)
+```
+
+Logging is second rather than last on purpose: every branch after it is easier to
+diagnose with it in place, and it is the one item with no dependency on the schema.
+
+`feat/rebuild-index` should reuse what already exists rather than adding a path ---
+`indexing.py` already carries a collection reset whose docstring names the
+rebuild-index command as its intended caller, and `embeddings.py` already refuses
+a vector whose dimension disagrees with the configuration.
+
+Not a branch, but Phase 6 work all the same: **threshold calibration and chunking
+parameters** need several real documents to measure against, which only now exists.
+Both were deferred from Phase 1 for exactly that reason.
+
+## 14.5 Acceptance and validation
+
+-   An existing `data/app.db` from before Phase 6 opens, gains its new columns, and
+    keeps every conversation, message and document. Tested against a real copied
+    database, not only a fresh one.
+-   Uploading the same file twice is refused the second time, naming the first ---
+    including when it has been renamed.
+-   A file edited on disk after indexing is reported as out of date, and
+    re-ingesting it makes the report go away.
+-   Changing `ollama_embedding_model` takes the affected files out of search and
+    chat with a stated reason, and never mixes their vectors with new ones.
+-   Deleting the Qdrant collection is detected and distinguished from the other two
+    staleness causes.
+-   A rebuild restores search to what it was, from `data/sources/` alone.
+-   A truncated or non-PDF-masquerading-as-PDF file fails with a reason the UI can
+    show, and leaves nothing behind.
+-   A test asserts no chunk text, file content or question reaches the log.
+-   Backend and frontend suites, lint, types and the production build pass. Record
+    any browser check that could not run under `Not validated`.
+
+## 14.6 Checklists
+
+### File handling
+
+-   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
+-   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
 -   [ ] File size validation
--   [ ] File type validation
 -   [ ] Duplicate detection
 -   [ ] Corrupt file handling
--   [ ] Empty-document handling
 
-## Index integrity
+### Index integrity
 
--   [ ] Delete vectors when source is deleted
--   [ ] Detect stale vectors
--   [ ] Rebuild index command
--   [ ] Handle embedding model changes
+-   [x] Delete vectors when source is deleted --- Phase 2
+-   [ ] Schema migration runner *(prerequisite; see §14.2)*
+-   [ ] Detect a changed source file
+-   [ ] Detect an embedding model change
+-   [ ] Detect an index that lost points
+-   [ ] Rebuild index on demand
 
-## UX
+### UX
 
--   [ ] Empty states
--   [ ] Loading states
--   [ ] Error states
--   [ ] Processing states
--   [ ] Clear source display
--   [ ] Keyboard usability
+-   [x] Empty states --- all four surfaces, Phases 2--5
+-   [x] Loading states --- all four surfaces, Phases 2--5
+-   [x] Error states --- all four surfaces, Phases 2--5
+-   [x] Processing states --- Phase 2
+-   [x] Clear source display --- Phases 3--4
+-   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
+-   [ ] Surface index integrity in the library
 
-## Logging
+### Logging
 
 -   [ ] Backend structured logging
 -   [ ] Processing errors
 -   [ ] Ollama errors
 -   [ ] Qdrant errors
+-   [ ] A test proving no user content is logged
+
+### Carried over
+
+-   [ ] Rewrite a follow-up question before retrieval (§12.6)
+-   [ ] Inspect a printed PDF (§13.6) --- do this first; it is two minutes
+-   [ ] Calibrate the similarity threshold (deferred from Phase 1)
+-   [ ] Measure chunking parameters (deferred from Phase 1)
 
 ------------------------------------------------------------------------
 
