@@ -100,6 +100,48 @@ CREATE INDEX IF NOT EXISTS idx_citations_message
 -- The conversation list is by most recent activity.
 CREATE INDEX IF NOT EXISTS idx_conversations_updated_at
     ON conversations(updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS documents (
+    id          TEXT PRIMARY KEY,
+    title       TEXT NOT NULL,
+    -- Markdown, as the user last left it. AI-generated text must always remain
+    -- editable, so this column is the document — not a cache of something that
+    -- could be regenerated.
+    content     TEXT NOT NULL,
+    -- Where it came from, when it came from somewhere. Deliberately WITHOUT a
+    -- foreign key: deleting a conversation must not delete the documents made
+    -- from it. The document is the user's work; the conversation was scaffolding.
+    source_conversation_id  TEXT,
+    source_message_id       TEXT,
+    -- The instruction that produced the first draft, kept so a person can see
+    -- what they asked for months later.
+    source_instruction      TEXT,
+    created_at  TEXT NOT NULL,
+    updated_at  TEXT NOT NULL
+);
+
+-- Citations are copied onto the document for the same reason as on a message:
+-- the index changes as files are added, re-ingested and removed, so re-deriving
+-- them later would attribute the document to sources that were never behind it.
+CREATE TABLE IF NOT EXISTS document_citations (
+    id            TEXT PRIMARY KEY,
+    document_id   TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    position      INTEGER NOT NULL,
+    file_id       TEXT NOT NULL,
+    file_name     TEXT NOT NULL,
+    page_number   INTEGER,
+    chunk_indexes TEXT NOT NULL,
+    best_score    REAL NOT NULL,
+    UNIQUE (document_id, position)
+);
+
+-- Citations are always read for a document, in display order.
+CREATE INDEX IF NOT EXISTS idx_document_citations_document
+    ON document_citations(document_id, position);
+
+-- The document list is by most recently edited.
+CREATE INDEX IF NOT EXISTS idx_documents_updated_at
+    ON documents(updated_at DESC);
 """
 
 
