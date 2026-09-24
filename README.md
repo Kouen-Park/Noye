@@ -224,6 +224,19 @@ pip install -r requirements-dev.txt
 pytest app/tests/
 ```
 
+Lint:
+
+```bash
+ruff check app/          # report
+ruff check app/ --fix    # apply the safe fixes
+```
+
+The rule selection is in `backend/pyproject.toml`, with a note on each group
+saying why it is on or off. It is chosen to catch bugs rather than to enforce
+taste — `F821` (undefined name) is the reason it exists, since that class of
+mistake hides on error paths that only run when something else has already gone
+wrong.
+
 Available endpoints:
 
 | Method | Path | Purpose |
