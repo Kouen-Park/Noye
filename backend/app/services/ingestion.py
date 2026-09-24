@@ -211,7 +211,7 @@ def ingest_file(
                 "Ingestion failed file=%s reason=%s", record.id, _first_sentence(str(exc))
             )
             return _fail(connection, record, str(exc), qdrant_client=qdrant_client)
-        except Exception as exc:  # noqa: BLE001 - last resort, see below
+        except Exception as exc:
             # An unexpected error must still leave the file in a terminal state
             # with a reason; a row stuck in EMBEDDING forever is worse than an
             # ugly message, and the original type is preserved in the text.

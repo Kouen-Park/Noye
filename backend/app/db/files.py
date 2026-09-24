@@ -14,7 +14,7 @@ from __future__ import annotations
 import sqlite3
 import uuid
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.models.files import Chunk, File, FileStatus, FileType
 
@@ -33,7 +33,7 @@ def new_file_id() -> str:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _to_file(row: sqlite3.Row) -> File:

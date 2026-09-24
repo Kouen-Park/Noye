@@ -9,7 +9,7 @@ these to and from SQLite rows.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 
 
@@ -53,7 +53,7 @@ class FileType(str, Enum):
         return self is FileType.PDF
 
     @classmethod
-    def from_filename(cls, name: str) -> "FileType":
+    def from_filename(cls, name: str) -> FileType:
         """Infer the type from a filename's extension.
 
         Raises:
@@ -62,7 +62,13 @@ class FileType(str, Enum):
                 read.
         """
         suffix = name.rsplit(".", 1)[-1].lower() if "." in name else ""
-        aliases = {"pdf": cls.PDF, "md": cls.MARKDOWN, "markdown": cls.MARKDOWN, "txt": cls.TEXT, "text": cls.TEXT}
+        aliases = {
+            "pdf": cls.PDF,
+            "md": cls.MARKDOWN,
+            "markdown": cls.MARKDOWN,
+            "txt": cls.TEXT,
+            "text": cls.TEXT,
+        }
         if suffix not in aliases:
             supported = ", ".join(sorted({t.value for t in cls}))
             raise ValueError(f"Unsupported file type '{suffix or name}'. Supported: {supported}")
@@ -70,7 +76,7 @@ class FileType(str, Enum):
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 @dataclass

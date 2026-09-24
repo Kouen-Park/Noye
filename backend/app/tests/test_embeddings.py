@@ -245,7 +245,7 @@ def test_related_texts_are_closer_than_unrelated_ones() -> None:
     )
 
     def similarity(left: list[float], right: list[float]) -> float:
-        dot = sum(a * b for a, b in zip(left, right))
+        dot = sum(a * b for a, b in zip(left, right, strict=True))
         norm = (sum(a * a for a in left) ** 0.5) * (sum(b * b for b in right) ** 0.5)
         return dot / norm
 
@@ -264,7 +264,7 @@ def test_real_ollama_matches_korean_question_to_korean_passage() -> None:
     )
 
     def similarity(left: list[float], right: list[float]) -> float:
-        dot = sum(a * b for a, b in zip(left, right))
+        dot = sum(a * b for a, b in zip(left, right, strict=True))
         norm = (sum(a * a for a in left) ** 0.5) * (sum(b * b for b in right) ** 0.5)
         return dot / norm
 

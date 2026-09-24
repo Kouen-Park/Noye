@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field
 from app.api.deps import get_db
 from app.db import conversations as conversation_store
 from app.db import files as file_store
+from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
 from app.models.files import FileStatus
 from app.services.citations import build_citations
@@ -33,7 +34,6 @@ from app.services.embeddings import EmbeddingError
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.retrieval import DEFAULT_LIMIT
-from app.logging_config import get_logger
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -73,7 +73,7 @@ class CitationOut(BaseModel):
     label: str
 
     @classmethod
-    def of(cls, citation: MessageCitation) -> "CitationOut":
+    def of(cls, citation: MessageCitation) -> CitationOut:
         return cls(
             file_id=citation.file_id,
             file_name=citation.file_name,
@@ -96,7 +96,7 @@ class MessageOut(BaseModel):
     created_at: str
 
     @classmethod
-    def of(cls, message: Message) -> "MessageOut":
+    def of(cls, message: Message) -> MessageOut:
         return cls(
             id=message.id,
             role=message.role,
@@ -117,7 +117,7 @@ class ConversationOut(BaseModel):
     messages: list[MessageOut]
 
     @classmethod
-    def of(cls, conversation: Conversation) -> "ConversationOut":
+    def of(cls, conversation: Conversation) -> ConversationOut:
         return cls(
             id=conversation.id,
             title=conversation.title,
@@ -137,7 +137,7 @@ class ConversationSummary(BaseModel):
     message_count: int
 
     @classmethod
-    def of(cls, conversation: Conversation, message_count: int) -> "ConversationSummary":
+    def of(cls, conversation: Conversation, message_count: int) -> ConversationSummary:
         return cls(
             id=conversation.id,
             title=conversation.title,
@@ -348,4 +348,4 @@ def delete_conversation(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
-__all__ = ["router", "NO_CONTEXT_ANSWER", "MAX_LIMIT"]
+__all__ = ["MAX_LIMIT", "NO_CONTEXT_ANSWER", "router"]

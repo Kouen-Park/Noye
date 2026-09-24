@@ -20,11 +20,11 @@ from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
 from app.db import files as file_store
+from app.logging_config import get_logger
 from app.models.files import FileStatus
 from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError
 from app.services.retrieval import DEFAULT_LIMIT, search
-from app.logging_config import get_logger
 
 router = APIRouter(prefix="/search", tags=["search"])
 

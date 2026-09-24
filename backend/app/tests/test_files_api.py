@@ -88,7 +88,12 @@ def finish_scheduled(db: sqlite3.Connection, file_id: str) -> None:
     file_store.set_status(db, file_id, FileStatus.READY)
 
 
-def upload(client: TestClient, name: str = "doc.pdf", content: bytes | None = None, tmp_path: Path | None = None):
+def upload(
+    client: TestClient,
+    name: str = "doc.pdf",
+    content: bytes | None = None,
+    tmp_path: Path | None = None,
+):
     if content is None:
         assert tmp_path is not None
         content = write_pdf(tmp_path / f"src-{name}", ["Some page text about graphs."]).read_bytes()
@@ -158,7 +163,9 @@ def test_same_filename_twice_does_not_overwrite(client, db, tmp_path) -> None:
 
 @pytest.mark.parametrize("name", ["archive.zip", "photo.png", "script.py", "noextension"])
 def test_unsupported_type_is_rejected(client, name: str) -> None:
-    response = client.post("/files", files={"file": (name, b"some bytes", "application/octet-stream")})
+    response = client.post(
+        "/files", files={"file": (name, b"some bytes", "application/octet-stream")}
+    )
 
     assert response.status_code == 400
     assert "Unsupported file type" in response.json()["detail"]
@@ -271,7 +278,9 @@ def test_delete_removes_row_and_original(client, db, tmp_path) -> None:
 
 def test_delete_removes_the_vectors(client, db, tmp_path, monkeypatch) -> None:
     removed: list[str] = []
-    monkeypatch.setattr(files_api, "delete_file_chunks", lambda file_id, **kw: removed.append(file_id))
+    monkeypatch.setattr(
+        files_api, "delete_file_chunks", lambda file_id, **kw: removed.append(file_id)
+    )
     file_id = upload(client, tmp_path=tmp_path).json()["id"]
     finish_scheduled(db, file_id)
 
@@ -558,7 +567,9 @@ def test_cancel_idle_file_is_conflict(client, db, uploads) -> None:
     assert client.post(f"/files/{file_id}/cancel").status_code == 409
 
 
-def test_orphaned_processing_row_can_be_stopped_then_deleted(client, db, uploads, monkeypatch) -> None:
+def test_orphaned_processing_row_can_be_stopped_then_deleted(
+    client, db, uploads, monkeypatch
+) -> None:
     file_id = make_stored_file(db, uploads, status=FileStatus.EMBEDDING, error=None)
     monkeypatch.setattr(ingestion, "delete_file_chunks", lambda *args, **kwargs: None)
     assert client.delete(f"/files/{file_id}").status_code == 409

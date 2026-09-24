@@ -21,9 +21,9 @@ from app.config import get_settings
 from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.models.files import FileStatus, FileType
+from app.services import ingestion
 from app.services.indexing import count_chunks as count_vectors
 from app.services.indexing import delete_file_chunks, point_id
-from app.services import ingestion
 from app.services.ingestion import ingest_file
 
 VECTOR_SIZE = get_settings().qdrant_vector_size
@@ -299,9 +299,15 @@ def test_text_file_is_ingested(db, qdrant, tmp_path) -> None:
 
 def test_korean_markdown_is_ingested(db, qdrant, tmp_path) -> None:
     path = tmp_path / "한글노트.md"
-    path.write_text("# 알고리즘 정리\n\n" + "다익스트라는 거리 추정값이 가장 작은 정점을 선택한다. " * 40)
+    path.write_text(
+        "# 알고리즘 정리\n\n" + "다익스트라는 거리 추정값이 가장 작은 정점을 선택한다. " * 40
+    )
     record = file_store.create_file(
-        db, name="한글노트.md", file_type=FileType.MARKDOWN, path=str(path), size=path.stat().st_size
+        db,
+        name="한글노트.md",
+        file_type=FileType.MARKDOWN,
+        path=str(path),
+        size=path.stat().st_size,
     )
 
     with ollama_client() as http:

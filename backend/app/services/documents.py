@@ -95,8 +95,8 @@ def draft_document(
 
 
 __all__ = [
-    "SYSTEM_PROMPT",
     "DEFAULT_TIMEOUT_SECONDS",
+    "SYSTEM_PROMPT",
     "GenerationError",
     "build_document_prompt",
     "draft_document",

@@ -132,7 +132,9 @@ def test_an_edit_moves_the_document_up_the_list(db) -> None:
 
     store.update_document(db, first.id, content="edited")
 
-    assert [d.title for d in store.list_documents(db)][0] == "first"
+    # The whole order, not just position 0: asserting only the head would pass if
+    # the second document had vanished.
+    assert [d.title for d in store.list_documents(db)] == ["first", "second"]
 
 
 # --- provenance --------------------------------------------------------------
