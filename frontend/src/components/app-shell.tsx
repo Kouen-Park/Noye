@@ -25,7 +25,7 @@ const NAV = [
   { label: "Library", Icon: ShelfIcon, href: "/library", soon: false },
   { label: "Search", Icon: SearchIcon, href: "/search", soon: false },
   { label: "Chat", Icon: ChatIcon, href: "/chat", soon: false },
-  { label: "Documents", Icon: DocumentIcon, href: "/documents", soon: true },
+  { label: "Documents", Icon: DocumentIcon, href: "/documents", soon: false },
 ] as const;
 
 interface AppShellProps {

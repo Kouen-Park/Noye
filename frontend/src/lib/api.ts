@@ -294,6 +294,114 @@ export async function deleteConversation(id: string): Promise<void> {
   await request(`/chat/conversations/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
+// --- documents ---------------------------------------------------------------
+
+/** A source a document's first draft was built from, as it was then. */
+export interface DocumentCitation {
+  file_id: string;
+  file_name: string;
+  page_number: number | null;
+  chunk_indexes: number[];
+  score: number;
+  label: string;
+}
+
+export interface NoyeDocument {
+  id: string;
+  title: string;
+  /** Markdown, as the user last left it. This is the document, not a cache. */
+  content: string;
+  /**
+   * Where a generated document came from. These may point at a conversation that
+   * has since been deleted — a document outlives its scaffolding.
+   */
+  source_conversation_id: string | null;
+  source_message_id: string | null;
+  source_instruction: string | null;
+  citations: DocumentCitation[];
+  created_at: string;
+  updated_at: string;
+}
+
+/** A document in the list. No body — the list shows titles and dates. */
+export interface DocumentSummary {
+  id: string;
+  title: string;
+  excerpt: string;
+  is_generated: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function listDocuments(signal?: AbortSignal): Promise<DocumentSummary[]> {
+  const response = await request("/documents", { signal });
+  return (await response.json()) as DocumentSummary[];
+}
+
+export async function readDocument(
+  id: string,
+  signal?: AbortSignal,
+): Promise<NoyeDocument> {
+  const response = await request(`/documents/${encodeURIComponent(id)}`, { signal });
+  return (await response.json()) as NoyeDocument;
+}
+
+/** Create a document from nothing, or from text the user already has. */
+export async function createDocument(
+  title: string,
+  content = "",
+): Promise<NoyeDocument> {
+  const response = await request("/documents", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, content }),
+  });
+  return (await response.json()) as NoyeDocument;
+}
+
+/**
+ * Draft a document from a stored answer.
+ *
+ * No AbortSignal, for the same reason as `askQuestion`: a local model can take
+ * minutes, and abandoning the request would not stop the work.
+ */
+export async function generateDocument(
+  messageId: string,
+  instruction: string,
+): Promise<NoyeDocument> {
+  const response = await request("/documents/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message_id: messageId, instruction }),
+  });
+  return (await response.json()) as NoyeDocument;
+}
+
+/**
+ * Save an edit. Omitted fields are left alone; an empty `content` is a real
+ * value, because a user may clear a document's body.
+ */
+export async function updateDocument(
+  id: string,
+  patch: { title?: string; content?: string },
+): Promise<NoyeDocument> {
+  const response = await request(`/documents/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  return (await response.json()) as NoyeDocument;
+}
+
+export async function deleteDocument(id: string): Promise<void> {
+  await request(`/documents/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+/** Where to download a document's Markdown. A plain URL, handed to the browser. */
+export function documentExportUrl(id: string): string {
+  return `${BASE_URL}/documents/${encodeURIComponent(id)}/export.md`;
+}
+
 /** Every file, newest first. */
 export async function listFiles(signal?: AbortSignal): Promise<StoredFile[]> {
   const response = await request("/files", { signal });

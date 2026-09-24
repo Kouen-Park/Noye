@@ -1,4 +1,5 @@
 import { Passages } from "@/components/chat/passages";
+import { CreateDocumentAction } from "@/components/documents/create-document-action";
 import type { ChatMessage } from "@/lib/api";
 
 /**
@@ -40,6 +41,9 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
       <div className="max-w-[68ch] rounded-lg rounded-bl-sm border border-edge-strong bg-card px-3.5 py-2.5">
         <p className="whitespace-pre-wrap text-[14.5px] leading-relaxed">{message.content}</p>
         <Passages citations={message.citations} />
+        {/* Offered only on an answer with something in it — there is nothing to
+            make a document from otherwise, and the API refuses it anyway. */}
+        {message.content.trim() !== "" && <CreateDocumentAction messageId={message.id} />}
       </div>
     </li>
   );
