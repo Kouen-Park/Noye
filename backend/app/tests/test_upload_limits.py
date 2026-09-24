@@ -98,20 +98,21 @@ class TestContentHash:
         record = file_store.get_file(db, response.json()["id"])
         assert record.content_hash == hashlib.sha256(PDF_ISH).hexdigest()
 
-    def test_the_same_bytes_under_two_names_hash_alike(self, client, db):
+    def test_a_renamed_copy_is_recognised_as_the_same_file(self, client, db):
         """What makes the hash the right identity for a duplicate.
 
-        A renamed copy is still the same file, which a filename comparison cannot
-        see. Branch 4 relies on this.
+        This used to upload the same bytes twice and compare the stored hashes.
+        Duplicate detection now refuses the second upload, which states the same
+        thing more strongly: the rename is not merely hashed alike, it is treated
+        as the file the user already has.
         """
         first = post(client, "notes.pdf", PDF_ISH)
+        assert first.status_code == 201
+
         second = post(client, "notes-copy.pdf", PDF_ISH)
 
-        hashes = {
-            file_store.get_file(db, first.json()["id"]).content_hash,
-            file_store.get_file(db, second.json()["id"]).content_hash,
-        }
-        assert len(hashes) == 1
+        assert second.status_code == 409
+        assert "notes.pdf" in second.json()["detail"]
 
     def test_different_bytes_hash_differently(self, client, db):
         first = post(client, "a.pdf", PDF_ISH)
