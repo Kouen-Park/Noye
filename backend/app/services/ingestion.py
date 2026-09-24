@@ -31,6 +31,7 @@ from qdrant_client import QdrantClient
 
 from app.config import get_settings
 from app.db import files as file_store
+from app.db.database import connect, init_schema
 from app.logging_config import get_logger, timed
 from app.models.files import Chunk as ChunkRow
 from app.models.files import File, FileStatus
@@ -42,6 +43,36 @@ from app.services.indexing import delete_file_chunks, index_chunks, point_id
 #: Identifiers, counts and timings only. A chunk's text never goes in here — see
 #: app/logging_config.py for why that is a rule rather than a preference.
 logger = get_logger("ingestion")
+
+
+def ingest_in_background(file_id: str) -> None:
+    """Run ingestion on its own connection, for a FastAPI background task.
+
+    Lives here rather than in the files router because two routers now queue it —
+    upload and re-ingest in `/files`, and the whole-library rebuild in `/index` — and
+    it is about running the pipeline, not about shaping a request.
+
+    The request's connection is closed as soon as the response is sent, and this runs
+    on a different thread, so it must not borrow it.
+
+    The reservation is released on every path. A file left reserved is a file nothing
+    can ever ingest again, which is worse than a failed ingestion because it has no
+    visible cause.
+    """
+    try:
+        connection = connect()
+    except Exception:
+        release_file(file_id)
+        raise
+    try:
+        try:
+            init_schema(connection)
+        except Exception:
+            release_file(file_id)
+            raise
+        ingest_file(connection, file_id, reserved=True)
+    finally:
+        connection.close()
 
 
 def _first_sentence(reason: str) -> str:
