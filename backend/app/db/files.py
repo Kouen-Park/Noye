@@ -68,6 +68,37 @@ def _to_chunk(row: sqlite3.Row) -> Chunk:
 # --- files -------------------------------------------------------------------
 
 
+def find_by_content_hash(
+    connection: sqlite3.Connection, content_hash: str
+) -> File | None:
+    """The oldest file with these exact bytes, or None.
+
+    Oldest rather than newest: if several copies somehow exist, the one the user
+    has had longest is the one they will recognise, and it is the one whose
+    conversations and documents cite it.
+
+    A ``content_hash`` of None is never matched — the caller must not pass one.
+    NULL means "indexed before Noye recorded this", so treating two unknowns as
+    equal would call every pre-Phase-6 file a duplicate of every other.
+
+    Returns:
+        The existing file, or None when these bytes are new.
+    """
+    if not content_hash:
+        raise ValueError("Cannot look a file up by an empty content hash")
+
+    row = connection.execute(
+        """
+        SELECT * FROM files
+        WHERE content_hash = ?
+        ORDER BY created_at ASC
+        LIMIT 1
+        """,
+        (content_hash,),
+    ).fetchone()
+    return _to_file(row) if row else None
+
+
 def create_file(
     connection: sqlite3.Connection,
     *,
