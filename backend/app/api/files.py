@@ -23,7 +23,6 @@ from pydantic import BaseModel
 from app.api.deps import get_db
 from app.config import get_settings, sources_dir
 from app.db import files as file_store
-from app.db.database import connect, init_schema
 from app.logging_config import get_logger
 from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
@@ -31,7 +30,7 @@ from app.services.ingestion import (
     AlreadyIngesting,
     cancel_ingestion,
     cancel_orphaned_file,
-    ingest_file,
+    ingest_in_background,
     release_file,
     reserve_delete,
     reserve_ingestion,
@@ -163,25 +162,13 @@ def stored_path(file_id: str, name: str) -> Path:
 
 
 def _ingest_in_background(file_id: str) -> None:
-    """Run ingestion on its own connection.
+    """Queue ingestion. The work lives in the service; this is the seam.
 
-    The request's connection is closed as soon as the response is sent, and this
-    runs on a different thread, so it must not borrow it.
+    Kept as a module-level name rather than calling the service directly, because the
+    tests replace it here to observe what a request scheduled without running a real
+    pipeline. Calling through this attribute is what makes that interception work.
     """
-    try:
-        connection = connect()
-    except Exception:
-        release_file(file_id)
-        raise
-    try:
-        try:
-            init_schema(connection)
-        except Exception:
-            release_file(file_id)
-            raise
-        ingest_file(connection, file_id, reserved=True)
-    finally:
-        connection.close()
+    ingest_in_background(file_id)
 
 
 @router.post("", response_model=FileOut, status_code=status.HTTP_201_CREATED)
