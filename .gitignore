@@ -34,7 +34,9 @@ data/app.db-shm
 # never committed — the directories are kept, their contents are not. The old
 # rule here named data/uploads/, a path the code does not use, so every upload
 # was in fact trackable.
-data/sources/*
+data/sources/
+# Logs carry no user content by design, but they are machine state, not source.
+data/logs/*
 !data/sources/.gitkeep
 data/documents/*
 !data/documents/.gitkeep
