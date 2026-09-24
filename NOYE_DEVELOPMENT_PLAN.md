@@ -2075,6 +2075,88 @@ AI-generated text should always remain editable.
 
 ------------------------------------------------------------------------
 
+## 13.1 Starting point and scope
+
+Chat produces grounded answers with the passages behind them. Nothing can be kept
+from one: an answer lives in a conversation and is read-only. Phase 5 adds
+documents — generated from an answer, then **edited by the person**, saved, and
+exported.
+
+The principle the plan states for this phase is the constraint: AI-generated text
+must always remain editable. So a document is not a rendering of an answer that
+re-derives itself. It is a copy the user owns from the moment it exists, and
+nothing regenerates it behind their back.
+
+## 13.2 Two dependency decisions
+
+Both are made here rather than discovered mid-branch, because both add something
+to a local-first app the user installs themselves.
+
+### PDF export uses the browser's own print path
+
+Not a server-side renderer. `weasyprint` and its relatives need system libraries
+(cairo, pango) that a user would have to install with a package manager before
+Noye worked — for a product whose claim is that it runs on your machine without
+setup, that is a real cost. The browser already has a PDF engine, it is offline,
+and it needs no dependency at all.
+
+The cost is honest: less control over the output, and the user passes through a
+print dialog. Mitigated with a print stylesheet so the exported page is the
+document rather than the application around it. Revisit only if the output proves
+unusable, and say so in the PR if it does.
+
+### Markdown preview uses `react-markdown`, not a string-to-HTML renderer
+
+The content is model-generated and then user-edited, and it is derived from the
+user's own files — so an ingested PDF containing something that looks like a script
+tag could reach the preview through the model. A `marked`-style renderer produces
+an HTML string that has to go through `dangerouslySetInnerHTML`, which makes
+sanitisation a thing we must not forget. `react-markdown` builds a React element
+tree instead and does not render raw HTML by default, so the safe behaviour is the
+default rather than a discipline.
+
+## 13.3 What persistence has to get right
+
+**A document keeps the citations it was generated from.** Same reason as chat: the
+index changes, so re-deriving them later would attribute a document to sources that
+were never behind it. They are copied in, file name included, and survive the file
+being deleted.
+
+**A document records where it came from, loosely.** The conversation and message it
+was generated from are stored, but as plain columns without a foreign key — deleting
+a conversation must not delete the documents made from it. The document is the
+user's work; the conversation was scaffolding.
+
+**Edits are the document.** There is no "regenerate" that silently replaces what
+someone wrote. Generating again creates a new document.
+
+## 13.4 Branch and PR sequence
+
+1.  `feat/document-persistence` — schema, models, SQLite layer. Documents carry
+    title, Markdown body, optional provenance, and copied citations. No API.
+2.  `feat/document-api` — CRUD plus `POST /documents/generate`, which turns a
+    stored answer plus a user instruction into Markdown through a prompt built for
+    that task rather than the QA prompt. Generation failures do not create a
+    half-written document.
+3.  `feat/document-ui` — `/documents` with a list, a Markdown editor, a preview,
+    and both exports. Activate Documents in the shell.
+
+## 13.5 Acceptance and validation
+
+-   Generating from a chat answer with an instruction ("turn this into revision
+    notes") produces structured Markdown that is immediately editable, and the
+    edit is what persists.
+-   A document's citations still name the right file and page after a reload, and
+    after the cited file is deleted.
+-   Deleting the conversation a document came from leaves the document intact.
+-   `.md` export round-trips: what is exported is what is in the editor.
+-   PDF export produces the document, not the application chrome around it.
+-   Backend tests cover the persistence contracts and the API's outcomes with the
+    existing mocked-Ollama approach. Frontend lint, TypeScript, tests and
+    production build pass. Record any browser check that could not run under
+    `Not validated`.
+
+
 # 14. Phase 6 --- Reliability and Quality
 
 Once the complete workflow works, improve reliability.
