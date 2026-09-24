@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from qdrant_client import QdrantClient, models
-from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.exceptions import ApiException
 
 from app.config import get_settings
 from app.services.embeddings import embed_text
@@ -91,7 +91,7 @@ def search(
             score_threshold=min_score,
             with_payload=True,
         )
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(f"Could not search Qdrant: {exc}") from exc
 
     return [_to_result(point) for point in response.points]

@@ -14,8 +14,13 @@ import uuid
 from collections.abc import Sequence
 
 from qdrant_client import QdrantClient, models
-from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.exceptions import ApiException
 
+# ApiException is the base, not UnexpectedResponse. The distinction is load-bearing:
+# an unreachable Qdrant raises ResponseHandlingException, which is a sibling of
+# UnexpectedResponse and is NOT an OSError, so catching the narrower type let a
+# connection refusal escape as an unhandled error. That surfaced as a 500 from
+# /search with Qdrant simply not running, where a 503 saying so is the answer.
 from app.config import get_settings
 from app.services.chunking import Chunk
 
@@ -72,7 +77,7 @@ def ensure_collection(client: QdrantClient | None = None) -> None:
                 distance=models.Distance.COSINE,
             ),
         )
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(
             f"Could not prepare Qdrant collection "
             f"'{settings.qdrant_collection}' at {settings.qdrant_url}: {exc}"
@@ -93,7 +98,7 @@ def recreate_collection(client: QdrantClient | None = None) -> None:
     try:
         if client.collection_exists(settings.qdrant_collection):
             client.delete_collection(settings.qdrant_collection)
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(
             f"Could not delete Qdrant collection "
             f"'{settings.qdrant_collection}': {exc}"
@@ -161,7 +166,7 @@ def index_chunks(
 
     try:
         client.upsert(collection_name=settings.qdrant_collection, points=points)
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(f"Could not store vectors in Qdrant: {exc}") from exc
 
     return len(points)
@@ -184,7 +189,7 @@ def delete_file_chunks(file_id: str, client: QdrantClient | None = None) -> None
             collection_name=settings.qdrant_collection,
             points_selector=models.FilterSelector(filter=_file_filter(file_id)),
         )
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(
             f"Could not delete vectors for file {file_id}: {exc}"
         ) from exc
@@ -205,7 +210,7 @@ def count_chunks(
             count_filter=_file_filter(file_id) if file_id else None,
             exact=True,
         )
-    except (UnexpectedResponse, OSError, ValueError) as exc:
+    except (ApiException, OSError, ValueError) as exc:
         raise IndexingError(f"Could not count vectors in Qdrant: {exc}") from exc
 
     return result.count
