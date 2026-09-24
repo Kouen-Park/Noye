@@ -263,6 +263,7 @@ Available endpoints:
 | `DELETE` | `/documents/{id}` | Delete a document |
 | `GET` | `/documents/{id}/export.md` | Download the stored Markdown |
 | `GET` | `/index/status` | Whether the index still matches the files; `?deep=true` also compares point counts |
+| `POST` | `/index/rebuild` | Re-index every file from the originals on disk; returns 202 |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
