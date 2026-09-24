@@ -19,11 +19,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
-from app.db import files as file_store
 from app.logging_config import get_logger
-from app.models.files import FileStatus
 from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError
+from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT, search
 
 router = APIRouter(prefix="/search", tags=["search"])
@@ -85,11 +84,11 @@ def search_knowledge(
             detail="Enter something to search for.",
         )
 
-    ready = {
-        record.id: record.name
-        for record in file_store.list_files(db)
-        if record.status is FileStatus.READY
-    }
+    # READY is necessary but no longer sufficient. A READY file can hold vectors
+    # from an embedding model that is no longer configured, and a cosine score
+    # across two embedding spaces is meaningless — it would rank confidently and
+    # wrongly, which is worse than returning nothing because the user cannot see it.
+    ready = searchable_file_ids(db)
     if not ready:
         # Nothing to search. Returning early also avoids spending an embedding
         # call on a query that could not match anything.
