@@ -89,6 +89,70 @@ h2,
   animation: noye-pulse 1.2s ease-in-out infinite;
 }
 
+/* Printing is the PDF export (DESIGN.md's palette is screen-first; this is the
+   paper view). Everything that is application rather than document is removed,
+   because a PDF of the app around the text is not an export of the text.
+
+   Elements opt in with data-print="document"; everything else is hidden. That way
+   a new control added later is hidden by default rather than silently appearing
+   in people's exports. */
+@media print {
+  /* Ink on white. The canvas tint is a screen choice and would either waste toner
+     or be dropped by the driver, inconsistently. */
+  :root {
+    --canvas: #ffffff;
+    --card: #ffffff;
+    --sunken: #ffffff;
+    --ink: #000000;
+    --ink-soft: #333333;
+    --edge: #cccccc;
+    --edge-strong: #999999;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  /* Hide the application. */
+  body :not([data-print="document"]):not(:has([data-print="document"])) {
+    display: none !important;
+  }
+
+  [data-print="document"] {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  [data-print="document"] * {
+    color: #000;
+  }
+
+  /* A heading should not be the last line on a page, and a table or code block
+     should not be split across one where it can be helped. */
+  [data-print="document"] :is(h1, h2, h3) {
+    break-after: avoid;
+  }
+
+  [data-print="document"] :is(pre, table, blockquote, li) {
+    break-inside: avoid;
+  }
+
+  /* Links print as text, so the destination has to be readable on paper. */
+  [data-print="document"] a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #555;
+  }
+
+  @page {
+    margin: 18mm;
+  }
+}
+
 /* Status is carried by icon and text as well as colour, so removing motion
    loses no meaning. The two animations are stopped outright rather than
    time-compressed: a clamped iteration count can leave a spinner parked at a
