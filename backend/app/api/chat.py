@@ -25,14 +25,13 @@ from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
 from app.db import conversations as conversation_store
-from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
-from app.models.files import FileStatus
 from app.services.citations import build_citations
 from app.services.embeddings import EmbeddingError
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
+from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -175,12 +174,14 @@ class RenameRequest(BaseModel):
 
 
 def _ready_file_names(db: sqlite3.Connection) -> dict[str, str]:
-    """Display names of the files a question may be answered from."""
-    return {
-        record.id: record.name
-        for record in file_store.list_files(db)
-        if record.status is FileStatus.READY
-    }
+    """Display names of the files a question may be answered from.
+
+    Delegates to the integrity service rather than filtering on READY here, so chat
+    and search cannot drift apart on which files are safe to use. A READY file whose
+    vectors came from a superseded embedding model is excluded: mixing embedding
+    spaces produces a ranking that is wrong while looking right.
+    """
+    return searchable_file_ids(db)
 
 
 @router.post("", response_model=AskResponse, status_code=status.HTTP_201_CREATED)
