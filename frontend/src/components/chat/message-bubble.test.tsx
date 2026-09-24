@@ -49,7 +49,23 @@ describe("MessageBubble", () => {
 
   it("offers nothing to inspect on an answer with no passages", () => {
     render(<MessageBubble message={message({ citations: [] })} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /passage/i })).not.toBeInTheDocument();
+  });
+
+  it("offers to make a document from an answer", () => {
+    render(<MessageBubble message={message()} />);
+    expect(screen.getByRole("button", { name: "Create document" })).toBeInTheDocument();
+  });
+
+  it("offers no document action on a question", () => {
+    render(<MessageBubble message={message({ role: "user", content: "How?" })} />);
+    expect(screen.queryByRole("button", { name: "Create document" })).not.toBeInTheDocument();
+  });
+
+  it("offers no document action on a failed turn", () => {
+    // There is nothing to make a document from, and the API refuses it anyway.
+    render(<MessageBubble message={message({ content: "", error: "down" })} />);
+    expect(screen.queryByRole("button", { name: "Create document" })).not.toBeInTheDocument();
   });
 
   it("reports a failed turn with its reason, and says the question survived", () => {
