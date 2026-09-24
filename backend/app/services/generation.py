@@ -136,8 +136,18 @@ def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
     )
 
 
-def generate(prompt: str, *, client: httpx.Client | None = None) -> str:
+def generate(
+    prompt: str,
+    *,
+    client: httpx.Client | None = None,
+    system: str | None = None,
+) -> str:
     """Send one prompt to Ollama and return the generated text.
+
+    ``system`` overrides :data:`SYSTEM_PROMPT` for callers whose task is not
+    answering a question — drafting a document, for instance. The transport,
+    timeout, thinking setting and error mapping are the same for every task, so
+    they live here rather than being copied per caller.
 
     Raises:
         ValueError: ``prompt`` is empty.
@@ -148,20 +158,23 @@ def generate(prompt: str, *, client: httpx.Client | None = None) -> str:
         raise ValueError("Cannot generate from an empty prompt")
 
     settings = get_settings()
+    system_prompt = system or SYSTEM_PROMPT
 
     if client is None:
         with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
-            return _request_generation(owned_client, prompt, settings)
-    return _request_generation(client, prompt, settings)
+            return _request_generation(owned_client, prompt, settings, system_prompt)
+    return _request_generation(client, prompt, settings, system_prompt)
 
 
-def _request_generation(client: httpx.Client, prompt: str, settings) -> str:
+def _request_generation(
+    client: httpx.Client, prompt: str, settings, system_prompt: str = SYSTEM_PROMPT
+) -> str:
     model = settings.ollama_model
     url = f"{settings.ollama_base_url.rstrip('/')}/api/generate"
     payload = {
         "model": model,
         "prompt": prompt,
-        "system": SYSTEM_PROMPT,
+        "system": system_prompt,
         "stream": False,
         "think": settings.ollama_thinking,
     }
