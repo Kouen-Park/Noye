@@ -12,16 +12,22 @@ from __future__ import annotations
 
 import sqlite3
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
 from app.api.deps import get_db
 from app.config import get_settings
 from app.db import files as file_store
+from app.logging_config import get_logger
 from app.models.files import FileStatus
+from app.services.indexing import IndexingError
+from app.services.ingestion import ingest_in_background
 from app.services.integrity import FileIntegrity, Problem, check_library
+from app.services.rebuild import plan_rebuild
 
 router = APIRouter(prefix="/index", tags=["index"])
+
+logger = get_logger("api.index")
 
 
 class FileProblems(BaseModel):
@@ -102,4 +108,73 @@ def index_status(
         searchable_files=searchable,
         deep=deep,
         problems=[FileProblems.of(report) for report in reports if not report.is_sound],
+    )
+
+
+class SkippedFile(BaseModel):
+    """A file the rebuild did not queue."""
+
+    file_id: str
+    file_name: str
+    reason: str
+
+
+class RebuildStarted(BaseModel):
+    """What the rebuild is doing. Returned before the work finishes."""
+
+    #: How many files were queued for re-ingestion.
+    queued: int
+    #: Files not queued, each with a reason.
+    skipped: list[SkippedFile]
+    #: Whether the collection had to be dropped. True only when its vector width
+    #: disagreed with the configuration, which makes existing points unusable.
+    collection_recreated: bool
+    #: The model the new vectors will come from.
+    embedding_model: str
+
+
+@router.post(
+    "/rebuild", response_model=RebuildStarted, status_code=status.HTTP_202_ACCEPTED
+)
+def rebuild_index(
+    background: BackgroundTasks,
+    db: sqlite3.Connection = Depends(get_db),
+) -> RebuildStarted:
+    """Re-index every file from the originals on disk.
+
+    Returns 202 immediately: re-embedding a real library is minutes to hours of local
+    inference. Each file moves through the ordinary pipeline stages, so `GET /files`
+    shows the progress and nothing new has to be polled.
+
+    The collection is **not** dropped unless its vector width disagrees with the
+    configuration. Dropping first would mean a rebuild that fails part-way leaves no
+    index at all, where before there was a stale one that still answered — and a
+    stale answer beats no answer. Per-file re-ingestion replaces each file's vectors
+    as it goes, so the index is never wholly absent.
+
+    A file whose original is missing is skipped rather than failed: its existing
+    vectors are still the best record of a document the user no longer has.
+    """
+    try:
+        plan = plan_rebuild(db)
+    except IndexingError as exc:
+        logger.warning("Rebuild could not start error=%s: %s", type(exc).__name__, exc)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Could not reach the index to rebuild it: {exc}",
+        ) from exc
+
+    for file_id in plan.file_ids:
+        file_store.reset_counts(db, file_id)
+        file_store.set_status(db, file_id, FileStatus.UPLOADING)
+        background.add_task(ingest_in_background, file_id)
+
+    return RebuildStarted(
+        queued=plan.queued,
+        skipped=[
+            SkippedFile(file_id=item.file_id, file_name=item.file_name, reason=item.reason)
+            for item in plan.skipped
+        ],
+        collection_recreated=plan.collection_recreated,
+        embedding_model=plan.embedding_model,
     )
