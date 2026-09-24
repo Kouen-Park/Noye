@@ -17,6 +17,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from app.config import PROJECT_ROOT, get_settings
+from app.db.migrations import apply_migrations
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS files (
@@ -29,6 +30,14 @@ CREATE TABLE IF NOT EXISTS files (
     error        TEXT,
     page_count   INTEGER,
     chunk_count  INTEGER NOT NULL DEFAULT 0,
+    -- sha256 of the file's bytes. How a duplicate is identified, and how a source
+    -- edited on disk after indexing is noticed. NULL for files indexed before
+    -- Noye recorded it; see migrations._step_1_file_provenance.
+    content_hash TEXT,
+    -- The embedding model whose vectors are in the index for this file. Search
+    -- must never mix two embedding spaces in one ranking. NULL means unknown,
+    -- not mismatched.
+    embedding_model TEXT,
     created_at   TEXT NOT NULL,
     updated_at   TEXT NOT NULL
 );
@@ -181,9 +190,24 @@ def connect(path: str | Path | None = None) -> sqlite3.Connection:
 
 
 def init_schema(connection: sqlite3.Connection) -> None:
-    """Create the tables and indexes if they do not exist. Safe to re-run."""
+    """Create the tables and indexes, then bring the schema up to date.
+
+    Safe to re-run: every statement in ``SCHEMA`` is ``IF NOT EXISTS`` and every
+    migration step checks the live schema before changing it.
+
+    The order is not interchangeable. ``SCHEMA`` creates tables; migrations alter
+    them. A migration that ran first would find no table to alter — which it
+    raises on rather than skipping, because skipping would leave a column quietly
+    missing.
+
+    ``SCHEMA`` describes the current shape, including columns that migrations add,
+    so a fresh database gets them from the ``CREATE TABLE`` and the migrations then
+    find their work already done. An existing database gets them from the
+    migration. Both end in the same place.
+    """
     with connection:
         connection.executescript(SCHEMA)
+    apply_migrations(connection)
 
 
 @contextmanager
