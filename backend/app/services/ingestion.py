@@ -29,13 +29,31 @@ from dataclasses import replace
 import httpx
 from qdrant_client import QdrantClient
 
+from app.config import get_settings
 from app.db import files as file_store
+from app.logging_config import get_logger, timed
 from app.models.files import Chunk as ChunkRow
 from app.models.files import File, FileStatus
 from app.services.chunking import chunk_pages
 from app.services.embeddings import embed_chunks
 from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
+
+#: Identifiers, counts and timings only. A chunk's text never goes in here — see
+#: app/logging_config.py for why that is a rule rather than a preference.
+logger = get_logger("ingestion")
+
+
+def _first_sentence(reason: str) -> str:
+    """The cause, without the advice that follows it.
+
+    Ingestion reasons are written for the user, so they carry remediation —
+    "Could not reach Ollama at http://localhost:11434. Check that it is running
+    (brew services start ollama)." A log wants the first half; the second is
+    instructions to a person and it pushes the identifiers off the line.
+    """
+    head, separator, _ = reason.partition(". ")
+    return head + "." if separator else reason
 
 
 class IngestionError(Exception):
@@ -163,6 +181,12 @@ def ingest_file(
         _claim(file_id, cancellation)
     try:
         try:
+            logger.info(
+                "Ingestion started file=%s type=%s size=%d",
+                record.id,
+                record.file_type.value,
+                record.size,
+            )
             _check_cancel(cancellation)
             pages = _extract(connection, record)
             _check_cancel(cancellation)
@@ -174,11 +198,29 @@ def ingest_file(
             )
             _check_cancel(cancellation)
         except IngestionError as exc:
+            # The full reason is the user's and reaches the UI through the file
+            # row. The log keeps only its first sentence: the rest is advice
+            # written for a person ("Check that it is running (brew services
+            # start ollama)"), which a log line does not need and which pushes
+            # the fields that matter off the end of the terminal.
+            #
+            # Not dropped entirely, even though the stage line above usually
+            # carries the same cause: a failure raised outside a timed stage —
+            # a file with no extractable text — has no other line at all.
+            logger.warning(
+                "Ingestion failed file=%s reason=%s", record.id, _first_sentence(str(exc))
+            )
             return _fail(connection, record, str(exc), qdrant_client=qdrant_client)
         except Exception as exc:  # noqa: BLE001 - last resort, see below
             # An unexpected error must still leave the file in a terminal state
             # with a reason; a row stuck in EMBEDDING forever is worse than an
             # ugly message, and the original type is preserved in the text.
+            #
+            # This is the one place a traceback is worth keeping: the message on
+            # the row names the exception type but throws away where it came
+            # from, and an unexpected error is exactly the case where that
+            # matters.
+            logger.exception("Unexpected ingestion error file=%s", record.id)
             return _fail(
                 connection,
                 record,
@@ -193,7 +235,25 @@ def ingest_file(
             if not cancelled:
                 result = file_store.set_status(connection, file_id, FileStatus.READY)
                 _in_flight.pop(file_id, None)
+                # pages is omitted for a format that has none. Logging
+                # "pages=None" for every Markdown file reads as a page count that
+                # could not be determined, which is a different and alarming
+                # thing from a format where the number is meaningless.
+                if record.file_type.has_pages:
+                    logger.info(
+                        "Ingestion complete file=%s pages=%s chunks=%s",
+                        file_id,
+                        result.page_count,
+                        result.chunk_count,
+                    )
+                else:
+                    logger.info(
+                        "Ingestion complete file=%s chunks=%s",
+                        file_id,
+                        result.chunk_count,
+                    )
                 return result
+        logger.info("Ingestion cancelled file=%s", file_id)
         return _fail(connection, record, "Processing was cancelled.", qdrant_client=qdrant_client)
     finally:
         _release(file_id, cancellation)
@@ -203,7 +263,8 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
 
     try:
-        pages = extract_file(record.path, record.file_type)
+        with timed(logger, "Extracted", file=record.id):
+            pages = extract_file(record.path, record.file_type)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -257,7 +318,14 @@ def _embed_and_index(
     file_store.set_status(connection, record.id, FileStatus.EMBEDDING)
 
     try:
-        vectors = embed_chunks(chunks, client=http_client)
+        with timed(
+            logger,
+            "Embedded",
+            file=record.id,
+            chunks=len(chunks),
+            model=get_settings().ollama_embedding_model,
+        ):
+            vectors = embed_chunks(chunks, client=http_client)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -266,9 +334,10 @@ def _embed_and_index(
     # otherwise leave the tail of the first run searchable.
     try:
         _check_cancel(cancellation)
-        delete_file_chunks(record.id, client=qdrant_client)
-        _check_cancel(cancellation)
-        index_chunks(chunks, vectors, client=qdrant_client)
+        with timed(logger, "Indexed", file=record.id, points=len(chunks)):
+            delete_file_chunks(record.id, client=qdrant_client)
+            _check_cancel(cancellation)
+            index_chunks(chunks, vectors, client=qdrant_client)
         _check_cancel(cancellation)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
@@ -297,10 +366,22 @@ def _fail(
     """Mark the file FAILED and remove anything it managed to index."""
     try:
         delete_file_chunks(record.id, client=qdrant_client)
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         # Cleanup is best-effort: reporting the original failure matters more
         # than a secondary error from an already-unreachable Qdrant.
-        pass
+        #
+        # Swallowing it silently, though, hid the case that actually matters —
+        # the file is marked FAILED while its vectors survive in the index, so
+        # search keeps returning passages from a document the library shows as
+        # broken. Nothing in the UI can show that, which is precisely why it
+        # belongs in a log.
+        logger.warning(
+            "Vector cleanup failed after ingestion failure, index may hold stale "
+            "points file=%s error=%s: %s",
+            record.id,
+            type(exc).__name__,
+            exc,
+        )
 
     file_store.replace_chunks(connection, record.id, [])
     # The chunk rows are gone, so the count must go with them. Leaving it behind

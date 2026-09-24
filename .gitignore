@@ -38,6 +38,9 @@ data/sources/*
 !data/sources/.gitkeep
 data/documents/*
 !data/documents/.gitkeep
+# Logs carry no user content by design, but they are machine state, not source,
+# and the rotating backups would show up as untracked files after every run.
+data/logs/
 qdrant_storage/
 
 # IDE / local agent tooling

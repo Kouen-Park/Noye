@@ -27,8 +27,11 @@ from app.models.conversations import Role
 from app.models.documents import Document
 from app.services.documents import draft_document
 from app.services.generation import GenerationError
+from app.logging_config import get_logger
 
 router = APIRouter(prefix="/documents", tags=["documents"])
+
+logger = get_logger("api.documents")
 
 
 class DocumentCitationOut(BaseModel):
@@ -186,6 +189,14 @@ def generate_document(
     try:
         content = draft_document(instruction, message.content, message.citations)
     except GenerationError as exc:
+        # The instruction and the draft are the user's; only the source
+        # message id and the failure go in.
+        logger.warning(
+            "Document drafting failed message=%s error=%s: %s",
+            request.message_id,
+            type(exc).__name__,
+            exc,
+        )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=(

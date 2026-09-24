@@ -33,8 +33,11 @@ from app.services.embeddings import EmbeddingError
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.retrieval import DEFAULT_LIMIT
+from app.logging_config import get_logger
 
 router = APIRouter(prefix="/chat", tags=["chat"])
+
+logger = get_logger("api.chat")
 
 #: Most passages one answer may be grounded in.
 #:
@@ -236,6 +239,15 @@ def ask(
     try:
         generated = answer_question(question, limit=request.limit, file_ids=list(ready))
     except (EmbeddingError, IndexingError, GenerationError) as exc:
+        # Neither the question nor the answer is logged. The conversation id
+        # locates the turn for anyone who needs the text, in the database
+        # where the user already keeps it.
+        logger.warning(
+            "Answer failed conversation=%s error=%s: %s",
+            conversation.id,
+            type(exc).__name__,
+            exc,
+        )
         # A failure is recorded as the assistant's turn, so the conversation
         # shows what was asked and why it could not be answered.
         failed = conversation_store.add_message(

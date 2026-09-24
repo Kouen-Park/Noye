@@ -51,6 +51,14 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./data/app.db"
 
+    #: Noye's own log level. Deliberately separate from uvicorn's: raising this
+    #: must not raise httpx's, which logs request bodies and would put a user's
+    #: question into the log.
+    log_level: str = "INFO"
+    #: A rotating file under ``data/logs/`` as well as stderr. Off in tests, which
+    #: assert on handler output rather than on a file.
+    log_to_file: bool = True
+
     @property
     def allowed_origins(self) -> list[str]:
         """The CORS origin list, parsed from the comma-separated setting."""
