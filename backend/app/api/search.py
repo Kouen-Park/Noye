@@ -24,8 +24,11 @@ from app.models.files import FileStatus
 from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError
 from app.services.retrieval import DEFAULT_LIMIT, search
+from app.logging_config import get_logger
 
 router = APIRouter(prefix="/search", tags=["search"])
+
+logger = get_logger("api.search")
 
 #: Most results one request may ask for.
 #:
@@ -95,6 +98,9 @@ def search_knowledge(
     try:
         results = search(query, limit=limit, file_ids=list(ready))
     except EmbeddingError as exc:
+        # The query text is NOT logged: it is the user's words. The model name
+        # and the failure are what a developer needs.
+        logger.warning("Search embedding failed error=%s: %s", type(exc).__name__, exc)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=(
@@ -103,6 +109,7 @@ def search_knowledge(
             ),
         ) from exc
     except IndexingError as exc:
+        logger.warning("Search index query failed error=%s: %s", type(exc).__name__, exc)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Could not search the index: {exc}",
