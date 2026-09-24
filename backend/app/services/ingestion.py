@@ -342,6 +342,13 @@ def _embed_and_index(
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
+    # After the write, not before. This column is read to decide whether a file's
+    # vectors are from the current embedding space, so it must never name a model
+    # for vectors that were not actually stored.
+    file_store.set_embedding_model(
+        connection, record.id, get_settings().ollama_embedding_model
+    )
+
     rows = [
         ChunkRow(
             id=f"{record.id}:{chunk.chunk_index}",
@@ -389,4 +396,8 @@ def _fail(
     # no longer had — the library showed "24 passages" beside "Could not read".
     # page_count is left alone: the pages really were read, and that stays true.
     file_store.set_counts(connection, record.id, chunk_count=0)
+    # The vectors are gone, so the model that made them must go with them. Leaving
+    # it would have a FAILED file claiming an embedding space it no longer occupies,
+    # which is exactly the confusion the column exists to prevent.
+    file_store.set_embedding_model(connection, record.id, None)
     return file_store.set_status(connection, record.id, FileStatus.FAILED, error=reason)
