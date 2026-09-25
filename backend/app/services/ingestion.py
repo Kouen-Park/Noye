@@ -39,6 +39,7 @@ from app.services.chunking import chunk_pages
 from app.services.embeddings import embed_chunks
 from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
+from app.services.integrity import hash_file
 
 #: Identifiers, counts and timings only. A chunk's text never goes in here — see
 #: app/logging_config.py for why that is a rule rather than a preference.
@@ -298,6 +299,15 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
             pages = extract_file(record.path, record.file_type)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
+
+    # Upload hashes bytes while saving them, but re-ingestion and a whole-library
+    # rebuild start from an original already on disk. Record that copy after it has
+    # proved readable, so a pre-Phase-6 file gains an identity and a source changed
+    # on purpose gets a new integrity baseline.
+    content_hash = hash_file(record.path)
+    if content_hash is None:
+        raise IngestionError("Could not read the source file while recording its identity.")
+    file_store.set_content_hash(connection, record.id, content_hash)
 
     # Only meaningful for page-aware formats; Markdown and text come back as a
     # single placeholder page, and reporting "1 page" for them would be noise.

@@ -8,6 +8,7 @@ real services.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sqlite3
 from pathlib import Path
@@ -25,6 +26,7 @@ from app.services import ingestion
 from app.services.indexing import count_chunks as count_vectors
 from app.services.indexing import delete_file_chunks, point_id
 from app.services.ingestion import ingest_file
+from app.services.integrity import hash_file
 
 VECTOR_SIZE = get_settings().qdrant_vector_size
 
@@ -134,6 +136,17 @@ def test_vectors_and_rows_agree_in_number(db, qdrant, tmp_path) -> None:
     assert file_store.count_chunks(db, record.id) == result.chunk_count
 
 
+def test_ingestion_records_the_stored_sources_hash(db, qdrant, tmp_path) -> None:
+    """A pre-Phase-6 file gains the identity upload would have recorded."""
+    record = add_pdf(db, tmp_path, [sentences(30)])
+    assert record.content_hash is None
+
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    assert result.content_hash == hashlib.sha256(Path(record.path).read_bytes()).hexdigest()
+
+
 def test_status_passes_through_every_stage(db, qdrant, tmp_path, monkeypatch) -> None:
     record = add_pdf(db, tmp_path, [sentences(30)])
     seen: list[FileStatus] = []
@@ -189,6 +202,22 @@ def test_reingesting_a_shorter_document_drops_stale_vectors(db, qdrant, tmp_path
     assert count_vectors(file_id=record.id, client=qdrant) == short_run.chunk_count
 
 
+def test_reingesting_a_changed_source_replaces_its_hash(db, qdrant, tmp_path) -> None:
+    path = write_pdf(tmp_path / "changed.pdf", [sentences(30, "Original")])
+    record = file_store.create_file(
+        db, name="changed.pdf", file_type=FileType.PDF, path=str(path), size=path.stat().st_size
+    )
+    with ollama_client() as http:
+        first = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    write_pdf(path, [sentences(30, "Replacement")])
+    with ollama_client() as http:
+        second = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+
+    assert first.content_hash != second.content_hash
+    assert second.content_hash == hash_file(path)
+
+
 # --- failures ----------------------------------------------------------------
 
 
@@ -216,6 +245,7 @@ def test_corrupt_pdf_fails_with_a_reason(db, qdrant, tmp_path) -> None:
 
     assert result.status is FileStatus.FAILED
     assert "Could not open PDF" in result.error
+    assert result.content_hash is None
 
 
 def test_scanned_pdf_fails_with_an_ocr_explanation(db, qdrant, tmp_path) -> None:

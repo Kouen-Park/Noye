@@ -22,6 +22,7 @@ from app.db.files import (
     list_chunks,
     list_files,
     replace_chunks,
+    set_content_hash,
     set_counts,
     set_status,
 )
@@ -240,6 +241,20 @@ def test_status_update_bumps_updated_at(db: sqlite3.Connection) -> None:
 def test_status_update_on_missing_file_raises(db: sqlite3.Connection) -> None:
     with pytest.raises(FileRecordNotFound):
         set_status(db, "absent", FileStatus.READY)
+
+
+def test_content_hash_can_be_recorded_after_creation(db: sqlite3.Connection) -> None:
+    record = add(db)
+
+    updated = set_content_hash(db, record.id, "a" * 64)
+
+    assert updated.content_hash == "a" * 64
+    assert updated.updated_at >= record.updated_at
+
+
+def test_content_hash_update_on_missing_file_raises(db: sqlite3.Connection) -> None:
+    with pytest.raises(FileRecordNotFound):
+        set_content_hash(db, "absent", "a" * 64)
 
 
 def test_counts_are_recorded(db: sqlite3.Connection) -> None:

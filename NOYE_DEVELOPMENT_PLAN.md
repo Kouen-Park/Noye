@@ -2428,6 +2428,35 @@ Both were deferred from Phase 1 for exactly that reason.
 
 ------------------------------------------------------------------------
 
+## 14.7 Live Qdrant verification (what branches 5–6 could only stub)
+
+Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
+`cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
+`embedding_model` empty before the run.
+
+**Deep point comparison confirmed.** The first time the branch-5 deep check actually
+read Qdrant: 24/24 match, no problems.
+
+**POINTS_MISSING confirmed.** Ten points deleted directly via Qdrant's API.
+- Shallow: `problems: none` (the cheap checks cannot see it — as designed).
+- Deep: `POINTS_MISSING searchable=True points=14/24`.
+- `searchable=True` confirmed: an incomplete index is *out of date*, not *wrong*.
+
+**Rebuild success path confirmed.** First real run of `POST /index/rebuild`
+against a live Qdrant:
+- Response: `202 queued=1 collection_recreated=false` — the collection was NOT
+  dropped, which is the decision the branch exists to make.
+- 12 seconds later: `READY chunks=24 qdrant=24`.
+- `embedding_model=embeddinggemma` written by ingestion.
+
+**Finding fixed in `fix/hash-on-reingest`.** The first live rebuild left
+`content_hash` NULL because re-ingest reads a file already on disk and does not pass
+through `_save_upload`. The common ingestion path now hashes the stored original
+after extraction proves it readable, so both a single-file retry and a whole-library
+rebuild fill the missing identity. Re-ingesting a deliberately changed source also
+records the new bytes as the integrity baseline. Unit tests cover both cases and keep
+an old file's hash unknown when extraction fails before the new step runs.
+
 # 15. Testing Strategy
 
 Testing should focus heavily on the knowledge pipeline.
