@@ -69,6 +69,7 @@ class TestStatus:
         assert body["searchable_files"] == 0
         assert body["problems"] == []
         assert body["deep"] is False
+        assert body["point_check_complete"] is False
 
     def test_a_sound_library_lists_no_problems(self, client, db, tmp_path):
         """Only problems are listed.
@@ -151,6 +152,7 @@ class TestDeepCheck:
         body = client.get("/index/status", params={"deep": "true"}).json()
 
         assert body["deep"] is True
+        assert body["point_check_complete"] is True
         problem = body["problems"][0]
         assert problem["problems"] == ["POINTS_MISSING"]
         assert problem["indexed_points"] == 1
@@ -175,6 +177,7 @@ class TestDeepCheck:
 
         assert body["problems"] == []
         assert body["searchable_files"] == 1
+        assert body["point_check_complete"] is False
 
     def test_a_point_count_above_the_chunk_count_is_not_a_problem(
         self, client, db, tmp_path, monkeypatch
@@ -187,4 +190,7 @@ class TestDeepCheck:
         monkeypatch.setattr(integrity, "count_chunks", lambda *a, **kw: 9)
         add_ready(db, tmp_path, name="a.md", chunks=5)
 
-        assert client.get("/index/status", params={"deep": "true"}).json()["problems"] == []
+        body = client.get("/index/status", params={"deep": "true"}).json()
+
+        assert body["problems"] == []
+        assert body["point_check_complete"] is True

@@ -66,6 +66,10 @@ class IndexStatus(BaseModel):
     searchable_files: int
     #: Whether the deep Qdrant comparison ran.
     deep: bool
+    #: True only when every READY file's point count was read successfully.
+    #: ``deep=True`` with this false means Qdrant was unavailable, not that the
+    #: library was confirmed sound.
+    point_check_complete: bool
     #: Only files with something wrong. A sound library reports an empty list rather
     #: than every file with an empty problem list, which would make the response
     #: grow with the library and say nothing.
@@ -101,12 +105,17 @@ def index_status(
         for report in reports
         if report.file_id in ready_ids and report.is_searchable
     )
+    ready_reports = [report for report in reports if report.file_id in ready_ids]
+    point_check_complete = deep and all(
+        report.indexed_points is not None for report in ready_reports
+    )
 
     return IndexStatus(
         embedding_model=get_settings().ollama_embedding_model,
         ready_files=len(ready_ids),
         searchable_files=searchable,
         deep=deep,
+        point_check_complete=point_check_complete,
         problems=[FileProblems.of(report) for report in reports if not report.is_sound],
     )
 
