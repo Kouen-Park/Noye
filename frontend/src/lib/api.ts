@@ -402,6 +402,66 @@ export function documentExportUrl(id: string): string {
   return `${BASE_URL}/documents/${encodeURIComponent(id)}/export.md`;
 }
 
+// --- index integrity ---------------------------------------------------------
+
+export type IndexProblem =
+  | "MISSING_SOURCE"
+  | "SOURCE_CHANGED"
+  | "MODEL_CHANGED"
+  | "POINTS_MISSING";
+
+/** One file whose original or derived index no longer agrees with SQLite. */
+export interface FileIntegrityProblem {
+  file_id: string;
+  file_name: string;
+  problems: IndexProblem[];
+  searchable: boolean;
+  indexed_points: number | null;
+  expected_points: number | null;
+}
+
+/** Whether the derived index still describes the library. */
+export interface IndexStatus {
+  embedding_model: string;
+  ready_files: number;
+  searchable_files: number;
+  deep: boolean;
+  /** False after a requested deep check when Qdrant could not be inspected. */
+  point_check_complete: boolean;
+  problems: FileIntegrityProblem[];
+}
+
+export interface SkippedRebuildFile {
+  file_id: string;
+  file_name: string;
+  reason: string;
+}
+
+/** The rebuild plan accepted by the backend before background work begins. */
+export interface RebuildStarted {
+  queued: number;
+  skipped: SkippedRebuildFile[];
+  collection_recreated: boolean;
+  embedding_model: string;
+}
+
+/** Check cheap source/model integrity, optionally including Qdrant point counts. */
+export async function getIndexStatus(
+  deep = false,
+  signal?: AbortSignal,
+): Promise<IndexStatus> {
+  const response = await request(`/index/status?deep=${deep}`, { signal });
+  return (await response.json()) as IndexStatus;
+}
+
+/** Queue every available source for re-ingestion. */
+export async function rebuildIndex(): Promise<RebuildStarted> {
+  const response = await request("/index/rebuild", { method: "POST" });
+  return (await response.json()) as RebuildStarted;
+}
+
+// --- files -------------------------------------------------------------------
+
 /** Every file, newest first. */
 export async function listFiles(signal?: AbortSignal): Promise<StoredFile[]> {
   const response = await request("/files", { signal });

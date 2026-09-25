@@ -17,10 +17,14 @@ import {
   cancelFile as cancelFileRequest,
   deleteFile as deleteFileRequest,
   getFile,
+  getIndexStatus,
   isProcessing,
   listFiles,
+  rebuildIndex as rebuildIndexRequest,
   rejectionFor,
   reingestFile as reingestFileRequest,
+  type IndexStatus,
+  type RebuildStarted,
   type StoredFile,
   uploadFile,
 } from "@/lib/api";
@@ -36,6 +40,7 @@ export interface RejectedUpload {
 }
 
 export type LoadPhase = "loading" | "ready" | "error";
+export type IntegrityPhase = "loading" | "ready" | "checking" | "rebuilding" | "error";
 
 export interface Library {
   files: StoredFile[];
@@ -51,7 +56,13 @@ export interface Library {
   announcement: string;
   /** Set after an upload succeeds, so the page can move focus to the new card. */
   lastAddedId: string | null;
+  integrity: IndexStatus | null;
+  integrityPhase: IntegrityPhase;
+  integrityError: string | null;
+  rebuildResult: RebuildStarted | null;
   reload: () => void;
+  checkIndex: () => Promise<void>;
+  rebuildIndex: () => Promise<void>;
   addFiles: (selected: File[]) => Promise<void>;
   removeFile: (id: string) => Promise<void>;
   retryFile: (id: string) => Promise<void>;
@@ -68,9 +79,17 @@ export function useLibrary(): Library {
   const [rejected, setRejected] = useState<RejectedUpload[]>([]);
   const [announcement, setAnnouncement] = useState("");
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
+  const [integrity, setIntegrity] = useState<IndexStatus | null>(null);
+  const [integrityPhase, setIntegrityPhase] = useState<IntegrityPhase>("loading");
+  const [integrityError, setIntegrityError] = useState<string | null>(null);
+  const [rebuildResult, setRebuildResult] = useState<RebuildStarted | null>(null);
 
   /** Guards against a slow poll round overlapping the next tick. */
   const pollInFlight = useRef(false);
+  /** The latest integrity request wins if a focus refresh overlaps a deep check. */
+  const integrityRequest = useRef(0);
+  /** A settled transition triggers one cheap integrity refresh, not a poll. */
+  const processingWasActive = useRef(false);
 
   /** Apply a successful listing. Separated from the fetch so the initial load
    *  can update state from the promise callback rather than synchronously
@@ -89,6 +108,43 @@ export function useLibrary(): Library {
     );
   }, []);
 
+  const loadIntegrity = useCallback(
+    async (
+      deep: boolean,
+      options: { announce?: boolean; signal?: AbortSignal } = {},
+    ) => {
+      const request = ++integrityRequest.current;
+      try {
+        const result = await getIndexStatus(deep, options.signal);
+        if (options.signal?.aborted || request !== integrityRequest.current) return;
+        setIntegrity(result);
+        setIntegrityPhase("ready");
+        setIntegrityError(null);
+        if (options.announce) {
+          if (deep && !result.point_check_complete) {
+            setAnnouncement("The stored index could not be checked. Make sure Qdrant is running.");
+          } else if (result.problems.length === 0) {
+            setAnnouncement("The library index is healthy.");
+          } else {
+            setAnnouncement(
+              `The index check found ${result.problems.length} ${result.problems.length === 1 ? "file" : "files"} that need attention.`,
+            );
+          }
+        }
+      } catch (error) {
+        if (options.signal?.aborted || request !== integrityRequest.current) return;
+        const message =
+          error instanceof ApiError
+            ? error.message
+            : "Something went wrong checking the library index.";
+        setIntegrityPhase("error");
+        setIntegrityError(message);
+        if (options.announce) setAnnouncement(`The index check failed. ${message}`);
+      }
+    },
+    [],
+  );
+
   // Initial load. State is set from the promise's callbacks, not from the
   // effect body.
   useEffect(() => {
@@ -100,12 +156,47 @@ export function useLibrary(): Library {
     return () => controller.abort();
   }, [applyList, applyLoadFailure]);
 
+  // Integrity is separate from the file listing: a failed check must not hide a
+  // usable library. The cheap source/model check makes no Qdrant round trips.
+  useEffect(() => {
+    const controller = new AbortController();
+    const request = ++integrityRequest.current;
+    getIndexStatus(false, controller.signal).then(
+      (result) => {
+        if (controller.signal.aborted || request !== integrityRequest.current) return;
+        setIntegrity(result);
+        setIntegrityPhase("ready");
+        setIntegrityError(null);
+      },
+      (error: unknown) => {
+        if (controller.signal.aborted || request !== integrityRequest.current) return;
+        setIntegrityPhase("error");
+        setIntegrityError(
+          error instanceof ApiError
+            ? error.message
+            : "Something went wrong checking the library index.",
+        );
+      },
+    );
+    return () => controller.abort();
+  }, []);
+
   // Poll the files that are still being processed. The effect re-runs whenever
   // the set of processing ids changes, and does nothing while that set is empty.
   const processingIds = files
     .filter((file) => isProcessing(file.status))
     .map((file) => file.id)
     .join(",");
+
+  useEffect(() => {
+    if (processingIds !== "") {
+      processingWasActive.current = true;
+      return;
+    }
+    if (!processingWasActive.current) return;
+    processingWasActive.current = false;
+    void loadIntegrity(false);
+  }, [processingIds, loadIntegrity]);
 
   useEffect(() => {
     if (processingIds === "") return;
@@ -220,6 +311,7 @@ export function useLibrary(): Library {
         await deleteFileRequest(id);
         setFiles((current) => current.filter((file) => file.id !== id));
         setAnnouncement(target ? `${target.name} was removed.` : "The file was removed.");
+        void loadIntegrity(false);
       } catch (error) {
         const message =
           error instanceof ApiError ? error.message : "Something went wrong removing this file.";
@@ -232,7 +324,7 @@ export function useLibrary(): Library {
         setAnnouncement(`${target?.name ?? "The file"} was not removed. ${message}`);
       }
     },
-    [files],
+    [files, loadIntegrity],
   );
 
   const retryFile = useCallback(async (id: string) => {
@@ -273,6 +365,45 @@ export function useLibrary(): Library {
     setRejected((current) => current.filter((item) => item.key !== key));
   }, []);
 
+  const checkIndex = useCallback(async () => {
+    setIntegrityPhase("checking");
+    setIntegrityError(null);
+    await loadIntegrity(true, { announce: true });
+  }, [loadIntegrity]);
+
+  const rebuildIndex = useCallback(async () => {
+    setIntegrityPhase("rebuilding");
+    setIntegrityError(null);
+    setRebuildResult(null);
+    try {
+      const result = await rebuildIndexRequest();
+      setRebuildResult(result);
+      setIntegrityPhase("ready");
+      setAnnouncement(
+        result.queued === 0
+          ? "No files were queued for rebuilding."
+          : `${result.queued} ${result.queued === 1 ? "file is" : "files are"} being rebuilt.`,
+      );
+
+      try {
+        const listed = await listFiles();
+        applyList(listed);
+      } catch {
+        setIntegrityError(
+          "The rebuild started, but the file list could not be refreshed. It will update when this tab regains focus.",
+        );
+      }
+
+      if (result.queued === 0) void loadIntegrity(false);
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : "Something went wrong starting the rebuild.";
+      setIntegrityPhase("error");
+      setIntegrityError(message);
+      setAnnouncement(`The index was not rebuilt. ${message}`);
+    }
+  }, [applyList, loadIntegrity]);
+
   // Re-list when the tab regains focus. Ingestion can be started from another
   // tab, a second window, or the API directly, and without this the list only
   // ever reflects what this tab did itself. Quiet on purpose: it replaces the
@@ -291,15 +422,19 @@ export function useLibrary(): Library {
           // next deliberate action reports the failure loudly enough.
         },
       );
+      void loadIntegrity(false);
     };
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-  }, []);
+  }, [loadIntegrity]);
 
   const reload = useCallback(() => {
     setPhase("loading");
+    setIntegrityPhase("loading");
+    setIntegrityError(null);
     listFiles().then(applyList, applyLoadFailure);
-  }, [applyList, applyLoadFailure]);
+    void loadIntegrity(false);
+  }, [applyList, applyLoadFailure, loadIntegrity]);
 
   return {
     files,
@@ -310,7 +445,13 @@ export function useLibrary(): Library {
     rejected,
     announcement,
     lastAddedId,
+    integrity,
+    integrityPhase,
+    integrityError,
+    rebuildResult,
     reload,
+    checkIndex,
+    rebuildIndex,
     addFiles,
     removeFile,
     retryFile,

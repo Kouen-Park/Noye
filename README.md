@@ -171,11 +171,12 @@ noye/
 
 ### Phase 6 — Reliability and Quality
 
-- [ ] Upload size limits
-- [ ] Duplicate detection
-- [ ] Stale vector detection
-- [ ] Rebuild the index on demand
-- [ ] Handle a change of embedding model
+- [x] Upload size limits
+- [x] Duplicate detection
+- [x] Stale vector detection
+- [x] Rebuild the index on demand
+- [x] Handle a change of embedding model
+- [x] Surface index integrity in the library
 
 ### Phase 7 — Desktop Application
 

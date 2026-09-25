@@ -6,7 +6,9 @@ import { AppShell } from "@/components/app-shell";
 import { CrossIcon } from "@/components/icons";
 import { DropZone } from "@/components/library/drop-zone";
 import { FileCard } from "@/components/library/file-card";
+import { IntegrityPanel } from "@/components/library/integrity-panel";
 import { useLibrary } from "@/hooks/use-library";
+import { isProcessing } from "@/lib/api";
 import { GROUPS, groupOf } from "@/lib/status";
 
 /**
@@ -65,6 +67,10 @@ export default function LibraryPage() {
     [library.files],
   );
   const passageCount = indexedFiles.reduce((total, file) => total + file.chunk_count, 0);
+  const busyFileIds = useMemo(
+    () => library.files.filter((file) => isProcessing(file.status)).map((file) => file.id),
+    [library.files],
+  );
 
   const isEmpty = library.phase === "ready" && library.files.length === 0;
 
@@ -119,6 +125,19 @@ export default function LibraryPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {library.phase === "ready" && library.files.length > 0 && (
+        <IntegrityPanel
+          status={library.integrity}
+          phase={library.integrityPhase}
+          error={library.integrityError}
+          rebuildResult={library.rebuildResult}
+          busyFileIds={busyFileIds}
+          onCheck={library.checkIndex}
+          onReingest={library.retryFile}
+          onRebuild={library.rebuildIndex}
+        />
       )}
 
       {library.phase === "loading" && (
