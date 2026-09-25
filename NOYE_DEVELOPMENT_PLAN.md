@@ -2388,18 +2388,18 @@ Both were deferred from Phase 1 for exactly that reason.
 
 -   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
 -   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
--   [ ] File size validation
--   [ ] Duplicate detection
--   [ ] Corrupt file handling
+-   [x] File size validation
+-   [x] Duplicate detection
+-   [x] Corrupt file handling
 
 ### Index integrity
 
 -   [x] Delete vectors when source is deleted --- Phase 2
--   [ ] Schema migration runner *(prerequisite; see §14.2)*
--   [ ] Detect a changed source file
--   [ ] Detect an embedding model change
--   [ ] Detect an index that lost points
--   [ ] Rebuild index on demand
+-   [x] Schema migration runner *(prerequisite; see §14.2)*
+-   [x] Detect a changed source file
+-   [x] Detect an embedding model change
+-   [x] Detect an index that lost points
+-   [x] Rebuild index on demand
 
 ### UX
 
@@ -2409,15 +2409,15 @@ Both were deferred from Phase 1 for exactly that reason.
 -   [x] Processing states --- Phase 2
 -   [x] Clear source display --- Phases 3--4
 -   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
--   [ ] Surface index integrity in the library
+-   [x] Surface index integrity in the library
 
 ### Logging
 
--   [ ] Backend structured logging
--   [ ] Processing errors
--   [ ] Ollama errors
--   [ ] Qdrant errors
--   [ ] A test proving no user content is logged
+-   [x] Backend structured logging
+-   [x] Processing errors
+-   [x] Ollama errors
+-   [x] Qdrant errors
+-   [x] A test proving no user content is logged
 
 ### Carried over
 
@@ -2456,6 +2456,33 @@ after extraction proves it readable, so both a single-file retry and a whole-lib
 rebuild fill the missing identity. Re-ingesting a deliberately changed source also
 records the new bytes as the integrity baseline. Unit tests cover both cases and keep
 an old file's hash unknown when extraction fails before the new step runs.
+
+## 14.8 Library integrity UI
+
+The library now makes the backend's integrity decisions visible without turning an
+expensive Qdrant scan into background traffic. Opening or refocusing the page runs
+the cheap source-hash and embedding-model check. **Check stored index** is the
+explicit deep action that also compares stored point counts with Qdrant.
+
+The status response carries `point_check_complete` separately from `deep`. This is
+important when Qdrant is unavailable: the page says that the stored index could not
+be checked and does not misreport an empty `problems` list as a healthy deep check.
+
+Remediation follows the cause rather than offering one ambiguous repair:
+
+-   a changed source offers a one-file re-index;
+-   an embedding-model mismatch or missing points offers a confirmed library rebuild;
+-   a missing source asks the user to restore or remove the file;
+-   rebuild responses show queued, skipped, and recreated-collection results, while
+    the existing ingestion polling continues to report progress.
+
+Validation for the branch covered the backend contract, API client, hook request
+sequencing, each problem presentation, rebuild confirmation and results, the full
+backend and frontend suites, Ruff, ESLint, TypeScript, and a production Webpack
+build. A browser pass against the real library confirmed the cheap healthy summary,
+the explicit deep-check action, the Qdrant-unavailable state, visible keyboard focus,
+and no console warnings or errors. No rebuild or file mutation was performed during
+that browser pass.
 
 # 15. Testing Strategy
 
