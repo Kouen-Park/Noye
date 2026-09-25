@@ -201,6 +201,34 @@ def set_status(
     return get_file(connection, file_id)
 
 
+def set_content_hash(
+    connection: sqlite3.Connection, file_id: str, content_hash: str
+) -> File:
+    """Record the sha256 of the file's bytes, as read during this ingestion.
+
+    ``content_hash`` is written at upload time when the bytes pass through the
+    server, but re-ingestion and rebuild read a file already on disk without
+    re-uploading it, so nothing hashed it. This lets those paths fill the column
+    after they know the file is readable and intact.
+
+    Only an upload can compute the hash from the original network stream; this
+    function hashes the stored copy. For a file that has never changed, the result
+    is identical, so duplicate detection will recognise a re-upload after a
+    re-ingest and refuse it correctly.
+
+    Raises:
+        FileRecordNotFound: no such id.
+    """
+    with connection:
+        cursor = connection.execute(
+            "UPDATE files SET content_hash = ?, updated_at = ? WHERE id = ?",
+            (content_hash, _now_iso(), file_id),
+        )
+    if cursor.rowcount == 0:
+        raise FileRecordNotFound(f"No file with id {file_id}")
+    return get_file(connection, file_id)
+
+
 def set_embedding_model(
     connection: sqlite3.Connection, file_id: str, model: str | None
 ) -> File:
