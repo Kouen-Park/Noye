@@ -2421,6 +2421,13 @@ Both were deferred from Phase 1 for exactly that reason.
 
 ### Carried over
 
+The post-#35 local-stack pass is recorded in
+[`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Real search,
+chat, document generation/editing and source/vector cleanup were observed.
+It also fixes a fresh-database startup race. The full live suite, browser file
+selection and printed-PDF inspection remain incomplete; these results do not
+close the remaining Phase 6 acceptance work.
+
 -   [ ] Rewrite a follow-up question before retrieval (§12.6)
 -   [ ] Inspect a printed PDF (§13.6) --- do this first; it is two minutes
 -   [ ] Calibrate the similarity threshold (deferred from Phase 1)
