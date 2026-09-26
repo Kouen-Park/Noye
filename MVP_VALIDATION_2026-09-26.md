@@ -102,11 +102,12 @@ service-disabled suite's skips are intentional, not live-service passes.
   was not tested in this pass. The synthetic PDF can be recreated; no user
   source was deleted.
 - At 375 px, all four routes reported root/body `scrollWidth` equal to the
-  viewport. At 390 px, the page also did not overflow, but the horizontally
-  scrollable navigation initially showed only part of the final `Documents`
-  item (its right edge measured 428 px). At 768 px the navigation fit normally.
-  There is no committed visual baseline, so visual regression remains
-  inconclusive rather than passed.
+  viewport. The final `Documents` navigation item initially ended at 428 px,
+  so its label was partially hidden. Mobile link padding/gaps were tightened
+  while retaining the existing desktop spacing; the item's measured right edge
+  is now 368 px at both 375 px and 390 px. The full label is visible and the
+  page still has no horizontal overflow. There is no committed visual baseline,
+  so broader visual regression remains inconclusive rather than passed.
 
 ## Defect fixed
 

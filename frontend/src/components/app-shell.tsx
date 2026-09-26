@@ -47,11 +47,11 @@ export function AppShell({ children, current, passageCount, fileCount }: AppShel
         </div>
 
         <nav aria-label="Sections">
-          <ul className="flex gap-1 overflow-x-auto md:flex-col md:overflow-visible">
+          <ul className="flex gap-0 overflow-x-auto md:flex-col md:gap-1 md:overflow-visible">
             {NAV.map(({ label, Icon, href, soon }) => {
               const isCurrent = label === current;
               const shared =
-                "flex min-h-11 items-center gap-3 whitespace-nowrap rounded-md px-3 text-sm";
+                "flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-2 text-sm md:gap-3 md:px-3";
               if (soon) {
                 return (
                   <li key={label}>
