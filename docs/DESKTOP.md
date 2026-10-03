@@ -194,3 +194,30 @@ reduced-motion scrolling, readable long source names, and stronger sidebar text
 contrast. Retrieved metadata is still not proof of answer support; previous turns
 are still not model context. Actual RAG/citation opening, Gemini quality/latency,
 native PDF export and the final packaged-app acceptance pass remain deferred.
+
+## First-run hardware measurement foundation
+
+Added 2026-10-04: `GET /runtime/hardware` is a read-only measurement API. macOS
+memory probes each have a one-second timeout and fixed arguments without a shell;
+the synchronous route runs them outside the async event loop. Free plus inactive
+pages are an estimate, not guaranteed allocation headroom. Apple Silicon is only
+an acceleration candidate: no GPU enumeration, VRAM or throughput is claimed.
+Unsupported platforms and denied probes return unknown/null. Disk space is for
+the workspace volume, not necessarily a separately configured Ollama model volume.
+
+Executed `.venv/bin/pytest app/tests/test_hardware.py app/tests/test_desktop.py -q`:
+**22 passed, 7 warnings** after permitting temporary loopback listeners. Initial
+sandboxed lifecycle checks failed because binding a local socket was prohibited;
+the new hardware tests passed there. `.venv/bin/ruff check app/` passed.
+A direct host probe outside the sandbox returned Darwin/arm64, 8 logical CPUs,
+8 GiB total RAM and approximately 1.08 GiB free-plus-inactive memory at that moment.
+Inside the sandbox, denied memory queries returned null as designed.
+
+`npm run desktop:build -- --no-sign -- --locked` passed (static UI, frozen backend
+and Rust app bundle; **67.22 MiB**). No native window/browser UI was opened for this
+backend-only step; the first-run recommendation screen does not exist yet.
+
+No frontend changes, recommendation catalog, automatic installation, provider/key
+setup or speed benchmark were implemented in this bounded step. First-run setup
+remains incomplete. Full backend/live RAG and native export acceptance were not
+rerun; the user's ordinary-usage-only limit narrowed this turn to the foundation.

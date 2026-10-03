@@ -2374,6 +2374,20 @@ evidence and limitations are recorded in `docs/DESKTOP.md`.
 This completes §14.1 step 2. Hardware recommendations and first-run setup are
 next. It does not complete final live RAG/PDF acceptance or fix inference latency.
 
+### First-run hardware foundation (2026-10-04)
+
+`GET /runtime/hardware` now reports OS, architecture, logical CPUs, workspace-volume
+free disk, and macOS total/free-plus-inactive memory. Missing or restricted probes
+return null, not zero. Apple Silicon architecture is an acceleration candidate,
+not a verified Metal device or speed benchmark. Queries are read-only and bounded;
+no credentials, user paths, model downloads or cloud calls are included.
+
+Hardware/API and existing desktop lifecycle tests: **22 passed**; backend Ruff
+passed. This is only the measurement prerequisite for §14.1 step 3. Recommendation
+rules, first-run UI, installation and secure persistent settings remain pending.
+The user requested stopping at ordinary usage limits, so the milestone is not
+marked complete. See `docs/DESKTOP.md` for validation boundaries.
+
 Avoid making desktop packaging block development of the knowledge
 engine.
 
