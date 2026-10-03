@@ -7,11 +7,14 @@ delete the user's documents, so it must not be exposed on a network interface
 without adding authentication first.
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import ai, chat, documents, files, index, search
+from app.api import ai, chat, documents, files, index, runtime, search
 from app.config import get_settings
+from app.db.database import connect, init_schema
 from app.logging_config import configure_logging, get_logger
 
 # Before the routers, so anything they log during import is already captured.
@@ -21,9 +24,23 @@ from app.logging_config import configure_logging, get_logger
 configure_logging()
 logger = get_logger("main")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Complete schema setup before serving concurrent requests or announcing
+    # desktop readiness. Request-time checks remain defensive/idempotent.
+    connection = connect()
+    try:
+        init_schema(connection)
+    finally:
+        connection.close()
+    yield
+
+
 app = FastAPI(
     title="Noye API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 settings = get_settings()
@@ -58,6 +75,7 @@ app.include_router(chat.router)
 app.include_router(documents.router)
 app.include_router(index.router)
 app.include_router(ai.router)
+app.include_router(runtime.router)
 
 
 @app.get("/health")
