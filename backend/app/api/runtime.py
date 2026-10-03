@@ -6,9 +6,16 @@ import httpx
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.config import get_settings
+from app.config import data_directory, get_settings
+from app.services.hardware import HardwareInfo, inspect_hardware
 
 router = APIRouter(prefix="/runtime", tags=["runtime"])
+
+
+@router.get("/hardware", response_model=HardwareInfo)
+def hardware() -> HardwareInfo:
+    # Sync handler keeps bounded OS probes off the asynchronous event loop.
+    return inspect_hardware(data_directory())
 
 
 class ServicesOut(BaseModel):
