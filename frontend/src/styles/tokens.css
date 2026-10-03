@@ -35,6 +35,8 @@
 
   --ink: light-dark(#292421, #ece7dc);        /* 13.40:1 / 10.69:1 */
   --ink-soft: light-dark(#6a6055, #9ca79e);   /* secondary copy, facts */
+  /* Secondary copy on the darker sidebar: 4.97:1 / 7.54:1. */
+  --ink-on-sunken: light-dark(#5b5349, #9ca79e);
   --ink-faint: light-dark(#98907f, #6d7872);  /* eyebrows, disabled */
 
   /* Text placed ON a filled --brand or --accent surface. */

@@ -10,11 +10,13 @@ export function ProviderSelector({
   onChange,
   disabled = false,
   task = "chat",
+  compact = false,
 }: {
   value: GenerationProvider;
   onChange: (provider: GenerationProvider) => void;
   disabled?: boolean;
   task?: "chat" | "document";
+  compact?: boolean;
 }) {
   const id = useId();
   const [providers, setProviders] = useState<AiProvider[] | null>(null);
@@ -33,7 +35,7 @@ export function ProviderSelector({
   const ollama = providers?.find((provider) => provider.id === "ollama");
 
   return (
-    <div className="mb-3 rounded-md border border-edge-strong bg-card px-3 py-2">
+    <div className={compact ? "min-w-0" : "mb-3 rounded-md border border-edge-strong bg-card px-3 py-2"}>
       <label htmlFor={id} className="block text-[12px] font-semibold text-ink-soft">
         AI for {task === "chat" ? "this chat" : "this document"}
       </label>
@@ -64,16 +66,23 @@ export function ProviderSelector({
           {" "}Your API project determines billing; Noye cannot enforce a free tier.
         </p>
       )}
-      {providers !== null && !gemini?.configured && (
+      {providers !== null && !gemini?.configured && (compact ? (
+        <details className="mt-1 text-[12px] text-ink-soft">
+          <summary className="min-h-11 cursor-pointer py-3">Gemini setup</summary>
+          <p>{isDesktopRuntime()
+            ? "Gemini uses GEMINI_API_KEY from the backend environment. In-app key setup is not available in this desktop preview yet."
+            : "To enable Gemini, set GEMINI_API_KEY in the project's .env and restart the backend. Keep the key out of frontend settings."}</p>
+        </details>
+      ) : (
         <p className="mt-1 text-[12px] text-ink-soft">
           {isDesktopRuntime()
             ? "Gemini uses GEMINI_API_KEY from the backend environment. In-app key setup is not available in this desktop preview yet."
             : "To enable Gemini, set GEMINI_API_KEY in the project's .env and restart the backend. Keep the key out of frontend settings."}
         </p>
-      )}
+      ))}
       {error && (
         <p className="mt-1 text-[12px] text-fail" role="status">
-          Could not check Gemini configuration. Local mode is still selected. Reload to try again.
+          Could not check Gemini configuration. Your AI selection has not changed. Reload to try again.
         </p>
       )}
     </div>

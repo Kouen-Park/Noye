@@ -49,6 +49,11 @@ body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Secondary copy must remain readable on the tan structural surface too. */
+.noye-sidebar {
+  --ink-soft: var(--ink-on-sunken);
+}
+
 /* Display face is used with restraint: headings only, never body copy. */
 h1,
 h2,
