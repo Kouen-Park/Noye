@@ -102,8 +102,9 @@ In particular:
 -   Do not introduce authentication, payments, collaboration, cloud
     sync, or agent frameworks into the MVP unless explicitly requested.
 -   Build Tauri in Phase 6 after the relevant existing unit/API/UI checks,
-    lint, types and builds pass. Phase 7 follows with stability/quality
-    improvement and final packaged-app end-to-end acceptance.
+    lint, types and builds pass. Phase 7 implements the twelve approved core
+    workflow improvements; Phase 8 follows with stability/quality refinement
+    and final packaged-app end-to-end acceptance. Validate each change as it lands.
 -   Do not copy Memex or another project's implementation wholesale.
     Noye should remain independently implemented.
 
@@ -543,12 +544,14 @@ Local Web Application
         ↓
 Phase 6: Tauri Desktop Application
         ↓
-Phase 7: Reliability, Quality and Final Acceptance
+Phase 7: Twelve Core Workflow Improvements
+        ↓
+Phase 8: Reliability, Quality and Final Acceptance
 ```
 
-Build the knowledge workflow first; complete desktop implementation before the
-final stability/quality and end-to-end acceptance phase. Validate each change as
-it lands rather than postponing all testing to Phase 7.
+Build the knowledge workflow first, then the desktop app and the twelve approved
+workflow improvements, followed by stability/quality refinement and final acceptance. Validate each change as
+it lands rather than postponing all testing to Phase 8.
 
 ------------------------------------------------------------------------
 
@@ -1512,7 +1515,7 @@ Decisions taken here:
 
 -   **Uploads are stored as `{file_id}__{filename}`.** Two uploads of the same
     name would otherwise overwrite each other. `File.name` keeps the original
-    for display. Duplicate *detection* belongs to the Phase 7 reliability
+    for display. Duplicate *detection* belongs to the Phase 8 reliability
     baseline; silently destroying the first upload is not an acceptable stand-in.
 -   **The response never includes `path`.** A server filesystem path is of no
     use to a client and invites being treated as a URL.
@@ -2186,7 +2189,7 @@ attribute it depends on, but no printed page has been inspected, because Chromiu
 cannot launch at this machine's available memory. The checkboxes above say so
 rather than claiming it. This is the cost §13.2 accepted when it chose the
 browser's print path — weak control over output — and it should be confirmed by
-eye during Phase 7's native export acceptance pass.
+eye during Phase 8's native export acceptance pass.
 
 **The print stylesheet is a whitelist.** Only `data-print="document"` and its
 ancestors survive printing. A blacklist would need every future control
@@ -2224,19 +2227,19 @@ proxy assertion outlives the assumption it was standing in for.
 **§12.6 is now more visible, not less.** Phase 5 makes chat the route into
 documents, so the fact that the model does not receive earlier conversation turns
 is easier to run into. Its cheapest option — rewriting a follow-up question
-before retrieval — belongs to Phase 7 quality improvement after desktop
-implementation.
+before retrieval — belongs to Phase 7 item 11 after desktop implementation;
+Phase 8 rechecks the resulting quality and latency.
 
 
 # 14. Phase 6 --- Desktop Application
 
-**Sequence update, 2026-10-03:** the user moved Tauri desktop implementation to
-Phase 6, followed by stability/quality improvement and final end-to-end acceptance
-in Phase 7 (§16.10). Proceed with desktop milestones once their relevant
-unit/API/UI tests, lint, types and builds pass; these checks continue throughout
+**Sequence update, 2026-10-03:** implement Tauri in Phase 6, then the twelve approved
+core workflow improvements in Phase 7 (§16). Stability/quality refinement and final
+packaged-app acceptance follow in Phase 8 (§17.10). Proceed with desktop milestones
+once their relevant unit/API/UI tests, lint, types and builds pass; these checks continue throughout
 implementation. Completing this phase does not declare the desktop MVP accepted.
 Native PDF export, live RAG quality and local/cloud latency remain unresolved until
-observed in Phase 7's packaged-app acceptance pass.
+observed in Phase 8's packaged-app acceptance pass.
 
 Use Tauri to package the application.
 
@@ -2288,10 +2291,10 @@ Desktop work includes:
    return only availability to the UI. Changing a generation model needs no index
    rebuild. Changing an embedding model does, and requires the existing explicit
    rebuild workflow.
-6. **Handoff to Phase 7:** finish the desktop implementation milestones, record
-   their validation and outstanding defects, then improve reliability/quality and
-   run final packaged-app acceptance under §16.10. Keep the MVP checklist open
-   until that pass confirms the complete workflow.
+6. **Handoff to Phase 7:** finish desktop implementation, record its validation
+   and outstanding defects, then implement the twelve improvements in §16.
+   Phase 8 (§17.10) performs subsequent stability/quality refinement and final
+   packaged-app acceptance; keep the MVP checklist open until then.
 
 ## 14.2 Desktop implementation acceptance
 
@@ -2303,9 +2306,9 @@ Desktop work includes:
 - The packaged app launches and stops its own backend cleanly without stopping
   unrelated user services.
 - Relevant unit/API/UI checks, lint, types and packaged builds pass for each
-  milestone; retain outstanding checks explicitly for Phase 7 (§16.10).
+  milestone; retain outstanding checks explicitly for Phase 8 (§17.10).
 - Full workflow acceptance, native export inspection and live quality/latency
-  measurement belong to Phase 7 and remain required before the MVP release.
+  measurement belong to Phase 8 and remain required before the MVP release.
 
 ## 14.3 macOS foundation implementation
 
@@ -2340,7 +2343,7 @@ This completes §14.1 step 1's local macOS foundation, not the desktop MVP relea
 Next: the chat-focused layout, then first-run recommendations/installation and
 secure persistent AI settings. Live RAG, citations, exports, inference latency,
 Windows, other Macs and signed/notarized distribution remain unvalidated; final
-macOS workflow acceptance and quality/latency measurement belong to Phase 7.
+macOS workflow acceptance and quality/latency measurement belong to Phase 8.
 
 Avoid making desktop packaging block development of the knowledge
 engine.
@@ -2417,21 +2420,232 @@ Export
 
 ------------------------------------------------------------------------
 
-# 16. Phase 7 --- Reliability and Quality
+# 16. Phase 7 --- Core Workflow Improvements
 
-Phase 7 follows the Phase 6 Tauri implementation. Improve reliability and answer,
-retrieval and document quality in the packaged application, then perform the final
-end-to-end acceptance pass before declaring the desktop MVP complete.
+Implement the twelve improvements approved on 2026-10-03 after the Phase 6 Tauri
+milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
+types and builds run with each change. Phase 8 then performs broader stability,
+quality refinement and final packaged-app acceptance.
 
-**Sequence update, 2026-10-03:** the user moved Tauri desktop implementation to
-Phase 6 and reliability/quality improvement to Phase 7. Keep already implemented
-migrations, logging, upload safeguards and index-integrity work complete. The
-implementation notes in §§16.1–16.9 retain the original design context and measured
+These items are pending as complete milestones. Existing desktop storage, service
+checks and SQLite-copy import are partial foundations, not missing functionality
+to rebuild. Reassess current code before each item and preserve all saved work.
+
+## 16.1 Approved scope and expected benefit
+
+| ID | Priority | Improvement | Expected benefit |
+| --- | --- | --- | --- |
+| 1 | High | Store retrieved excerpts and pass them to document drafting | Draft detailed documents using source examples and numbers omitted from a short answer |
+| 2 | High | Preserve the source version and excerpt behind each citation | Inspect the evidence behind old answers after originals change or disappear |
+| 3 | High | Prevent rebuilds from conflicting with active work | Avoid collection resets colliding with uploads or ingestion |
+| 4 | High | Version indexes by model, chunking and input format | Detect incompatible old vectors when processing or embedding behavior changes |
+| 5 | High | Back up and restore SQLite together with original files | Preserve conversations and user-edited documents independently of the derived index |
+| 6 | High | Persist jobs, recover after restart and cancel between batches | Make interrupted work understandable and safely resumable |
+| 7 | High | Complete desktop data/service/model integration | Make installation usable and service/model failures diagnosable |
+| 8 | High | Restrict published Qdrant ports to localhost | Keep local knowledge storage within the intended network boundary |
+| 9 | Medium | Separate query/document embedding formats and validate input length | Use task-appropriate inputs and detect truncation instead of silently losing text |
+| 10 | Medium | Establish retrieval evaluation and assess hybrid search/reranking | Measure and improve bilingual, exact-term and multi-document retrieval |
+| 11 | Medium | Support bounded conversation context and selected sources | Resolve follow-up questions and restrict answers to the user's chosen material |
+| 12 | Medium | Improve evidence inspection, cited exports and PDF extraction status | Inspect/share document provenance and identify pages with no extracted text |
+
+Hybrid retrieval and reranking are evaluation-gated options in item 10. A measured
+finding that an option does not improve the baseline is a valid documented result;
+adding an extra model or service is not required to mark the evaluation complete.
+Item 12 includes PDF extraction coverage reporting, not mandatory OCR, layout
+models or a new document parser. Notebook/workspace organization remains a later
+feature; item 11 supplies source selection within the existing workflow.
+
+## 16.2 Implementation milestones
+
+### 1. Retrieved excerpts in document generation
+
+-   [ ] Persist the actual excerpts used for an answer and pass that saved material
+    with the answer and instruction to `services/documents.py`. Reuse item 2's
+    evidence storage; do not re-retrieve current chunks to reconstruct old evidence.
+- Update cloud payload disclosure before sending the newly included excerpts to
+  Gemini. Keep generation explicitly selected and embeddings/search local.
+- Validate captured generation requests contain source detail absent from the
+  answer, while legacy messages without snapshots are clearly identified and do
+  not acquire invented historical evidence.
+
+### 2. Citation evidence and source versions
+
+-   [ ] Add immutable excerpt snapshots and original source identity/version to
+    stored message/document evidence using additive SQLite migrations. Preserve
+    file/page/chunk metadata and any available index identity from item 4.
+- Keep historical evidence after source re-ingestion/deletion; show changed,
+  missing and legacy-unknown originals clearly. Existing citation metadata remains
+  readable, but cannot be labelled as an exact text snapshot it never stored.
+- Validate old evidence remains identical after source edits/re-indexing/deletion
+  and conversation/document reload. Never treat the presence of citations as
+  proof that every generated or subsequently edited sentence is supported.
+
+### 3. Rebuild and ingestion coordination
+
+-   [ ] Coordinate library-wide maintenance with ingestion/deletion before any
+    collection reset. Refuse or safely drain conflicting work; reserve eligible
+    work before destructive operations. Keep the ordinary non-reset rebuild path.
+- Start with the existing single-process architecture and a shared maintenance
+  guard; use versioned collections only if a concrete need justifies the change.
+- Validate a dimension-changing rebuild with a busy file cannot reset the live
+  collection before reporting the conflict. Cover upload, cancel, deletion and
+  duplicate rebuild requests, including failure cleanup.
+
+### 4. Index identity and compatibility
+
+-   [ ] Persist an index fingerprint covering embedding model identity/digest,
+    vector dimension, input-format version, and extraction/chunking configuration.
+    Store source revisions separately and expose when an explicit rebuild is needed.
+- Reuse existing migrations and integrity checks. Mark legacy identity as unknown;
+  do not invent compatibility from the model name alone. Generation-model changes
+  do not invalidate embeddings; embedding-format/model changes may require rebuild.
+- Validate changes under the same model tag and changes to prefix/chunk settings
+  are detected, incompatible spaces never share rankings, and saved writing survives.
+
+### 5. Complete workspace backup and restore
+
+-   [ ] Build a user-visible backup/restore workflow covering originals, SQLite
+    conversations, edited documents and evidence snapshots. Reuse SQLite's backup
+    API and the desktop import's copy-first/no-overwrite behavior, including WAL data.
+- Define a consistent snapshot boundary with active writes/jobs. Include versioned
+  metadata, exclude credentials/model weights and rebuildable vectors, and restore
+  into a new destination before an explicit switch. Correct stale "SQLite is
+  entirely rebuildable" documentation in `db/database.py` and storage helpers.
+- Validate round-trip preservation, invalid/partial backup rejection, migration,
+  missing-source reporting and no overwrites. Rebuild the restored derived index
+  without claiming original files alone can recover conversations or edited text.
+
+### 6. Durable jobs and responsive cancellation
+
+-   [ ] Persist job identity, status/progress and interruption reason in SQLite;
+    recover interrupted work on startup and expose safe resume/retry. Use bounded
+    local workers rather than introducing Redis/Celery by default.
+- Check cancellation between embedding batches, bound simultaneous local inference,
+  and keep only fully committed files searchable. Resume idempotently and reconcile
+  SQLite/Qdrant after partial writes. Never automatically repeat cloud generation
+  or activate billing because an app restarted.
+- Validate restart/closed-parent behavior during queued, embedding and indexing
+  stages, batch cancellation, retry and repeated resume without duplicate vectors.
+
+### 7. Desktop data, service and model integration
+
+-   [ ] Reuse Phase 6 app-data paths, owned backend lifecycle, service/model checks,
+    onboarding and persistent AI settings; complete remaining integration gaps.
+- Distinguish configuration, service availability, installed model and readiness.
+  Preserve work across app replacement, imports and provider/model changes. Bound
+  generation context/output budgets and make long-running progress/cancel states
+  understandable; model installation remains explicit and credentials OS-protected.
+- Validate missing/recovered services and models, installation failure/cancel/retry,
+  bounded startup/shutdown and data persistence. Already validated foundation work
+  stays complete; this item is not a second Tauri build.
+
+### 8. Local-only Qdrant exposure
+
+-   [ ] Bind Docker-published Qdrant ports to `127.0.0.1`; remove the gRPC mapping
+    unless used. Keep app-owned backend binds local and remove documentation that
+    treats CORS as authentication or a substitute for network access control.
+- Validate Compose configuration and effective listener bindings when Docker is
+  available, and confirm local ingestion/search still connect. Do not claim a
+  network verification from static YAML inspection alone.
+
+### 9. Task-specific embedding inputs and length limits
+
+-   [ ] Separate query and document embedding functions with explicit model-aware
+    input formats. For EmbeddingGemma, verify runner behavior and compare retrieval
+    task prefixes against the current baseline; record the format in item 4.
+- Detect oversized inputs, including prefixes, and request non-silent truncation
+  behavior where supported. Return usable length errors or split documents before
+  embedding; keep original excerpt text separate from model input formatting.
+- Validate captured query/document payloads, boundary/oversized inputs and bilingual
+  retrieval. Re-index explicitly when a chosen input format changes the embedding
+  space; do not compare new-format queries with an old-format document index.
+
+### 10. Retrieval evaluation and measured improvements
+
+-   [ ] Create a reproducible, non-personal evaluation set with Korean/English and
+    cross-language questions, exact identifiers, negatives and multi-document cases.
+    Record the current baseline before selecting an algorithm or another model.
+- Measure Recall@K/ranking, evidence relevance, answer accuracy/abstention and
+  cold/warm latency. Compare deduplication/diversity, lexical+dense retrieval and
+  conditional local reranking only where justified; measure Korean tokenization.
+- Record adopted/declined options and reasons. Retain the current stack and avoid
+  unmeasured thresholds or always-on extra model calls. Phase 8 expands and tunes
+  this evaluation instead of rebuilding it.
+
+### 11. Conversation context and source selection
+
+-   [ ] Resolve follow-ups with bounded recent context or measured question
+    rewriting; pass selected source IDs through chat/retrieval and persist the
+    conversation's scope. Historical generated answers are context, not source evidence.
+- Define unrestricted, explicitly empty and chosen-source scopes distinctly;
+  deleted/unready/incompatible files must not silently broaden a selected scope.
+  Keep history within the local model's budget and compare answer quality/latency.
+- Validate pronouns/comparisons, scope persistence/reload, empty selections and
+  deleted sources. Keep full notebook organization and long-term memory out of
+  this item unless separately requested.
+
+### 12. Evidence inspection, cited exports and PDF coverage
+
+-   [ ] Show item 2's saved excerpts and original status in the source panel;
+    offer body-only and provenance-inclusive Markdown/PDF exports; report PDF pages
+    with no extracted text and the actual extraction coverage.
+- Keep exports consistent with saved/unsaved editing state and the user's chosen
+  export mode. Include portable source labels/versions rather than temporary
+  localhost links. Describe evidence as supporting the first draft, not validating
+  subsequent user edits. No-text pages are not automatically classified as scans.
+- Validate changed/missing sources, mixed text/image PDFs, pageless formats, and
+  actual native-webview export files. Evidence is retained independently of the
+  original; any future OCR or bounding-box viewer work needs separate justification.
+
+## 16.3 Dependency order and focused changes
+
+Keep the twelve IDs above stable while following actual dependencies. Begin with
+item 8's small local-exposure fix; items 3/4 protect maintenance and index identity.
+Item 2 establishes evidence storage before item 1's drafting and item 12's exports.
+Item 5 uses the resulting schema; item 6 reuses maintenance coordination. Item 7
+builds on Phase 6 rather than restarting it. Evaluate item 9 with item 10's baseline,
+then implement measured input/retrieval changes and item 11's bounded context/scope.
+
+Use focused Conventional Commits and reviewable PRs for meaningful units. Combined
+items may share schema prerequisites, but do not put all twelve into one large
+feature commit. Preserve existing user data and keep unrelated in-progress work
+out of each change. No database/framework replacement is required by this phase.
+
+## 16.4 Completion and handoff to Phase 8
+
+- Items 1–9, 11 and 12 are implemented and have their relevant regression/API/UI
+  checks and remaining limits recorded. Reused Phase 6 behavior counts when the
+  complete milestone is verified; incomplete required work remains open.
+- Item 10 has a working evaluation set/harness and recorded baseline/comparison
+  results. Only hybrid/reranking adoption may be declined with measured reasons;
+  that decision does not waive the evaluation implementation.
+- Changes to SQLite preserve existing work; old evidence remains honest about
+  missing snapshots. No personal data, credentials or models enter Git/test fixtures.
+- Local/cloud payload disclosure matches actual behavior; no automatic cloud
+  fallback/retry or implicit model download is introduced.
+- Relevant suites, lint, types and web/desktop builds pass for affected surfaces.
+  Record unavailable live checks rather than marking them complete.
+- Phase 8 expands stability/quality evaluation and runs the full packaged workflow.
+  Phase 7 completion alone does not close the final MVP acceptance checklist.
+
+------------------------------------------------------------------------
+
+# 17. Phase 8 --- Reliability and Quality
+
+Phase 8 follows Phase 6 desktop implementation and the twelve Phase 7 core
+workflow improvements. Refine stability and quality using the completed features,
+then perform final packaged-app end-to-end acceptance before the desktop MVP release.
+
+**Sequence update, 2026-10-03:** the user assigned the twelve comparison-review
+improvements to Phase 7 and moved the previous reliability/quality phase to Phase 8.
+Keep already implemented migrations, logging, upload safeguards and index-integrity
+work complete. Phase 7 features are not implemented a second time here. The
+implementation notes in §§17.1–17.9 retain the original design context and measured
 results; statements about missing functionality there describe that earlier
 starting point. They are not instructions to rebuild delivered features. Remaining
-work and final acceptance are listed in §16.10.
+work and final acceptance are listed in §17.10.
 
-## 16.1 What the original checklist got wrong
+## 17.1 What the original checklist got wrong
 
 The lists below were written before Phases 2--5 existed, and several of their items
 were delivered on the way. They should be **verified and ticked, not built**:
@@ -2455,13 +2669,13 @@ Two items carry over from earlier phases and belong here:
 
 -   **§12.6** --- the model still does not receive earlier conversation turns.
     Phase 5 made chat the route into documents, so this is now easier to run into.
-    Its cheapest option (rewrite a follow-up question before retrieval) is one
-    prompt and one model call.
--   **§13.6** --- inspect a PDF exported from the native webview during Phase 7.
+    Phase 7 item 11 implements bounded follow-up context; Phase 8 verifies its
+    answer quality and latency across the complete conversation workflow.
+-   **§13.6** --- inspect a PDF exported from the native webview during Phase 8.
     The browser print implementation alone does not establish that the packaged
     application's PDF output works.
 
-## 16.2 Implemented schema migration design
+## 17.2 Implemented schema migration design
 
 Before the reliability baseline, earlier phases had only **added tables**, for
 which `CREATE TABLE IF NOT EXISTS` was enough. The baseline required **adding
@@ -2478,7 +2692,7 @@ expecting a column that is not there, and the first query would fail at runtime
 rather than at startup.
 
 The migration runner was therefore the first reliability branch. It is now
-implemented; future Phase 7 schema changes must reuse it and preserve existing data.
+implemented; future Phase 8 schema changes must reuse it and preserve existing data.
 
 **Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
 in order at startup.** Not Alembic --- that is a second dependency, a config file
@@ -2493,7 +2707,7 @@ which are the user's own questions and writing. So migrations are additive only,
 and any step that would drop or rewrite a column takes a file copy of the database
 first.
 
-## 16.3 Four decisions to take up front
+## 17.3 Four decisions to take up front
 
 **What "duplicate" means.** Not the filename: the same name in two folders is
 legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
@@ -2547,7 +2761,7 @@ backend logging. Its implemented design follows two rules:
 Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
 No new dependency, and structured enough to grep.
 
-## 16.4 Original branch and PR sequence (implemented)
+## 17.4 Original branch and PR sequence (implemented)
 
 ```text
 1. feat/schema-migrations      user_version runner; unblocks everything
@@ -2567,11 +2781,11 @@ diagnose with it in place, and it is the one item with no dependency on the sche
 rebuild-index command as its intended caller, and `embeddings.py` already refuses
 a vector whose dimension disagrees with the configuration.
 
-Not a branch, but Phase 7 work all the same: **threshold calibration and chunking
+Not a branch, but Phase 8 work all the same: **threshold calibration and chunking
 parameters** need several real documents to measure against, which only now exists.
 Both were deferred from Phase 1 for exactly that reason.
 
-## 16.5 Acceptance and validation
+## 17.5 Acceptance and validation
 
 -   An existing `data/app.db` from before the schema migrations opens, gains its new columns, and
     keeps every conversation, message and document. Tested against a real copied
@@ -2591,7 +2805,7 @@ Both were deferred from Phase 1 for exactly that reason.
 -   Backend and frontend suites, lint, types and the production build pass. Record
     any browser check that could not run under `Not validated`.
 
-## 16.6 Checklists
+## 17.6 Checklists
 
 ### File handling
 
@@ -2604,7 +2818,7 @@ Both were deferred from Phase 1 for exactly that reason.
 ### Index integrity
 
 -   [x] Delete vectors when source is deleted --- Phase 2
--   [x] Schema migration runner *(prerequisite; see §16.2)*
+-   [x] Schema migration runner *(prerequisite; see §17.2)*
 -   [x] Detect a changed source file
 -   [x] Detect an embedding model change
 -   [x] Detect an index that lost points
@@ -2630,14 +2844,14 @@ Both were deferred from Phase 1 for exactly that reason.
 
 ### Carried over
 
--   [ ] Rewrite a follow-up question before retrieval (§12.6)
+-   [ ] Recheck Phase 7 follow-up handling (§12.6, item 11) against quality/latency targets
 -   [ ] Inspect a PDF exported from the packaged app (§13.6)
 -   [ ] Calibrate the similarity threshold (deferred from Phase 1)
 -   [ ] Measure chunking parameters (deferred from Phase 1)
 
 ------------------------------------------------------------------------
 
-## 16.7 Live Qdrant verification (what branches 5–6 could only stub)
+## 17.7 Live Qdrant verification (what branches 5–6 could only stub)
 
 Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
 `cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
@@ -2666,7 +2880,7 @@ rebuild fill the missing identity. Re-ingesting a deliberately changed source al
 records the new bytes as the integrity baseline. Unit tests cover both cases and keep
 an old file's hash unknown when extraction fails before the new step runs.
 
-## 16.8 Library integrity UI
+## 17.8 Library integrity UI
 
 The library now makes the backend's integrity decisions visible without turning an
 expensive Qdrant scan into background traffic. Opening or refocusing the page runs
@@ -2693,7 +2907,7 @@ the explicit deep-check action, the Qdrant-unavailable state, visible keyboard f
 and no console warnings or errors. No rebuild or file mutation was performed during
 that browser pass.
 
-## 16.9 Optional Gemini generation
+## 17.9 Optional Gemini generation
 
 Implemented on `feat/optional-gemini`: local Ollama remains the default and
 `provider: "gemini"` selects Google generation for `/chat` or
@@ -2707,18 +2921,20 @@ Validation (2026-10-03): backend suite **534 passed, 19 skipped**; Gemini transp
 and routing tests **28 passed** using mocked responses; frontend **137 passed**;
 Ruff, ESLint, TypeScript and the production Webpack build passed. No live Gemini
 request or cloud latency measurement was performed. Remaining live end-to-end and
-PDF checks are deferred to Phase 7 at the user's request.
+PDF checks are deferred to Phase 8 at the user's request.
 
-## 16.10 Post-desktop improvements and final acceptance
+## 17.10 Stability/quality refinement and final acceptance
 
-Start after the Phase 6 desktop milestones are implemented. Reassess the current
-code and remaining defects rather than repeating the completed reliability
-branches. Prioritize data preservation, index/rebuild correctness and source
-provenance, then measure retrieval, answer quality and inference latency.
+Start after Phase 6 desktop milestones and all twelve Phase 7 items are completed
+with their relevant validation. Reassess remaining defects rather than repeating
+the completed reliability branches or Phase 7 implementations. Prioritize data
+preservation, index/rebuild correctness and source provenance, then measure
+retrieval, answer quality and inference latency.
 
 -   [ ] Resolve remaining reliability and quality defects found in the packaged app.
--   [ ] Evaluate follow-up question handling (§12.6) with quality and latency evidence.
--   [ ] Calibrate retrieval thresholds and chunking on representative documents.
+-   [ ] Recheck Phase 7 follow-up handling (§12.6) against quality and latency targets.
+-   [ ] Expand the Phase 7 retrieval evaluation and refine thresholds/chunking on
+    representative documents; do not rebuild its evaluation harness.
 -   [ ] Verify first-run setup, model download failure/cancel/retry and persistent
     provider/model settings, including OS-protected cloud credentials.
 -   [ ] Verify provider/model changes preserve saved conversations and documents;
@@ -2736,7 +2952,7 @@ provenance, then measure retrieval, answer quality and inference latency.
 
 ------------------------------------------------------------------------
 
-# 17. V2 --- Folder Watch
+# 18. V2 --- Folder Watch
 
 One of the first post-MVP features should be folder watching.
 
@@ -2775,9 +2991,11 @@ persistent personal knowledge system.
 
 ------------------------------------------------------------------------
 
-# 18. Future Ideas --- Not MVP
+# 19. Future Ideas --- Not MVP
 
-Possible later features:
+Possible later features. Phase 6 desktop/model management and Phase 7 source
+selection and evaluation-gated hybrid/reranking work are now explicitly in scope;
+advanced versions beyond those milestones remain future work.
 
 -   Folder watch
 -   Automatic re-index when source changes
@@ -2788,17 +3006,12 @@ Possible later features:
 -   DOCX support
 -   PPTX support
 -   Better semantic chunking
--   Hybrid keyword + vector search
--   Reranking
 -   Knowledge graph experiments
--   Local model management UI
 -   Multiple embedding models
--   Source filters
 -   Conversation-to-document workflows
 -   Document templates
 -   Automatic study guides
 -   Flashcard generation
--   Offline-first desktop packaging
 -   Additional cloud model providers beyond the requested optional Gemini path
 -   Optional sync
 
@@ -2806,7 +3019,7 @@ Do not build these until the basic workflow is reliable.
 
 ------------------------------------------------------------------------
 
-# 19. What Noye Should Avoid Becoming
+# 20. What Noye Should Avoid Becoming
 
 Avoid feature creep toward:
 
@@ -2825,7 +3038,7 @@ The core identity should remain:
 
 ------------------------------------------------------------------------
 
-# 20. Memex Inspiration --- Without Becoming a Fork
+# 21. Memex Inspiration --- Without Becoming a Fork
 
 Memex was reviewed as a useful architectural/product reference.
 
@@ -3215,7 +3428,7 @@ order, but changes should remain deliberate.
 
 ------------------------------------------------------------------------
 
-# 21. Recommended Development Order
+# 22. Recommended Development Order
 
 Do not jump randomly between frontend and AI features.
 
@@ -3254,14 +3467,16 @@ Follow this order:
         ↓
 16. Tauri desktop implementation (Phase 6)
         ↓
-17. Reliability + quality + final desktop acceptance (Phase 7)
+17. Twelve core workflow improvements (Phase 7)
         ↓
-18. Folder Watch
+18. Reliability + quality + final desktop acceptance (Phase 8)
+        ↓
+19. Folder Watch
 ```
 
 ------------------------------------------------------------------------
 
-# 22. Suggested Timeline
+# 23. Suggested Timeline
 
 ## Week 1 --- Core Setup
 
@@ -3314,7 +3529,16 @@ Follow this order:
 -   first-run setup, model installation and persistent AI settings
 -   relevant automated checks for each implementation milestone
 
-## Week 7 --- Reliability and Quality (Phase 7)
+## Week 7 --- Core Workflow Improvements (Phase 7)
+
+-   implement the twelve approved milestones in §16
+-   evidence/document generation, index safety and backup/job recovery
+-   desktop/service integration and local exposure
+-   embedding/retrieval evaluation, follow-up context and source selection
+-   evidence inspection, cited exports and PDF coverage
+-   validate each focused change before moving on
+
+## Week 8 --- Reliability and Quality (Phase 8)
 
 -   remaining error handling and data/index safety fixes
 -   retrieval and answer-quality measurement
@@ -3322,11 +3546,12 @@ Follow this order:
 -   final packaged-app end-to-end acceptance, including exports
 -   README/demo evidence and initial desktop release
 
-The timeline is directional, not a deadline.
+The timeline is directional, not a deadline. Phase 7 contains twelve milestones
+and may span multiple weeks; the week labels describe order, not effort estimates.
 
 ------------------------------------------------------------------------
 
-# 23. Portfolio Goals
+# 24. Portfolio Goals
 
 Noye should demonstrate skills beyond a standard CRUD web application.
 
@@ -3361,7 +3586,7 @@ A recruiter should be able to understand the project quickly:
 
 ------------------------------------------------------------------------
 
-# 24. Demo Goal
+# 25. Demo Goal
 
 The eventual portfolio demo should show one continuous workflow:
 
@@ -3392,7 +3617,7 @@ portfolio.
 
 ------------------------------------------------------------------------
 
-# 25. Current Immediate Tasks
+# 26. Current Immediate Tasks
 
 The repository foundation now exists.
 
@@ -3422,7 +3647,7 @@ Do not move to UI work until this milestone is reliable.
 
 ------------------------------------------------------------------------
 
-# 26. Definition of MVP Complete
+# 27. Definition of MVP Complete
 
 The MVP is complete when a user can:
 

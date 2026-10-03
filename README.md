@@ -183,7 +183,25 @@ noye/
 - [ ] Signed/notarized distribution
 - [ ] Windows support
 
-### Phase 7 — Reliability and Quality
+### Phase 7 — Core Workflow Improvements
+
+- [ ] Store retrieved excerpts and pass them to document generation
+- [ ] Preserve citation excerpts and original source versions
+- [ ] Coordinate rebuilds with active ingestion/deletion
+- [ ] Version indexes by embedding model, chunking and input format
+- [ ] Back up and restore SQLite together with source files
+- [ ] Persist jobs, recover after restart and cancel between batches
+- [ ] Complete desktop data/service/model integration using Phase 6 foundations
+- [ ] Restrict Qdrant port publishing to localhost
+- [ ] Separate query/document embedding formats and validate input length
+- [ ] Establish retrieval evaluation and assess hybrid search/reranking
+- [ ] Support bounded conversation context and selected sources
+- [ ] Improve evidence inspection, cited exports and PDF extraction coverage
+
+These twelve milestones are planned work; existing partial foundations remain
+implemented. Hybrid search/reranking adoption depends on measured benefit.
+
+### Phase 8 — Reliability and Quality
 
 - [x] Upload size limits
 - [x] Duplicate detection
@@ -192,13 +210,14 @@ noye/
 - [x] Handle a change of embedding model
 - [x] Surface index integrity in the library
 
-- [ ] Remaining stability and quality improvements after desktop implementation
-- [ ] Retrieval/answer quality and local/cloud latency measurements
+- [ ] Stability and quality refinement after the twelve Phase 7 improvements
+- [ ] Expanded retrieval/answer quality and local/cloud latency validation
 - [ ] Final desktop end-to-end verification, including native Markdown/PDF export
 
 Completed safeguards above retain their status from earlier work. Phase 6 builds
-out the desktop app; Phase 7 improves and validates the packaged workflow before
-MVP release. Relevant tests, lint, types and builds run throughout implementation.
+out the desktop app; Phase 7 implements the twelve improvements; Phase 8 refines
+stability/quality and validates the packaged workflow before MVP release. Relevant
+tests, lint, types and builds run throughout implementation.
 
 ## Privacy Philosophy
 

@@ -4,8 +4,9 @@ This is a local development preview, not the completed desktop MVP or a signed
 public release. The app packages the UI and backend; Ollama and Qdrant remain
 external prerequisites. Missing services/models are reported inside the app.
 
-Roadmap order: Phase 6 implements the Tauri application, followed by Phase 7
-stability/quality improvements and final packaged-app acceptance. Relevant automated
+Roadmap order: Phase 6 implements the Tauri application; Phase 7 implements the
+twelve core workflow improvements; Phase 8 follows with stability/quality refinement
+and final packaged-app acceptance. Relevant automated
 checks and build validation continue during implementation.
 
 ## Build
@@ -93,7 +94,7 @@ The same import option is available on the bundled `noye-backend` executable.
 
 ## Validation
 
-Recorded on 2026-10-03; full document/RAG acceptance remains deferred to Phase 7
+Recorded on 2026-10-03; full document/RAG acceptance remains deferred to Phase 8
 by request.
 
 ```bash
