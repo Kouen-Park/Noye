@@ -9,11 +9,15 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #: Repository root — this file is ``<root>/backend/app/config.py``.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+GenerationProvider = Literal["ollama", "gemini"]
 
 
 class Settings(BaseSettings):
@@ -43,6 +47,10 @@ class Settings(BaseSettings):
     #: qwen3.5 is a reasoning model; thinking stays off for RAG answers because
     #: it costs roughly 30x the tokens and latency for no gain at answer length.
     ollama_thinking: bool = False
+
+    # Optional cloud generation only; embeddings always remain local.
+    gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    gemini_model: str = Field(default="gemini-3.8-flash", pattern=r"^[A-Za-z0-9._-]+$")
 
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "noye"
