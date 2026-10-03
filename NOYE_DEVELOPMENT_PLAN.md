@@ -123,6 +123,14 @@ Agents must:
 If an optional cloud provider is added in the future, it must not
 silently replace local mode.
 
+**Scope update, 2026-10-03:** the user requested both local inference and an
+API-key option to address local generation latency. Optional Gemini generation is
+now in scope for the MVP. Ollama remains the default; each chat/document request
+explicitly chooses a provider. Extraction, embeddings, Qdrant and persistence stay
+local. The key is server-only environment configuration in the web MVP. The UI
+discloses what leaves the computer before cloud use. There is no automatic fallback,
+retry or billing activation. Desktop credential entry and secure storage are Phase 7.
+
 ## 0.5 Citation and provenance rules
 
 Citation provenance is one of Noye's most important requirements.
@@ -441,6 +449,8 @@ Example Noye use cases:
 -   [x] Semantic search
 -   [x] Ask questions over indexed knowledge
 -   [x] Local LLM generation through Ollama
+-   [x] Optional Gemini generation for chat and documents, selected per request;
+    automated transport/API/UI tests pass. Live Gemini validation requires a key.
 -   [x] File citations
 -   [x] Page citations
 -   [x] Conversation history — stored and re-readable; the model does not
@@ -2484,6 +2494,22 @@ the explicit deep-check action, the Qdrant-unavailable state, visible keyboard f
 and no console warnings or errors. No rebuild or file mutation was performed during
 that browser pass.
 
+## 14.9 Optional Gemini generation
+
+Implemented on `codex/optional-gemini`: local Ollama remains the default and
+`provider: "gemini"` selects Google generation for `/chat` or
+`/documents/generate`. `/ai/providers` returns model names and configuration
+availability only. The shared selector explains the cloud payload and free-tier
+data policy. Gemini keys stay in the backend environment; errors omit raw provider
+bodies and credentials. Quota errors never trigger automatic fallback or retries.
+The existing citation mapping and local embedding/index pipeline are unchanged.
+
+Validation (2026-10-03): backend suite **534 passed, 19 skipped**; Gemini transport
+and routing tests **28 passed** using mocked responses; frontend **137 passed**;
+Ruff, ESLint, TypeScript and the production Webpack build passed. No live Gemini
+request or cloud latency measurement was performed. Remaining live end-to-end and
+PDF checks are deferred to Phase 7 at the user's request.
+
 # 15. Testing Strategy
 
 Testing should focus heavily on the knowledge pipeline.
@@ -2556,7 +2582,13 @@ Export
 
 # 16. Phase 7 --- Desktop Application
 
-Only start this once the local web version is stable.
+**Sequence update, 2026-10-03:** the user requested completing the Tauri desktop
+application before the final remaining end-to-end verification. Proceed once
+relevant unit/API/UI tests, lint, types and builds pass. The remaining live browser
+and end-to-end acceptance checks are deferred to the desktop release gate, not
+declared complete. PDF export and local inference latency remain unresolved until
+observed in that final pass. Re-check export in the native webview rather than
+assuming the browser print path works there.
 
 Use Tauri to package the application.
 
@@ -2582,6 +2614,50 @@ Desktop work includes:
 -   [ ] Application packaging
 -   [ ] macOS build
 -   [ ] Windows build
+
+## 16.1 Desktop implementation order
+
+1. **Tauri foundation and lifecycle:** macOS application shell, persistent app-data
+   location, managed backend startup/shutdown, readiness checks, and clear Ollama/
+   Qdrant availability. Package a built UI rather than relying on a development
+   server. Preserve existing user files, conversations and documents on migration.
+2. **Chat-focused interface:** familiar AI-assistant layout with conversation
+   navigation on the left, a readable central conversation and composer, model/
+   provider selection, and an inspectable source panel. Library and Documents
+   remain accessible. Reuse the existing palette and accessibility rules; the
+   requested interaction direction supersedes the older library-first framing.
+3. **First-run setup:** detect OS, architecture, total/available RAM, available
+   disk, and known inference acceleration. Detect Ollama and installed models.
+   Explain a conservative recommendation and its download size; the user chooses
+   local setup or a cloud key. Hardware estimates are guidance, not a guarantee
+   of measured speed. Optional short benchmarking can refine a recommendation.
+4. **Model installation:** offer recommended generation and embedding models with
+   explicit download confirmation, progress, cancel/retry, disk checks and usable
+   errors. Never silently download a model or enable cloud billing. Start with
+   Ollama's supported model-management API rather than arbitrary shell commands.
+5. **Persistent AI settings:** let the user change installed generation models and
+   providers later. Store cloud credentials using OS-protected credential storage;
+   return only availability to the UI. Changing a generation model needs no index
+   rebuild. Changing an embedding model does, and requires the existing explicit
+   rebuild workflow.
+6. **Final acceptance pass:** run the entire workflow in the packaged macOS app,
+   then record evidence and close the MVP checklist. Notebook/source grouping and
+   NotebookLM-style output templates follow the completed MVP.
+
+## 16.2 Desktop release acceptance
+
+- First launch presents a usable local recommendation or a cloud setup path.
+- Installation can finish, fail, be cancelled and retried with clear feedback.
+- Installed local generation models and Gemini can be selected and changed later.
+- A provider/model switch does not discard saved conversations or documents.
+- Cloud payload disclosure appears before use; local mode sends no content to Google.
+- The packaged app launches and stops its own backend cleanly without stopping
+  unrelated user services.
+- Upload, READY status, semantic search, grounded chat, citation/source inspection,
+  conversation reload, document generation/edit/save, Markdown/PDF export and clean
+  source/vector deletion are verified in the desktop app.
+- Local and cloud latency are measured separately. A mocked Gemini response does
+  not count as a live cloud speed or answer-quality measurement.
 
 Avoid making desktop packaging block development of the knowledge
 engine.
@@ -2651,7 +2727,7 @@ Possible later features:
 -   Automatic study guides
 -   Flashcard generation
 -   Offline-first desktop packaging
--   Optional cloud model providers
+-   Additional cloud model providers beyond the requested optional Gemini path
 -   Optional sync
 
 Do not build these until the basic workflow is reliable.

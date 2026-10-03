@@ -11,7 +11,13 @@ truth for *values* — never hardcode a colour in a component.
 
 ## 1. Direction
 
-**A reference library, not a chat app.**
+**A source-grounded research workspace.**
+
+Direction update, 2026-10-03: the desktop version will use the familiar layout of
+an AI assistant: conversation navigation on the left, a central conversation and
+composer, provider/model selection, and a source inspection panel. First launch
+will guide local model setup or API-key configuration, with settings available
+later. This is planned Phase 7 work; the current web surfaces remain separate.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,

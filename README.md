@@ -4,7 +4,10 @@
 
 Noye is a **local-first AI knowledge workspace** that turns your files into searchable, reusable knowledge.
 
-Upload PDFs, Markdown files, and notes. Noye is designed to process them locally, let you search and ask questions across your knowledge base, preserve source citations, and turn useful results into editable documents.
+Upload PDFs, Markdown files, and notes. Noye processes and searches them locally,
+preserves source citations, and turns useful results into editable documents.
+Generation defaults to local Ollama; you can explicitly select Gemini with your
+own API key for chat or document drafting.
 
 > 🚧 **Noye is currently under active development.** The features below describe the planned MVP unless marked complete.
 
@@ -189,6 +192,9 @@ noye/
 ## Privacy Philosophy
 
 **Local by default.** Personal knowledge should not require cloud storage.
+Selecting Gemini sends the question and retrieved excerpts to Google; document
+drafting sends the instruction, stored answer and cited file names. Original files,
+embeddings, search and saved work remain local.
 
 **Sources over hallucinations.** Generated answers should remain connected to the information they came from.
 
@@ -199,8 +205,9 @@ noye/
 ### Backend
 
 The backend serves ingestion, search, chat and documents over the routes listed
-below. Everything runs against local services — Qdrant and Ollama — so both have
-to be up for anything beyond `/health`.
+below. Ingestion and search need local Qdrant and Ollama embeddings, including
+when Gemini handles generation. Generation uses the provider explicitly selected
+for each request, defaulting to Ollama.
 
 ```bash
 cd backend
@@ -243,6 +250,7 @@ Available endpoints:
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
+| `GET` | `/ai/providers` | Generation model names and whether Gemini has a configured key; never returns credentials |
 | `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
@@ -267,6 +275,38 @@ Available endpoints:
 | `POST` | `/index/rebuild` | Re-index every file from the originals on disk; returns 202 |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
+
+### Optional Gemini generation
+
+Set these values in the repository-root `.env` (not `frontend/.env.local`), then
+restart the backend:
+
+```dotenv
+GEMINI_API_KEY=your-key-here
+GEMINI_MODEL=gemini-3.8-flash
+```
+
+Obtain a key from [Google AI Studio](https://aistudio.google.com/apikey).
+The model is configurable; choose one available to your project using the
+[official model list](https://ai.google.dev/gemini-api/docs/models).
+The chat screen and Create document form each have a provider selector. They
+start in local mode even when a Gemini key exists; no key enables cloud mode
+automatically. Without a key, Gemini is disabled and setup guidance is shown.
+
+Only FastAPI reads the key and sends it to Google in a header. Do not commit it,
+put it in a `NEXT_PUBLIC_*` variable, or paste it into a conversation. Provider
+errors never include Gemini's raw response body, which could echo private input.
+Noye makes one request and does not retry or switch providers on failure.
+
+Your API project's billing determines charges. Noye cannot turn a paid project
+into a free one or enforce Google's free quota; use a project without activated
+billing for free-only testing. A quota/rate-limit failure is shown as an error.
+Free-tier inputs and outputs may be used to improve Google products, so avoid
+confidential material and review the
+[data terms](https://ai.google.dev/gemini-api/terms) before selecting cloud mode.
+
+This does not change the embedding model or invalidate the local vector index.
+Gemini requires internet access; local mode continues to work without a Gemini key.
 
 The API has **no authentication** — Noye is local and single-user, so the server
 binds to `127.0.0.1`. Do not expose it on a network interface.
