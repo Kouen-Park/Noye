@@ -23,6 +23,20 @@ export type FileStatus =
 /** Supported source formats. Mirrors `FileType`. */
 export type FileType = "pdf" | "md" | "txt";
 
+export type GenerationProvider = "ollama" | "gemini";
+
+export interface AiProvider {
+  id: GenerationProvider;
+  model: string;
+  configured: boolean;
+}
+
+/** Only model names and availability are returned, never credentials. */
+export async function listAiProviders(signal?: AbortSignal): Promise<AiProvider[]> {
+  const response = await request("/ai/providers", { signal });
+  return (await response.json()) as AiProvider[];
+}
+
 /** A file as the API reports it. `path` is deliberately absent server-side. */
 export interface StoredFile {
   id: string;
@@ -252,15 +266,12 @@ export interface AskResponse {
 export async function askQuestion(
   question: string,
   conversationId?: string,
+  provider: GenerationProvider = "ollama",
 ): Promise<AskResponse> {
   const response = await request("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(
-      conversationId === undefined
-        ? { question }
-        : { question, conversation_id: conversationId },
-    ),
+    body: JSON.stringify({ question, conversation_id: conversationId, provider }),
   });
   return (await response.json()) as AskResponse;
 }
@@ -368,11 +379,12 @@ export async function createDocument(
 export async function generateDocument(
   messageId: string,
   instruction: string,
+  provider: GenerationProvider = "ollama",
 ): Promise<NoyeDocument> {
   const response = await request("/documents/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message_id: messageId, instruction }),
+    body: JSON.stringify({ message_id: messageId, instruction, provider }),
   });
   return (await response.json()) as NoyeDocument;
 }

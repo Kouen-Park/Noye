@@ -7,10 +7,12 @@ import { AppShell } from "@/components/app-shell";
 import { Composer } from "@/components/chat/composer";
 import { ConversationList } from "@/components/chat/conversation-list";
 import { MessageBubble } from "@/components/chat/message-bubble";
+import { ProviderSelector } from "@/components/provider-selector";
 import {
   ApiError,
   type ChatMessage,
   type ConversationSummary,
+  type GenerationProvider,
   askQuestion,
   deleteConversation,
   listConversations,
@@ -53,6 +55,7 @@ function ChatView() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [pending, setPending] = useState(false);
+  const [provider, setProvider] = useState<GenerationProvider>("ollama");
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
   /** Which conversation the loaded messages belong to, so a stale load is ignored. */
@@ -116,7 +119,7 @@ function ChatView() {
       };
       setMessages((current) => [...current, provisional]);
 
-      askQuestion(question, conversationId ?? undefined).then(
+      askQuestion(question, conversationId ?? undefined, provider).then(
         (response) => {
           setPending(false);
           // Replace the provisional turn with the stored pair, so ids and
@@ -146,7 +149,7 @@ function ChatView() {
         },
       );
     },
-    [conversationId, refreshList, router],
+    [conversationId, provider, refreshList, router],
   );
 
   const open = useCallback(
@@ -192,6 +195,7 @@ function ChatView() {
       </div>
 
       <div className="min-w-0 flex-1">
+        <ProviderSelector value={provider} onChange={setProvider} disabled={pending} />
         {/* An answer arrives without a page change, so it is announced. */}
         <p role="status" aria-live="polite" className="sr-only">
           {pending ? "Thinking about your question." : ""}
