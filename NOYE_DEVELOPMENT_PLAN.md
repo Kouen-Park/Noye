@@ -2496,7 +2496,7 @@ that browser pass.
 
 ## 14.9 Optional Gemini generation
 
-Implemented on `codex/optional-gemini`: local Ollama remains the default and
+Implemented on `feat/optional-gemini`: local Ollama remains the default and
 `provider: "gemini"` selects Google generation for `/chat` or
 `/documents/generate`. `/ai/providers` returns model names and configuration
 availability only. The shared selector explains the cloud payload and free-tier
@@ -2606,13 +2606,13 @@ Windows
 
 Desktop work includes:
 
--   [ ] Tauri setup
--   [ ] Start/manage backend
--   [ ] Manage local data directory
+-   [x] Tauri setup
+-   [x] Start/manage the app's own backend
+-   [x] Manage local data directory and explicit copy-only web-data import
 -   [ ] Manage Qdrant
--   [ ] Manage Ollama detection
--   [ ] Application packaging
--   [ ] macOS build
+-   [x] Ollama availability and installed-model detection (no install/start yet)
+-   [x] Application packaging (local unsigned preview)
+-   [x] macOS build (Apple Silicon; other machines not validated)
 -   [ ] Windows build
 
 ## 16.1 Desktop implementation order
@@ -2658,6 +2658,40 @@ Desktop work includes:
   source/vector deletion are verified in the desktop app.
 - Local and cloud latency are measured separately. A mocked Gemini response does
   not count as a live cloud speed or answer-quality measurement.
+
+## 16.3 macOS foundation implementation
+
+Implemented on `feat/tauri-macos`, based on the unmerged
+`feat/optional-gemini` work. Branch names now follow the user's requested `feat/`
+prefix without `codex/`. No published history was rewritten.
+
+The Tauri 2 application packages a Next.js static export and a native PyInstaller
+sidecar. The backend binds a reserved loopback socket on an OS-selected port and
+announces readiness only after SQLite schema initialization. The frontend waits
+for that announcement before mounting API consumers; source and Markdown export
+links use the same runtime address. A lost native command or failed startup has
+bounded waiting and a visible error rather than indefinite loading.
+
+The app owns only its sidecar. Closing the window or quitting requests graceful
+shutdown, with a bounded fallback for that child alone. Closed parent stdin also
+stops the backend if the parent disappears. A single-instance guard prevents
+accidental duplicate app launches. Ollama and Qdrant are inspected with bounded
+GET requests, never started, stopped or downloaded by this milestone.
+
+Desktop storage lives in macOS Application Support, not the app bundle or the
+frozen backend's extraction directory. The default desktop Qdrant collection is
+`noye_desktop`, separate from the web workspace's `noye`, so a desktop rebuild
+cannot silently discard the web index. Explicit workspace import copies sources,
+documents and a SQLite backup, rewrites copied source paths, rejects existing
+destinations and symbolic links, and leaves originals and credentials untouched.
+The copied library requires an explicit desktop-index rebuild. No existing user
+workspace was imported during implementation.
+
+Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
+This completes §16.1 step 1's local macOS foundation, not the desktop MVP release.
+Next: the chat-focused layout, then first-run recommendations/installation and
+secure persistent AI settings. Live RAG, citations, exports, inference latency,
+Windows, other Macs and signed/notarized distribution remain release-gate work.
 
 Avoid making desktop packaging block development of the knowledge
 engine.

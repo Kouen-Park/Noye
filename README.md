@@ -47,7 +47,7 @@ Noye aims to provide one local workspace where you can:
 | Vector Search | Qdrant |
 | Local AI | Ollama |
 | Infrastructure | Docker |
-| Desktop | Tauri *(planned)* |
+| Desktop | Tauri 2 *(macOS foundation implemented; final acceptance pending)* |
 
 ## Architecture
 
@@ -183,10 +183,14 @@ noye/
 
 ### Phase 7 — Desktop Application
 
-- [ ] Tauri integration
-- [ ] Start and manage the backend
-- [ ] macOS packaging
-- [ ] Folder watching
+- [x] Tauri integration with a bundled static UI
+- [x] Start and stop the app's own backend
+- [x] Persistent app-data directory and explicit workspace import
+- [x] Local macOS application bundle
+- [ ] Chat-focused layout, hardware recommendations and model installation
+- [ ] Persistent model/provider settings and OS-protected API keys
+- [ ] Final desktop end-to-end verification, including PDF export
+- [ ] Signed/notarized distribution
 - [ ] Windows support
 
 ## Privacy Philosophy
@@ -251,6 +255,7 @@ Available endpoints:
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
 | `GET` | `/ai/providers` | Generation model names and whether Gemini has a configured key; never returns credentials |
+| `GET` | `/runtime/services` | Bounded Ollama/Qdrant and installed-model checks; never generates or downloads |
 | `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
@@ -383,6 +388,20 @@ things that are easy to get wrong — is documented in
 plain custom properties with no framework dependency; components never hardcode
 a colour, and never need a `dark:` variant, because each token resolves itself
 per colour scheme.
+
+### macOS desktop preview
+
+The macOS shell bundles the static frontend and a frozen Python backend; it does
+not need Next.js or Python servers running separately. It starts its own loopback
+backend on an available port and stops only that process when you quit or close
+the window. Qdrant and Ollama still run separately; a banner reports missing
+services or models rather than starting Docker or downloading anything silently.
+
+See [the desktop build and data guide](docs/DESKTOP.md) for prerequisites,
+packaging, validation and a non-destructive import of existing web data. The
+chat-focused interface, first-run recommendations, model installation and secure
+in-app API-key settings are the next milestones, not included in this preview.
+The final full workflow and native PDF export remain unverified.
 
 ### Supporting services
 
