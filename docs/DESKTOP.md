@@ -4,6 +4,10 @@ This is a local development preview, not the completed desktop MVP or a signed
 public release. The app packages the UI and backend; Ollama and Qdrant remain
 external prerequisites. Missing services/models are reported inside the app.
 
+Roadmap order: Phase 6 implements the Tauri application, followed by Phase 7
+stability/quality improvements and final packaged-app acceptance. Relevant automated
+checks and build validation continue during implementation.
+
 ## Build
 
 Use macOS, Xcode Command Line Tools, Rust 1.99+, Node/npm, and the backend Python
@@ -89,7 +93,8 @@ The same import option is available on the bundled `noye-backend` executable.
 
 ## Validation
 
-Recorded on 2026-10-03; full document/RAG acceptance remains deferred by request.
+Recorded on 2026-10-03; full document/RAG acceptance remains deferred to Phase 7
+by request.
 
 ```bash
 cd backend

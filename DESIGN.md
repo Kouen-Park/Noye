@@ -17,7 +17,7 @@ Direction update, 2026-10-03: the desktop version will use the familiar layout o
 an AI assistant: conversation navigation on the left, a central conversation and
 composer, provider/model selection, and a source inspection panel. First launch
 will guide local model setup or API-key configuration, with settings available
-later. This is planned Phase 7 work; the current web surfaces remain separate.
+later. This is planned Phase 6 work; the current web surfaces remain separate.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,

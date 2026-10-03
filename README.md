@@ -172,7 +172,18 @@ noye/
 - [x] Markdown export
 - [x] PDF export *(via your browser's print dialog)*
 
-### Phase 6 — Reliability and Quality
+### Phase 6 — Desktop Application
+
+- [x] Tauri integration with a bundled static UI
+- [x] Start and stop the app's own backend
+- [x] Persistent app-data directory and explicit workspace import
+- [x] Local macOS application bundle
+- [ ] Chat-focused layout, hardware recommendations and model installation
+- [ ] Persistent model/provider settings and OS-protected API keys
+- [ ] Signed/notarized distribution
+- [ ] Windows support
+
+### Phase 7 — Reliability and Quality
 
 - [x] Upload size limits
 - [x] Duplicate detection
@@ -181,17 +192,13 @@ noye/
 - [x] Handle a change of embedding model
 - [x] Surface index integrity in the library
 
-### Phase 7 — Desktop Application
+- [ ] Remaining stability and quality improvements after desktop implementation
+- [ ] Retrieval/answer quality and local/cloud latency measurements
+- [ ] Final desktop end-to-end verification, including native Markdown/PDF export
 
-- [x] Tauri integration with a bundled static UI
-- [x] Start and stop the app's own backend
-- [x] Persistent app-data directory and explicit workspace import
-- [x] Local macOS application bundle
-- [ ] Chat-focused layout, hardware recommendations and model installation
-- [ ] Persistent model/provider settings and OS-protected API keys
-- [ ] Final desktop end-to-end verification, including PDF export
-- [ ] Signed/notarized distribution
-- [ ] Windows support
+Completed safeguards above retain their status from earlier work. Phase 6 builds
+out the desktop app; Phase 7 improves and validates the packaged workflow before
+MVP release. Relevant tests, lint, types and builds run throughout implementation.
 
 ## Privacy Philosophy
 

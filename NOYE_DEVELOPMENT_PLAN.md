@@ -101,8 +101,9 @@ In particular:
 -   Do not make an external AI API mandatory for the core product.
 -   Do not introduce authentication, payments, collaboration, cloud
     sync, or agent frameworks into the MVP unless explicitly requested.
--   Do not begin Tauri packaging before the local web MVP is
-    sufficiently stable.
+-   Build Tauri in Phase 6 after the relevant existing unit/API/UI checks,
+    lint, types and builds pass. Phase 7 follows with stability/quality
+    improvement and final packaged-app end-to-end acceptance.
 -   Do not copy Memex or another project's implementation wholesale.
     Noye should remain independently implemented.
 
@@ -129,7 +130,7 @@ now in scope for the MVP. Ollama remains the default; each chat/document request
 explicitly chooses a provider. Extraction, embeddings, Qdrant and persistence stay
 local. The key is server-only environment configuration in the web MVP. The UI
 discloses what leaves the computer before cloud use. There is no automatic fallback,
-retry or billing activation. Desktop credential entry and secure storage are Phase 7.
+retry or billing activation. Desktop credential entry and secure storage are Phase 6.
 
 ## 0.5 Citation and provenance rules
 
@@ -540,12 +541,14 @@ The development path should be:
 ``` text
 Local Web Application
         ↓
-Stable MVP
+Phase 6: Tauri Desktop Application
         ↓
-Tauri Desktop Application
+Phase 7: Reliability, Quality and Final Acceptance
 ```
 
-Do **not** start by solving desktop packaging.
+Build the knowledge workflow first; complete desktop implementation before the
+final stability/quality and end-to-end acceptance phase. Validate each change as
+it lands rather than postponing all testing to Phase 7.
 
 ------------------------------------------------------------------------
 
@@ -1509,8 +1512,8 @@ Decisions taken here:
 
 -   **Uploads are stored as `{file_id}__{filename}`.** Two uploads of the same
     name would otherwise overwrite each other. `File.name` keeps the original
-    for display. Duplicate *detection* is Phase 6; silently destroying the
-    first upload is not an acceptable stand-in for it.
+    for display. Duplicate *detection* belongs to the Phase 7 reliability
+    baseline; silently destroying the first upload is not an acceptable stand-in.
 -   **The response never includes `path`.** A server filesystem path is of no
     use to a client and invites being treated as a URL.
 -   **Delete removes vectors first, and aborts the whole delete if that
@@ -2183,7 +2186,7 @@ attribute it depends on, but no printed page has been inspected, because Chromiu
 cannot launch at this machine's available memory. The checkboxes above say so
 rather than claiming it. This is the cost §13.2 accepted when it chose the
 browser's print path — weak control over output — and it should be confirmed by
-eye before Phase 6.
+eye during Phase 7's native export acceptance pass.
 
 **The print stylesheet is a whitelist.** Only `data-print="document"` and its
 ancestors survive printing. A blacklist would need every future control
@@ -2221,294 +2224,128 @@ proxy assertion outlives the assumption it was standing in for.
 **§12.6 is now more visible, not less.** Phase 5 makes chat the route into
 documents, so the fact that the model does not receive earlier conversation turns
 is easier to run into. Its cheapest option — rewriting a follow-up question
-before retrieval — is worth taking before or alongside Phase 6.
+before retrieval — belongs to Phase 7 quality improvement after desktop
+implementation.
 
 
-# 14. Phase 6 --- Reliability and Quality
+# 14. Phase 6 --- Desktop Application
 
-The workflow is complete: a file becomes searchable knowledge, an answer cites its
-sources, and a document outlives both. Phase 6 is about what happens when that
-workflow meets a library that has been used for a while --- a file that changed on
-disk, the same PDF uploaded twice, an embedding model swapped out, a Qdrant volume
-that was deleted. None of those are hypothetical; all of them are silent today.
+**Sequence update, 2026-10-03:** the user moved Tauri desktop implementation to
+Phase 6, followed by stability/quality improvement and final end-to-end acceptance
+in Phase 7 (§16.10). Proceed with desktop milestones once their relevant
+unit/API/UI tests, lint, types and builds pass; these checks continue throughout
+implementation. Completing this phase does not declare the desktop MVP accepted.
+Native PDF export, live RAG quality and local/cloud latency remain unresolved until
+observed in Phase 7's packaged-app acceptance pass.
 
-## 14.1 What the original checklist got wrong
+Use Tauri to package the application.
 
-The lists below were written before Phases 2--5 existed, and several of their items
-were delivered on the way. They should be **verified and ticked, not built**:
+Initial target:
 
--   *Delete vectors when source is deleted* --- Phase 2. Deletion removes the
-    original, the metadata and the vectors.
--   *File type validation* --- `FileType.from_filename` rejects an unknown
-    extension at upload with a 400, server-side. The frontend's `rejectionFor`
-    is a courtesy on top, not the enforcement.
--   *Empty-document handling* --- upload deletes and rejects a zero-byte file
-    rather than leaving a row that can never become READY.
--   *The whole UX group* --- empty, loading, error and processing states, source
-    display and keyboard usability were built across Phases 2--5 against
-    `DESIGN.md`'s floor, on all four surfaces.
-
-What genuinely remains is narrower and sharper than the list suggests: **size
-limits, duplicate detection, corrupt-file handling, the three kinds of index
-staleness, rebuilding on demand, and the whole of logging.**
-
-Two items carry over from earlier phases and belong here:
-
--   **§12.6** --- the model still does not receive earlier conversation turns.
-    Phase 5 made chat the route into documents, so this is now easier to run into.
-    Its cheapest option (rewrite a follow-up question before retrieval) is one
-    prompt and one model call.
--   **§13.6** --- nobody has inspected a printed PDF. That check is two minutes
-    and could invalidate a claim already shipped in the README, so it should
-    happen **before** Phase 6 work starts rather than after.
-
-## 14.2 The schema problem that comes first
-
-Every phase so far only ever **added tables**, and `CREATE TABLE IF NOT EXISTS` is
-enough for that. Phase 6 is the first phase that must **add columns to an existing
-table**: `files` needs at least the embedding model that produced its vectors, and
-a content hash.
-
-There is no migration mechanism --- verified: nothing in `app/db/` contains
-`ALTER`, `user_version`, or anything resembling a migration. And the failure mode
-is silent, which is what makes it dangerous. Re-running a `CREATE TABLE IF NOT
-EXISTS` that now names a new column against a database where the table already
-exists is a **no-op**; the column does not appear. Confirmed empirically rather
-than assumed. A user with an existing `data/app.db` would therefore get code
-expecting a column that is not there, and the first query would fail at runtime
-rather than at startup.
-
-So the migration runner is branch one, and nothing else in Phase 6 can land before
-it.
-
-**Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
-in order at startup.** Not Alembic --- that is a second dependency, a config file
-and a migrations directory for what will be a handful of `ALTER TABLE` statements
-on a single-user local SQLite database, and Noye's claim is that it works without
-setup. Reconsider if the schema ever starts changing *shape* rather than growing.
-
-**The requirement that matters: a migration must never lose the user's data.**
-Original files are the source of truth and the vector index is rebuildable, but
-SQLite holds the things that are *not* derived --- conversations and documents,
-which are the user's own questions and writing. So migrations are additive only,
-and any step that would drop or rewrite a column takes a file copy of the database
-first.
-
-## 14.3 Four decisions to take up front
-
-**What "duplicate" means.** Not the filename: the same name in two folders is
-legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
-the bytes**, computed while the upload is being written, stored on the row.
-
-The choice to make is what a duplicate *does*. Accepting it and pointing two rows
-at one blob saves disk but makes deletion ambiguous --- deleting one file would
-have to know the other still needs the bytes. **Refuse it, with a 409 naming the
-existing file**, because the user's actual question is "do I already have this?"
-and the answer should be a name they recognise. The hash earns its place twice
-over: it also detects a source file that changed since it was indexed.
-
-**What "stale" means.** Three distinct failures are currently indistinguishable,
-and each needs a different remedy, so each has to be detected separately rather
-than collapsed into one flag:
-
-1.  The **source changed on disk** since it was indexed --- the stored hash no
-    longer matches the file. Remedy: re-ingest that one file.
-2.  The **embedding model changed** --- the vectors are from a different space.
-    Detectable cheaply by comparing the stored model name against the
-    configuration; no Qdrant call needed.
-3.  The **index lost points SQLite says exist** --- a dropped collection, a
-    deleted Docker volume. Needs an actual count comparison against Qdrant, so it
-    is the expensive check and should not run on every request.
-
-**What a model change should do.** Not silently re-embed: on this machine a
-re-index of a real library is minutes to hours of local inference, and the user
-should choose when to pay that. Detect it, say so plainly, and offer the rebuild.
-
-The rule that makes this a correctness issue rather than a tidiness one:
-**search and chat must never mix vectors from two embedding spaces.** A cosine
-score between them is meaningless, so the ranking would be confidently wrong ---
-which is worse than returning nothing, because nothing is visible and a bad
-ranking is not. A file whose vectors are from a superseded model therefore leaves
-the searchable set, with a stated reason, exactly as a file mid-ingestion already
-does.
-
-**What logging may and may not record.** There is none today --- zero
-`import logging` in the backend, verified. Two rules before any is added:
-
--   **Never log file contents, a chunk, or a question's text.** This is a private
-    knowledge base whose whole claim is that it stays on the user's machine, and a
-    log file is the one place its contents would leak *outside* the files the user
-    chose to put there. A test should assert this rather than a comment asking for
-    it.
--   **Log the pipeline's decisions and every failure's cause.** The ingestion
-    error already reaches SQLite for the UI; the log is for whoever is debugging,
-    so it carries what the UI deliberately withholds --- timings, stack traces,
-    which model answered, how many chunks, which Qdrant call failed.
-
-Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
-No new dependency, and structured enough to grep.
-
-## 14.4 Branch and PR sequence
-
-```text
-1. feat/schema-migrations      user_version runner; unblocks everything
-2. feat/backend-logging        independent, and makes 3-7 debuggable
-3. feat/upload-limits          size cap, content hash, corrupt files      (needs 1)
-4. feat/duplicate-detection    the 409 path and its wording               (needs 3)
-5. feat/index-integrity        the three staleness checks, /index/status   (needs 1)
-6. feat/rebuild-index          rebuild endpoint and action                (needs 5)
-7. feat/library-integrity-ui   the surface for all of it                  (needs 4,6)
+``` text
+macOS
 ```
 
-Logging is second rather than last on purpose: every branch after it is easier to
-diagnose with it in place, and it is the one item with no dependency on the schema.
+Then:
 
-`feat/rebuild-index` should reuse what already exists rather than adding a path ---
-`indexing.py` already carries a collection reset whose docstring names the
-rebuild-index command as its intended caller, and `embeddings.py` already refuses
-a vector whose dimension disagrees with the configuration.
+``` text
+Windows
+```
 
-Not a branch, but Phase 6 work all the same: **threshold calibration and chunking
-parameters** need several real documents to measure against, which only now exists.
-Both were deferred from Phase 1 for exactly that reason.
+Desktop work includes:
 
-## 14.5 Acceptance and validation
+-   [x] Tauri setup
+-   [x] Start/manage the app's own backend
+-   [x] Manage local data directory and explicit copy-only web-data import
+-   [ ] Manage Qdrant
+-   [x] Ollama availability and installed-model detection (no install/start yet)
+-   [x] Application packaging (local unsigned preview)
+-   [x] macOS build (Apple Silicon; other machines not validated)
+-   [ ] Windows build
 
--   An existing `data/app.db` from before Phase 6 opens, gains its new columns, and
-    keeps every conversation, message and document. Tested against a real copied
-    database, not only a fresh one.
--   Uploading the same file twice is refused the second time, naming the first ---
-    including when it has been renamed.
--   A file edited on disk after indexing is reported as out of date, and
-    re-ingesting it makes the report go away.
--   Changing `ollama_embedding_model` takes the affected files out of search and
-    chat with a stated reason, and never mixes their vectors with new ones.
--   Deleting the Qdrant collection is detected and distinguished from the other two
-    staleness causes.
--   A rebuild restores search to what it was, from `data/sources/` alone.
--   A truncated or non-PDF-masquerading-as-PDF file fails with a reason the UI can
-    show, and leaves nothing behind.
--   A test asserts no chunk text, file content or question reaches the log.
--   Backend and frontend suites, lint, types and the production build pass. Record
-    any browser check that could not run under `Not validated`.
+## 14.1 Desktop implementation order
 
-## 14.6 Checklists
+1. **Tauri foundation and lifecycle:** macOS application shell, persistent app-data
+   location, managed backend startup/shutdown, readiness checks, and clear Ollama/
+   Qdrant availability. Package a built UI rather than relying on a development
+   server. Preserve existing user files, conversations and documents on migration.
+2. **Chat-focused interface:** familiar AI-assistant layout with conversation
+   navigation on the left, a readable central conversation and composer, model/
+   provider selection, and an inspectable source panel. Library and Documents
+   remain accessible. Reuse the existing palette and accessibility rules; the
+   requested interaction direction supersedes the older library-first framing.
+3. **First-run setup:** detect OS, architecture, total/available RAM, available
+   disk, and known inference acceleration. Detect Ollama and installed models.
+   Explain a conservative recommendation and its download size; the user chooses
+   local setup or a cloud key. Hardware estimates are guidance, not a guarantee
+   of measured speed. Optional short benchmarking can refine a recommendation.
+4. **Model installation:** offer recommended generation and embedding models with
+   explicit download confirmation, progress, cancel/retry, disk checks and usable
+   errors. Never silently download a model or enable cloud billing. Start with
+   Ollama's supported model-management API rather than arbitrary shell commands.
+5. **Persistent AI settings:** let the user change installed generation models and
+   providers later. Store cloud credentials using OS-protected credential storage;
+   return only availability to the UI. Changing a generation model needs no index
+   rebuild. Changing an embedding model does, and requires the existing explicit
+   rebuild workflow.
+6. **Handoff to Phase 7:** finish the desktop implementation milestones, record
+   their validation and outstanding defects, then improve reliability/quality and
+   run final packaged-app acceptance under §16.10. Keep the MVP checklist open
+   until that pass confirms the complete workflow.
 
-### File handling
+## 14.2 Desktop implementation acceptance
 
--   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
--   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
--   [x] File size validation
--   [x] Duplicate detection
--   [x] Corrupt file handling
+- First launch presents a usable local recommendation or a cloud setup path.
+- Installation can finish, fail, be cancelled and retried with clear feedback.
+- Installed local generation models and Gemini can be selected and changed later.
+- A provider/model switch does not discard saved conversations or documents.
+- Cloud payload disclosure appears before use; local mode sends no content to Google.
+- The packaged app launches and stops its own backend cleanly without stopping
+  unrelated user services.
+- Relevant unit/API/UI checks, lint, types and packaged builds pass for each
+  milestone; retain outstanding checks explicitly for Phase 7 (§16.10).
+- Full workflow acceptance, native export inspection and live quality/latency
+  measurement belong to Phase 7 and remain required before the MVP release.
 
-### Index integrity
+## 14.3 macOS foundation implementation
 
--   [x] Delete vectors when source is deleted --- Phase 2
--   [x] Schema migration runner *(prerequisite; see §14.2)*
--   [x] Detect a changed source file
--   [x] Detect an embedding model change
--   [x] Detect an index that lost points
--   [x] Rebuild index on demand
+Implemented on `feat/tauri-macos`, based on the unmerged
+`feat/optional-gemini` work. Branch names now follow the user's requested `feat/`
+prefix without `codex/`. No published history was rewritten.
 
-### UX
+The Tauri 2 application packages a Next.js static export and a native PyInstaller
+sidecar. The backend binds a reserved loopback socket on an OS-selected port and
+announces readiness only after SQLite schema initialization. The frontend waits
+for that announcement before mounting API consumers; source and Markdown export
+links use the same runtime address. A lost native command or failed startup has
+bounded waiting and a visible error rather than indefinite loading.
 
--   [x] Empty states --- all four surfaces, Phases 2--5
--   [x] Loading states --- all four surfaces, Phases 2--5
--   [x] Error states --- all four surfaces, Phases 2--5
--   [x] Processing states --- Phase 2
--   [x] Clear source display --- Phases 3--4
--   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
--   [x] Surface index integrity in the library
+The app owns only its sidecar. Closing the window or quitting requests graceful
+shutdown, with a bounded fallback for that child alone. Closed parent stdin also
+stops the backend if the parent disappears. A single-instance guard prevents
+accidental duplicate app launches. Ollama and Qdrant are inspected with bounded
+GET requests, never started, stopped or downloaded by this milestone.
 
-### Logging
+Desktop storage lives in macOS Application Support, not the app bundle or the
+frozen backend's extraction directory. The default desktop Qdrant collection is
+`noye_desktop`, separate from the web workspace's `noye`, so a desktop rebuild
+cannot silently discard the web index. Explicit workspace import copies sources,
+documents and a SQLite backup, rewrites copied source paths, rejects existing
+destinations and symbolic links, and leaves originals and credentials untouched.
+The copied library requires an explicit desktop-index rebuild. No existing user
+workspace was imported during implementation.
 
--   [x] Backend structured logging
--   [x] Processing errors
--   [x] Ollama errors
--   [x] Qdrant errors
--   [x] A test proving no user content is logged
+Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
+This completes §14.1 step 1's local macOS foundation, not the desktop MVP release.
+Next: the chat-focused layout, then first-run recommendations/installation and
+secure persistent AI settings. Live RAG, citations, exports, inference latency,
+Windows, other Macs and signed/notarized distribution remain unvalidated; final
+macOS workflow acceptance and quality/latency measurement belong to Phase 7.
 
-### Carried over
-
--   [ ] Rewrite a follow-up question before retrieval (§12.6)
--   [ ] Inspect a printed PDF (§13.6) --- do this first; it is two minutes
--   [ ] Calibrate the similarity threshold (deferred from Phase 1)
--   [ ] Measure chunking parameters (deferred from Phase 1)
+Avoid making desktop packaging block development of the knowledge
+engine.
 
 ------------------------------------------------------------------------
-
-## 14.7 Live Qdrant verification (what branches 5–6 could only stub)
-
-Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
-`cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
-`embedding_model` empty before the run.
-
-**Deep point comparison confirmed.** The first time the branch-5 deep check actually
-read Qdrant: 24/24 match, no problems.
-
-**POINTS_MISSING confirmed.** Ten points deleted directly via Qdrant's API.
-- Shallow: `problems: none` (the cheap checks cannot see it — as designed).
-- Deep: `POINTS_MISSING searchable=True points=14/24`.
-- `searchable=True` confirmed: an incomplete index is *out of date*, not *wrong*.
-
-**Rebuild success path confirmed.** First real run of `POST /index/rebuild`
-against a live Qdrant:
-- Response: `202 queued=1 collection_recreated=false` — the collection was NOT
-  dropped, which is the decision the branch exists to make.
-- 12 seconds later: `READY chunks=24 qdrant=24`.
-- `embedding_model=embeddinggemma` written by ingestion.
-
-**Finding fixed in `fix/hash-on-reingest`.** The first live rebuild left
-`content_hash` NULL because re-ingest reads a file already on disk and does not pass
-through `_save_upload`. The common ingestion path now hashes the stored original
-after extraction proves it readable, so both a single-file retry and a whole-library
-rebuild fill the missing identity. Re-ingesting a deliberately changed source also
-records the new bytes as the integrity baseline. Unit tests cover both cases and keep
-an old file's hash unknown when extraction fails before the new step runs.
-
-## 14.8 Library integrity UI
-
-The library now makes the backend's integrity decisions visible without turning an
-expensive Qdrant scan into background traffic. Opening or refocusing the page runs
-the cheap source-hash and embedding-model check. **Check stored index** is the
-explicit deep action that also compares stored point counts with Qdrant.
-
-The status response carries `point_check_complete` separately from `deep`. This is
-important when Qdrant is unavailable: the page says that the stored index could not
-be checked and does not misreport an empty `problems` list as a healthy deep check.
-
-Remediation follows the cause rather than offering one ambiguous repair:
-
--   a changed source offers a one-file re-index;
--   an embedding-model mismatch or missing points offers a confirmed library rebuild;
--   a missing source asks the user to restore or remove the file;
--   rebuild responses show queued, skipped, and recreated-collection results, while
-    the existing ingestion polling continues to report progress.
-
-Validation for the branch covered the backend contract, API client, hook request
-sequencing, each problem presentation, rebuild confirmation and results, the full
-backend and frontend suites, Ruff, ESLint, TypeScript, and a production Webpack
-build. A browser pass against the real library confirmed the cheap healthy summary,
-the explicit deep-check action, the Qdrant-unavailable state, visible keyboard focus,
-and no console warnings or errors. No rebuild or file mutation was performed during
-that browser pass.
-
-## 14.9 Optional Gemini generation
-
-Implemented on `feat/optional-gemini`: local Ollama remains the default and
-`provider: "gemini"` selects Google generation for `/chat` or
-`/documents/generate`. `/ai/providers` returns model names and configuration
-availability only. The shared selector explains the cloud payload and free-tier
-data policy. Gemini keys stay in the backend environment; errors omit raw provider
-bodies and credentials. Quota errors never trigger automatic fallback or retries.
-The existing citation mapping and local embedding/index pipeline are unchanged.
-
-Validation (2026-10-03): backend suite **534 passed, 19 skipped**; Gemini transport
-and routing tests **28 passed** using mocked responses; frontend **137 passed**;
-Ruff, ESLint, TypeScript and the production Webpack build passed. No live Gemini
-request or cloud latency measurement was performed. Remaining live end-to-end and
-PDF checks are deferred to Phase 7 at the user's request.
 
 # 15. Testing Strategy
 
@@ -2580,121 +2417,322 @@ Export
 
 ------------------------------------------------------------------------
 
-# 16. Phase 7 --- Desktop Application
+# 16. Phase 7 --- Reliability and Quality
 
-**Sequence update, 2026-10-03:** the user requested completing the Tauri desktop
-application before the final remaining end-to-end verification. Proceed once
-relevant unit/API/UI tests, lint, types and builds pass. The remaining live browser
-and end-to-end acceptance checks are deferred to the desktop release gate, not
-declared complete. PDF export and local inference latency remain unresolved until
-observed in that final pass. Re-check export in the native webview rather than
-assuming the browser print path works there.
+Phase 7 follows the Phase 6 Tauri implementation. Improve reliability and answer,
+retrieval and document quality in the packaged application, then perform the final
+end-to-end acceptance pass before declaring the desktop MVP complete.
 
-Use Tauri to package the application.
+**Sequence update, 2026-10-03:** the user moved Tauri desktop implementation to
+Phase 6 and reliability/quality improvement to Phase 7. Keep already implemented
+migrations, logging, upload safeguards and index-integrity work complete. The
+implementation notes in §§16.1–16.9 retain the original design context and measured
+results; statements about missing functionality there describe that earlier
+starting point. They are not instructions to rebuild delivered features. Remaining
+work and final acceptance are listed in §16.10.
 
-Initial target:
+## 16.1 What the original checklist got wrong
 
-``` text
-macOS
+The lists below were written before Phases 2--5 existed, and several of their items
+were delivered on the way. They should be **verified and ticked, not built**:
+
+-   *Delete vectors when source is deleted* --- Phase 2. Deletion removes the
+    original, the metadata and the vectors.
+-   *File type validation* --- `FileType.from_filename` rejects an unknown
+    extension at upload with a 400, server-side. The frontend's `rejectionFor`
+    is a courtesy on top, not the enforcement.
+-   *Empty-document handling* --- upload deletes and rejects a zero-byte file
+    rather than leaving a row that can never become READY.
+-   *The whole UX group* --- empty, loading, error and processing states, source
+    display and keyboard usability were built across Phases 2--5 against
+    `DESIGN.md`'s floor, on all four surfaces.
+
+At the original baseline stage, the remaining work was narrower than the list: **size
+limits, duplicate detection, corrupt-file handling, the three kinds of index
+staleness, rebuilding on demand, and the whole of logging.**
+
+Two items carry over from earlier phases and belong here:
+
+-   **§12.6** --- the model still does not receive earlier conversation turns.
+    Phase 5 made chat the route into documents, so this is now easier to run into.
+    Its cheapest option (rewrite a follow-up question before retrieval) is one
+    prompt and one model call.
+-   **§13.6** --- inspect a PDF exported from the native webview during Phase 7.
+    The browser print implementation alone does not establish that the packaged
+    application's PDF output works.
+
+## 16.2 Implemented schema migration design
+
+Before the reliability baseline, earlier phases had only **added tables**, for
+which `CREATE TABLE IF NOT EXISTS` was enough. The baseline required **adding
+columns to an existing table**: `files` needed the embedding model that produced
+its vectors and a content hash.
+
+At that starting point there was no migration mechanism: `app/db/` contained no
+`ALTER`, `user_version`, or migration runner. The failure mode was silent.
+Re-running a `CREATE TABLE IF NOT
+EXISTS` that now names a new column against a database where the table already
+exists is a **no-op**; the column does not appear. Confirmed empirically rather
+than assumed. A user with an existing `data/app.db` would therefore get code
+expecting a column that is not there, and the first query would fail at runtime
+rather than at startup.
+
+The migration runner was therefore the first reliability branch. It is now
+implemented; future Phase 7 schema changes must reuse it and preserve existing data.
+
+**Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
+in order at startup.** Not Alembic --- that is a second dependency, a config file
+and a migrations directory for what will be a handful of `ALTER TABLE` statements
+on a single-user local SQLite database, and Noye's claim is that it works without
+setup. Reconsider if the schema ever starts changing *shape* rather than growing.
+
+**The requirement that matters: a migration must never lose the user's data.**
+Original files are the source of truth and the vector index is rebuildable, but
+SQLite holds the things that are *not* derived --- conversations and documents,
+which are the user's own questions and writing. So migrations are additive only,
+and any step that would drop or rewrite a column takes a file copy of the database
+first.
+
+## 16.3 Four decisions to take up front
+
+**What "duplicate" means.** Not the filename: the same name in two folders is
+legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
+the bytes**, computed while the upload is being written, stored on the row.
+
+The choice to make is what a duplicate *does*. Accepting it and pointing two rows
+at one blob saves disk but makes deletion ambiguous --- deleting one file would
+have to know the other still needs the bytes. **Refuse it, with a 409 naming the
+existing file**, because the user's actual question is "do I already have this?"
+and the answer should be a name they recognise. The hash earns its place twice
+over: it also detects a source file that changed since it was indexed.
+
+**What "stale" means.** Before the integrity work, three failures were indistinguishable,
+and each needs a different remedy, so each has to be detected separately rather
+than collapsed into one flag:
+
+1.  The **source changed on disk** since it was indexed --- the stored hash no
+    longer matches the file. Remedy: re-ingest that one file.
+2.  The **embedding model changed** --- the vectors are from a different space.
+    Detectable cheaply by comparing the stored model name against the
+    configuration; no Qdrant call needed.
+3.  The **index lost points SQLite says exist** --- a dropped collection, a
+    deleted Docker volume. Needs an actual count comparison against Qdrant, so it
+    is the expensive check and should not run on every request.
+
+**What a model change should do.** Not silently re-embed: on this machine a
+re-index of a real library is minutes to hours of local inference, and the user
+should choose when to pay that. Detect it, say so plainly, and offer the rebuild.
+
+The rule that makes this a correctness issue rather than a tidiness one:
+**search and chat must never mix vectors from two embedding spaces.** A cosine
+score between them is meaningless, so the ranking would be confidently wrong ---
+which is worse than returning nothing, because nothing is visible and a bad
+ranking is not. A file whose vectors are from a superseded model therefore leaves
+the searchable set, with a stated reason, exactly as a file mid-ingestion already
+does.
+
+**What logging may and may not record.** Before the logging branch there was no
+backend logging. Its implemented design follows two rules:
+
+-   **Never log file contents, a chunk, or a question's text.** This is a private
+    knowledge base whose whole claim is that it stays on the user's machine, and a
+    log file is the one place its contents would leak *outside* the files the user
+    chose to put there. A test should assert this rather than a comment asking for
+    it.
+-   **Log the pipeline's decisions and every failure's cause.** The ingestion
+    error already reaches SQLite for the UI; the log is for whoever is debugging,
+    so it carries what the UI deliberately withholds --- timings, stack traces,
+    which model answered, how many chunks, which Qdrant call failed.
+
+Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
+No new dependency, and structured enough to grep.
+
+## 16.4 Original branch and PR sequence (implemented)
+
+```text
+1. feat/schema-migrations      user_version runner; unblocks everything
+2. feat/backend-logging        independent, and makes 3-7 debuggable
+3. feat/upload-limits          size cap, content hash, corrupt files      (needs 1)
+4. feat/duplicate-detection    the 409 path and its wording               (needs 3)
+5. feat/index-integrity        the three staleness checks, /index/status   (needs 1)
+6. feat/rebuild-index          rebuild endpoint and action                (needs 5)
+7. feat/library-integrity-ui   the surface for all of it                  (needs 4,6)
 ```
 
-Then:
+Logging is second rather than last on purpose: every branch after it is easier to
+diagnose with it in place, and it is the one item with no dependency on the schema.
 
-``` text
-Windows
-```
+`feat/rebuild-index` should reuse what already exists rather than adding a path ---
+`indexing.py` already carries a collection reset whose docstring names the
+rebuild-index command as its intended caller, and `embeddings.py` already refuses
+a vector whose dimension disagrees with the configuration.
 
-Desktop work includes:
+Not a branch, but Phase 7 work all the same: **threshold calibration and chunking
+parameters** need several real documents to measure against, which only now exists.
+Both were deferred from Phase 1 for exactly that reason.
 
--   [x] Tauri setup
--   [x] Start/manage the app's own backend
--   [x] Manage local data directory and explicit copy-only web-data import
--   [ ] Manage Qdrant
--   [x] Ollama availability and installed-model detection (no install/start yet)
--   [x] Application packaging (local unsigned preview)
--   [x] macOS build (Apple Silicon; other machines not validated)
--   [ ] Windows build
+## 16.5 Acceptance and validation
 
-## 16.1 Desktop implementation order
+-   An existing `data/app.db` from before the schema migrations opens, gains its new columns, and
+    keeps every conversation, message and document. Tested against a real copied
+    database, not only a fresh one.
+-   Uploading the same file twice is refused the second time, naming the first ---
+    including when it has been renamed.
+-   A file edited on disk after indexing is reported as out of date, and
+    re-ingesting it makes the report go away.
+-   Changing `ollama_embedding_model` takes the affected files out of search and
+    chat with a stated reason, and never mixes their vectors with new ones.
+-   Deleting the Qdrant collection is detected and distinguished from the other two
+    staleness causes.
+-   A rebuild restores search to what it was, from `data/sources/` alone.
+-   A truncated or non-PDF-masquerading-as-PDF file fails with a reason the UI can
+    show, and leaves nothing behind.
+-   A test asserts no chunk text, file content or question reaches the log.
+-   Backend and frontend suites, lint, types and the production build pass. Record
+    any browser check that could not run under `Not validated`.
 
-1. **Tauri foundation and lifecycle:** macOS application shell, persistent app-data
-   location, managed backend startup/shutdown, readiness checks, and clear Ollama/
-   Qdrant availability. Package a built UI rather than relying on a development
-   server. Preserve existing user files, conversations and documents on migration.
-2. **Chat-focused interface:** familiar AI-assistant layout with conversation
-   navigation on the left, a readable central conversation and composer, model/
-   provider selection, and an inspectable source panel. Library and Documents
-   remain accessible. Reuse the existing palette and accessibility rules; the
-   requested interaction direction supersedes the older library-first framing.
-3. **First-run setup:** detect OS, architecture, total/available RAM, available
-   disk, and known inference acceleration. Detect Ollama and installed models.
-   Explain a conservative recommendation and its download size; the user chooses
-   local setup or a cloud key. Hardware estimates are guidance, not a guarantee
-   of measured speed. Optional short benchmarking can refine a recommendation.
-4. **Model installation:** offer recommended generation and embedding models with
-   explicit download confirmation, progress, cancel/retry, disk checks and usable
-   errors. Never silently download a model or enable cloud billing. Start with
-   Ollama's supported model-management API rather than arbitrary shell commands.
-5. **Persistent AI settings:** let the user change installed generation models and
-   providers later. Store cloud credentials using OS-protected credential storage;
-   return only availability to the UI. Changing a generation model needs no index
-   rebuild. Changing an embedding model does, and requires the existing explicit
-   rebuild workflow.
-6. **Final acceptance pass:** run the entire workflow in the packaged macOS app,
-   then record evidence and close the MVP checklist. Notebook/source grouping and
-   NotebookLM-style output templates follow the completed MVP.
+## 16.6 Checklists
 
-## 16.2 Desktop release acceptance
+### File handling
 
-- First launch presents a usable local recommendation or a cloud setup path.
-- Installation can finish, fail, be cancelled and retried with clear feedback.
-- Installed local generation models and Gemini can be selected and changed later.
-- A provider/model switch does not discard saved conversations or documents.
-- Cloud payload disclosure appears before use; local mode sends no content to Google.
-- The packaged app launches and stops its own backend cleanly without stopping
-  unrelated user services.
-- Upload, READY status, semantic search, grounded chat, citation/source inspection,
-  conversation reload, document generation/edit/save, Markdown/PDF export and clean
-  source/vector deletion are verified in the desktop app.
-- Local and cloud latency are measured separately. A mocked Gemini response does
-  not count as a live cloud speed or answer-quality measurement.
+-   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
+-   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
+-   [x] File size validation
+-   [x] Duplicate detection
+-   [x] Corrupt file handling
 
-## 16.3 macOS foundation implementation
+### Index integrity
 
-Implemented on `feat/tauri-macos`, based on the unmerged
-`feat/optional-gemini` work. Branch names now follow the user's requested `feat/`
-prefix without `codex/`. No published history was rewritten.
+-   [x] Delete vectors when source is deleted --- Phase 2
+-   [x] Schema migration runner *(prerequisite; see §16.2)*
+-   [x] Detect a changed source file
+-   [x] Detect an embedding model change
+-   [x] Detect an index that lost points
+-   [x] Rebuild index on demand
 
-The Tauri 2 application packages a Next.js static export and a native PyInstaller
-sidecar. The backend binds a reserved loopback socket on an OS-selected port and
-announces readiness only after SQLite schema initialization. The frontend waits
-for that announcement before mounting API consumers; source and Markdown export
-links use the same runtime address. A lost native command or failed startup has
-bounded waiting and a visible error rather than indefinite loading.
+### UX
 
-The app owns only its sidecar. Closing the window or quitting requests graceful
-shutdown, with a bounded fallback for that child alone. Closed parent stdin also
-stops the backend if the parent disappears. A single-instance guard prevents
-accidental duplicate app launches. Ollama and Qdrant are inspected with bounded
-GET requests, never started, stopped or downloaded by this milestone.
+-   [x] Empty states --- all four surfaces, Phases 2--5
+-   [x] Loading states --- all four surfaces, Phases 2--5
+-   [x] Error states --- all four surfaces, Phases 2--5
+-   [x] Processing states --- Phase 2
+-   [x] Clear source display --- Phases 3--4
+-   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
+-   [x] Surface index integrity in the library
 
-Desktop storage lives in macOS Application Support, not the app bundle or the
-frozen backend's extraction directory. The default desktop Qdrant collection is
-`noye_desktop`, separate from the web workspace's `noye`, so a desktop rebuild
-cannot silently discard the web index. Explicit workspace import copies sources,
-documents and a SQLite backup, rewrites copied source paths, rejects existing
-destinations and symbolic links, and leaves originals and credentials untouched.
-The copied library requires an explicit desktop-index rebuild. No existing user
-workspace was imported during implementation.
+### Logging
 
-Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
-This completes §16.1 step 1's local macOS foundation, not the desktop MVP release.
-Next: the chat-focused layout, then first-run recommendations/installation and
-secure persistent AI settings. Live RAG, citations, exports, inference latency,
-Windows, other Macs and signed/notarized distribution remain release-gate work.
+-   [x] Backend structured logging
+-   [x] Processing errors
+-   [x] Ollama errors
+-   [x] Qdrant errors
+-   [x] A test proving no user content is logged
 
-Avoid making desktop packaging block development of the knowledge
-engine.
+### Carried over
+
+-   [ ] Rewrite a follow-up question before retrieval (§12.6)
+-   [ ] Inspect a PDF exported from the packaged app (§13.6)
+-   [ ] Calibrate the similarity threshold (deferred from Phase 1)
+-   [ ] Measure chunking parameters (deferred from Phase 1)
+
+------------------------------------------------------------------------
+
+## 16.7 Live Qdrant verification (what branches 5–6 could only stub)
+
+Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
+`cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
+`embedding_model` empty before the run.
+
+**Deep point comparison confirmed.** The first time the branch-5 deep check actually
+read Qdrant: 24/24 match, no problems.
+
+**POINTS_MISSING confirmed.** Ten points deleted directly via Qdrant's API.
+- Shallow: `problems: none` (the cheap checks cannot see it — as designed).
+- Deep: `POINTS_MISSING searchable=True points=14/24`.
+- `searchable=True` confirmed: an incomplete index is *out of date*, not *wrong*.
+
+**Rebuild success path confirmed.** First real run of `POST /index/rebuild`
+against a live Qdrant:
+- Response: `202 queued=1 collection_recreated=false` — the collection was NOT
+  dropped, which is the decision the branch exists to make.
+- 12 seconds later: `READY chunks=24 qdrant=24`.
+- `embedding_model=embeddinggemma` written by ingestion.
+
+**Finding fixed in `fix/hash-on-reingest`.** The first live rebuild left
+`content_hash` NULL because re-ingest reads a file already on disk and does not pass
+through `_save_upload`. The common ingestion path now hashes the stored original
+after extraction proves it readable, so both a single-file retry and a whole-library
+rebuild fill the missing identity. Re-ingesting a deliberately changed source also
+records the new bytes as the integrity baseline. Unit tests cover both cases and keep
+an old file's hash unknown when extraction fails before the new step runs.
+
+## 16.8 Library integrity UI
+
+The library now makes the backend's integrity decisions visible without turning an
+expensive Qdrant scan into background traffic. Opening or refocusing the page runs
+the cheap source-hash and embedding-model check. **Check stored index** is the
+explicit deep action that also compares stored point counts with Qdrant.
+
+The status response carries `point_check_complete` separately from `deep`. This is
+important when Qdrant is unavailable: the page says that the stored index could not
+be checked and does not misreport an empty `problems` list as a healthy deep check.
+
+Remediation follows the cause rather than offering one ambiguous repair:
+
+-   a changed source offers a one-file re-index;
+-   an embedding-model mismatch or missing points offers a confirmed library rebuild;
+-   a missing source asks the user to restore or remove the file;
+-   rebuild responses show queued, skipped, and recreated-collection results, while
+    the existing ingestion polling continues to report progress.
+
+Validation for the branch covered the backend contract, API client, hook request
+sequencing, each problem presentation, rebuild confirmation and results, the full
+backend and frontend suites, Ruff, ESLint, TypeScript, and a production Webpack
+build. A browser pass against the real library confirmed the cheap healthy summary,
+the explicit deep-check action, the Qdrant-unavailable state, visible keyboard focus,
+and no console warnings or errors. No rebuild or file mutation was performed during
+that browser pass.
+
+## 16.9 Optional Gemini generation
+
+Implemented on `feat/optional-gemini`: local Ollama remains the default and
+`provider: "gemini"` selects Google generation for `/chat` or
+`/documents/generate`. `/ai/providers` returns model names and configuration
+availability only. The shared selector explains the cloud payload and free-tier
+data policy. Gemini keys stay in the backend environment; errors omit raw provider
+bodies and credentials. Quota errors never trigger automatic fallback or retries.
+The existing citation mapping and local embedding/index pipeline are unchanged.
+
+Validation (2026-10-03): backend suite **534 passed, 19 skipped**; Gemini transport
+and routing tests **28 passed** using mocked responses; frontend **137 passed**;
+Ruff, ESLint, TypeScript and the production Webpack build passed. No live Gemini
+request or cloud latency measurement was performed. Remaining live end-to-end and
+PDF checks are deferred to Phase 7 at the user's request.
+
+## 16.10 Post-desktop improvements and final acceptance
+
+Start after the Phase 6 desktop milestones are implemented. Reassess the current
+code and remaining defects rather than repeating the completed reliability
+branches. Prioritize data preservation, index/rebuild correctness and source
+provenance, then measure retrieval, answer quality and inference latency.
+
+-   [ ] Resolve remaining reliability and quality defects found in the packaged app.
+-   [ ] Evaluate follow-up question handling (§12.6) with quality and latency evidence.
+-   [ ] Calibrate retrieval thresholds and chunking on representative documents.
+-   [ ] Verify first-run setup, model download failure/cancel/retry and persistent
+    provider/model settings, including OS-protected cloud credentials.
+-   [ ] Verify provider/model changes preserve saved conversations and documents;
+    cloud payload disclosure precedes use and local mode sends no content to Google.
+-   [ ] Verify the packaged app owns its backend lifecycle without stopping
+    unrelated services, and preserves data across shutdown/relaunch.
+-   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
+    reload → document generation → edit/save → Markdown/PDF export → clean deletion
+    in the packaged macOS app. Inspect actual exported files from the native webview.
+-   [ ] Measure local and cloud latency separately. Mocked responses do not establish
+    live speed or answer quality; record checks that require unavailable services/keys.
+-   [ ] Record final acceptance evidence and close the MVP checklist only for
+    behavior actually verified. Notebook/source grouping and output templates follow
+    the completed MVP.
 
 ------------------------------------------------------------------------
 
@@ -3214,9 +3252,9 @@ Follow this order:
         ↓
 15. Markdown/PDF export
         ↓
-16. Tests + reliability
+16. Tauri desktop implementation (Phase 6)
         ↓
-17. Tauri desktop packaging
+17. Reliability + quality + final desktop acceptance (Phase 7)
         ↓
 18. Folder Watch
 ```
@@ -3268,21 +3306,21 @@ Follow this order:
 
 **Target: usable MVP by the end of Week 5.**
 
-## Week 6 --- Quality
+## Week 6 --- Desktop (Phase 6)
 
--   tests
--   error handling
--   duplicate detection
--   deletion cleanup
--   UX polish
--   README/demo improvements
+-   Tauri and macOS packaging
+-   local application lifecycle and persistent storage
+-   chat-focused layout
+-   first-run setup, model installation and persistent AI settings
+-   relevant automated checks for each implementation milestone
 
-## Week 7 --- Desktop
+## Week 7 --- Reliability and Quality (Phase 7)
 
--   Tauri
--   macOS packaging
--   local application lifecycle
--   initial desktop release
+-   remaining error handling and data/index safety fixes
+-   retrieval and answer-quality measurement
+-   inference latency and chunking/threshold calibration
+-   final packaged-app end-to-end acceptance, including exports
+-   README/demo evidence and initial desktop release
 
 The timeline is directional, not a deadline.
 
