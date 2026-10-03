@@ -1,9 +1,14 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 /**
- * The library is the only built surface, so the root sends people there rather
- * than showing a landing page that only repeats the sidebar.
+ * Client navigation also works in the packaged static export, where there is
+ * no Next server to perform a redirect. Chat-first navigation follows later.
  */
 export default function Home() {
-  redirect("/library");
+  const router = useRouter();
+  useEffect(() => { router.replace("/library/"); }, [router]);
+  return <p className="p-6 text-ink-soft" role="status">Opening your library…</p>;
 }

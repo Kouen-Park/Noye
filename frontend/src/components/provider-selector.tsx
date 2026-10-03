@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 
 import { type AiProvider, type GenerationProvider, listAiProviders } from "@/lib/api";
+import { isDesktopRuntime } from "@/lib/runtime";
 
 export function ProviderSelector({
   value,
@@ -65,8 +66,9 @@ export function ProviderSelector({
       )}
       {providers !== null && !gemini?.configured && (
         <p className="mt-1 text-[12px] text-ink-soft">
-          To enable Gemini, set GEMINI_API_KEY in the project&apos;s .env and restart the backend.
-          Keep the key out of frontend settings.
+          {isDesktopRuntime()
+            ? "Gemini uses GEMINI_API_KEY from the backend environment. In-app key setup is not available in this desktop preview yet."
+            : "To enable Gemini, set GEMINI_API_KEY in the project's .env and restart the backend. Keep the key out of frontend settings."}
         </p>
       )}
       {error && (

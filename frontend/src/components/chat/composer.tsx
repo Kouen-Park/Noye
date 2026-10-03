@@ -69,8 +69,7 @@ export function Composer({ onAsk, pending, disabled = false }: ComposerProps) {
         </button>
       </div>
       <p className="mt-1.5 text-[12px] text-ink-faint">
-        Answers come from your own files, on this machine. A local model can take a
-        while.
+        Answers use your selected AI and cite your files. Local models can take a while.
       </p>
     </form>
   );

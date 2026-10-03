@@ -11,6 +11,8 @@
  * changes with it.
  */
 
+import { apiBaseUrl } from "@/lib/runtime";
+
 /** Where a file is in the ingestion pipeline. Mirrors `FileStatus`. */
 export type FileStatus =
   | "UPLOADING"
@@ -117,12 +119,10 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-
 async function request(path: string, init?: RequestInit): Promise<Response> {
   let response: Response;
   try {
-    response = await fetch(`${BASE_URL}${path}`, init);
+    response = await fetch(`${apiBaseUrl()}${path}`, init);
   } catch {
     // A network-level failure is the common case in local development: the
     // backend simply is not running. Status 0 marks that apart from an HTTP
@@ -192,7 +192,7 @@ export async function searchKnowledge(
  * cited page. Pageless formats get no fragment rather than a made-up one.
  */
 export function sourceUrl(fileId: string, pageNumber: number | null = null): string {
-  const base = `${BASE_URL}/files/${encodeURIComponent(fileId)}/source`;
+  const base = `${apiBaseUrl()}/files/${encodeURIComponent(fileId)}/source`;
   return pageNumber === null ? base : `${base}#page=${pageNumber}`;
 }
 
@@ -411,7 +411,19 @@ export async function deleteDocument(id: string): Promise<void> {
 
 /** Where to download a document's Markdown. A plain URL, handed to the browser. */
 export function documentExportUrl(id: string): string {
-  return `${BASE_URL}/documents/${encodeURIComponent(id)}/export.md`;
+  return `${apiBaseUrl()}/documents/${encodeURIComponent(id)}/export.md`;
+}
+
+export interface RuntimeServices {
+  ollama: boolean;
+  qdrant: boolean;
+  generation_model: boolean;
+  embedding_model: boolean;
+}
+
+export async function getRuntimeServices(signal?: AbortSignal): Promise<RuntimeServices> {
+  const response = await request("/runtime/services", { signal });
+  return (await response.json()) as RuntimeServices;
 }
 
 // --- index integrity ---------------------------------------------------------

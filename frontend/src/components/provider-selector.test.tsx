@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ProviderSelector } from "@/components/provider-selector";
 import type { GenerationProvider } from "@/lib/api";
+import * as runtime from "@/lib/runtime";
 
 function Harness({ task = "chat" }: { task?: "chat" | "document" }) {
   const [provider, setProvider] = useState<GenerationProvider>("ollama");
@@ -20,7 +21,7 @@ function configure(configured: boolean) {
 
 describe("ProviderSelector", () => {
   beforeEach(() => configure(true));
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
   it("defaults to local even when Gemini is configured", async () => {
     render(<Harness />);
@@ -64,5 +65,13 @@ describe("ProviderSelector", () => {
   it("prevents changing provider during generation", async () => {
     render(<ProviderSelector value="ollama" onChange={vi.fn()} disabled />);
     await waitFor(() => expect(screen.getByRole("combobox")).toBeDisabled());
+  });
+
+  it("does not direct desktop users to an unread repository .env", async () => {
+    vi.spyOn(runtime, "isDesktopRuntime").mockReturnValue(true);
+    configure(false);
+    render(<Harness />);
+    expect(await screen.findByText(/In-app key setup is not available/)).toBeInTheDocument();
+    expect(screen.queryByText(/project's .env/)).not.toBeInTheDocument();
   });
 });

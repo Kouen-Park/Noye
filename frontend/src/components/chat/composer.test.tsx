@@ -66,9 +66,10 @@ describe("Composer", () => {
     expect(screen.getByRole("button", { name: "Thinking…" })).toBeDisabled();
   });
 
-  it("warns that a local model can be slow", () => {
+  it("mentions the selected AI and warns that local models can be slow", () => {
     render(<Composer onAsk={vi.fn()} pending={false} />);
-    expect(screen.getByText(/local model can take a while/i)).toBeInTheDocument();
+    expect(screen.getByText(/local models can take a while/i)).toBeInTheDocument();
+    expect(screen.getByText(/your selected AI/)).toBeInTheDocument();
   });
 
   it("is unusable when disabled", () => {
