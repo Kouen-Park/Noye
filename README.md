@@ -178,7 +178,8 @@ noye/
 - [x] Start and stop the app's own backend
 - [x] Persistent app-data directory and explicit workspace import
 - [x] Local macOS application bundle
-- [ ] Chat-focused layout, hardware recommendations and model installation
+- [x] Chat-focused layout with conversation navigation and passage inspection
+- [ ] Hardware recommendations and model installation
 - [ ] Persistent model/provider settings and OS-protected API keys
 - [ ] Signed/notarized distribution
 - [ ] Windows support
@@ -425,8 +426,10 @@ services or models rather than starting Docker or downloading anything silently.
 
 See [the desktop build and data guide](docs/DESKTOP.md) for prerequisites,
 packaging, validation and a non-destructive import of existing web data. The
-chat-focused interface, first-run recommendations, model installation and secure
-in-app API-key settings are the next milestones, not included in this preview.
+chat-focused interface is included: conversations on the left, a bottom composer,
+local/cloud provider selection and an answer-specific passage panel. First-run
+recommendations, model installation, changing installed models and secure in-app
+API-key settings are the next milestones, not included in this preview.
 The final full workflow and native PDF export remain unverified.
 
 ### Supporting services

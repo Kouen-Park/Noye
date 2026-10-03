@@ -2340,10 +2340,39 @@ workspace was imported during implementation.
 
 Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
 This completes §14.1 step 1's local macOS foundation, not the desktop MVP release.
-Next: the chat-focused layout, then first-run recommendations/installation and
+The chat-focused layout is now implemented under §14.4. Next: first-run recommendations/installation and
 secure persistent AI settings. Live RAG, citations, exports, inference latency,
 Windows, other Macs and signed/notarized distribution remain unvalidated; final
 macOS workflow acceptance and quality/latency measurement belong to Phase 8.
+
+## 14.4 Chat-focused workspace implementation
+
+Implemented on the same `feat/tauri-macos` branch at the user's request. Web and
+desktop launch into Chat, with conversation navigation on the left, a bounded
+scrolling message column and bottom composer. Library, Search and Documents remain
+reachable. Provider selection shows the configured model; changing installed
+generation models belongs to §14.1 steps 4–5, not this milestone.
+
+Each answer can open its own consulted-passage metadata in a right-hand panel on
+wide screens or an inline panel at smaller widths. It retains file/page links and
+the warning that retrieved context is not verified support. Markdown answers use
+the existing safe renderer, without automatic images or document print marking.
+The UI continues to disclose cloud payloads and the lack of previous-turn context.
+The waiting state names the selected provider without pretending to know which
+retrieval/generation stage is active.
+
+URL-keyed controllers abort stale reads and ignore late generation results after
+navigation; generation itself continues on the backend. Delete completion cannot
+reset a different open conversation. Failed questions return to the composer,
+IME composition does not submit Enter, and scrolling respects reduced motion.
+
+Frontend tests: **160 passed**; ESLint and TypeScript passed. The macOS/static UI
+build passed. Browser UI checks used synthetic in-memory conversations, not live
+AI or personal files. Native launch/navigation and cleanup were observed. Exact
+evidence and limitations are recorded in `docs/DESKTOP.md`.
+
+This completes §14.1 step 2. Hardware recommendations and first-run setup are
+next. It does not complete final live RAG/PDF acceptance or fix inference latency.
 
 Avoid making desktop packaging block development of the knowledge
 engine.

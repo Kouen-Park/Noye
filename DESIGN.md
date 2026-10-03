@@ -13,11 +13,18 @@ truth for *values* — never hardcode a colour in a component.
 
 **A source-grounded research workspace.**
 
-Direction update, 2026-10-03: the desktop version will use the familiar layout of
-an AI assistant: conversation navigation on the left, a central conversation and
-composer, provider/model selection, and a source inspection panel. First launch
-will guide local model setup or API-key configuration, with settings available
-later. This is planned Phase 6 work; the current web surfaces remain separate.
+Direction update, 2026-10-03: both web and desktop now open into a chat-focused
+workspace: conversations on the left, readable central prose and a bottom
+composer, explicit provider selection with the configured model name, and an
+answer-specific passage inspection panel. Below 1280px the panel sits above the
+conversation; below 768px navigation collapses into a menu. Library, Search and
+Documents remain accessible. First-run recommendations, installation, changing
+installed models and secure API-key settings are later Phase 6 milestones.
+
+Retrieved passages are labelled **consulted**, not verified support. No fabricated
+retrieval stage or progress percentage appears while waiting for a model. Chat
+uses the existing safe Markdown renderer but does not load model-generated images
+automatically or opt into document-only printing.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,
@@ -37,7 +44,7 @@ exceptions and on the one thing that makes Noye Noye: the citation.
 
 ## 2. Palette
 
-Base palette chosen by the project owner. Three tokens are derived, because the
+Base palette chosen by the project owner. Four tokens are derived, because the
 six base colours cannot cover every job — each derivation is measured, not
 guessed.
 
@@ -59,6 +66,7 @@ guessed.
 | `--leaf` | `#FBF8F2` | Card fill in light mode. Surface `#DED0B6` as a card fill turns a long list into a wall of tan. |
 | `--accent-ink` | `#7a5c28` | Brass is 2.70:1 on the background — unreadable. This is the text-safe sibling at 5.41:1. |
 | `--fail` | `#8c1d33` | Oxblood. No failure colour existed, and ingestion has real failure states (scanned PDFs, non-UTF-8 text). |
+| `--ink-on-sunken` | `#5b5349` | Sidebar secondary text. The old muted ink measured 4.03:1 on tan; this measures 4.97:1. Dark mode uses `#9ca79e` at 7.54:1 on the sidebar. |
 
 ### Measured contrast — light
 

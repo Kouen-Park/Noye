@@ -145,3 +145,52 @@ Not validated: complete upload/RAG/citation flows, live Gemini quality/latency,
 native Markdown/PDF export, real user-data import, crash recovery under active
 ingestion, installation/onboarding, secure key persistence, Intel/other Macs,
 Windows or Apple-signed/notarized distribution.
+
+## Chat-focused workspace validation
+
+The second desktop milestone was implemented and validated on `feat/tauri-macos`
+on 2026-10-03–04.
+Both browser and native startup now open Chat. The shared sidebar retains Library,
+Search and Documents, with saved conversations and New chat on the left. Answers
+use safe Markdown; a selected answer's consulted-passage metadata opens alongside
+the conversation on wide screens and above it on smaller screens. The composer
+stays at the bottom while messages scroll independently. Provider selection shows
+the backend-configured model, not a new installed-model management feature.
+
+Executed frontend checks: `npm test -- --reporter=dot` — **160 passed in 22 files**;
+`npm run lint` and `npx tsc --noEmit` passed. The complete
+`npm run desktop:build -- --no-sign -- --locked` workflow passed, including the
+static UI, frozen backend and **67.22 MiB** Apple Silicon app bundle. Backend/Rust
+source did not change; the foundation results above are prior validation, not a
+new full backend/Rust test run for this UI milestone.
+
+Browser observations used a temporary static preview and synthetic, in-memory API
+responses, with no model calls or personal file reads. Checked prompt-to-composer
+focus, Enter submission, visible waiting/disabled conversation actions, returned
+answer/new-conversation navigation, passage panel opening, page-link metadata,
+Escape/focus return, and Library/Search/Documents navigation. Layouts were viewed
+at 1440×900, 768×900, 390×844 and 375×812; measured document scroll width equalled
+viewport width at those sizes. Light and explicit dark token modes were inspected.
+The final mobile-menu auto-close behavior is covered by the component test.
+
+Axe-core WCAG A/AA checks reported **0 violations** in the inspected light/dark
+chat states after sidebar contrast repairs. Initial light sidebar muted text was
+**4.03:1** (message counts **2.08:1**); the new token measures **4.97:1** light and
+**7.54:1** dark against the sidebar. Captured browser warning/error logs were empty
+in the checked chat session. Two local preview samples recorded LCP **288 ms** and
+**188 ms**, CLS **0**; these are synthetic local samples, not field performance or
+AI latency measurements. INP, exhaustive network accounting and a manual screen
+reader audit were not measured. No committed screenshot baseline exists, so visual
+regression remains **INCONCLUSIVE**, not a baseline comparison pass.
+
+The rebuilt native app was observed opening the new chat screen with the existing
+missing Ollama/Qdrant banner, navigating to Library/Documents and back to Chat.
+Quit removed its app/backend processes and loopback listener. The temporary preview
+servers were also stopped. No user workspace was imported or modified for QA.
+
+A focused code/interaction review added stale-read/generation/deletion guards,
+retryable opening errors, failed-question draft restoration, IME-safe Enter,
+reduced-motion scrolling, readable long source names, and stronger sidebar text
+contrast. Retrieved metadata is still not proof of answer support; previous turns
+are still not model context. Actual RAG/citation opening, Gemini quality/latency,
+native PDF export and the final packaged-app acceptance pass remain deferred.
