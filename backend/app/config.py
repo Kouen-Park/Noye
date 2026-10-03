@@ -7,6 +7,7 @@ so hardcoding either one would let them drift apart silently.
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -58,6 +59,9 @@ class Settings(BaseSettings):
     qdrant_vector_size: int = 768
 
     database_url: str = "sqlite:///./data/app.db"
+    #: Desktop supplies an absolute app-data directory. The web defaults stay
+    #: unchanged; neither app bundles nor temporary extraction dirs hold data.
+    noye_data_dir: Path | None = None
 
     #: Noye's own log level. Deliberately separate from uvicorn's: raising this
     #: must not raise httpx's, which logs request bodies and would put a user's
@@ -82,7 +86,19 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Return the process-wide settings, read from the environment once."""
-    return Settings()
+    data_root = os.environ.get("NOYE_DATA_DIR")
+    settings = Settings(_env_file=Path(data_root) / ".env") if data_root else Settings()
+    if settings.noye_data_dir and "qdrant_collection" not in settings.model_fields_set:
+        # A new desktop workspace must not rebuild/drop the web workspace's
+        # derived index. Explicit advanced configuration can still override it.
+        settings.qdrant_collection = "noye_desktop"
+    return settings
+
+
+def data_directory() -> Path:
+    """Persistent storage root, independent of the process working directory."""
+    configured = get_settings().noye_data_dir
+    return configured.expanduser().resolve() if configured else PROJECT_ROOT / "data"
 
 
 def sources_dir() -> Path:
@@ -91,13 +107,13 @@ def sources_dir() -> Path:
     These files are Noye's source of truth: the SQLite metadata and the Qdrant
     index are both derived from them and can be rebuilt.
     """
-    path = PROJECT_ROOT / "data" / "sources"
+    path = data_directory() / "sources"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 def documents_dir() -> Path:
     """Where generated, user-editable documents are stored. Created on demand."""
-    path = PROJECT_ROOT / "data" / "documents"
+    path = data_directory() / "documents"
     path.mkdir(parents=True, exist_ok=True)
     return path
