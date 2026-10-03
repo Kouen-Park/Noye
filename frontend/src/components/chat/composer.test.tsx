@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -75,5 +75,17 @@ describe("Composer", () => {
   it("is unusable when disabled", () => {
     render(<Composer onAsk={vi.fn()} pending={false} disabled />);
     expect(field()).toBeDisabled();
+  });
+
+  it("does not send Enter while composing Korean or Japanese text", () => {
+    const onAsk = vi.fn();
+    render(<Composer onAsk={onAsk} pending={false} />);
+    fireEvent.change(field(), { target: { value: "문서 요약" } });
+    fireEvent.keyDown(field(), { key: "Enter", isComposing: true });
+    fireEvent.keyDown(field(), { key: "Enter", keyCode: 229 });
+    expect(onAsk).not.toHaveBeenCalled();
+    expect(field()).toHaveValue("문서 요약");
+    fireEvent.keyDown(field(), { key: "Enter" });
+    expect(onAsk).toHaveBeenCalledWith("문서 요약");
   });
 });
