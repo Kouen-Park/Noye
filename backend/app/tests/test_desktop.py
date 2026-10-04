@@ -95,6 +95,9 @@ def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
             with httpx.Client(base_url=ready["url"], timeout=3) as client:
                 assert client.get("/health").json() == {"status": "ok"}
                 assert client.get("/files").json() == []
+                setup = client.get("/runtime/setup")
+                assert setup.status_code == 200
+                assert "catalog_checked_on" in setup.json()["recommendation"]
                 response = client.options("/files", headers={
                     "Origin": "tauri://localhost", "Access-Control-Request-Method": "GET",
                 })
@@ -129,7 +132,7 @@ def test_service_checks_are_read_only_and_bounded(monkeypatch, unavailable):
         return httpx.Response(200, text="healthz check passed")
 
     original = httpx.AsyncClient
-    monkeypatch.setattr("app.api.runtime.httpx.AsyncClient", lambda **kwargs: original(
+    monkeypatch.setattr("app.services.runtime_checks.httpx.AsyncClient", lambda **kwargs: original(
         transport=httpx.MockTransport(handle), **kwargs,
     ))
     response = TestClient(app).get("/runtime/services")
@@ -141,7 +144,7 @@ def test_service_checks_are_read_only_and_bounded(monkeypatch, unavailable):
 
 
 def test_model_tags_do_not_confuse_latest_with_a_different_size():
-    from app.api.runtime import model_installed
+    from app.services.runtime_checks import model_installed
 
     assert model_installed("embeddinggemma", {"embeddinggemma:latest"})
     assert not model_installed("qwen3.5:4b", {"qwen3.5:9b"})

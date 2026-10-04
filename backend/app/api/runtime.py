@@ -1,13 +1,13 @@
 """Bounded, read-only service checks. Never generate, embed or download."""
 
-import asyncio
-
-import httpx
 from fastapi import APIRouter
 from pydantic import BaseModel
+from starlette.concurrency import run_in_threadpool
 
 from app.config import data_directory, get_settings
 from app.services.hardware import HardwareInfo, inspect_hardware
+from app.services.model_recommendations import Recommendation, recommend_models
+from app.services.runtime_checks import InstalledModel, ServicesOut, inspect_services
 
 router = APIRouter(prefix="/runtime", tags=["runtime"])
 
@@ -18,46 +18,29 @@ def hardware() -> HardwareInfo:
     return inspect_hardware(data_directory())
 
 
-class ServicesOut(BaseModel):
-    ollama: bool
-    qdrant: bool
-    generation_model: bool
-    embedding_model: bool
-
-
-def model_installed(configured: str, installed: set[str]) -> bool:
-    canonical = configured if ":" in configured else f"{configured}:latest"
-    return canonical in installed
-
-
 @router.get("/services", response_model=ServicesOut)
 async def services() -> ServicesOut:
+    return (await inspect_services(get_settings())).services
+
+
+class SetupOut(BaseModel):
+    hardware: HardwareInfo
+    recommendation: Recommendation
+    services: ServicesOut
+    installed_models: list[InstalledModel]
+    configured_generation_model: str
+    gemini_configured: bool
+
+
+@router.get("/setup", response_model=SetupOut)
+async def setup() -> SetupOut:
     settings = get_settings()
-
-    async with httpx.AsyncClient(timeout=1.5, follow_redirects=False) as client:
-        async def ollama_models() -> tuple[bool, set[str]]:
-            try:
-                response = await client.get(f"{settings.ollama_base_url.rstrip('/')}/api/tags")
-                response.raise_for_status()
-                body = response.json()
-                names = {model["name"] for model in body["models"]}
-                if not all(isinstance(name, str) for name in names):
-                    return False, set()
-                return True, names
-            except (httpx.HTTPError, ValueError, TypeError, KeyError):
-                return False, set()
-
-        async def qdrant_ready() -> bool:
-            try:
-                response = await client.get(f"{settings.qdrant_url.rstrip('/')}/healthz")
-                return response.is_success
-            except httpx.HTTPError:
-                return False
-
-        (ollama, names), qdrant = await asyncio.gather(ollama_models(), qdrant_ready())
-
-    return ServicesOut(
-        ollama=ollama, qdrant=qdrant,
-        generation_model=model_installed(settings.ollama_model, names),
-        embedding_model=model_installed(settings.ollama_embedding_model, names),
+    measured = await run_in_threadpool(inspect_hardware, data_directory())
+    snapshot = await inspect_services(settings)
+    return SetupOut(
+        hardware=measured,
+        recommendation=recommend_models(measured, settings.ollama_embedding_model),
+        services=snapshot.services, installed_models=snapshot.installed_models,
+        configured_generation_model=settings.ollama_model,
+        gemini_configured=bool(settings.gemini_api_key.get_secret_value().strip()),
     )
