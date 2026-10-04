@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backend;
+mod preferences;
 
 use std::sync::Arc;
 use tauri::Manager;
@@ -18,10 +19,15 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .manage(backend)
         .setup(move |app| {
+            app.manage(Arc::new(preferences::PreferenceStore::new(app.handle())?));
             managed.start(app.handle());
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![backend::backend_status])
+        .invoke_handler(tauri::generate_handler![
+            backend::backend_status,
+            preferences::ai_settings,
+            preferences::save_ai_settings
+        ])
         .build(tauri::generate_context!())
         .expect("could not build Noye desktop")
         .run(|app, event| match event {

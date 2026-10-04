@@ -18,6 +18,8 @@ struct Process {
     child: Option<CommandChild>,
     exited: bool,
     status: BackendStatus,
+    configured: u64,
+    next_config: u64,
 }
 
 pub struct Backend {
@@ -36,6 +38,8 @@ impl Default for Backend {
                     url: None,
                     error: None,
                 },
+                configured: 0,
+                next_config: 2,
             }),
             exit: Condvar::new(),
         }
@@ -60,19 +64,53 @@ impl Backend {
             app.shell().sidecar("noye-backend").map_err(|e| e.to_string())?
                 .args(["--data-dir".to_owned(), dir.to_string_lossy().into_owned()])
                 .env("FRONTEND_ORIGINS", "tauri://localhost,http://tauri.localhost,http://localhost:3000,http://127.0.0.1:3000")
+                .env("NOYE_CONTROL_TOKEN", &app.state::<Arc<crate::preferences::PreferenceStore>>().token)
                 .spawn().map_err(|e| e.to_string())
         })();
         match spawned {
             Ok((mut events, child)) => {
                 self.process.lock().unwrap().child = Some(child);
+                let store = app.state::<Arc<crate::preferences::PreferenceStore>>();
+                let config = store.configuration().unwrap_or_else(|_| {
+                    eprintln!("Keychain unavailable; cloud generation is disabled until AI settings are saved.");
+                    store.local_configuration().unwrap()
+                });
+                let frame = serde_json::json!({"event":"configure", "id":1, "values":config});
+                let _ = self
+                    .process
+                    .lock()
+                    .unwrap()
+                    .child
+                    .as_mut()
+                    .unwrap()
+                    .write(format!("{frame}\n").as_bytes());
                 let backend = self.clone();
                 tauri::async_runtime::spawn(async move {
                     while let Some(event) = events.recv().await {
                         match event {
                             CommandEvent::Stdout(line) => {
+                                if let Ok(value) =
+                                    serde_json::from_slice::<serde_json::Value>(&line)
+                                {
+                                    if value["event"] == "configured" {
+                                        backend.process.lock().unwrap().configured =
+                                            value["id"].as_u64().unwrap_or(0);
+                                        let mut process = backend.process.lock().unwrap();
+                                        if process.status.url.is_some() {
+                                            process.status.state = "ready";
+                                        }
+                                        drop(process);
+                                        backend.exit.notify_all();
+                                    }
+                                }
                                 if let Some(url) = ready_url(&line) {
-                                    backend.process.lock().unwrap().status = BackendStatus {
-                                        state: "ready",
+                                    let mut process = backend.process.lock().unwrap();
+                                    process.status = BackendStatus {
+                                        state: if process.configured > 0 {
+                                            "ready"
+                                        } else {
+                                            "starting"
+                                        },
                                         url: Some(url),
                                         error: None,
                                     };
@@ -108,6 +146,30 @@ impl Backend {
                     ),
                 };
             }
+        }
+    }
+
+    pub fn configure(&self, values: serde_json::Value) -> Result<(), String> {
+        let mut process = self.process.lock().unwrap();
+        let id = process.next_config;
+        process.next_config += 1;
+        let frame = serde_json::json!({"event":"configure", "id":id, "values":values});
+        process
+            .child
+            .as_mut()
+            .ok_or("Backend unavailable")?
+            .write(format!("{frame}\n").as_bytes())
+            .map_err(|_| "Backend unavailable")?;
+        let (process, _) = self
+            .exit
+            .wait_timeout_while(process, Duration::from_secs(5), |state| {
+                !state.exited && state.configured < id
+            })
+            .unwrap();
+        if process.configured >= id {
+            Ok(())
+        } else {
+            Err("Backend did not confirm settings".into())
         }
     }
 
