@@ -4,6 +4,9 @@ Started independently from `main` on 2026-10-05 while Phase 6 continues in a
 separate checkout. This supplies a pilot dataset and reproducible comparisons;
 it does not close the complete item 10 quality milestone.
 
+The [parallel merge guide](parallel-merge-guide.md) records draft PR order,
+observed conflicts and validation of a combined committed Phase 6 snapshot.
+
 `backend/evaluation/lumen-v1.json` contains invented project facts: 18 pre-chunked
 passages across 9 documents, 24 Korean/English questions, 21 answerable questions
 and 3 negatives. It includes cross-language questions, close identifiers
