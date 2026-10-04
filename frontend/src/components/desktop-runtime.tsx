@@ -5,6 +5,7 @@ import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react
 
 import { getRuntimeServices, type RuntimeServices } from "@/lib/api";
 import { setDesktopBaseUrl } from "@/lib/runtime";
+import { DesktopSetupDialog, useSetupGuide } from "./desktop-setup";
 
 interface BackendStatus {
   state: "starting" | "ready" | "failed";
@@ -62,7 +63,7 @@ export function DesktopRuntime({ children }: { children: ReactNode }) {
   }, []);
 
   if (mode === "web") return children;
-  if (state === "ready") return <><DesktopServices />{children}</>;
+  if (state === "ready") return <DesktopWorkspace>{children}</DesktopWorkspace>;
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center gap-3 p-8">
       <h1 className="text-3xl">{state === "failed" ? "Noye could not start" : "Starting Noye"}</h1>
@@ -74,7 +75,17 @@ export function DesktopRuntime({ children }: { children: ReactNode }) {
   );
 }
 
-function DesktopServices() {
+function DesktopWorkspace({ children }: { children: ReactNode }) {
+  const setup = useSetupGuide();
+  return <>
+    <DesktopServices onSetup={setup.show} />
+    {setup.storageWarning && <p role="status" className="px-5 py-2 text-xs text-ink-soft">Could not remember this guide&apos;s dismissal. It may reopen on your next launch.</p>}
+    {children}
+    {setup.open && <DesktopSetupDialog onClose={setup.close} />}
+  </>;
+}
+
+function DesktopServices({ onSetup }: { onSetup: () => void }) {
   const [services, setServices] = useState<RuntimeServices | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -94,7 +105,7 @@ function DesktopServices() {
     return () => { controller.abort(); clearTimeout(timer); };
   }, []);
 
-  if (!failed && (!services || Object.values(services).every(Boolean))) return null;
+  const needsAttention = failed || (!!services && !Object.values(services).every(Boolean));
   const missing = services ? [
     !services.ollama ? "Ollama is not running" : null,
     !services.qdrant ? "Qdrant is not running" : null,
@@ -103,9 +114,16 @@ function DesktopServices() {
   ].filter(Boolean).join("; ") : "";
 
   return (
-    <aside role="status" className="border-b border-edge-strong bg-accent-wash px-5 py-3 text-sm text-ink">
-      {failed ? "Could not check local services." : `Local setup needs attention: ${missing}.`}
-      {" "}Saved work stays accessible. Search and AI need Qdrant and local embeddings; cloud generation does not replace them.
+    <aside aria-label="Desktop AI setup" className={`flex shrink-0 flex-wrap items-center justify-between gap-x-4 border-b border-edge-strong px-5 text-sm text-ink ${needsAttention ? "bg-accent-wash py-2" : "bg-canvas"}`}>
+      {needsAttention ? <p role="status" className="min-w-0 flex-1">
+        {failed ? "Could not check local services." : `Local setup needs attention: ${missing}.`}
+        {" "}Saved work stays accessible. Search and AI need Qdrant and local embeddings; cloud generation does not replace them.
+      </p> : <span className="text-xs text-ink-soft">Local-first workspace</span>}
+      <button onClick={(event) => {
+        // WebKit does not always focus a pointer-clicked button before showModal.
+        event.currentTarget.focus();
+        onSetup();
+      }} className="min-h-11 shrink-0 px-2 py-2 text-sm font-semibold text-brand">AI setup</button>
     </aside>
   );
 }

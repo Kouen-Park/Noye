@@ -39,6 +39,44 @@ export async function listAiProviders(signal?: AbortSignal): Promise<AiProvider[
   return (await response.json()) as AiProvider[];
 }
 
+export interface DesktopSetup {
+  hardware: {
+    os: string;
+    architecture: string;
+    logical_cpus: number | null;
+    total_memory_bytes: number | null;
+    available_memory_bytes: number | null;
+    memory_measurement: "free_and_inactive_estimate" | "unknown";
+    workspace_disk_free_bytes: number | null;
+    acceleration: "apple_silicon_candidate" | "unknown";
+  };
+  recommendation: {
+    generation: {
+      name: string;
+      approximate_download_bytes: number;
+      minimum_total_memory_bytes: number;
+      estimated_working_memory_bytes: number;
+      source_url: string;
+    } | null;
+    memory_status: "estimated_fit" | "close_apps" | "unknown" | "insufficient_total";
+    acceleration_unverified: boolean;
+    embedding_model: string;
+    approximate_embedding_download_bytes: number | null;
+    workspace_disk_status: "unknown" | "low" | "check_model_location";
+    catalog_checked_on: string;
+  };
+  services: RuntimeServices;
+  installed_models: { name: string; size_bytes: number | null }[];
+  configured_generation_model: string;
+  gemini_configured: boolean;
+}
+
+/** Read-only setup guidance; no model pulls, provider changes or key contents. */
+export async function getDesktopSetup(signal?: AbortSignal): Promise<DesktopSetup> {
+  const response = await request("/runtime/setup", { signal });
+  return (await response.json()) as DesktopSetup;
+}
+
 /** A file as the API reports it. `path` is deliberately absent server-side. */
 export interface StoredFile {
   id: string;
