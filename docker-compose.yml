@@ -4,8 +4,9 @@ services:
     # across machines. Bump deliberately, then re-verify the collection setup.
     image: qdrant/qdrant:v1.19.1
     ports:
-      - "6333:6333"
-      - "6334:6334"
+      # The backend uses REST. Keep personal vectors on this computer and do
+      # not publish the unused gRPC port.
+      - "127.0.0.1:6333:6333"
     volumes:
       - qdrant_storage:/qdrant/storage
 
