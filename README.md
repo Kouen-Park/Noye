@@ -6,7 +6,7 @@ Noye is a **local-first AI knowledge workspace** that turns your files into sear
 
 Upload PDFs, Markdown files, and notes. Noye processes and searches them locally,
 preserves source citations, and turns useful results into editable documents.
-Generation defaults to local Ollama; you can explicitly select Gemini with your
+Generation defaults to local Ollama; you can explicitly select Gemini, OpenAI or Claude with your
 own API key for chat or document drafting.
 
 > 🚧 **Noye is currently under active development.** The features below describe the planned MVP unless marked complete.
@@ -281,7 +281,7 @@ Available endpoints:
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
-| `GET` | `/ai/providers` | Generation model names and whether Gemini has a configured key; never returns credentials |
+| `GET` | `/ai/providers` | Generation model names and cloud-key availability; never returns credentials |
 | `GET` | `/runtime/services` | Bounded Ollama/Qdrant and installed-model checks; never generates or downloads |
 | `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
@@ -308,7 +308,23 @@ Available endpoints:
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
-### Optional Gemini generation
+### Optional cloud generation
+
+Desktop: open **Settings → Cloud APIs** for OpenAI, Claude and Gemini key
+entry/removal using macOS Keychain. Saved keys are never returned to the UI.
+An explicit default-provider preference applies to new work, not existing selections.
+Saving keys never sends a validation request or activates billing.
+
+**Settings → Local models** downloads supported recommendations, reports layer
+progress, cancels/retries downloads, switches installed generation models and
+deletes unused models after exact-name confirmation. Confirm a folder on Ollama's
+actual model-storage volume first. Ollama must already be running. Current
+generation, fixed embeddings and models used by Noye inference are protected.
+See [desktop setup and validation](docs/DESKTOP.md) for remaining limits.
+
+Web: configure OpenAI using `OPENAI_API_KEY`/`OPENAI_MODEL` and Claude using
+`ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL` in the repository-root `.env`, never frontend
+environment variables. Gemini web configuration follows:
 
 Set these values in the repository-root `.env` (not `frontend/.env.local`), then
 restart the backend:

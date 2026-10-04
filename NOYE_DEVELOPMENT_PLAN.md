@@ -133,6 +133,14 @@ local. The key is server-only environment configuration in the web MVP. The UI
 discloses what leaves the computer before cloud use. There is no automatic fallback,
 retry or billing activation. Desktop credential entry and secure storage are Phase 6.
 
+**Scope update, 2026-10-05:** the user explicitly requested in-app model
+installation/deletion and OpenAI (ChatGPT), Claude and Gemini key settings.
+Optional OpenAI Responses and Anthropic Messages generation are now in scope.
+Desktop credentials use macOS Keychain, not plaintext preferences, and only
+availability is returned to the UI. Local remains the first-launch default;
+subsequent work can use an explicitly saved default provider. No automatic
+provider fallback, inference on key save, tools or embedding switch is added.
+
 ## 0.5 Citation and provenance rules
 
 Citation provenance is one of Noye's most important requirements.
@@ -2300,7 +2308,7 @@ Desktop work includes:
 
 - First launch presents a usable local recommendation or a cloud setup path.
 - Installation can finish, fail, be cancelled and retried with clear feedback.
-- Installed local generation models and Gemini can be selected and changed later.
+- Installed generation models, Gemini, OpenAI and Claude can be selected and changed later.
 - A provider/model switch does not discard saved conversations or documents.
 - Cloud payload disclosure appears before use; local mode sends no content to Google.
 - The packaged app launches and stops its own backend cleanly without stopping
@@ -2424,6 +2432,34 @@ require an explicit rebuild. Final live RAG, latency and native PDF acceptance
 remain deferred to Phase 8 as requested.
 
 Avoid making desktop packaging block development of the knowledge engine.
+
+### AI management update — 2026-10-05
+
+Implemented explicit recommended-model downloads with user-confirmed model-volume
+disk checks, layer progress, cancel/retry and sanitized errors. Exact-name
+deletion protects configured generation, fixed embeddings and Noye's active
+inference. Model writes require a per-process desktop capability and loopback
+Ollama. No arbitrary shell command, remote mutation or partial-blob cleanup.
+
+Implemented native model/default-provider preferences and macOS Keychain
+entry/removal for three cloud APIs. Private stdin passes credentials to the owned
+backend with a non-secret acknowledgement; whole settings snapshots preserve
+running jobs. The settings overlay preserves workspace children. Frontend design
+skills guided three calm sections, compact service messaging, palette-matched
+progress and fixed dialog controls with responsive scrolling.
+
+Validated: backend **632 passed, 19 skipped**; frontend **182 passed**; native Rust
+**3 passed**; frozen-backend lifecycle/configuration **10 passed**. Ruff, ESLint,
+TypeScript and unsigned macOS packaging passed. Browser fixtures exercised fake
+key save, downloads, cancel and draft/focus preservation. Native non-secret save
+and secure input rendering were observed. Exact evidence is in `docs/DESKTOP.md`.
+
+Remaining before Phase 6 handoff: Ollama/Qdrant service preparation/recovery,
+stronger native credential-lifecycle verification and live model-management
+acceptance. Real cloud authorization, live RAG/quality/latency, PDF export and
+final packaged-app E2E remain unvalidated; final acceptance stays Phase 8.
+Do not declare Phase 6 complete or start all twelve Phase 7 items from these
+settings controls alone.
 
 ------------------------------------------------------------------------
 

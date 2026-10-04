@@ -318,3 +318,78 @@ service setup. No model was installed or switched and no cloud content was sent.
 Live RAG/citation behavior, AI quality/latency, native Markdown/PDF export and final
 packaged-app acceptance remain deferred to Phase 8. Other hardware/OSes and signed
 distribution remain unvalidated.
+
+## In-app AI management — 2026-10-05
+
+This supersedes the guide-only limitations above. **Settings** opens from the
+desktop status bar, AI selector or first-run guide. Local models, Cloud APIs and
+Services are separate sections; the workspace remains mounted behind the dialog.
+
+Local models support Qwen 3.5 0.8b/2b/4b/9b and configured embeddinggemma variants.
+Downloads are explicit, never select a model automatically and report current
+layer progress, not a fabricated overall percentage. The user must confirm an
+existing folder on Ollama's actual model-storage volume; the app cannot discover
+it reliably from a separate Ollama server. Free space must cover twice the
+catalog estimate plus 1 GiB. Downloads time out after 30 minutes, can be cancelled
+and retried, and are cancelled on owned-backend shutdown. Partial/shared downloads
+may remain in Ollama; Noye does not delete blobs. API contracts follow
+[Ollama's documentation](https://github.com/ollama/ollama/blob/main/docs/api.md).
+
+Deletion requires an exact installed name and warns about shared Ollama usage.
+Selected generation, fixed embeddings and Noye's in-flight inference are
+protected; other apps' active inference is not reliably detectable. Mutations
+require loopback Ollama and the native app's random per-process capability.
+Changing generation models does not rebuild the index. Embeddings remain fixed.
+
+OpenAI, Claude and Gemini key entry/removal uses the apple-native store in
+[keyring 3.6.3](https://docs.rs/keyring/3.6.3/keyring/) under service
+`app.noye.desktop.ai`. No plaintext fallback. Only key availability reaches the
+UI; `ai-settings.json` stores provider/model names. Keys travel through private
+child stdin, never a public HTTP settings endpoint, CLI argument or browser
+storage. A failed Keychain/apply operation is reported; missing backend
+acknowledgement asks for restart. Existing jobs retain their settings snapshots.
+Key removal cannot cancel a provider request already sent.
+
+OpenAI uses [Responses](https://developers.openai.com/api/docs/guides/migrate-to-responses)
+with `store: false`; Claude uses [Messages](https://platform.claude.com/docs/en/api/messages/create).
+One request, no tools/retry/fallback; malformed/incomplete answers and upstream
+errors are sanitized. Saving keys sends no inference request. API usage is separate
+from [ChatGPT subscriptions](https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform)
+and [Claude subscriptions](https://support.claude.com/en/articles/9876003-i-have-a-paid-claude-subscription-pro-max-team-or-enterprise-plans-why-do-i-have-to-pay-separately-to-use-the-claude-api-and-console).
+Selected-provider payload disclosure remains visible; embeddings/search stay local.
+
+Executed validation:
+
+- `backend/.venv/bin/pytest app/tests/ -q`: **632 passed, 19 skipped, 8 warnings**.
+  Live-service checks remain skipped; cloud/model tests use mock transports.
+- `backend/.venv/bin/ruff check app/ desktop.py`: passed.
+- `npm run lint`, `npx tsc --noEmit`: passed.
+- `npm test`: **182 passed, 25 files**, including key masking/clearing, confirmed
+  removal, storage confirmation, exact-name deletion and errors.
+- `cargo test --locked --manifest-path src-tauri/Cargo.toml`: **3 passed**.
+- `NOYE_TEST_SIDECAR=... .venv/bin/pytest app/tests/test_desktop.py -q`:
+  **10 passed, 7 warnings**, including private configuration/availability and
+  graceful line/EOF shutdown with temporary data.
+- `npm run desktop:build -- --no-sign -- --locked`: passed, unsigned
+  **67.49 MiB** `Noye.app`.
+
+Browser fixtures: **375×812**, **768×1024**, **1440×900**, light/dark settings,
+scrolling with fixed controls, fake-key save/clearing, provider refresh without
+changing current AI, unsent draft/opener-focus preservation, download confirmation,
+layer progress and cancellation. Observed axe A/AA violations **0**, captured
+console errors/warnings **0**. One navigation measured LCP **296 ms**, CLS **0**:
+static fixture rendering, not AI latency. INP, exhaustive network accounting and
+manual screen-reader coverage were not measured. No committed visual baseline:
+formal visual regression **INCONCLUSIVE**.
+
+Native packaged app: local/cloud settings opened with real offline service
+readings. The unchanged local preference was saved and backend confirmation
+appeared; persisted JSON contained only provider/model names. Key input was a
+secure text field. No actual key was saved/removed, paid request made, or model
+downloaded/deleted. Native chat-text automation was inconclusive; newly proven
+draft preservation applies to browser fixtures/component checks, not native input.
+
+Remaining: service preparation/recovery (especially Qdrant), native Keychain
+permission/credential persistence across signed updates, live opt-in model
+management and cloud authorization, signed distribution, and Phase 8
+RAG/latency/PDF acceptance. Opening Settings does not install/start Ollama/Qdrant.
