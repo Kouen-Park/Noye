@@ -37,6 +37,7 @@ from qdrant_client import QdrantClient
 from app.config import get_settings
 from app.db import files as file_store
 from app.logging_config import get_logger
+from app.services import index_identity
 from app.services.indexing import collection_vector_size, recreate_collection
 from app.services.ingestion import AlreadyIngesting, reserve_ingestion
 
@@ -91,6 +92,8 @@ def plan_rebuild(
     the best record of a document the user no longer has on disk.
     """
     settings = get_settings()
+    # Prove the selected model is installed before any destructive collection call.
+    index_identity.current_index_identity()
     recreated = False
 
     if needs_recreation(client):

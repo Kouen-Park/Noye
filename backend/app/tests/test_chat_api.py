@@ -23,6 +23,7 @@ from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.main import app
 from app.models.files import FileStatus, FileType
+from app.services import index_identity
 from app.services.embeddings import EmbeddingError
 from app.services.generation import Answer, GenerationError
 from app.services.indexing import IndexingError
@@ -49,6 +50,8 @@ def add_ready_file(db: sqlite3.Connection, name: str = "Algorithms.pdf") -> str:
     record = file_store.create_file(
         db, name=name, file_type=FileType.PDF, path=f"/tmp/{name}", size=1024
     )
+    identity = index_identity.current_index_identity()
+    file_store.set_index_identity(db, record.id, identity.fingerprint, identity.metadata_json)
     file_store.set_status(db, record.id, FileStatus.READY)
     return record.id
 

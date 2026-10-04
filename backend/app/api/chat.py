@@ -25,8 +25,10 @@ from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
 from app.db import conversations as conversation_store
+from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
+from app.models.files import FileStatus
 from app.services.citations import build_citations
 from app.services.embeddings import EmbeddingError
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
@@ -217,27 +219,31 @@ def ask(
         db, conversation.id, role=Role.USER, content=question
     )
 
-    ready = _ready_file_names(db)
-
-    if not ready:
-        answer = conversation_store.add_message(
-            db,
-            conversation.id,
-            role=Role.ASSISTANT,
-            content=(
-                "There is nothing in your library to answer from yet. Add a file, or "
-                "wait for one that is still processing."
-            ),
-        )
-        return AskResponse(
-            conversation_id=conversation.id,
-            conversation_title=conversation.title,
-            question=MessageOut.of(stored_question),
-            answer=MessageOut.of(answer),
-            searched_files=0,
-        )
-
+    ready = {}
     try:
+        ready = _ready_file_names(db)
+
+        if not ready:
+            answer = conversation_store.add_message(
+                db,
+                conversation.id,
+                role=Role.ASSISTANT,
+                content=(
+                    "No compatible index is available for the ready files. "
+                    "Open the library to check index compatibility and rebuild when needed."
+                    if any(r.status is FileStatus.READY for r in file_store.list_files(db))
+                    else "There is nothing in your library to answer from yet. Add a file, or "
+                    "wait for one that is still processing."
+                ),
+            )
+            return AskResponse(
+                conversation_id=conversation.id,
+                conversation_title=conversation.title,
+                question=MessageOut.of(stored_question),
+                answer=MessageOut.of(answer),
+                searched_files=0,
+            )
+
         generated = answer_question(question, limit=request.limit, file_ids=list(ready))
     except (EmbeddingError, IndexingError, GenerationError) as exc:
         # Neither the question nor the answer is logged. The conversation id

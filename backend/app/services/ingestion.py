@@ -35,8 +35,9 @@ from app.db.database import connect, init_schema
 from app.logging_config import get_logger, timed
 from app.models.files import Chunk as ChunkRow
 from app.models.files import File, FileStatus
+from app.services import index_identity
 from app.services.chunking import chunk_pages
-from app.services.embeddings import embed_chunks
+from app.services.embeddings import EmbeddingError, embed_chunks
 from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
 from app.services.integrity import hash_file
@@ -222,14 +223,16 @@ def ingest_file(
             _check_cancel(cancellation)
             pages = _extract(connection, record)
             _check_cancel(cancellation)
+            identity = index_identity.current_index_identity(client=http_client)
             chunks = _chunk(connection, record, pages)
             _check_cancel(cancellation)
             _embed_and_index(
                 connection, record, chunks, qdrant_client=qdrant_client, http_client=http_client,
                 cancellation=cancellation,
+                identity=identity,
             )
             _check_cancel(cancellation)
-        except IngestionError as exc:
+        except (IngestionError, EmbeddingError) as exc:
             # The full reason is the user's and reaches the UI through the file
             # row. The log keeps only its first sentence: the rest is advice
             # written for a person ("Check that it is running (brew services
@@ -321,7 +324,10 @@ def _chunk(
 ) -> list:
     file_store.set_status(connection, record.id, FileStatus.CHUNKING)
 
-    chunks = chunk_pages(pages, file_id=record.id)
+    settings = get_settings()
+    chunks = chunk_pages(
+        pages, file_id=record.id, chunk_size=settings.chunk_size, overlap=settings.chunk_overlap
+    )
 
     if not record.file_type.has_pages:
         # Drop the placeholder page number here, before anything downstream sees
@@ -355,10 +361,13 @@ def _embed_and_index(
     qdrant_client: QdrantClient | None,
     http_client: httpx.Client | None,
     cancellation: threading.Event,
+    identity: index_identity.IndexIdentity,
 ) -> None:
     file_store.set_status(connection, record.id, FileStatus.EMBEDDING)
 
     try:
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during processing. Retry.")
         with timed(
             logger,
             "Embedded",
@@ -367,6 +376,8 @@ def _embed_and_index(
             model=get_settings().ollama_embedding_model,
         ):
             vectors = embed_chunks(chunks, client=http_client)
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during processing. Retry.")
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -378,8 +389,12 @@ def _embed_and_index(
         with timed(logger, "Indexed", file=record.id, points=len(chunks)):
             delete_file_chunks(record.id, client=qdrant_client)
             _check_cancel(cancellation)
-            index_chunks(chunks, vectors, client=qdrant_client)
+            index_chunks(
+                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint
+            )
         _check_cancel(cancellation)
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during indexing. Retry.")
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -388,6 +403,9 @@ def _embed_and_index(
     # for vectors that were not actually stored.
     file_store.set_embedding_model(
         connection, record.id, get_settings().ollama_embedding_model
+    )
+    file_store.set_index_identity(
+        connection, record.id, identity.fingerprint, identity.metadata_json
     )
 
     rows = [
@@ -441,4 +459,5 @@ def _fail(
     # it would have a FAILED file claiming an embedding space it no longer occupies,
     # which is exactly the confusion the column exists to prevent.
     file_store.set_embedding_model(connection, record.id, None)
+    file_store.set_index_identity(connection, record.id, None, None)
     return file_store.set_status(connection, record.id, FileStatus.FAILED, error=reason)
