@@ -21,7 +21,12 @@ from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.files import FileStatus
 from app.services.indexing import IndexingError
-from app.services.ingestion import ingest_in_background
+from app.services.ingestion import (
+    MaintenanceBusy,
+    end_rebuild,
+    ingest_in_background,
+    release_file,
+)
 from app.services.integrity import FileIntegrity, Problem, check_library
 from app.services.rebuild import plan_rebuild
 
@@ -166,6 +171,8 @@ def rebuild_index(
     """
     try:
         plan = plan_rebuild(db)
+    except MaintenanceBusy as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except IndexingError as exc:
         logger.warning("Rebuild could not start error=%s: %s", type(exc).__name__, exc)
         raise HTTPException(
@@ -173,10 +180,14 @@ def rebuild_index(
             detail=f"Could not reach the index to rebuild it: {exc}",
         ) from exc
 
-    for file_id in plan.file_ids:
-        file_store.reset_counts(db, file_id)
-        file_store.set_status(db, file_id, FileStatus.UPLOADING)
-        background.add_task(ingest_in_background, file_id)
+    try:
+        for file_id in plan.file_ids:
+            file_store.reset_counts(db, file_id)
+            file_store.set_status(db, file_id, FileStatus.UPLOADING)
+        background.add_task(_run_rebuild, plan.file_ids)
+    except BaseException:
+        _release_rebuild(plan.file_ids)
+        raise
 
     return RebuildStarted(
         queued=plan.queued,
@@ -187,3 +198,18 @@ def rebuild_index(
         collection_recreated=plan.collection_recreated,
         embedding_model=plan.embedding_model,
     )
+
+
+def _release_rebuild(file_ids: tuple[str, ...]) -> None:
+    for file_id in file_ids:
+        release_file(file_id)
+    end_rebuild()
+
+
+def _run_rebuild(file_ids: tuple[str, ...]) -> None:
+    """Hold the maintenance guard through the last background pipeline."""
+    try:
+        for file_id in file_ids:
+            ingest_in_background(file_id)
+    finally:
+        _release_rebuild(file_ids)

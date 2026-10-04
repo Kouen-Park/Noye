@@ -191,6 +191,62 @@ class TestSkipping:
 
 
 class TestADimensionChange:
+    @pytest.mark.parametrize("reserve", [ingestion.reserve_ingestion, ingestion.reserve_delete])
+    def test_busy_library_is_refused_before_reset(
+        self, client, db, tmp_path, recreated, monkeypatch, reserve
+    ):
+        monkeypatch.setattr(rebuild, "collection_vector_size", lambda *a, **kw: 1024)
+        record = add_file(db, tmp_path, name="busy.md", chunks=9)
+        reserve(record.id)
+        try:
+            response = client.post("/index/rebuild")
+            assert response.status_code == 409
+            assert recreated == []
+            assert file_store.get_file(db, record.id).chunk_count == 9
+        finally:
+            ingestion.release_file(record.id)
+        # A rejected attempt must not leave the global guard stuck.
+        assert client.post("/index/rebuild").status_code == 202
+
+    def test_reserves_files_and_blocks_new_writes_before_reset(
+        self, client, db, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(rebuild, "collection_vector_size", lambda *a, **kw: 1024)
+        record = add_file(db, tmp_path, name="reserved.md")
+
+        def reset(*args, **kwargs):
+            assert ingestion.is_ingesting(record.id)
+            with pytest.raises(ingestion.MaintenanceBusy):
+                ingestion.reserve_ingestion("new-upload")
+            with pytest.raises(ingestion.MaintenanceBusy):
+                ingestion.reserve_delete("other-source")
+
+        monkeypatch.setattr(rebuild, "recreate_collection", reset)
+        assert client.post("/index/rebuild").status_code == 202
+
+    def test_reset_failure_releases_reservations_and_guard(
+        self, client, db, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(rebuild, "collection_vector_size", lambda *a, **kw: 1024)
+        record = add_file(db, tmp_path, name="retry.md")
+
+        def reset(*args, **kwargs):
+            raise IndexingError("reset failed")
+
+        monkeypatch.setattr(rebuild, "recreate_collection", reset)
+        assert client.post("/index/rebuild").status_code == 503
+        assert not ingestion.is_ingesting(record.id)
+        ingestion.reserve_ingestion(record.id)
+        ingestion.release_file(record.id)
+
+    def test_does_not_reset_if_no_original_can_be_rebuilt(
+        self, client, db, tmp_path, recreated, monkeypatch
+    ):
+        monkeypatch.setattr(rebuild, "collection_vector_size", lambda *a, **kw: 1024)
+        add_file(db, tmp_path, name="missing.md", on_disk=False)
+        assert client.post("/index/rebuild").json()["queued"] == 0
+        assert recreated == []
+
     def test_recreates_the_collection_when_the_width_disagrees(
         self, client, db, tmp_path, recreated, monkeypatch
     ):
@@ -254,3 +310,48 @@ class TestNeedsRecreation:
     def test_false_when_there_is_no_collection(self, monkeypatch):
         monkeypatch.setattr(rebuild, "collection_vector_size", lambda *a, **kw: None)
         assert rebuild.needs_recreation() is False
+
+
+def test_duplicate_rebuild_is_conflict(client):
+    ingestion.begin_rebuild()
+    try:
+        assert client.post("/index/rebuild").status_code == 409
+    finally:
+        ingestion.end_rebuild()
+    assert client.post("/index/rebuild").status_code == 202
+
+
+def test_guard_is_held_between_background_files(client, db, tmp_path, monkeypatch):
+    first = add_file(db, tmp_path, name="one.md")
+    second = add_file(db, tmp_path, name="two.md")
+    ran = []
+
+    def run(file_id):
+        ran.append(file_id)
+        ingestion.release_file(file_id)
+        with pytest.raises(ingestion.MaintenanceBusy):
+            ingestion.reserve_ingestion("new-file")
+        assert client.post("/index/rebuild").status_code == 409
+
+    monkeypatch.setattr(index_api, "ingest_in_background", run)
+    assert client.post("/index/rebuild").status_code == 202
+    assert set(ran) == {first.id, second.id}
+    ingestion.reserve_ingestion("new-file")
+    ingestion.release_file("new-file")
+
+
+def test_worker_exception_releases_the_whole_plan(monkeypatch):
+    ingestion.begin_rebuild()
+    for file_id in ("one", "two"):
+        ingestion.reserve_rebuild_ingestion(file_id)
+
+    def broken(file_id):
+        raise RuntimeError("cannot open database")
+
+    monkeypatch.setattr(index_api, "ingest_in_background", broken)
+    with pytest.raises(RuntimeError, match="cannot open database"):
+        index_api._run_rebuild(("one", "two"))
+    for file_id in ("one", "two"):
+        assert not ingestion.is_ingesting(file_id)
+    ingestion.reserve_ingestion("one")
+    ingestion.release_file("one")
