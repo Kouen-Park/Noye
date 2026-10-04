@@ -49,6 +49,8 @@ def _to_file(row: sqlite3.Row) -> File:
         chunk_count=row["chunk_count"],
         content_hash=row["content_hash"],
         embedding_model=row["embedding_model"],
+        index_fingerprint=row["index_fingerprint"],
+        index_metadata=row["index_metadata"],
         created_at=datetime.fromisoformat(row["created_at"]),
         updated_at=datetime.fromisoformat(row["updated_at"]),
     )
@@ -250,6 +252,20 @@ def set_embedding_model(
         cursor = connection.execute(
             "UPDATE files SET embedding_model = ?, updated_at = ? WHERE id = ?",
             (model, _now_iso(), file_id),
+        )
+    if cursor.rowcount == 0:
+        raise FileRecordNotFound(f"No file with id {file_id}")
+    return get_file(connection, file_id)
+
+
+def set_index_identity(
+    connection: sqlite3.Connection, file_id: str, fingerprint: str | None, metadata: str | None
+) -> File:
+    """Persist observed processing identity after the corresponding vector write."""
+    with connection:
+        cursor = connection.execute(
+            "UPDATE files SET index_fingerprint = ?, index_metadata = ?, updated_at = ? "
+            "WHERE id = ?", (fingerprint, metadata, _now_iso(), file_id),
         )
     if cursor.rowcount == 0:
         raise FileRecordNotFound(f"No file with id {file_id}")

@@ -10,6 +10,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #: Repository root — this file is ``<root>/backend/app/config.py``.
@@ -48,6 +49,14 @@ class Settings(BaseSettings):
     qdrant_collection: str = "noye"
     #: Must match the output dimension of ``ollama_embedding_model``.
     qdrant_vector_size: int = 768
+    chunk_size: int = Field(default=1000, gt=0)
+    chunk_overlap: int = Field(default=150, ge=0)
+
+    @model_validator(mode="after")
+    def validate_chunk_window(self) -> Settings:
+        if self.chunk_overlap >= self.chunk_size:
+            raise ValueError("CHUNK_OVERLAP must be smaller than CHUNK_SIZE")
+        return self
 
     database_url: str = "sqlite:///./data/app.db"
 

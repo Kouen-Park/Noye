@@ -110,6 +110,8 @@ class File:
     #: The embedding model whose vectors are in the index for this file. Written by
     #: ingestion, not by upload, because that is when the vectors are made.
     embedding_model: str | None = None
+    index_fingerprint: str | None = None
+    index_metadata: str | None = None
     created_at: datetime = field(default_factory=_now)
     updated_at: datetime = field(default_factory=_now)
 

@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS files (
     -- must never mix two embedding spaces in one ranking. NULL means unknown,
     -- not mismatched.
     embedding_model TEXT,
+    index_fingerprint TEXT,
+    index_metadata TEXT,
     created_at   TEXT NOT NULL,
     updated_at   TEXT NOT NULL
 );
