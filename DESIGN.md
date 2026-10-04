@@ -18,8 +18,14 @@ workspace: conversations on the left, readable central prose and a bottom
 composer, explicit provider selection with the configured model name, and an
 answer-specific passage inspection panel. Below 1280px the panel sits above the
 conversation; below 768px navigation collapses into a menu. Library, Search and
-Documents remain accessible. First-run recommendations, installation, changing
-installed models and secure API-key settings are later Phase 6 milestones.
+Documents remain accessible. Added 2026-10-05: a desktop-only first-run guide shows
+measured hardware, a conservative model candidate and local/Gemini prerequisites.
+It uses the existing paper/forest tokens, with a fixed header/footer and a scrolling
+body so loading and long instructions do not hide Skip/Continue. Current and
+recommended models are distinct; guide selection never changes the provider.
+The guide can be dismissed and reopened without unmounting the workspace.
+Installation, changing installed models and secure API-key settings remain later
+Phase 6 milestones.
 
 Retrieved passages are labelled **consulted**, not verified support. No fabricated
 retrieval stage or progress percentage appears while waiting for a model. Chat

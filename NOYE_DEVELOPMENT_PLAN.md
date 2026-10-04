@@ -2340,8 +2340,9 @@ workspace was imported during implementation.
 
 Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
 This completes §14.1 step 1's local macOS foundation, not the desktop MVP release.
-The chat-focused layout is now implemented under §14.4. Next: first-run recommendations/installation and
-secure persistent AI settings. Live RAG, citations, exports, inference latency,
+The chat-focused layout is implemented under §14.4, with a read-only first-run
+recommendation guide under §14.5. Next: opt-in installation and secure persistent
+AI settings. Live RAG, citations, exports, inference latency,
 Windows, other Macs and signed/notarized distribution remain unvalidated; final
 macOS workflow acceptance and quality/latency measurement belong to Phase 8.
 
@@ -2371,8 +2372,9 @@ build passed. Browser UI checks used synthetic in-memory conversations, not live
 AI or personal files. Native launch/navigation and cleanup were observed. Exact
 evidence and limitations are recorded in `docs/DESKTOP.md`.
 
-This completes §14.1 step 2. Hardware recommendations and first-run setup are
-next. It does not complete final live RAG/PDF acceptance or fix inference latency.
+This completes §14.1 step 2. The first-run hardware prerequisite and read-only
+guide are described below. This does not complete final live RAG/PDF acceptance
+or fix inference latency.
 
 ### First-run hardware foundation (2026-10-04)
 
@@ -2384,12 +2386,44 @@ no credentials, user paths, model downloads or cloud calls are included.
 
 Hardware/API and existing desktop lifecycle tests: **22 passed**; backend Ruff
 passed. This is only the measurement prerequisite for §14.1 step 3. Recommendation
-rules, first-run UI, installation and secure persistent settings remain pending.
+rules and first-run UI were pending at this checkpoint; §14.5 adds the read-only
+guide. Installation and secure persistent settings remain pending.
 The user requested stopping at ordinary usage limits, so the milestone is not
 marked complete. See `docs/DESKTOP.md` for validation boundaries.
 
-Avoid making desktop packaging block development of the knowledge
-engine.
+## 14.5 Conservative recommendations and read-only setup guide
+
+Implemented 2026-10-05 on the same `feat/tauri-macos` branch. `GET /runtime/setup`
+combines measured hardware, GET-only local service/model inventory checks and a
+small versioned Ollama catalog. Recommendations use total RAM and current available
+memory, reserving headroom for the OS, app, local embeddings and short questions.
+Unknown acceleration considers only the smallest candidate. Busy/unknown memory
+does not claim the model fits; workspace disk is not claimed to be Ollama's actual
+model-storage volume. Download sizes come from official Ollama pages; memory budgets
+are Noye heuristics, not vendor requirements or measured speed/quality.
+
+After the owned backend is ready, a desktop-only guide shows the candidate, current
+model, approximate download sizes and missing prerequisites. Local/Gemini views
+explain their data paths without changing providers, downloading models, making
+inference calls or exposing keys. Only guide dismissal is remembered locally;
+AI setup reopens it with fresh readings. Skip/Continue and failed-check retry remain
+available, while saved-work UI stays mounted. A configured key is not live validation.
+
+Executed backend checks: **588 passed, 19 skipped**; frozen-backend lifecycle/setup
+checks: **10 passed**. Frontend: **175 passed**; Ruff, ESLint, TypeScript and the
+unsigned macOS build passed. Browser checks used synthetic fixtures; native launch
+showed actual hardware and offline services. Exact evidence, interaction repairs
+and limitations are in `docs/DESKTOP.md`.
+
+This implements the recommendation/guide portion of §14.1 step 3, not complete
+first-run AI setup. Next are explicit model downloads with progress/cancel/retry
+and actual model-volume disk checks (§14.1 step 4), persistent generation-model
+settings and OS-secure API-key entry (§14.1 step 5), then remaining service setup
+(§14.1 step 6). No automatic cloud fallback is permitted. Embedding changes still
+require an explicit rebuild. Final live RAG, latency and native PDF acceptance
+remain deferred to Phase 8 as requested.
+
+Avoid making desktop packaging block development of the knowledge engine.
 
 ------------------------------------------------------------------------
 

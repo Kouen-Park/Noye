@@ -221,3 +221,100 @@ No frontend changes, recommendation catalog, automatic installation, provider/ke
 setup or speed benchmark were implemented in this bounded step. First-run setup
 remains incomplete. Full backend/live RAG and native export acceptance were not
 rerun; the user's ordinary-usage-only limit narrowed this turn to the foundation.
+
+## Read-only recommendation and first-run guide
+
+Added 2026-10-05 on `feat/tauri-macos`. `GET /runtime/setup` returns measured
+hardware, a conservative generation-model candidate, configured model names,
+GET-only Ollama inventory/Qdrant health checks and a boolean for Gemini-key
+configuration. It never returns the key, calls inference, pulls a model or changes
+configuration. Service requests have a 1.5-second HTTP timeout with redirects
+disabled; the UI has a separate 10-second deadline and cancels closed/stale checks.
+Malformed inventory is not reported as healthy.
+
+The generation catalog's approximate decimal download sizes were checked against
+the [official Qwen3.5 library](https://ollama.com/library/qwen3.5) on 2026-10-05.
+The existing [EmbeddingGemma](https://ollama.com/library/embeddinggemma) configuration
+is preserved (about 0.62 GB); custom embedding sizes remain unknown.
+
+| Candidate | Download | Noye total-RAM threshold | Estimated available-memory budget |
+| --- | --- | --- | --- |
+| `qwen3.5:0.8b` | 1.0 GB | 8 GiB | 2.5 GiB |
+| `qwen3.5:2b` | 2.7 GB | 12 GiB | 5 GiB |
+| `qwen3.5:4b` | 3.4 GB | 16 GiB | 6 GiB |
+| `qwen3.5:9b` | 6.6 GB | 32 GiB | 10 GiB |
+
+These memory budgets are conservative Noye heuristics for short document questions,
+not vendor requirements, maximum-context guarantees or speed/quality benchmarks.
+Total RAM and current available memory both influence the result. Tight memory
+keeps only a conditional small candidate with a close-apps warning; unknown memory
+does not claim fit. Unknown acceleration considers only the smallest candidate.
+Workspace disk can warn about low space but cannot validate a different Ollama
+model-storage volume. Sizes/tags may change; actual install preflight is still needed.
+
+The desktop-only guide opens after the owned backend is ready. It separates the
+recommendation from the active model, shows missing local prerequisites, and offers
+local/Gemini explanatory views. Gemini still requires local embeddings and Qdrant.
+Cloud disclosures cover the existing chat/document payloads, unpaid-tier data terms
+and project-controlled billing; viewing the guide neither enables cloud use nor
+proves a configured key works. Secure in-app key entry is not implemented yet.
+Only a non-secret dismissal flag is stored, not provider/model/key configuration.
+AI setup reopens fresh measurements. The workspace stays mounted so closing/opening
+the guide does not discard an in-progress question. Storage failure allows session
+dismissal with a warning. This is a guide, not completed installation/onboarding.
+
+Executed checks:
+
+- `.venv/bin/pytest app/tests/ -q -m 'not integration'`: **588 passed, 19 skipped,
+  8 warnings**. Live-service checks auto-skipped while Ollama/Qdrant were unavailable;
+  these are not a live RAG acceptance pass.
+- `.venv/bin/ruff check app/`: passed.
+- With `NOYE_TEST_SIDECAR` pointing to the built Apple Silicon backend,
+  `.venv/bin/pytest app/tests/test_desktop.py -q`: **10 passed, 7 warnings**,
+  including real frozen-child `GET /runtime/setup`, temporary workspace, CORS and
+  orderly shutdown checks.
+- `npm test -- --reporter=dot`: **175 passed in 24 files**; `npm run lint` and
+  `npx tsc --noEmit` passed. Tests cover recommendations/unknown probes, read-only
+  API behavior, readiness gating, retry, timeout/abort/late results, guide selection,
+  dismissal/storage failure, preserved drafts and focus return.
+- `npm run desktop:build -- --no-sign -- --locked` with repository-local Rust
+  toolchain paths: passed, including static UI, frozen backend and **67.24 MiB**
+  macOS Apple Silicon app bundle. Rust source did not change in this milestone.
+
+Browser QA used a temporary static preview, a simulated native bridge and synthetic
+in-memory API responses, not the real Tauri lifecycle, models or personal files.
+Observed guide selection without provider change, refreshed readings while keeping
+the guide path, installed-model disclosure, Continue/Skip, Escape and opener focus
+return, dismissal across reload, and preserved unsent questions across guide use.
+Inspected 1440×900, 768×900, 390×844 and 375×812: document scroll width matched the
+viewport, and the guide had no horizontal overflow; the middle scrolls while
+Skip/Continue remain available. Inspected explicit light and dark token modes.
+Native dialog keyboard traversal did not reach background workspace controls;
+browser chrome remains keyboard-reachable.
+
+Axe-core WCAG A/AA checks reported **0 violations** in the inspected local/cloud
+light/dark guide states after a primary-button contrast repair. Captured browser
+warning/error logs were empty. A fixed-size guide reduced measured preview CLS from
+**0.428** to **0.0106** in comparable desktop samples; the light sample recorded LCP
+**392 ms**. These are synthetic local UI observations, not field performance or AI
+latency. INP, exhaustive request accounting and manual screen-reader validation
+were not measured. No committed screenshot baseline exists, so formal visual
+regression remains **INCONCLUSIVE**.
+
+The native app displayed actual Darwin/arm64 hardware: **8 GiB total RAM**, roughly
+**1.2–1.6 GiB available** and **13.1–13.2 GiB workspace disk free** across observations.
+It recommended the conditional 0.8b candidate with a tight-memory warning, preserved
+the configured 4b model, and reported offline Ollama/Qdrant without blocking Chat.
+Guide refresh/local/cloud views, dismissal, reopening, unsent-question preservation
+and dismissal across app relaunch were observed. Interaction review repaired
+loading layout shifts, button contrast and WebKit pointer-click focus restoration.
+The rebuilt native app visibly returned focus to AI setup after Escape. Quit left
+no Noye app/backend processes. The temporary preview/API servers were stopped,
+their two listeners were absent, and the browser viewport override/tab were cleared.
+
+Remaining: opt-in downloads/progress/cancel/retry, actual model-volume disk checks,
+persistent generation-model selection, OS-secure API-key entry and remaining local
+service setup. No model was installed or switched and no cloud content was sent.
+Live RAG/citation behavior, AI quality/latency, native Markdown/PDF export and final
+packaged-app acceptance remain deferred to Phase 8. Other hardware/OSes and signed
+distribution remain unvalidated.
