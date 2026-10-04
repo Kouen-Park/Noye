@@ -21,12 +21,19 @@ pushes for this workflow. Keep ongoing desktop changes in their own checkout.
 
 An isolated local branch, `codex/phase7-merge-preview`, started from the committed
 Phase 6 snapshot `f1d7ced` (`docs: record desktop setup validation and remaining
-work`). PRs #37, #38, #39 and #40 were merged there in that order. The tested
-combined commit is `37df892641dfddc35aaef9e1793da4e079a1319f`.
+work`). PRs #37, #38, #39 and #40 were merged there in that order, producing
+`37df892641dfddc35aaef9e1793da4e079a1319f`. That first snapshot passed 644 backend
+and 178 frontend tests, plus lint, types and both UI builds.
 
-The preview excludes Phase 6 changes that were still uncommitted on 2026-10-05,
-including the evolving model-management and settings implementation. It is a
-local integration check, not a merge into `main` or a new published feature PR.
+During validation, Phase 6's model-management, cloud-provider and macOS Keychain
+settings changes were committed through `f943875`. Those three additional commits
+were merged cleanly into the preview and the complete checks were repeated.
+The final tested combined commit is
+`c1b92053e129b1d3e4e2a0b602d093305b4b59e5`.
+
+This covers committed Phase 6 code through `f943875`, not subsequent changes or
+packaged-app acceptance. It is a local integration check, not a merge into `main`
+or a new published feature PR.
 
 PRs #37 and #38 merged cleanly. PR #39 had textual conflicts in four files:
 
@@ -49,9 +56,9 @@ Phase 6's Next.js 16.3.8 dependency updates.
 Commands ran from the preview's `backend` or `frontend` directory, respectively.
 
 - `python -m pytest app/tests -x -q --tb=short -p no:cacheprovider`:
-  **644 passed, 19 skipped**. The default live-service integration checks skipped.
+  **688 passed, 19 skipped**. The default live-service integration checks skipped.
 - `python -m ruff check app --no-cache`: passed.
-- `npm test -- --reporter=dot`: **178 passed across 24 test files**.
+- `npm test -- --reporter=dot`: **185 passed across 25 test files**.
 - `npm run lint`, `npx next typegen`, `npx tsc --noEmit`: passed.
 - `npm run build -- --webpack`: passed with Next.js 16.3.8.
 - `npm run desktop:ui`: passed; the desktop static UI export completed.
@@ -63,9 +70,9 @@ roots. Rerunning with permission to write that isolated worktree produced the
 passing result above. This did not require changing production paths or the
 user's database.
 
-This preview does not validate a packaged native application, the final Phase 6
-state, a real dimension-changing rebuild, or the production library. Repeat the
-relevant checks after Phase 6 is complete and after each final merge resolution.
+This preview does not validate a packaged native application, Phase 6 changes
+after `f943875`, a real dimension-changing rebuild, or the production library.
+Repeat the relevant checks after Phase 6 is complete and after each final merge resolution.
 Phase 8 still owns broader stability/quality work and final packaged acceptance.
 
 ## Scope completed and remaining
