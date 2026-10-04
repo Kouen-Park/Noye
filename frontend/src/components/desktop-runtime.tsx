@@ -6,6 +6,8 @@ import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react
 import { getRuntimeServices, type RuntimeServices } from "@/lib/api";
 import { setDesktopBaseUrl } from "@/lib/runtime";
 import { DesktopSetupDialog, useSetupGuide } from "./desktop-setup";
+import { AiSettingsDialog } from "./ai-settings";
+import { OPEN_AI_SETTINGS_EVENT } from "@/lib/ai-settings";
 
 interface BackendStatus {
   state: "starting" | "ready" | "failed";
@@ -77,15 +79,22 @@ export function DesktopRuntime({ children }: { children: ReactNode }) {
 
 function DesktopWorkspace({ children }: { children: ReactNode }) {
   const setup = useSetupGuide();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  useEffect(() => {
+    const open = () => { setup.close(); setSettingsOpen(true); };
+    window.addEventListener(OPEN_AI_SETTINGS_EVENT, open);
+    return () => window.removeEventListener(OPEN_AI_SETTINGS_EVENT, open);
+  });
   return <>
-    <DesktopServices onSetup={setup.show} />
+    <DesktopServices onSetup={setup.show} onSettings={() => setSettingsOpen(true)} />
     {setup.storageWarning && <p role="status" className="px-5 py-2 text-xs text-ink-soft">Could not remember this guide&apos;s dismissal. It may reopen on your next launch.</p>}
     {children}
-    {setup.open && <DesktopSetupDialog onClose={setup.close} />}
+    {setup.open && !settingsOpen && <DesktopSetupDialog onClose={setup.close} onSettings={() => { setup.close(); setSettingsOpen(true); }} />}
+    {settingsOpen && <AiSettingsDialog onClose={() => setSettingsOpen(false)} />}
   </>;
 }
 
-function DesktopServices({ onSetup }: { onSetup: () => void }) {
+function DesktopServices({ onSetup, onSettings }: { onSetup: () => void; onSettings: () => void }) {
   const [services, setServices] = useState<RuntimeServices | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -117,13 +126,13 @@ function DesktopServices({ onSetup }: { onSetup: () => void }) {
     <aside aria-label="Desktop AI setup" className={`flex shrink-0 flex-wrap items-center justify-between gap-x-4 border-b border-edge-strong px-5 text-sm text-ink ${needsAttention ? "bg-accent-wash py-2" : "bg-canvas"}`}>
       {needsAttention ? <p role="status" className="min-w-0 flex-1">
         {failed ? "Could not check local services." : `Local setup needs attention: ${missing}.`}
-        {" "}Saved work stays accessible. Search and AI need Qdrant and local embeddings; cloud generation does not replace them.
       </p> : <span className="text-xs text-ink-soft">Local-first workspace</span>}
-      <button onClick={(event) => {
+      <div className="flex shrink-0 items-center gap-2"><button onClick={(event) => {
         // WebKit does not always focus a pointer-clicked button before showModal.
         event.currentTarget.focus();
         onSetup();
       }} className="min-h-11 shrink-0 px-2 py-2 text-sm font-semibold text-brand">AI setup</button>
+      <button onClick={(event) => { event.currentTarget.focus(); onSettings(); }} className="min-h-11 px-2 py-2 text-sm font-semibold text-brand">Settings</button></div>
     </aside>
   );
 }

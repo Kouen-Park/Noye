@@ -57,9 +57,9 @@ describe("ProviderSelector", () => {
   it("keeps local available when configuration cannot be read", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     render(<Harness />);
-    await screen.findByText(/Could not check Gemini/);
+    await screen.findByText(/Could not check AI/);
     expect(screen.getByRole("combobox")).toHaveValue("ollama");
-    expect(screen.getByRole("option", { name: /Cloud API/ })).toBeDisabled();
+    expect(screen.getAllByRole("option", { name: /Cloud API/ }).every((option) => option.hasAttribute("disabled"))).toBe(true);
   });
 
   it("prevents changing provider during generation", async () => {
@@ -71,7 +71,7 @@ describe("ProviderSelector", () => {
     vi.spyOn(runtime, "isDesktopRuntime").mockReturnValue(true);
     configure(false);
     render(<Harness />);
-    expect(await screen.findByText(/In-app key setup is not available/)).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /Manage models and API keys in Settings/ })).toBeInTheDocument();
     expect(screen.queryByText(/project's .env/)).not.toBeInTheDocument();
   });
 });

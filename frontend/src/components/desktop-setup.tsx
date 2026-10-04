@@ -51,7 +51,7 @@ function download(bytes: number | null) {
 
 const actionClass = "min-h-11 rounded-md border border-edge-strong px-4 py-2 text-sm hover:bg-sunken";
 
-export function DesktopSetupDialog({ onClose }: { onClose: () => void }) {
+export function DesktopSetupDialog({ onClose, onSettings }: { onClose: () => void; onSettings?: () => void }) {
   const id = useId();
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -151,7 +151,8 @@ export function DesktopSetupDialog({ onClose }: { onClose: () => void }) {
       </>}
       </div>
       <footer className="shrink-0 border-t border-edge-strong px-5 py-4 sm:px-8">
-        <button onClick={onClose} className="min-h-11 rounded-md bg-brand px-5 py-2 text-sm font-semibold text-ink-inverse">
+        {onSettings && <button onClick={onSettings} className="mr-2 min-h-11 rounded-md bg-brand px-5 py-2 text-sm font-semibold text-ink-inverse">Open AI Settings</button>}
+        <button onClick={onClose} className={actionClass}>
           Continue to workspace
         </button>
         <p className="mt-2 text-xs text-ink-soft">This does not mark AI as ready. Reopen this guide with AI setup at any time.</p>
@@ -206,7 +207,7 @@ function LocalGuide({ data }: { data: DesktopSetup }) {
       <div><dt className="inline font-semibold">Local embeddings: </dt><dd className="inline break-words">{recommendation.embedding_model} · {download(recommendation.approximate_embedding_download_bytes)} · {services.embedding_model ? "Installed" : "Not confirmed installed"}.</dd></div>
       <div><dt className="inline font-semibold">Qdrant: </dt><dd className="inline">{services.qdrant ? "Reachable" : "Unavailable — requires separate setup"}.</dd></div>
     </dl>
-    <p className="mt-3 text-sm text-ink-soft">Your active model is unchanged. In-app downloads and model changes are not available in this preview yet. Do not change embeddings without an explicit index rebuild.</p>
+    <p className="mt-3 text-sm text-ink-soft">Your active model is unchanged by this guide. Open AI Settings to download, select or delete models. Embeddings remain fixed to protect your index.</p>
     <p className="mt-3 text-xs text-ink-soft">
       <a href="https://ollama.com/download" target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center underline">Ollama installation</a>
       {model && <> · <a href={model.source_url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center underline">Model details</a></>}
@@ -220,7 +221,7 @@ function CloudGuide({ configured }: { configured: boolean }) {
     <h3 className="text-lg text-ink-display">Use Gemini for generation</h3>
     <p className="mt-2 text-sm">{configured
       ? "A Gemini key is already configured in the backend. Select Gemini in the chat or document AI selector when you want to use it."
-      : "No Gemini key is configured. This preview reads GEMINI_API_KEY from the backend environment; secure in-app key entry is not available yet."}</p>
+      : "No Gemini key is configured. Open AI Settings to securely save a Gemini API key in macOS Keychain."}</p>
     <p className="mt-3 text-sm text-ink-soft">Chat sends your question and retrieved excerpts to Google. Document drafting sends your instruction, saved answer and cited file names. Files, embeddings and search stay local, so Ollama embeddings and Qdrant are still needed.</p>
     <p className="mt-3 text-sm text-ink-soft">Free-tier content may be used to improve Google products. Avoid confidential material. Your API project controls billing; Noye cannot enforce free-only usage.</p>
     <p className="mt-3 text-sm text-ink-soft">Opening this guide does not select Gemini, send content, validate your key or activate billing. There is no automatic cloud fallback.</p>

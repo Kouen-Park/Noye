@@ -71,6 +71,19 @@ h2,
   outline-offset: var(--focus-offset);
 }
 
+/* Native WebKit progress otherwise introduces an unrelated bright green. */
+progress {
+  appearance: none;
+  height: 0.5rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--sunken);
+  overflow: hidden;
+}
+progress::-webkit-progress-bar { background: var(--sunken); }
+progress::-webkit-progress-value { background: var(--brand); }
+progress::-moz-progress-bar { background: var(--brand); }
+
 /* The two pieces of motion in the library: the indexing ring and the pulse on
    the active stage segment. Both are ambient — they say "still working" — and
    neither carries information that the accompanying word does not. */

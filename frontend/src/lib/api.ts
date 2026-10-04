@@ -25,7 +25,7 @@ export type FileStatus =
 /** Supported source formats. Mirrors `FileType`. */
 export type FileType = "pdf" | "md" | "txt";
 
-export type GenerationProvider = "ollama" | "gemini";
+export type GenerationProvider = "ollama" | "gemini" | "openai" | "anthropic";
 
 export interface AiProvider {
   id: GenerationProvider;
