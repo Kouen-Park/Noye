@@ -76,13 +76,21 @@ def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
     env = {**os.environ, "LOG_TO_FILE": "false", "FRONTEND_ORIGINS": "tauri://localhost"}
     root = tmp_path / "workspace"
     executable = os.environ.get("NOYE_TEST_SIDECAR")
-    command = [executable] if executable else [
-        sys.executable, str(PROJECT_ROOT / "backend/desktop.py"),
-    ]
+    command = (
+        [executable]
+        if executable
+        else [
+            sys.executable,
+            str(PROJECT_ROOT / "backend/desktop.py"),
+        ]
+    )
     with subprocess.Popen(
         [*command, "--data-dir", str(root)],
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        text=True, env=env,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=env,
     ) as child:
         try:
             lines = queue.Queue()
@@ -92,15 +100,39 @@ def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
             ready = json.loads(line)
             assert ready["event"] == "ready"
             assert ready["url"].startswith("http://127.0.0.1:")
+            # Credentials travel only through private stdin, never an HTTP write.
+            child.stdin.write(
+                json.dumps(
+                    {
+                        "event": "configure",
+                        "id": 7,
+                        "values": {
+                            "openai_api_key": "synthetic-desktop-sentinel",
+                            "openai_model": "gpt-4.1-mini",
+                        },
+                    }
+                )
+                + "\n"
+            )
+            child.stdin.flush()
+            threading.Thread(target=lambda: lines.put(child.stdout.readline()), daemon=True).start()
+            assert json.loads(lines.get(timeout=5)) == {"event": "configured", "id": 7}
             with httpx.Client(base_url=ready["url"], timeout=3) as client:
                 assert client.get("/health").json() == {"status": "ok"}
                 assert client.get("/files").json() == []
+                providers = client.get("/ai/providers")
+                assert "synthetic-desktop-sentinel" not in providers.text
+                assert next(p for p in providers.json() if p["id"] == "openai")["configured"]
                 setup = client.get("/runtime/setup")
                 assert setup.status_code == 200
                 assert "catalog_checked_on" in setup.json()["recommendation"]
-                response = client.options("/files", headers={
-                    "Origin": "tauri://localhost", "Access-Control-Request-Method": "GET",
-                })
+                response = client.options(
+                    "/files",
+                    headers={
+                        "Origin": "tauri://localhost",
+                        "Access-Control-Request-Method": "GET",
+                    },
+                )
                 assert response.headers["access-control-allow-origin"] == "tauri://localhost"
             assert (root / "app.db").is_file()
             if shutdown == "line":
@@ -126,19 +158,35 @@ def test_service_checks_are_read_only_and_bounded(monkeypatch, unavailable):
         if unavailable:
             raise httpx.ConnectError("unavailable", request=request)
         if request.url.path == "/api/tags":
-            return httpx.Response(200, json={"models": [
-                {"name": "qwen3.5:4b"}, {"name": "embeddinggemma:latest"},
-            ]})
+            return httpx.Response(
+                200,
+                json={
+                    "models": [
+                        {"name": "qwen3.5:4b"},
+                        {"name": "embeddinggemma:latest"},
+                    ]
+                },
+            )
         return httpx.Response(200, text="healthz check passed")
 
     original = httpx.AsyncClient
-    monkeypatch.setattr("app.services.runtime_checks.httpx.AsyncClient", lambda **kwargs: original(
-        transport=httpx.MockTransport(handle), **kwargs,
-    ))
+    monkeypatch.setattr(
+        "app.services.runtime_checks.httpx.AsyncClient",
+        lambda **kwargs: original(
+            transport=httpx.MockTransport(handle),
+            **kwargs,
+        ),
+    )
     response = TestClient(app).get("/runtime/services")
-    assert response.json() == dict.fromkeys([
-        "ollama", "qdrant", "generation_model", "embedding_model",
-    ], not unavailable)
+    assert response.json() == dict.fromkeys(
+        [
+            "ollama",
+            "qdrant",
+            "generation_model",
+            "embedding_model",
+        ],
+        not unavailable,
+    )
     assert len(requests) == 2
     assert all(request.method == "GET" for request in requests)
 

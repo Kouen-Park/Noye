@@ -37,8 +37,14 @@ async def serve() -> None:
         listener.bind(("127.0.0.1", 0))
         port = listener.getsockname()[1]
         config = uvicorn.Config(
-            app, host="127.0.0.1", port=port, access_log=False,
-            loop="asyncio", http="h11", ws="none", timeout_graceful_shutdown=5,
+            app,
+            host="127.0.0.1",
+            port=port,
+            access_log=False,
+            loop="asyncio",
+            http="h11",
+            ws="none",
+            timeout_graceful_shutdown=5,
         )
         server = uvicorn.Server(config)
         loop = asyncio.get_running_loop()
@@ -48,9 +54,20 @@ async def serve() -> None:
 
         def watch_parent() -> None:
             try:
-                # Parent writes a line on normal exit; closed stdin means it
-                # died. Neither requires a second public HTTP endpoint.
-                sys.stdin.readline()
+                from app.config import apply_desktop_configuration
+
+                for line in sys.stdin:
+                    if line.strip() == "shutdown":
+                        break
+                    try:
+                        frame = json.loads(line)
+                        if frame.get("event") != "configure":
+                            continue
+                        apply_desktop_configuration(frame["values"])
+                        print(json.dumps({"event": "configured", "id": frame["id"]}), flush=True)
+                    except (ValueError, KeyError, TypeError, AttributeError):
+                        # Never log stdin or validation errors: they contain keys.
+                        print(json.dumps({"event": "configuration_failed"}), flush=True)
             finally:
                 if not loop.is_closed():
                     loop.call_soon_threadsafe(request_shutdown)
@@ -68,7 +85,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Noye managed desktop backend")
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument(
-        "--import-data", type=Path,
+        "--import-data",
+        type=Path,
         help="Copy a closed web workspace to a NEW data dir, then exit",
     )
     args = parser.parse_args()
@@ -80,8 +98,7 @@ def main() -> None:
         except (ValueError, OSError) as error:
             parser.error(str(error))
         print(
-            "Workspace copied. Originals are unchanged; "
-            "rebuild the desktop index before searching."
+            "Workspace copied. Originals are unchanged; rebuild the desktop index before searching."
         )
         return
     configure_data_directory(args.data_dir)

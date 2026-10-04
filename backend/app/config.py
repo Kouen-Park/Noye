@@ -18,7 +18,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 #: Repository root — this file is ``<root>/backend/app/config.py``.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-GenerationProvider = Literal["ollama", "gemini"]
+GenerationProvider = Literal["ollama", "gemini", "openai", "anthropic"]
 
 
 class Settings(BaseSettings):
@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     # Optional cloud generation only; embeddings always remain local.
     gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
     gemini_model: str = Field(default="gemini-3.8-flash", pattern=r"^[A-Za-z0-9._-]+$")
+    openai_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    openai_model: str = Field(default="gpt-4.1-mini", pattern=r"^[A-Za-z0-9._-]+$")
+    anthropic_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    anthropic_model: str = Field(default="claude-haiku-4-5", pattern=r"^[A-Za-z0-9._-]+$")
 
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "noye"
@@ -84,7 +88,7 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def _base_settings() -> Settings:
     """Return the process-wide settings, read from the environment once."""
     data_root = os.environ.get("NOYE_DATA_DIR")
     settings = Settings(_env_file=Path(data_root) / ".env") if data_root else Settings()
@@ -93,6 +97,47 @@ def get_settings() -> Settings:
         # derived index. Explicit advanced configuration can still override it.
         settings.qdrant_collection = "noye_desktop"
     return settings
+
+
+_desktop_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    # Replace whole snapshots, never mutate settings held by an in-flight job.
+    return _desktop_settings or _base_settings()
+
+
+def apply_desktop_configuration(values: dict) -> None:
+    global _desktop_settings
+    allowed = {
+        "ollama_model",
+        "gemini_model",
+        "openai_model",
+        "anthropic_model",
+        "gemini_api_key",
+        "openai_api_key",
+        "anthropic_api_key",
+    }
+    if not _base_settings().noye_data_dir or not isinstance(values, dict) or set(values) - allowed:
+        raise ValueError("Invalid desktop configuration")
+    merged = get_settings().model_dump()
+    merged.update(values)
+    updated = Settings.model_validate(merged)
+    from app.services.model_usage import canonical, deleting, lock
+
+    with lock:
+        if canonical(updated.ollama_model) in deleting:
+            raise ValueError("The selected model is being deleted")
+        _desktop_settings = updated
+
+
+def _clear_settings() -> None:
+    global _desktop_settings
+    _desktop_settings = None
+    _base_settings.cache_clear()
+
+
+get_settings.cache_clear = _clear_settings
 
 
 def data_directory() -> Path:

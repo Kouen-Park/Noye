@@ -23,4 +23,7 @@ def providers() -> list[ProviderOut]:
             id="gemini", model=settings.gemini_model,
             configured=bool(settings.gemini_api_key.get_secret_value().strip()),
         ),
+        *[ProviderOut(id=provider, model=getattr(settings, f"{provider}_model"),
+                      configured=bool(getattr(settings, f"{provider}_api_key").get_secret_value()))
+          for provider in ("openai", "anthropic")],
     ]

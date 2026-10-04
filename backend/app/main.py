@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import ai, chat, documents, files, index, runtime, search
+from app.api import ai, chat, documents, files, index, models, runtime, search
 from app.config import get_settings
 from app.db.database import connect, init_schema
 from app.logging_config import configure_logging, get_logger
@@ -35,6 +35,7 @@ async def lifespan(app: FastAPI):
     finally:
         connection.close()
     yield
+    await models.manager.cancel()
 
 
 app = FastAPI(
@@ -76,6 +77,7 @@ app.include_router(documents.router)
 app.include_router(index.router)
 app.include_router(ai.router)
 app.include_router(runtime.router)
+app.include_router(models.router)
 
 
 @app.get("/health")

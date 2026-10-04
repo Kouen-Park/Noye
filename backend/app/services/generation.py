@@ -28,9 +28,7 @@ DEFAULT_TIMEOUT_SECONDS = 300.0
 #: Said to the user when retrieval found nothing worth answering from. Returned
 #: without calling the model at all: asking a model to answer from no context
 #: is exactly how ungrounded answers happen.
-NO_CONTEXT_ANSWER = (
-    "I could not find anything about that in your indexed documents."
-)
+NO_CONTEXT_ANSWER = "I could not find anything about that in your indexed documents."
 
 SYSTEM_PROMPT = """You are Noye, answering questions about the user's own documents.
 
@@ -129,11 +127,7 @@ def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
         excerpts.append(f"[{label}]\n{result.content}")
 
     joined = "\n\n".join(excerpts)
-    return (
-        f"{joined}\n\n"
-        f"Question: {question.strip()}\n\n"
-        "Answer using only the excerpts above."
-    )
+    return f"{joined}\n\nQuestion: {question.strip()}\n\nAnswer using only the excerpts above."
 
 
 def generate(
@@ -160,14 +154,28 @@ def generate(
 
     settings = get_settings()
     system_prompt = system or SYSTEM_PROMPT
-    if provider not in ("ollama", "gemini"):
+    if provider not in ("ollama", "gemini", "openai", "anthropic"):
         raise ValueError("Unknown generation provider")
-    request_generation = _request_gemini if provider == "gemini" else _request_generation
+    if provider in ("openai", "anthropic"):
+        from app.services.cloud_generation import request_cloud
 
-    if client is None:
-        with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
-            return request_generation(owned_client, prompt, settings, system_prompt)
-    return request_generation(client, prompt, settings, system_prompt)
+        if client is None:
+            with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS, follow_redirects=False) as owned:
+                return request_cloud(owned, provider, prompt, settings, system_prompt)
+        return request_cloud(client, provider, prompt, settings, system_prompt)
+    request_generation = _request_gemini if provider == "gemini" else _request_generation
+    from contextlib import nullcontext
+
+    from app.services.model_usage import ModelBusyError, inference
+
+    try:
+        with inference(settings.ollama_model) if provider == "ollama" else nullcontext():
+            if client is None:
+                with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
+                    return request_generation(owned_client, prompt, settings, system_prompt)
+            return request_generation(client, prompt, settings, system_prompt)
+    except ModelBusyError as error:
+        raise GenerationError(str(error)) from None
 
 
 def _request_gemini(client: httpx.Client, prompt: str, settings, system_prompt: str) -> str:
@@ -218,7 +226,8 @@ def _request_gemini(client: httpx.Client, prompt: str, settings, system_prompt: 
             raise GenerationError("Gemini did not finish the answer. Try a shorter request.")
         parts = candidate["content"]["parts"]
         text = "".join(
-            part["text"] for part in parts
+            part["text"]
+            for part in parts
             if not part.get("thought") and isinstance(part.get("text"), str)
         )
     except (ValueError, KeyError, IndexError, TypeError, AttributeError):
@@ -268,8 +277,6 @@ def _request_generation(
 
     text = body.get("response")
     if not isinstance(text, str) or not text.strip():
-        raise GenerationError(
-            f"Ollama returned no answer text (keys: {sorted(body)})"
-        )
+        raise GenerationError(f"Ollama returned no answer text (keys: {sorted(body)})")
 
     return text.strip()
