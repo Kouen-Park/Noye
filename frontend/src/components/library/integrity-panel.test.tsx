@@ -44,6 +44,25 @@ function renderPanel(
 }
 
 describe("IntegrityPanel", () => {
+  it.each(["INDEX_UNKNOWN", "INDEX_CHANGED"] as const)(
+    "offers an explicit rebuild for %s", (problem) => {
+      renderPanel({ status: soundStatus({ searchable_files: 0, problems: [{
+        file_id: "file-1", file_name: "notes.md", problems: [problem],
+        searchable: false, indexed_points: null, expected_points: null,
+      }] }) });
+      expect(screen.getByText(/rebuild the index before searching this file/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /^rebuild index$/i })).toBeEnabled();
+    },
+  );
+
+  it("offers service recovery rather than rebuilding when identity is unavailable", () => {
+    renderPanel({ status: soundStatus({ searchable_files: 0, problems: [{
+      file_id: "file-1", file_name: "notes.md", problems: ["IDENTITY_UNAVAILABLE"],
+      searchable: false, indexed_points: null, expected_points: null,
+    }] }) });
+    expect(screen.getByText(/check Ollama and its model installation/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^rebuild index$/i })).not.toBeInTheDocument();
+  });
   it("explains that the cheap check does not include stored point counts", () => {
     renderPanel();
 

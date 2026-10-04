@@ -268,6 +268,15 @@ Available endpoints:
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
+Index compatibility includes the installed embedding model digest, vector dimension,
+input format and extraction/chunking settings. Changing the generation model alone
+does not invalidate it. Older indexes without this identity require an explicit
+rebuild; their original files, conversations and edited documents remain intact.
+The library distinguishes an unknown/changed index from an unavailable Ollama model.
+`CHUNK_SIZE` and `CHUNK_OVERLAP` default to 1000 and 150 characters; changing them
+requires rebuilding. Search filters Qdrant points by the verified fingerprint as
+well as eligible file IDs, so incompatible or legacy points cannot join a ranking.
+
 The API has **no authentication** — Noye is local and single-user, so the server
 binds to `127.0.0.1`. Do not expose it on a network interface.
 
