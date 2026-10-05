@@ -32,10 +32,14 @@ a new sibling directory rather than accepting arbitrary browser-supplied paths.
 A closed-workspace CLI restore is also available:
 python backend/desktop.py --data-dir NEW_DIRECTORY --restore-backup BACKUP.zip
 
-Validation at the service checkpoint: 758 backend tests passed, 19 skipped; the 15
-backup regressions then passed again after exclusive archive creation was hardened.
-They exercise committed WAL edits, exact historical evidence, original preservation,
-missing originals, legacy migration, invalid archives and snapshot contention.
-Frontend: 209 tests passed, including 3 new user-flow cases. No real user workspace,
-credential or vector index was modified. Native switch, real native downloads and
-large-workspace/low-disk behavior remain for the integration checks.
+Validation after integrating the completed evidence workflow: 772 backend tests
+passed, 19 skipped; 17 backup regressions cover committed WAL edits, historical
+evidence, originals, missing sources, legacy migration, invalid archives, snapshot
+contention, a competing archive writer and receipt publication order.
+Frontend: 214 tests passed, including 3 new user-flow cases; Ruff, ESLint, Next
+type generation, TypeScript and the default Turbopack production build passed.
+The initial Turbopack attempt refused a dependency symlink outside this worktree;
+copying the existing dependencies into it resolved that environment issue.
+No real user workspace, credential or vector index was modified. Native switching
+is the dependent item 7 change. Native downloads and large-workspace/low-disk
+behavior remain Phase 8 acceptance checks.
