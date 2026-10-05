@@ -149,7 +149,7 @@ export function DocumentEditor({
             </p>
           </>
         ) : (
-          <DocumentPreview content={exportContent} />
+          <DocumentPreview content={draftContent} provenance={includeProvenance ? provenance : ""} />
         )}
       </div>
       {documentId && <div className="mt-5 border-t border-edge pt-3">

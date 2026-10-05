@@ -147,6 +147,7 @@ progress::-moz-progress-bar { background: var(--brand); }
     width: auto !important;
     height: auto !important;
     max-height: none !important;
+    min-height: 0 !important;
     overflow: visible !important;
     margin: 0;
     padding: 0;
@@ -169,16 +170,18 @@ progress::-moz-progress-bar { background: var(--brand); }
     white-space: pre-wrap;
     overflow: visible;
     overflow-wrap: anywhere;
+    break-inside: auto;
+    page-break-inside: auto;
   }
 
-  /* A heading should not be the last line on a page, and a table or code block
-     should not be split across one where it can be helped. */
+  [data-print-provenance] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Keep headings with their text; allow evidence to flow across pages. */
   [data-print="document"] :is(h1, h2, h3) {
     break-after: avoid;
-  }
-
-  [data-print="document"] :is(pre, table, blockquote, li) {
-    break-inside: avoid;
   }
 
   /* Links print as text, so the destination has to be readable on paper. */
