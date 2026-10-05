@@ -1,0 +1,2 @@
+# Install after requirements.txt; only needed to build the bundled sidecar.
+pyinstaller==6.22.3

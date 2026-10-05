@@ -13,7 +13,7 @@ from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.main import app
 from app.models.files import FileStatus, FileType
-from app.services import integrity
+from app.services import index_identity, integrity
 from app.services.indexing import IndexingError
 from app.services.integrity import hash_file
 
@@ -55,6 +55,8 @@ def add_ready(
         size=source.stat().st_size,
         content_hash=hash_file(source),
     )
+    identity = index_identity.current_index_identity()
+    file_store.set_index_identity(db, record.id, identity.fingerprint, identity.metadata_json)
     file_store.set_counts(db, record.id, chunk_count=chunks)
     if model is not None:
         file_store.set_embedding_model(db, record.id, model)

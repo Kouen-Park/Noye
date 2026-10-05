@@ -95,7 +95,7 @@ export default function LibraryPage() {
           stated only inside the backend-unreachable error, which most people
           will never see. */}
       <p className="mb-6 mt-1 text-[13px] text-ink-faint">
-        Everything stays on this machine. Nothing is uploaded anywhere.
+        Original files stay on this machine. Cloud generation is optional.
       </p>
 
       <DropZone

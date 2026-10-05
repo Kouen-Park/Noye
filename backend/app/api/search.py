@@ -88,13 +88,13 @@ def search_knowledge(
     # from an embedding model that is no longer configured, and a cosine score
     # across two embedding spaces is meaningless — it would rank confidently and
     # wrongly, which is worse than returning nothing because the user cannot see it.
-    ready = searchable_file_ids(db)
-    if not ready:
-        # Nothing to search. Returning early also avoids spending an embedding
-        # call on a query that could not match anything.
-        return SearchResponse(query=query, results=[], searched_files=0)
-
     try:
+        ready = searchable_file_ids(db)
+        if not ready:
+            # Nothing to search. Returning early also avoids spending an embedding
+            # call on a query that could not match anything.
+            return SearchResponse(query=query, results=[], searched_files=0)
+
         results = search(query, limit=limit, file_ids=list(ready))
     except EmbeddingError as exc:
         # The query text is NOT logged: it is the user's words. The model name
