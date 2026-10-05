@@ -59,8 +59,10 @@ fn ready_url(line: &[u8]) -> Option<String> {
 impl Backend {
     pub fn start(self: &Arc<Self>, app: &tauri::AppHandle) {
         let spawned = (|| {
-            let dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
-            std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+            let root = app.path().app_data_dir().map_err(|e| e.to_string())?;
+            std::fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+            let root = root.canonicalize().map_err(|e| e.to_string())?;
+            let dir = crate::workspaces::active(&root)?;
             app.shell().sidecar("noye-backend").map_err(|e| e.to_string())?
                 .args(["--data-dir".to_owned(), dir.to_string_lossy().into_owned()])
                 .env("FRONTEND_ORIGINS", "tauri://localhost,http://tauri.localhost,http://localhost:3000,http://127.0.0.1:3000")
@@ -140,10 +142,7 @@ impl Backend {
                 process.status = BackendStatus {
                     state: "failed",
                     url: None,
-                    error: Some(
-                        "Noye could not launch its bundled backend. Check the app-data logs."
-                            .into(),
-                    ),
+                    error: Some(format!("Noye could not open its workspace: {reason}")),
                 };
             }
         }
