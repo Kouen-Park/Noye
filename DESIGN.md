@@ -20,12 +20,13 @@ answer-specific passage inspection panel. Below 1280px the panel sits above the
 conversation; below 768px navigation collapses into a menu. Library, Search and
 Documents remain accessible. Added 2026-10-05: a desktop-only first-run guide shows
 measured hardware, a conservative model candidate and local/Gemini prerequisites.
-It uses the existing paper/forest tokens, with a fixed header/footer and a scrolling
+It uses the shared semantic tokens, with a fixed header/footer and a scrolling
 body so loading and long instructions do not hide Skip/Continue. Current and
 recommended models are distinct; guide selection never changes the provider.
 The guide can be dismissed and reopened without unmounting the workspace.
-Installation, changing installed models and secure API-key settings remain later
-Phase 6 milestones.
+Settings now provides explicit model installation/deletion, model selection and
+Keychain-backed cloud API configuration. The Services section uses quiet rows,
+ownership labels and explicit preparation confirmation, not nested status cards.
 
 Retrieved passages are labelled **consulted**, not verified support. No fabricated
 retrieval stage or progress percentage appears while waiting for a model. Chat
@@ -34,8 +35,8 @@ automatically or opt into document-only printing.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,
-ink, a shelf, a citation. Warm off-white ground, deep forest green for the things
-you act on, brass for the things that mark and measure.
+ink, a shelf, a citation. Light mode keeps warm off-white, forest actions and brass
+markers; the owner-requested dark mode uses charcoal, off-white and muted blue.
 
 The direction comes from a real object — a cloth-bound book with a green cover
 and a gold-stamped spine. That keeps it away from the two places AI-built
@@ -72,7 +73,7 @@ guessed.
 | `--leaf` | `#FBF8F2` | Card fill in light mode. Surface `#DED0B6` as a card fill turns a long list into a wall of tan. |
 | `--accent-ink` | `#7a5c28` | Brass is 2.70:1 on the background — unreadable. This is the text-safe sibling at 5.41:1. |
 | `--fail` | `#8c1d33` | Oxblood. No failure colour existed, and ingestion has real failure states (scanned PDFs, non-UTF-8 text). |
-| `--ink-on-sunken` | `#5b5349` | Sidebar secondary text. The old muted ink measured 4.03:1 on tan; this measures 4.97:1. Dark mode uses `#9ca79e` at 7.54:1 on the sidebar. |
+| `--ink-on-sunken` | `#5b5349` | Sidebar secondary text. The old muted ink measured 4.03:1 on tan; this measures 4.97:1. Dark mode uses `#b3b9c4` at 9.44:1 on the sidebar. |
 
 ### Measured contrast — light
 
@@ -90,21 +91,30 @@ guessed.
 | Background → surface | 1.33:1 | elevation reads |
 | Background → leaf card | 1.08:1 | too weak alone → **border required** |
 
-### Measured contrast — dark
+### Dark palette — neutral charcoal
 
-Derived from the same palette: a very dark forest ground, brass lifted, green
-lifted enough to stay visible.
+Owner-requested update, 2026-10-05: dark mode uses neutral charcoal surfaces,
+off-white prose/headings and a muted blue action color. Green, brown and brass
+remain in light mode only. Shared semantic tokens keep both modes consistent;
+status still requires words/icons, never hue alone.
 
-| Token | Hex | On its surface |
+| Token | Hex | Purpose |
 | --- | --- | --- |
-| Canvas | `#121714` | — |
-| Card | `#27332a` | 1.38:1 vs canvas — matches light mode's 1.33:1 step |
-| Ink (cream) | `#ece7dc` | 10.69:1 AA ✓ |
-| Ink-soft | `#9ca79e` | 7.28:1 AA ✓ |
-| Accent (brass) | `#d9b478` | 6.75:1 AA ✓ |
-| Brand (green) | `#7faa8c` | 6.28:1 AA ✓ |
-| Fail | `#ef8a95` | 6.84:1 AA ✓ |
-| Card → border | 1.42:1 | edge reads |
+| Canvas | `#17191c` | Neutral charcoal workspace |
+| Card | `#22252a` | Raised panel |
+| Sunken | `#111316` | Inset/sidebar surface |
+| Ink/display | `#f0f1f3` | Off-white text without brown headings |
+| Ink-soft | `#b3b9c4` | Secondary copy |
+| Brand | `#a9b8cc` | Muted blue actions and focus |
+| Accent-ink | `#bcc5d2` | Quiet slate highlights |
+| Fail | `#eca0a7` | Restrained rose with explicit error text |
+
+This is a token-level palette change, not a claim of packaged-app visual
+acceptance. The macOS bundle must be rebuilt before judging it natively.
+Calculated dark contrast: ink/card 13.60:1, secondary/card 7.80:1,
+faint/card 4.64:1, brand/card 7.62:1, filled-button text/brand 8.75:1,
+accent text/wash 8.16:1 and failure text/wash 6.88:1. Strong control borders on
+cards measure 3.07:1. These are calculated token contrasts, not browser observations.
 
 ---
 
@@ -153,7 +163,8 @@ Light and dark build depth differently, because they have to.
 
 **Dark:** fill steps almost vanish at low luminance (a naive brown-on-brown dark
 mode measured 1.06:1 and looked like fog). So dark mode **fills** the card to a
-real 1.38:1 step *and* keeps a lighter border. Both channels work together.
+1.15:1 charcoal fill step *and* keeps a lighter border. Both channels work together;
+controls use the strong 3.07:1 border rather than relying on the fill alone.
 
 Never use shadow as the only elevation cue; it disappears on the dark ground.
 
@@ -165,7 +176,7 @@ Three roles, three faces.
 
 | Role | Face | Used for |
 | --- | --- | --- |
-| Display | **Fraunces** (variable serif) | Wordmark, page titles, empty-state headlines. Coloured `--ink-display` (coffee brown), not black. |
+| Display | **Fraunces** (variable serif) | Wordmark, page titles, empty-state headlines. `--ink-display`: coffee brown in light mode, off-white in dark. |
 | Body | **Geist Sans** | Everything else. |
 | Data | **Geist Mono** | Page numbers, passage counts, file sizes, citation numbers. |
 
