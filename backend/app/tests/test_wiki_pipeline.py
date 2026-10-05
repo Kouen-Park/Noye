@@ -115,6 +115,10 @@ def test_long_input_is_fully_processed_in_bounded_batches(text):
         payload = json.loads(request.content)
         calls.append(payload)
         p = json.loads(payload["prompt"])["passages"][0]
+        assert (
+            p["evidence_id"]
+            in payload["format"]["$defs"]["Claim"]["properties"]["evidence_id"]["enum"]
+        )
         assert payload["model"] == settings.ollama_model
         return httpx.Response(
             200,

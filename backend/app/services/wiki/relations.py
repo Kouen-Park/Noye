@@ -75,7 +75,17 @@ def infer(
                     },
                     ensure_ascii=False,
                 )
-                response = structured(prompt, RelationsOutput, settings=settings, client=client)
+                response = structured(
+                    prompt,
+                    RelationsOutput,
+                    settings=settings,
+                    client=client,
+                    constraints={
+                        "target_id": [page["id"]],
+                        "origin_evidence_id": [origin["evidence_id"]],
+                        "target_evidence_id": [target["evidence_id"]],
+                    },
+                )
                 for proposed in response.relations:
                     if (
                         proposed.target_id != page["id"]

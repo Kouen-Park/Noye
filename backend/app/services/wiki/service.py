@@ -62,6 +62,11 @@ def generate_source(
     page = store.ensure_page(connection, "source", f"source:{source_id}", reference.name)
     publication.capture_disk_edit(connection, page["id"])
     expected = store.page(connection, page["id"])["current_revision"]
+    parameters = {
+        "context_tokens": settings.generation_context_tokens,
+        "output_tokens": settings.generation_output_tokens,
+        "thinking": settings.ollama_thinking,
+    }
     key = store.digest(
         store.encode(
             {
@@ -69,6 +74,7 @@ def generate_source(
                 "version": reference.source_version,
                 "model": settings.ollama_model,
                 "prompt": PROMPT_VERSION,
+                "parameters": parameters,
             }
         )
     )
@@ -112,6 +118,7 @@ def generate_source(
         "manifest": manifest,
         "output_root_id": reference.root_id,
         "model": settings.ollama_model,
+        "parameters": parameters,
         "prompt_version": PROMPT_VERSION,
         "generated_at": store.now(),
         "processing_seconds": time.monotonic() - started,

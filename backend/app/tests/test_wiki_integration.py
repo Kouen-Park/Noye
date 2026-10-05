@@ -5,6 +5,7 @@ import json
 import httpx
 import pytest
 
+from app.config import Settings
 from app.db import wiki as store
 from app.models.wiki import EditWiki, SaveAnalysis, WikiScope
 from app.services import knowledge_jobs
@@ -130,6 +131,19 @@ def test_topic_reuse_hints_do_not_cross_selected_sources(workspace):
     assert service.known_topics(db, root_id, all_scope, sources.freeze(db, all_scope))
     chosen = WikiScope(mode="chosen", source_ids=[second.id])
     assert service.known_topics(db, root_id, chosen, sources.freeze(db, chosen)) == []
+
+
+def test_generation_settings_change_has_a_distinct_revision_identity(workspace, monkeypatch):
+    db, *_ = workspace
+    record = discover(workspace)
+    first = generate(db, record.id)
+    settings = Settings(_env_file=None, generation_context_tokens=8192)
+    monkeypatch.setattr(service, "get_settings", lambda: settings)
+    second = generate(db, record.id)
+    assert not second["reused"] and second["revision_id"] != first["revision_id"]
+    metadata = store.revision(db, second["revision_id"])["metadata"]
+    assert metadata["parameters"]["context_tokens"] == 8192
+    assert generate(db, record.id)["reused"]
 
 
 def test_user_disk_edits_conflict_refresh_and_provenance(workspace):
