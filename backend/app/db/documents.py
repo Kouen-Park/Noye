@@ -20,6 +20,7 @@ from datetime import UTC, datetime
 
 from app.models.conversations import MessageCitation
 from app.models.documents import Document, derive_title
+from app.models.evidence import decode_evidence, encode_evidence
 
 
 class DocumentNotFound(LookupError):
@@ -55,6 +56,7 @@ def _to_citation(row: sqlite3.Row) -> MessageCitation:
         page_number=row["page_number"],
         chunk_indexes=tuple(int(part) for part in raw.split(",") if part != ""),
         best_score=row["best_score"],
+        evidence=decode_evidence(row["evidence_json"]),
     )
 
 
@@ -69,8 +71,8 @@ def _write_citations(
         """
         INSERT INTO document_citations
             (id, document_id, position, file_id, file_name, page_number,
-             chunk_indexes, best_score)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             chunk_indexes, best_score, evidence_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         [
             (
@@ -82,6 +84,7 @@ def _write_citations(
                 citation.page_number,
                 ",".join(str(index) for index in citation.chunk_indexes),
                 citation.best_score,
+                encode_evidence(citation.evidence),
             )
             for position, citation in enumerate(citations)
         ],

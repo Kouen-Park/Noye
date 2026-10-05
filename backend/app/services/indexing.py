@@ -149,6 +149,8 @@ def index_chunks(
     client: QdrantClient | None = None,
     *,
     index_fingerprint: str | None = None,
+    source_hash: str | None = None,
+    index_metadata: str | None = None,
 ) -> int:
     """Store chunk vectors with their provenance, returning the number stored.
 
@@ -201,6 +203,8 @@ def index_chunks(
                 CHUNK_INDEX: chunk.chunk_index,
                 CONTENT: chunk.content,
                 "index_fingerprint": index_fingerprint,
+                "source_hash": source_hash,
+                "index_metadata": index_metadata,
             },
         )
         for chunk, vector in zip(chunks, vectors, strict=True)

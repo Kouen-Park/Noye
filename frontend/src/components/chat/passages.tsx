@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { type ChatCitation, sourceUrl } from "@/lib/api";
+import { SavedEvidence } from "@/components/saved-evidence";
 
 /**
  * The passages an answer was given as context.
@@ -85,8 +86,11 @@ export function PassageList({ citations }: PassagesProps) {
                   }
                   className="ml-auto inline-flex min-h-11 items-center rounded-md border border-edge-strong px-3 text-[12px] font-semibold text-accent-ink hover:bg-brand-wash"
                 >
-                  Open
+                  Open current
                 </a>
+                </div>
+                <div className="col-span-2">
+                  <SavedEvidence citation={citation} />
                 </div>
               </li>
             );
