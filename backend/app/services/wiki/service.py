@@ -25,6 +25,23 @@ def known_categories(connection):
     return sorted(known)
 
 
+def known_topics(connection, root_id, scope, manifest):
+    """Bounded taxonomy hints from verified pages inside this source's frozen scope."""
+    found = {}
+    for page in store.list_pages(connection, limit=1000):
+        if page["kind"] != "source" or not page["current_revision"]:
+            continue
+        revision = store.revision(connection, page["current_revision"])
+        if revision["metadata"].get("output_root_id") != root_id or not sources.eligible_page(
+            connection, revision, scope, manifest
+        ):
+            continue
+        for section in revision["metadata"].get("sections", []):
+            for topic in section["topics"]:
+                found[(topic["kind"], normalized(topic["title"]))] = topic
+    return [found[key] for key in sorted(found)[:32]]
+
+
 def generate_source(
     connection,
     source_id,
@@ -75,6 +92,7 @@ def generate_source(
         checkpoint=checkpoint,
         progress=progress,
         manual_category=record.get("manual_category"),
+        topics=known_topics(connection, reference.root_id, scope, manifest),
     )
     links = relations.infer(
         connection, page["id"], result, evidence, scope, manifest, settings, client, checkpoint

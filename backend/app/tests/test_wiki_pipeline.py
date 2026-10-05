@@ -174,3 +174,18 @@ def test_explicit_scope_never_infers_all_from_empty():
     assert WikiScope(mode="empty").source_ids == []
     with pytest.raises(ValueError):
         WikiScope(mode="chosen")
+
+
+def test_taxonomy_hints_are_in_every_complete_bounded_prompt():
+    topics = [{"kind": "project", "title": "HELIOS"}]
+    batches = pipeline.make_batches(
+        [passage("한국어 HELIOS 수치 37.\n" * 3000)],
+        ["Learning"],
+        Settings(_env_file=None),
+        topics,
+    )
+    for batch in batches:
+        prompt = json.loads(pipeline.prompt_for(batch, ["Learning"], topics))
+        assert prompt["existing_topics"] == topics
+        assert "language" in prompt
+        assert all(p["text"] for p in prompt["passages"])

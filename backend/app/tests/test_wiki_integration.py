@@ -120,6 +120,18 @@ def test_invented_relation_target_does_not_publish(workspace):
     assert not store.find(db, f"source:{second.id}")["current_revision"]
 
 
+def test_topic_reuse_hints_do_not_cross_selected_sources(workspace):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    generate(db, first.id)
+    all_scope = WikiScope()
+    root_id = sources.catalog(db).get(first.id)["root_id"]
+    assert service.known_topics(db, root_id, all_scope, sources.freeze(db, all_scope))
+    chosen = WikiScope(mode="chosen", source_ids=[second.id])
+    assert service.known_topics(db, root_id, chosen, sources.freeze(db, chosen)) == []
+
+
 def test_user_disk_edits_conflict_refresh_and_provenance(workspace):
     db, root, _, scan, _ = workspace
     record = discover(workspace)

@@ -36,26 +36,32 @@ def fragments(passages, max_bytes):
             start = end
 
 
-def prompt_for(batch, categories):
+def prompt_for(batch, categories, topics=()):
     return json.dumps(
         {
             "task": "summarize_section",
             "existing_categories": categories,
+            "existing_topics": list(topics),
+            "language": "Write summary and key points in the language of the supplied passages.",
             "passages": [{"evidence_id": p.id, "text": p.text} for p in batch],
         },
         ensure_ascii=False,
     )
 
 
-def make_batches(passages, categories, settings):
+def make_batches(passages, categories, settings, topics=()):
     budget = input_budget(settings)
-    available = min(6000, budget - request_size(prompt_for([], categories), SectionSummary) - 400)
+    available = min(
+        6000, budget - request_size(prompt_for([], categories, topics), SectionSummary) - 400
+    )
     if available < 128:
         raise WikiError("Increase the local context budget to generate Wiki summaries.")
     batch = []
     for fragment in fragments(passages, max_bytes=max(64, available // 2)):
         candidate = [*batch, fragment]
-        if batch and request_size(prompt_for(candidate, categories), SectionSummary) > budget - 400:
+        if batch and (
+            request_size(prompt_for(candidate, categories, topics), SectionSummary) > budget - 400
+        ):
             yield batch
             batch = [fragment]
         else:
@@ -91,13 +97,14 @@ def summarize(
     checkpoint=lambda: None,
     progress=lambda completed, total, stage: None,
     manual_category=None,
+    topics=(),
 ):
-    batches = list(make_batches(passages, categories, settings))
+    batches = list(make_batches(passages, categories, settings, topics))
     sections, consumed = [], []
     for position, batch in enumerate(batches):
         checkpoint()
         result = structured(
-            prompt_for(batch, categories), SectionSummary, settings=settings, client=client
+            prompt_for(batch, categories, topics), SectionSummary, settings=settings, client=client
         )
         for claim in [result.summary, *result.key_points]:
             verify_claim(claim, {p.id: p for p in batch})
