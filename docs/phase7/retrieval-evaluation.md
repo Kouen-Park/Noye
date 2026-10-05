@@ -2,7 +2,9 @@
 
 Started independently from `main` on 2026-10-05 while Phase 6 continues in a
 separate checkout. This supplies a pilot dataset and reproducible comparisons;
-it does not close the complete item 10 quality milestone.
+it did not close item 10 at that checkpoint. The later comparisons and actual
+answer/abstention reviews below complete its implementation measurements;
+independent human review and larger real-document studies remain Phase 8 work.
 
 The [parallel merge guide](parallel-merge-guide.md) records draft PR order,
 observed conflicts and validation of a combined committed Phase 6 snapshot.
