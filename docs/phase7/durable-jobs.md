@@ -34,3 +34,8 @@ progress retention, between-batch cancellation, queued cancellation, repeated
 retry without duplicate vectors, stale attempt rejection, and shared inference
 serialization/timeout cleanup. Packaged-app sleep/kill and real model latency are
 Phase 8 acceptance checks.
+
+Integrated validation: backend 783 passed, 19 skipped; frontend 216 passed.
+Ruff, ESLint, Next type generation, TypeScript and the default Turbopack web build
+passed. The shared inference regression also verifies error/timeout cleanup.
+No real user originals, credentials, model weights or live vector storage changed.
