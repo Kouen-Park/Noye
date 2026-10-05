@@ -56,3 +56,22 @@ The 19 default live-service tests skipped; the separate local embedding check ab
 was performed with synthetic data. `npm ci --ignore-scripts` reported six audit
 findings in the existing main lockfile (five high, one critical); this focused change
 does not update dependencies. Phase 6's dependency changes must be retained at merge.
+
+## Final integration — 2026-10-05
+
+The identical closed #39 head `a46a012` is retained on `feat/index-identity`.
+Main `f46b8c1` includes Phase 6 and the local exposure/maintenance replacements.
+Normal merge `9fe73f4` resolves the four documented conflicts: README retains
+compatibility and cloud setup; configuration combines SecretStr/desktop settings
+with chunk validation; chat keeps readiness inside its saved-failure handler and
+forwards the explicit provider; index rebuild retains both maintenance 409 and
+embedding preflight 503. Automatic ingestion/rebuild/type merges were inspected.
+Desktop startup/shutdown files and Next.js 16.3.8 manifests remain identical to main.
+
+Eight regression cases in `38b9d05` cover all four providers through real
+compatibility lookup and preserve failed turns without generation when identity
+resolution fails. Fresh backend: **720 passed, 19 skipped, 8 warnings**. Frontend:
+**199 passed across 27 files**. Ruff, ESLint, Next route types, TypeScript, web
+Webpack build, desktop UI export and diff checks passed. No new live service,
+credential, model replacement, dimension reset or native GUI check was performed.
+Earlier live embedding evidence above remains historical rather than a rerun.

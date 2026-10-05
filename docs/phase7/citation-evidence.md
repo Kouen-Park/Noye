@@ -1,9 +1,10 @@
 # Phase 7 item 2: historical citation evidence
 
-This branch builds on `feat/index-identity` commit `a46a012`. It uses migration 3
-after that branch's migration 2; merge index identity before this work. The
-ongoing Phase 6 checkout is separate. A PR targeting the identity branch keeps
-the evidence diff focused; retarget it to main after its prerequisite lands.
+This work originally built on `feat/index-identity` commit `a46a012`. Its
+prerequisites are now on main through the ordered integration in PRs #43–#47.
+The replacement for closed #41 uses `feat/evidence-snapshots`, targets main and
+preserves the original feature commits. Migration 3 follows index identity's
+migration 2; item 1's document drafting lands after this evidence foundation.
 
 Answers now store the exact returned excerpts with retrieval rank, chunk index,
 similarity score, capture time, original SHA-256 and observed index identity.
@@ -37,7 +38,7 @@ ordinary conversation reads do not hash full original files or query Qdrant.
 Saved evidence describes context provided to a model, not proof that every answer
 or subsequent user edit is supported.
 
-Validation: backend **545 passed, 19 skipped**, including 9 evidence regressions;
+Historical branch validation: backend **545 passed, 19 skipped**, including 9 evidence regressions;
 frontend **137 passed**, including 7 evidence UI cases. Ruff, ESLint, Next route
 type generation, TypeScript and the web production build passed. Tests use real
 SQLite and in-memory Qdrant with synthetic content and mocked model vectors;
@@ -50,3 +51,21 @@ Item 1 builds on these saved excerpts for drafting. Item 12 can reuse this
 inspection UI, but provenance-inclusive exports and PDF coverage are separate
 pending work. Item 5 must back up SQLite: originals alone cannot reconstruct
 conversations, edited documents or these evidence snapshots.
+
+## Main integration validation
+
+The refreshed branch passed **743 backend tests (19 skipped, 8 warnings)** and
+**207 frontend tests across 28 files**, plus Ruff, ESLint, route type generation,
+TypeScript and the web production build. Main's four-provider selection, saved
+identity failure handling and coordinated ingestion remain intact. The one
+textual conflict in the shared chat passage panel was resolved by keeping its
+desktop grid and rendering saved evidence across both columns; a new regression
+exercises the actual shared component.
+
+Initial parallel checks timed out at unchanged UI test/startup limits during
+environment delays. A single thread worker with default frontend test limits
+passed the entire suite; the unchanged desktop startup suite passed all 10 tests,
+then the full backend rerun passed. No timeout changes were committed. Tests still
+use temporary workspaces, synthetic sources and mocked/in-memory dependencies.
+Native GUI interaction, live models/cloud credentials, actual PDF output and
+large-file memory measurements remain unvalidated.
