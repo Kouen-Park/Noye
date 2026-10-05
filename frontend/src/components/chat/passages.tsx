@@ -78,7 +78,7 @@ export function Passages({ citations }: PassagesProps) {
                   }
                   className="ml-auto rounded-md border border-edge-strong px-2 py-1 text-[11.5px] font-semibold text-accent-ink hover:bg-brand-wash"
                 >
-                  Open
+                  Open current
                 </a>
                 <SavedEvidence citation={citation} />
               </li>

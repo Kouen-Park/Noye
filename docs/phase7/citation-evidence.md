@@ -10,7 +10,10 @@ similarity score, capture time, original SHA-256 and observed index identity.
 The text comes from returned search results, not a second query or a live file
 read after generation. Source/hash/index metadata travel on Qdrant points so a
 concurrent re-ingestion cannot relabel an old passage with a new SQLite revision.
-Extraction compares hashes before and after reading and refuses a detected edit.
+Extraction hashes and parses the same temporary byte copy, so transient path
+edits cannot change the text underneath its recorded revision. A post-extraction
+hash check also refuses a detected edit of the live original. This copy is held
+in memory only during extraction, bounded by the upload ceiling for normal uploads.
 
 Additive SQLite columns store versioned JSON on message and document citations.
 Old citations retain names/pages/chunks but have null evidence: Noye does not
@@ -34,7 +37,7 @@ ordinary conversation reads do not hash full original files or query Qdrant.
 Saved evidence describes context provided to a model, not proof that every answer
 or subsequent user edit is supported.
 
-Validation: backend **544 passed, 19 skipped**, including 8 evidence regressions;
+Validation: backend **545 passed, 19 skipped**, including 9 evidence regressions;
 frontend **137 passed**, including 7 evidence UI cases. Ruff, ESLint, Next route
 type generation, TypeScript and the web production build passed. Tests use real
 SQLite and in-memory Qdrant with synthetic content and mocked model vectors;
