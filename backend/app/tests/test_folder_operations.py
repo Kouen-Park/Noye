@@ -85,3 +85,38 @@ def test_knowledge_jobs_execute_progress_cancel_restart_and_retry(folder):
     knowledge_jobs.cancel(db, other["id"])
     worker.run_one(db, other["id"])
     assert knowledge_jobs.get(db, other["id"])["state"] == "cancelled"
+
+
+def test_late_cancellation_retains_saved_artifact_without_claiming_complete(folder, monkeypatch):
+    db, _, _, _, _ = folder
+    job = knowledge_jobs.enqueue(
+        db, kind="late-cancel", subject_id="artifact", payload={}, scope={"mode": "empty"}
+    )
+    knowledge_jobs.register("late-cancel", lambda context, payload: "saved-artifact")
+    checkpoint = knowledge_jobs.WorkContext.checkpoint
+
+    def cancel_after_last_check(context, stage, *args):
+        checkpoint(context, stage, *args)
+        if stage == "saving":
+            knowledge_jobs.cancel(db, job["id"])
+
+    monkeypatch.setattr(knowledge_jobs.WorkContext, "checkpoint", cancel_after_last_check)
+    knowledge_jobs.KnowledgeWorker().run_one(db, job["id"])
+    result = knowledge_jobs.get(db, job["id"])
+    assert result["state"] == "cancelled" and result["artifact_id"] == "saved-artifact"
+
+
+def test_local_job_never_calls_handler_when_ollama_is_remote(folder, monkeypatch):
+    from app.config import Settings
+
+    db, _, _, _, _ = folder
+    settings = Settings(_env_file=None, ollama_base_url="https://cloud.example.invalid")
+    monkeypatch.setattr(knowledge_jobs, "get_settings", lambda: settings)
+    called = []
+    knowledge_jobs.register("local-only", lambda context, payload: called.append(True))
+    job = knowledge_jobs.enqueue(
+        db, kind="local-only", subject_id="local", payload={}, scope={"mode": "empty"}
+    )
+    knowledge_jobs.KnowledgeWorker().run_one(db, job["id"])
+    assert not called
+    assert "no cloud fallback" in knowledge_jobs.get(db, job["id"])["error"]
