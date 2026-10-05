@@ -160,8 +160,11 @@ class KnowledgeWorker:
             context.checkpoint("saving")
             with connection:
                 connection.execute(
-                    "UPDATE knowledge_jobs SET state='complete',stage='complete',"
-                    "artifact_id=?,updated_at=? WHERE id=?",
+                    "UPDATE knowledge_jobs SET state=CASE WHEN cancel_requested=1 THEN 'cancelled' "
+                    "ELSE 'complete' END,stage=CASE WHEN cancel_requested=1 THEN 'cancelled' "
+                    "ELSE 'complete' END,artifact_id=COALESCE(?,artifact_id),"
+                    "error=CASE WHEN cancel_requested=1 THEN 'Cancelled after saving artifact.' "
+                    "ELSE NULL END,updated_at=? WHERE id=?",
                     (artifact_id, now(), job_id),
                 )
         except WorkCancelled as exc:
