@@ -28,6 +28,35 @@ DEFAULT_BATCH_SIZE = 16
 # Increment when model input formatting changes; original excerpts stay raw.
 INPUT_FORMAT_VERSION = "raw-v1"
 
+
+def input_format_version() -> str:
+    configured = get_settings().embedding_input_format
+    return INPUT_FORMAT_VERSION if configured == "raw-v1" else configured
+
+
+def format_input(text: str, *, task: str) -> str:
+    if not text.strip():
+        raise ValueError("Cannot embed empty text")
+    settings = get_settings()
+    if settings.embedding_input_format == "embeddinggemma-v1":
+        if settings.ollama_embedding_model.split(":")[0] != "embeddinggemma":
+            raise EmbeddingError("EmbeddingGemma input format requires the embeddinggemma model.")
+        prefix = "task: search result | query: " if task == "query" else "title: none | text: "
+        return prefix + text
+    return text
+
+
+def embed_query(text: str, *, client: httpx.Client | None = None) -> list[float]:
+    """Embed a search question using the selected, index-versioned task format."""
+    return embed_text(format_input(text, task="query"), client=client)
+
+
+def embed_documents(texts: Sequence[str], *, batch_size: int = DEFAULT_BATCH_SIZE,
+                    client: httpx.Client | None = None) -> list[list[float]]:
+    """Format model input without modifying stored excerpts."""
+    return embed_texts([format_input(text, task="document") for text in texts],
+                       batch_size=batch_size, client=client)
+
 #: Embedding a batch on local hardware is slow enough that the default httpx
 #: timeout of 5 seconds is not workable.
 DEFAULT_TIMEOUT_SECONDS = 120.0
@@ -81,6 +110,12 @@ def embed_texts(
         return []
 
     settings = get_settings()
+    for index, text in enumerate(texts):
+        if len(text) > settings.embedding_max_input_chars:
+            raise EmbeddingError(
+                f"Embedding input {index} exceeds {settings.embedding_max_input_chars} "
+                "characters including its task prefix. Shorten the question or reduce CHUNK_SIZE."
+            )
     vectors: list[list[float]] = []
 
     if client is None:
@@ -105,7 +140,7 @@ def embed_chunks(
     The vector at position *n* belongs to ``chunks[n]``; pairing them is the
     caller's job, which keeps this function free of storage concerns.
     """
-    return embed_texts(
+    return embed_documents(
         [chunk.content for chunk in chunks], batch_size=batch_size, client=client
     )
 
@@ -121,7 +156,7 @@ def _request_embeddings(
     url = f"{settings.ollama_base_url.rstrip('/')}/api/embed"
 
     try:
-        response = client.post(url, json={"model": model, "input": list(batch)})
+        response = client.post(url, json={"model": model, "input": list(batch), "truncate": False})
     except httpx.RequestError as exc:
         raise EmbeddingError(
             f"Could not reach Ollama at {settings.ollama_base_url}. "
@@ -135,9 +170,17 @@ def _request_embeddings(
         )
 
     if response.status_code >= 400:
+        if response.status_code == 400 and any(
+            phrase in response.text.lower()
+            for phrase in ("context length", "input length", "too long")
+        ):
+            raise EmbeddingError(
+                "The embedding input exceeds the model's token limit. Nothing was truncated. "
+                "Shorten the question or reduce CHUNK_SIZE and explicitly re-index the file."
+            )
         raise EmbeddingError(
             f"Ollama returned HTTP {response.status_code} while embedding "
-            f"with '{model}': {response.text[:200]}"
+            f"with '{model}'. Check the model and try again."
         )
 
     try:

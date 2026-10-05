@@ -16,7 +16,7 @@ from qdrant_client.http.exceptions import ApiException
 
 from app.config import get_settings
 from app.services import index_identity
-from app.services.embeddings import EmbeddingError, embed_text
+from app.services.embeddings import EmbeddingError, embed_query as embed_text
 from app.services.indexing import (
     CHUNK_INDEX,
     CONTENT,

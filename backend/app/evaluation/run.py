@@ -27,7 +27,16 @@ from app.config import get_settings
 from app.evaluation.dataset import load_dataset
 from app.evaluation.metrics import diversify, ranking_metrics, reciprocal_rank_fusion, summarize
 from app.services.chunking import Chunk
-from app.services.embeddings import EmbeddingError, embed_text, embed_texts
+from app.services.embeddings import (
+    EmbeddingError,
+    input_format_version,
+)
+from app.services.embeddings import (
+    embed_documents as embed_texts,
+)
+from app.services.embeddings import (
+    embed_query as embed_text,
+)
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, build_prompt, generate
 from app.services.indexing import index_chunks
 from app.services.retrieval import SearchResult
@@ -188,7 +197,8 @@ def evaluate(dataset: dict, *, mode: str, ks: list[int], repeats: int,
         ordered_times = sorted(warm_times)
         return {"dataset": dataset["name"], "mode": mode, "diversity": diversity,
                 "k": ks, "vector_size": get_settings().qdrant_vector_size,
-                "input_format": "raw-v1", "lexical_tokenizer": "unicode-words-preserving-ids",
+                "input_format": input_format_version(),
+                "lexical_tokenizer": "unicode-words-preserving-ids",
                 "model": get_settings().ollama_embedding_model if dense else None,
                 "model_digest": dense.digest if dense else None,
                 "generation_model": get_settings().ollama_model if generation else None,

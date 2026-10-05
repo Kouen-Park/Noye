@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3.5:4b"
     ollama_embedding_model: str = "embeddinggemma"
+    embedding_input_format: Literal["raw-v1", "embeddinggemma-v1"] = "raw-v1"
+    # A request-size guard, not an estimate of token count. Ollama enforces tokens.
+    embedding_max_input_chars: int = Field(default=8192, gt=0)
     #: qwen3.5 is a reasoning model; thinking stays off for RAG answers because
     #: it costs roughly 30x the tokens and latency for no gain at answer length.
     ollama_thinking: bool = False
