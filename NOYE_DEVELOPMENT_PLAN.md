@@ -2566,7 +2566,7 @@ milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
 types and builds run with each change. Phase 8 then performs broader stability,
 quality refinement and final packaged-app acceptance.
 
-Items 3, 4 and 8 are implemented with regression/configuration evidence; item 10
+Items 2, 3, 4 and 8 are implemented with regression/configuration evidence; item 10
 has its evaluation foundation but remains an incomplete milestone (see §16.5).
 The other items remain separate work. Existing desktop storage, service checks
 and SQLite-copy import are partial foundations, not missing functionality to
@@ -2611,7 +2611,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 2. Citation evidence and source versions
 
--   [ ] Add immutable excerpt snapshots and original source identity/version to
+-   [x] Add immutable excerpt snapshots and original source identity/version to
     stored message/document evidence using additive SQLite migrations. Preserve
     file/page/chunk metadata and any available index identity from item 4.
 - Keep historical evidence after source re-ingestion/deletion; show changed,
@@ -2797,6 +2797,29 @@ needs generated-answer/abstention review, representative data, embedding/chunkin
 comparisons and a measured reranking decision; its foundation is not completion.
 Other Phase 7 milestones and all final Phase 8 acceptance remain open. No final
 listener recreation, live dimension reset, latency or actual PDF output is claimed.
+
+## 16.6 Historical evidence integration — 2026-10-05
+
+The owner authorized the work from closed #41 and #42 in the same ordered,
+history-preserving workflow. The identical feature heads remain on
+`feat/evidence-snapshots` and `feat/document-evidence`; replacement PRs target main.
+Item 2 lands before item 1. The separate active working tree is left untouched.
+
+The evidence snapshot merge retains all four generation providers, saved identity
+failures and coordinated ingestion. Its only textual conflict was the shared
+chat passage panel: keep the desktop layout and put saved evidence across both
+grid columns. An added UI regression exercises that actual shared panel.
+
+Fresh checks: backend **743 passed, 19 skipped, 8 warnings**; frontend **207 passed
+across 28 files**; Ruff, ESLint, route type generation, TypeScript and the web build
+passed. Initial parallel UI/desktop checks timed out during environment delays;
+the unchanged desktop startup suite then passed **10 tests**, and the entire
+backend rerun passed. Frontend passed with a single thread worker and the default
+test timeouts. No timeout or production configuration change was committed.
+
+Item 2's implementation is complete, not the whole Phase 7 roadmap. Item 1's
+document drafting integration follows. Item 12's cited exports/PDF coverage and
+all real-service/native-GUI acceptance remain separate work in their planned phases.
 
 ------------------------------------------------------------------------
 
