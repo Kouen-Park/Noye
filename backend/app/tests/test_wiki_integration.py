@@ -146,6 +146,16 @@ def test_generation_settings_change_has_a_distinct_revision_identity(workspace, 
     assert generate(db, record.id)["reused"]
 
 
+def test_manual_category_change_invalidates_prior_classification(workspace):
+    db, *_ = workspace
+    record = discover(workspace)
+    generate(db, record.id)
+    with db:
+        db.execute("UPDATE sources SET manual_category='Personal' WHERE file_id=?", (record.id,))
+    result = generate(db, record.id)
+    assert not result["reused"] and result["classification"] == "Personal"
+
+
 def test_user_disk_edits_conflict_refresh_and_provenance(workspace):
     db, root, _, scan, _ = workspace
     record = discover(workspace)

@@ -75,6 +75,7 @@ def generate_source(
                 "model": settings.ollama_model,
                 "prompt": PROMPT_VERSION,
                 "parameters": parameters,
+                "manual_category": record.get("manual_category"),
             }
         )
     )
