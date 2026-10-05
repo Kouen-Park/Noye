@@ -140,9 +140,11 @@ def test_upgrade_keeps_user_writing_and_marks_old_identity_unknown():
         CREATE TABLE files (id TEXT PRIMARY KEY, content_hash TEXT, embedding_model TEXT);
         CREATE TABLE conversations (id TEXT PRIMARY KEY, title TEXT);
         CREATE TABLE messages (id TEXT PRIMARY KEY, content TEXT);
+        CREATE TABLE message_citations (id TEXT PRIMARY KEY);
+        CREATE TABLE document_citations (id TEXT PRIMARY KEY);
         CREATE TABLE documents (id TEXT PRIMARY KEY, content_markdown TEXT);
         INSERT INTO files VALUES ('source', 'original-sha', 'embeddinggemma');
-        INSERT INTO conversations VALUES ('chat', 'Saved conversation');
+        INSERT INTO conversations (id, title) VALUES ('chat', 'Saved conversation');
         INSERT INTO messages VALUES ('message', 'Saved question and answer');
         INSERT INTO documents VALUES ('document', 'User-edited writing');
         PRAGMA user_version = 1;

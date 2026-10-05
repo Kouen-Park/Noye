@@ -69,7 +69,7 @@ export function ProviderSelector({
       <p id={`${id}-help`} className="mt-1.5 text-[12px] text-ink-soft">
         {value !== "ollama"
           ? task === "chat"
-            ? `Your question and retrieved document excerpts will be sent to ${cloudName}. Files, embeddings and search stay local.`
+            ? `Your question, bounded recent conversation context and retrieved document excerpts will be sent to ${cloudName}. Files, embeddings and search stay local.`
             : `Your instruction, saved answer and cited file names will be sent to ${cloudName}. The document is saved locally.`
           : "Generation runs locally through Ollama. Your content is not sent to Google or other cloud AI providers."}
       </p>

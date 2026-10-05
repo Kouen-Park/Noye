@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS files (
     error        TEXT,
     page_count   INTEGER,
     chunk_count  INTEGER NOT NULL DEFAULT 0,
+    no_text_pages TEXT,
     -- sha256 of the file's bytes. How a duplicate is identified, and how a source
     -- edited on disk after indexing is noticed. NULL for files indexed before
     -- Noye recorded it; see migrations._step_1_file_provenance.
@@ -66,7 +67,8 @@ CREATE TABLE IF NOT EXISTS conversations (
     id          TEXT PRIMARY KEY,
     title       TEXT NOT NULL,
     created_at  TEXT NOT NULL,
-    updated_at  TEXT NOT NULL
+    updated_at  TEXT NOT NULL,
+    source_scope TEXT
 );
 
 CREATE TABLE IF NOT EXISTS messages (

@@ -40,7 +40,7 @@ def build_identity(model_digest: str) -> IndexIdentity:
         "embedding_model": normalize_model_tag(settings.ollama_embedding_model),
         "model_digest": model_digest,
         "vector_size": settings.qdrant_vector_size,
-        "input_format": embeddings.INPUT_FORMAT_VERSION,
+        "input_format": embeddings.input_format_version(),
         "chunk_size": settings.chunk_size,
         "chunk_overlap": settings.chunk_overlap,
         "chunker_version": CHUNKER_VERSION,

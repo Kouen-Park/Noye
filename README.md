@@ -218,21 +218,23 @@ noye/
 
 ### Phase 7 — Core Workflow Improvements
 
-- [ ] Store retrieved excerpts and pass them to document generation
-- [ ] Preserve citation excerpts and original source versions
-- [ ] Coordinate rebuilds with active ingestion/deletion
-- [ ] Version indexes by embedding model, chunking and input format
-- [ ] Back up and restore SQLite together with source files
-- [ ] Persist jobs, recover after restart and cancel between batches
-- [ ] Complete desktop data/service/model integration using Phase 6 foundations
-- [ ] Restrict Qdrant port publishing to localhost
-- [ ] Separate query/document embedding formats and validate input length
-- [ ] Establish retrieval evaluation and assess hybrid search/reranking
-- [ ] Support bounded conversation context and selected sources
-- [ ] Improve evidence inspection, cited exports and PDF extraction coverage
+- [x] Store retrieved excerpts and pass them to local document generation
+- [x] Preserve citation excerpts and original source versions
+- [x] Coordinate rebuilds with active ingestion/deletion
+- [x] Version indexes by embedding model, chunking and input format
+- [x] Back up and restore SQLite together with source files
+- [x] Persist jobs, recover after restart and cancel between batches
+- [x] Complete desktop data/service/model integration using Phase 6 foundations
+- [x] Restrict Qdrant port publishing to localhost
+- [x] Separate query/document embedding formats and validate input length
+- [x] Establish retrieval evaluation and assess hybrid search/reranking
+- [x] Support bounded conversation context and selected sources
+- [x] Improve evidence inspection, cited exports and PDF extraction coverage
 
-These twelve milestones are planned work; existing partial foundations remain
-implemented. Hybrid search/reranking adoption depends on measured benefit.
+Completed implementation checks and remaining limits are recorded in the
+[workflow validation](docs/phase7/knowledge-workflow.md) and development plan.
+Hybrid search/reranking adoption depends on measured benefit. Broader quality
+and packaged workflow acceptance remain Phase 8 work.
 
 ### Phase 7.5 — Knowledge Wiki and Source-Driven Documents *(planned)*
 
@@ -272,7 +274,7 @@ tests, lint, types and builds run throughout implementation.
 ## Privacy Philosophy
 
 **Local by default.** Personal knowledge should not require cloud storage.
-Selecting Gemini sends the question and retrieved excerpts to Google; document
+Selecting Gemini sends the question, bounded recent user questions and retrieved excerpts to Google; document
 drafting sends the instruction, stored answer and cited file names. Original files,
 embeddings, search and saved work remain local.
 
@@ -348,6 +350,7 @@ Available endpoints:
 | `GET` | `/chat/conversations` | List conversations, most recently active first |
 | `GET` | `/chat/conversations/{id}` | Read one conversation with its messages |
 | `PATCH` | `/chat/conversations/{id}` | Rename a conversation |
+| `PUT` | `/chat/conversations/{id}/scope` | Persist all/empty/chosen source selection |
 | `DELETE` | `/chat/conversations/{id}` | Delete a conversation; documents are untouched |
 | `GET` | `/documents` | List documents, most recently edited first |
 | `POST` | `/documents` | Create an empty document, or one from text you have |
@@ -355,11 +358,24 @@ Available endpoints:
 | `GET` | `/documents/{id}` | Read one document with its citations |
 | `PATCH` | `/documents/{id}` | Save a title or body edit |
 | `DELETE` | `/documents/{id}` | Delete a document |
-| `GET` | `/documents/{id}/export.md` | Download the stored Markdown |
+| `GET` | `/documents/{id}/export.md` | Download stored Markdown; `?provenance=true` adds saved evidence |
 | `GET` | `/index/status` | Whether the index still matches the files; `?deep=true` also compares point counts |
 | `POST` | `/index/rebuild` | Re-index every file from the originals on disk; returns 202 |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
+
+Chat accepts `file_ids`: omitted reuses the conversation's scope, `null` searches
+all eligible files, `[]` searches nothing, and a list searches only those IDs.
+`PUT /chat/conversations/{id}/scope` saves that selection without asking a question.
+Deleted, unready or incompatible selections never broaden to the whole library.
+Follow-ups use bounded recent user questions; prior AI answers are not sent as
+context or used as evidence. Cloud chat disclosure includes this recent context.
+
+New answers retain the exact retrieved excerpts and the original hash/index
+fingerprint carried by their points. Existing references without snapshots remain
+explicitly unknown. The source panel reports changed/missing originals independently
+of these saved excerpts. PDF records expose `no_text_pages` and extraction coverage;
+this reports missing text, not a scan diagnosis or OCR result.
 
 Index compatibility includes the installed embedding model digest, vector dimension,
 input format and extraction/chunking settings. Changing the generation model alone
@@ -369,6 +385,11 @@ The library distinguishes an unknown/changed index from an unavailable Ollama mo
 `CHUNK_SIZE` and `CHUNK_OVERLAP` default to 1000 and 150 characters; changing them
 requires rebuilding. Search filters Qdrant points by the verified fingerprint as
 well as eligible file IDs, so incompatible or legacy points cannot join a ranking.
+`EMBEDDING_INPUT_FORMAT=raw-v1` remains the measured default. The optional
+`embeddinggemma-v1` format separates query/document prefixes and requires an
+explicit rebuild. `EMBEDDING_MAX_INPUT_CHARS` bounds formatted request size;
+Ollama's token limit is also enforced with `truncate=false`.
+See [the recorded comparisons](docs/phase7/retrieval-evaluation.md).
 
 ### Optional cloud generation
 
@@ -481,7 +502,10 @@ the browser warns before you navigate away with unsaved edits. Autosave is
 deliberately absent, because edits to a generated draft tend to be wholesale
 rather than incremental and one firing mid-thought would make undo your problem.
 
-Markdown export downloads exactly what is stored. PDF export uses your browser's
+The editor's Markdown and PDF exports both use the current text, including
+unsaved edits. **Include provenance** appends saved source labels, revisions and
+literal excerpts; it does not certify later edits. Direct API Markdown export
+uses the saved body. PDF export uses your browser's
 own print dialog — choose *Save as PDF* — so Noye needs no extra system libraries
 to produce one. A print stylesheet hides the application so the page that reaches
 the PDF is the document; it is available from the Preview tab, since printing the
@@ -528,8 +552,9 @@ local/cloud provider selection and an answer-specific passage panel. First-run
 recommendations, model management, Keychain-backed API settings and opt-in service
 preparation are included. Dark mode uses neutral charcoal and muted blue; light
 mode retains the original paper/forest palette. Implementation checks pass, but
-live setup, credential/model management, full workflow and native PDF acceptance
-remain deferred to Phase 8; this is not a signed public release.
+live setup, credential/model management and full workflow acceptance remain
+deferred to Phase 8. Native synthetic Markdown/PDF export checks are recorded in
+[workflow validation](docs/phase7/knowledge-workflow.md); this is not a signed public release.
 
 ### Supporting services
 

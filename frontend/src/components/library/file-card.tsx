@@ -67,6 +67,15 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
           <span className="font-mono tabular-nums">{factsLine(file)}</span>
         </p>
 
+        {file.file_type === "pdf" && file.no_text_pages != null && (
+          <div className="mt-2 text-[12.5px] text-ink-soft">
+            <p>Text extracted from {file.extracted_page_count} of {file.page_count} pages.</p>
+            {file.no_text_pages.length > 0 && <details>
+              <summary className="min-h-11 cursor-pointer py-3">{file.no_text_pages.length} pages have no extracted text</summary>
+              <p className="[overflow-wrap:anywhere]">Pages: {file.no_text_pages.join(", ")}. These may be blank or image-only; OCR has not been performed.</p>
+            </details>}
+          </div>
+        )}
         {working && <StageBar status={file.status} />}
 
         {stalled && !stopping && (

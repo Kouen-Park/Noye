@@ -4,10 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
-import { SavedEvidence } from "@/components/saved-evidence";
 import { DocumentEditor } from "@/components/documents/document-editor";
 import { DocumentList } from "@/components/documents/document-list";
-import { ExportControls } from "@/components/documents/export-controls";
+import { PassageList } from "@/components/chat/passages";
 import {
   ApiError,
   type DocumentSummary,
@@ -56,7 +55,6 @@ function DocumentsView() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
-  const [view, setView] = useState<"write" | "preview">("write");
   /** Which document the loaded body belongs to, so a stale load is ignored. */
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
 
@@ -79,7 +77,6 @@ function DocumentsView() {
   // synced in an effect, which React 19 rejects.
   if (loadedFor !== documentId) {
     setLoadedFor(documentId);
-    setView("write");
     if (documentId === null) {
       setOpen(null);
       setError(null);
@@ -190,34 +187,18 @@ function DocumentsView() {
               content={open.content}
               onSave={save}
               saving={saving}
-              onViewChange={setView}
+              documentId={open.id}
+              provenance={open.provenance_markdown}
             />
-
-            <div className="mt-5 border-t border-edge pt-3">
-              <ExportControls
-                documentId={open.id}
-                previewVisible={view === "preview"}
-              />
-            </div>
 
             {open.citations.length > 0 && (
               <div className="mt-4 border-t border-edge pt-3">
                 <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
-                  Evidence retained from the original answer
+                  Evidence saved with the first draft
                 </h2>
-                <ul className="mt-2 space-y-1">
-                  {open.citations.map((citation, index) => (
-                    <li
-                      key={`${citation.file_id}:${citation.page_number}:${index}`}
-                      className="text-[12.5px] text-ink-soft"
-                    >
-                      {citation.label}
-                      <SavedEvidence citation={citation} />
-                    </li>
-                  ))}
-                </ul>
+                <PassageList citations={open.citations} />
                 <p className="mt-1.5 text-[11.5px] text-ink-faint">
-                  This records the original answer&apos;s material. It does not verify later edits.
+                  These describe the draft, not what you have written since.
                 </p>
               </div>
             )}

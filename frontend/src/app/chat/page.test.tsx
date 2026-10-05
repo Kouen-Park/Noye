@@ -14,6 +14,7 @@ vi.mock("@/lib/api", async (original) => ({
   ...await original<typeof api>(),
   listConversations: vi.fn(), readConversation: vi.fn(), askQuestion: vi.fn(),
   renameConversation: vi.fn(), deleteConversation: vi.fn(), listAiProviders: vi.fn(),
+  listFiles: vi.fn(), updateConversationScope: vi.fn(),
 }));
 
 function deferred<T>() {
@@ -50,6 +51,7 @@ describe("chat workspace", () => {
       { id: "gemini", model: "cloud-model", configured: true },
     ]);
     vi.mocked(api.readConversation).mockResolvedValue(conversation());
+    vi.mocked(api.listFiles).mockResolvedValue([]);
   });
   afterEach(() => vi.unstubAllGlobals());
 
@@ -109,7 +111,7 @@ describe("chat workspace", () => {
     await screen.findByRole("option", { name: /cloud-model/ });
     await userEvent.selectOptions(screen.getByRole("combobox"), "gemini");
     send();
-    expect(api.askQuestion).toHaveBeenCalledWith("My question", undefined, "gemini");
+    expect(api.askQuestion).toHaveBeenCalledWith("My question", undefined, "gemini", null);
     expect(screen.getByText("Waiting for Gemini…")).toBeInTheDocument();
     for (const name of ["New chat", "Open Chat c1", "Rename Chat c1", "Delete Chat c1"]) {
       expect(screen.getByRole("button", { name })).toBeDisabled();
@@ -198,6 +200,25 @@ describe("chat workspace", () => {
     await userEvent.click(screen.getByRole("button", { name: "New chat" }));
     expect(screen.getByLabelText("Ask about your documents")).toHaveValue("");
     expect(api.askQuestion).not.toHaveBeenCalled();
+  });
+
+  it("reloads a saved empty scope and waits for a scope update before asking", async () => {
+    navigation.query = "c=c1";
+    const saved = { ...conversation(), source_scope: [] };
+    const update = deferred<api.ChatConversation>();
+    vi.mocked(api.readConversation).mockResolvedValue(saved);
+    vi.mocked(api.updateConversationScope).mockReturnValue(update.promise);
+    vi.mocked(api.askQuestion).mockResolvedValue(response());
+    render(<ChatPage />);
+    await screen.findByText("No files selected");
+    await userEvent.click(screen.getByText("No files selected"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "All ready files" }));
+    expect(api.updateConversationScope).toHaveBeenCalledWith("c1", null);
+    expect(screen.getByRole("button", { name: "Ask" })).toBeDisabled();
+    await act(async () => update.resolve({ ...saved, source_scope: null }));
+    expect(screen.getByText("Search all ready files")).toBeInTheDocument();
+    send("A scoped question");
+    expect(api.askQuestion).toHaveBeenCalledWith("A scoped question", "c1", "ollama", null);
   });
 
   it("does not animate conversation scrolling when reduced motion is requested", async () => {

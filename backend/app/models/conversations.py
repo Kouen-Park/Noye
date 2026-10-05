@@ -103,6 +103,8 @@ class Conversation:
     updated_at: datetime = field(default_factory=_now)
     #: Populated when a conversation is read with its messages; empty in a list.
     messages: list[Message] = field(default_factory=list)
+    # None = all eligible files; [] = explicitly no files. IDs survive deletion.
+    source_scope: list[str] | None = None
 
 
 def derive_title(question: str) -> str:

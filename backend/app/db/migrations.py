@@ -132,6 +132,11 @@ def _step_4_durable_jobs(connection: sqlite3.Connection) -> None:
             connection.execute(statement)
 
 
+def _step_5_context_coverage(connection: sqlite3.Connection) -> None:
+    add_column_if_missing(connection, "conversations", "source_scope", "TEXT")
+    add_column_if_missing(connection, "files", "no_text_pages", "TEXT")
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
@@ -139,6 +144,7 @@ MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     # them before migrations in the application; no historical text is backfilled.
     _step_3_citation_evidence,
     _step_4_durable_jobs,
+    _step_5_context_coverage,
 )
 
 #: Where a fully migrated database stands.

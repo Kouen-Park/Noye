@@ -81,3 +81,16 @@ describe("Passages", () => {
     expect(screen.queryByText(/0\.68/)).not.toBeInTheDocument();
   });
 });
+
+it("shows immutable saved evidence and omits the missing original link", async () => {
+  render(<Passages citations={[{ ...citation(), original_status: "missing", evidence: {
+    version: 1, captured_at: "2026-10-05T00:00:00+00:00", excerpts: [{
+      content: "Saved exact text", chunk_index: 0, retrieval_rank: 1, score: .9,
+      source_hash: "abc", index_fingerprint: null, index_metadata: null,
+    }],
+  } }]} />);
+  await userEvent.click(screen.getByRole("button", { name: /consulted/ }));
+  expect(screen.getByText("Saved exact text")).toBeInTheDocument();
+  expect(screen.getByText("Original: missing")).toBeInTheDocument();
+  expect(screen.queryByRole("link")).not.toBeInTheDocument();
+});

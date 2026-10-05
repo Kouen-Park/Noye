@@ -98,6 +98,7 @@ class File:
     error: str | None = None
     page_count: int | None = None
     chunk_count: int = 0
+    no_text_pages: list[int] | None = None
     #: sha256 of the file's bytes, computed while the upload was written. Identifies
     #: a duplicate — not the filename, since the same name in two folders is
     #: legitimately two files and a renamed copy is still the same file — and

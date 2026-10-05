@@ -510,3 +510,70 @@ def test_a_real_question_is_answered_and_cited_end_to_end(db, tmp_path) -> None:
         assert reread["messages"][1]["citations"] == answer["citations"]
     finally:
         delete_file_chunks(record.id)
+
+
+def test_selected_scope_survives_reload_deletion_and_never_broadens(client, db, monkeypatch):
+    selected = add_ready_file(db, "Selected.pdf")
+    other = add_ready_file(db, "Other.pdf")
+    capture = {}
+    stub_answer(monkeypatch, Answer("Only selected", [chunk(selected)]), capture)
+    first = client.post("/chat", json={"question": "Topic", "file_ids": [selected]}).json()
+    cid = first["conversation_id"]
+    assert capture["file_ids"] == [selected]
+    assert client.get(f"/chat/conversations/{cid}").json()["source_scope"] == [selected]
+    file_store.delete_file(db, selected)
+    followup = client.post("/chat", json={"question": "And that?", "conversation_id": cid}).json()
+    assert followup["searched_files"] == 0
+    assert followup["answer"]["citations"] == []
+    assert "None of the selected files" in followup["answer"]["content"]
+    assert file_store.get_file(db, other).is_ready
+    assert client.put(f"/chat/conversations/{cid}/scope", json={"file_ids": []}).json()[
+        "source_scope"] == []
+    assert client.put(f"/chat/conversations/{cid}/scope", json={"file_ids": None}).json()[
+        "source_scope"] is None
+
+
+def test_empty_scope_skips_readiness_and_generation(client, monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("An explicitly empty scope must not call services")
+    monkeypatch.setattr(chat_api, "_ready_file_names", forbidden)
+    monkeypatch.setattr(chat_api, "answer_question", forbidden)
+    body = client.post("/chat", json={"question": "Question", "file_ids": []}).json()
+    assert body["searched_files"] == 0
+    assert "No files are selected" in body["answer"]["content"]
+
+
+def test_followup_uses_bounded_context_and_captures_exact_evidence(
+    client, db, monkeypatch, tmp_path,
+):
+    from app.services.integrity import hash_file
+    file_id = add_ready_file(db)
+    path = tmp_path / "source.pdf"
+    path.write_bytes(b"original version")
+    db.execute("UPDATE files SET path = ? WHERE id = ?", (str(path), file_id))
+    db.commit()
+    file_store.set_content_hash(db, file_id, hash_file(path))
+    calls = []
+    def answer(question, **kwargs):
+        calls.append(kwargs)
+        from dataclasses import replace
+        evidence = replace(chunk(file_id), source_hash=hash_file(path),
+                           index_fingerprint="a" * 64)
+        return Answer("Short answer", [evidence])
+    monkeypatch.setattr(chat_api, "answer_question", answer)
+    first = client.post("/chat", json={"question": "Compare Dijkstra and Bellman-Ford"}).json()
+    cid = first["conversation_id"]
+    client.post("/chat", json={"question": "What about the second one?", "conversation_id": cid})
+    assert "Dijkstra" in calls[-1]["retrieval_query"]
+    assert "not evidence" in calls[-1]["history"]
+    citation = first["answer"]["citations"][0]
+    assert citation["evidence"]["excerpts"][0]["content"] == chunk(file_id).content
+    assert citation["evidence"]["excerpts"][0]["source_hash"] == hash_file(path)
+    path.write_bytes(b"changed")
+    reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
+    assert reloaded["evidence"] == citation["evidence"]
+    assert reloaded["original_status"] == "changed"
+    file_store.delete_file(db, file_id)
+    reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
+    assert reloaded["original_status"] == "missing"
+    assert reloaded["evidence"] == citation["evidence"]
