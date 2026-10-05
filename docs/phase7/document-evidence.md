@@ -2,7 +2,7 @@
 
 This work originally depended on the evidence-snapshot branch (item 2), which
 depended on index identity. Those prerequisites now land through PRs #43–#48.
-The replacement for closed #42 uses `feat/document-evidence`, targets main and
+PR #49 replaces closed #42 on `feat/document-evidence`, targets main and
 preserves the original feature commits. The separate active working tree is
 left untouched.
 

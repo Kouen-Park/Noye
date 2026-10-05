@@ -137,6 +137,8 @@ were closed and their `codex/` heads deleted, but identical `feat/` heads surviv
 `dd04762` on `feat/evidence-snapshots` and `9a962c4` on `feat/document-evidence`.
 The first replacement, [#48](https://github.com/Kouen-Park/Noye/pull/48), merged
 normally as `5ea0e57`; the document branch refresh builds on that actual main.
+The second replacement is [#49](https://github.com/Kouen-Park/Noye/pull/49),
+`feat/document-evidence`, targeting main after #48.
 An isolated temporary worktree keeps the separately active branch's edits intact.
 
 | Refresh | Actual conflict | Resolution |

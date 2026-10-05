@@ -2819,8 +2819,8 @@ the unchanged desktop startup suite then passed **10 tests**, and the entire
 backend rerun passed. Frontend passed with a single thread worker and the default
 test timeouts. No timeout or production configuration change was committed.
 
-Item 2 lands as PR #48 with main merge `5ea0e57`. Item 1's replacement for closed
-#42 builds on that merge. Normal refresh `bba3864` keeps one typed provider
+Item 2 lands as PR #48 with main merge `5ea0e57`. Item 1 is PR #49, replacing
+closed #42 and building on that merge. Normal refresh `bba3864` keeps one typed provider
 argument, local-only excerpt guards, API/service provider forwarding and both
 the provider selector and evidence disclosure in the creation form. Four real
 adapters are exercised through mock transports, and four UI regressions verify
