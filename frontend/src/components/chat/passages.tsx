@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { type ChatCitation, sourceUrl } from "@/lib/api";
+import { SavedEvidence } from "@/components/saved-evidence";
 
 /**
  * The passages an answer was given as context.
@@ -79,6 +80,7 @@ export function Passages({ citations }: PassagesProps) {
                 >
                   Open
                 </a>
+                <SavedEvidence citation={citation} />
               </li>
             );
           })}
