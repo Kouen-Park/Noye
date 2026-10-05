@@ -44,7 +44,7 @@ def test_real_job_failure_is_separate_from_indexing_and_restart_retry(
     db, *_ = workspace
     record = discover(workspace)
     jobs.register()
-    knowledge_jobs.worker.stop_event.clear()
+    worker = knowledge_jobs.KnowledgeWorker()
     response = client.post("/wiki/generate", json={"source_id": record.id})
     assert response.status_code == 202
     job = response.json()
@@ -56,7 +56,7 @@ def test_real_job_failure_is_separate_from_indexing_and_restart_retry(
         raise WikiError("Local model invalid JSON")
 
     monkeypatch.setattr(pipeline, "structured", fail)
-    knowledge_jobs.worker.run_one(db, retry["id"])
+    worker.run_one(db, retry["id"])
     assert knowledge_jobs.get(db, retry["id"])["state"] == "failed"
     assert ingestion_jobs.latest(db, record.id)["state"] == "complete"
     assert db.execute("SELECT status FROM files WHERE id=?", (record.id,)).fetchone()[0] == "READY"
@@ -65,7 +65,7 @@ def test_real_job_failure_is_separate_from_indexing_and_restart_retry(
     install_model(monkeypatch)
     completed = knowledge_jobs.resume(db, retry["id"])
     assert completed["manifest"] == job["manifest"] and completed["scope"] == job["scope"]
-    knowledge_jobs.worker.run_one(db, completed["id"])
+    worker.run_one(db, completed["id"])
     output = knowledge_jobs.get(db, completed["id"])
     assert output["state"] == "complete" and output["artifact_id"]
     assert client.get("/wiki/" + output["artifact_id"]).json()["revision"]["origin"] == "generated"
@@ -77,7 +77,7 @@ def test_cancellation_and_deduplication(workspace, client):
     job = client.post("/wiki/generate", json={"source_id": record.id}).json()
     assert client.post("/wiki/generate", json={"source_id": record.id}).status_code == 409
     assert knowledge_jobs.cancel(db, job["id"])["state"] == "cancelled"
-    knowledge_jobs.worker.run_one(db, job["id"])
+    knowledge_jobs.KnowledgeWorker().run_one(db, job["id"])
     assert knowledge_jobs.get(db, job["id"])["artifact_id"] is None
 
 
@@ -141,7 +141,6 @@ def test_topic_failure_keeps_committed_source_artifact(workspace, monkeypatch):
     monkeypatch.setattr(service, "refresh_topics", fail)
     job = jobs.enqueue(db, record.id, WikiScope())
     worker = knowledge_jobs.KnowledgeWorker()
-    knowledge_jobs.worker.stop_event.clear()
     worker.run_one(db, job["id"])
     failed = knowledge_jobs.get(db, job["id"])
     assert failed["state"] == "failed" and failed["artifact_id"]
