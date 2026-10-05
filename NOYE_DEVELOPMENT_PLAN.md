@@ -2780,7 +2780,7 @@ normal main refreshes and merge commits avoid rewriting published history.
 
 Phase 6 is #43, local Qdrant exposure is #44 (replaces #37), rebuild coordination
 is #45 (replaces #38), and index identity is #46 (replaces #39). Retrieval evaluation
-uses `feat/retrieval-evaluation` (replaces #40), refreshed only after those merges.
+is #47 on `feat/retrieval-evaluation` (replaces #40), refreshed after those merges.
 The merge guide in `docs/phase7/parallel-merge-guide.md` retains historical preview
 evidence and records fresh final-source checks and the four actual resolutions.
 

@@ -95,7 +95,7 @@ deleted; their `feat/` replacements had exactly the same feature SHAs:
 | #37 | [#44](https://github.com/Kouen-Park/Noye/pull/44), `feat/qdrant-localhost` | `bc21669` |
 | #38 | [#45](https://github.com/Kouen-Park/Noye/pull/45), `feat/rebuild-coordination` | `10066cf` |
 | #39 | [#46](https://github.com/Kouen-Park/Noye/pull/46), `feat/index-identity` | `a46a012` |
-| #40 | Replacement on `feat/retrieval-evaluation` | `f550315` |
+| #40 | [#47](https://github.com/Kouen-Park/Noye/pull/47), `feat/retrieval-evaluation` | `f550315` |
 
 Each Phase 7 head was refreshed with the newly merged main in order, without
 rebasing/force-pushing. Local exposure and maintenance merged cleanly. Identity
