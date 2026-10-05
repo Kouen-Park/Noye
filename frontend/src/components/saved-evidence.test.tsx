@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SavedEvidence } from "@/components/saved-evidence";
+import { PassageList } from "@/components/chat/passages";
 import { type ChatCitation, readSourceStatus } from "@/lib/api";
 
 vi.mock("@/lib/api", async (importOriginal) => ({
@@ -21,6 +22,14 @@ const citation: ChatCitation = {
 
 describe("SavedEvidence", () => {
   beforeEach(() => vi.resetAllMocks());
+
+  it("keeps historical excerpts separate from the current-source link in the shared panel", () => {
+    render(<PassageList citations={[citation]} />);
+    expect(screen.getByText(citation.evidence!.excerpts[0].content)
+      .closest(".col-span-2")).not.toBeNull();
+    expect(screen.getByRole("link", { name: "Open One.md" })).toHaveTextContent("Open current");
+    expect(readSourceStatus).not.toHaveBeenCalled();
+  });
 
   it("shows saved text safely without querying today's index or file", () => {
     const { container } = render(<SavedEvidence citation={citation} />);
