@@ -11,6 +11,7 @@ def test_history_has_a_hard_budget_and_assistant_text_is_not_retrieval_evidence(
                 for i in range(50)]
     context = recent_context(messages)
     assert len(context) <= 2400
+    assert "invented prior claim" not in context
     query = retrieval_question("What about it?", messages)
     assert "User topic" in query
     assert "invented prior claim" not in query

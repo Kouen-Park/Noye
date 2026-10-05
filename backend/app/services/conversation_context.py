@@ -14,10 +14,11 @@ def recent_context(messages: Sequence[Message]) -> str:
     parts = []
     remaining = MAX_HISTORY_CHARS
     for message in reversed(messages):
-        if message.error or not message.content.strip():
+        # A local-model comparison showed prior generated claims contaminating a
+        # follow-up despite the warning. Keep only the user's recent questions.
+        if message.role is not Role.USER or message.error or not message.content.strip():
             continue
-        label = "User" if message.role is Role.USER else "Previous assistant (not evidence)"
-        part = f"{label}: {message.content[:MAX_MESSAGE_CHARS]}"
+        part = f"Previous user question (not evidence): {message.content[:MAX_MESSAGE_CHARS]}"
         if len(parts) == MAX_MESSAGES or len(part) > remaining:
             break
         parts.append(part)
