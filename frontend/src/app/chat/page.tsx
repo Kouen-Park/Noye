@@ -6,6 +6,7 @@ import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react
 
 import { AppShell } from "@/components/app-shell";
 import { Composer } from "@/components/chat/composer";
+import { SourceSelector } from "@/components/chat/source-selector";
 import { ConversationList } from "@/components/chat/conversation-list";
 import { MessageBubble } from "@/components/chat/message-bubble";
 import { PassageList } from "@/components/chat/passages";
@@ -13,7 +14,7 @@ import { BookIcon, CrossIcon } from "@/components/icons";
 import { ProviderSelector } from "@/components/provider-selector";
 import {
   ApiError, type ChatMessage, type ConversationSummary, type GenerationProvider,
-  askQuestion, deleteConversation, listConversations, readConversation, renameConversation,
+  askQuestion, deleteConversation, listConversations, readConversation, renameConversation, updateConversationScope,
 } from "@/lib/api";
 
 export default function ChatPage() {
@@ -115,6 +116,8 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [scope, setScope] = useState<string[] | null>(null);
+  const [scopeSaving, setScopeSaving] = useState(false);
   const [inspecting, setInspecting] = useState<ChatMessage | null>(null);
   const panelId = useId();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -135,6 +138,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
       (conversation) => {
         if (controller.signal.aborted) return;
         setMessages(conversation.messages);
+        setScope(conversation.source_scope ?? null);
         setSavedTitle(conversation.title);
         setLoaded(true);
         setLoading(false);
@@ -154,7 +158,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   }, [messages.length, pending]);
 
   const ask = (question: string) => {
-    if (inFlight.current || busy || !loaded) return;
+    if (inFlight.current || busy || scopeSaving || !loaded) return;
     inFlight.current = true;
     setPending(true);
     onBusyChange(true);
@@ -166,7 +170,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
     setMessages((current) => [...current, provisional]);
     // Do not abort generation: the backend saves the turn even if the user
     // leaves. Only mounted workspace state/navigation may consume its result.
-    askQuestion(question, conversationId ?? undefined, provider).then(
+    askQuestion(question, conversationId ?? undefined, provider, scope).then(
       (response) => {
         refreshList();
         if (!live.current) return;
@@ -187,6 +191,17 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
     });
   };
 
+  const changeScope = (ids: string[] | null) => {
+    if (busy || scopeSaving || !loaded) return;
+    if (conversationId === null) { setScope(ids); return; }
+    setScopeSaving(true);
+    updateConversationScope(conversationId, ids).then(() => {
+      if (live.current) { setScope(ids); setError(null); }
+    }, (cause: unknown) => {
+      if (live.current) setError(cause instanceof ApiError ? cause.message : "Could not save selected files.");
+    }).finally(() => { if (live.current) setScopeSaving(false); });
+  };
+
   const closePassages = () => {
     setInspecting(null);
     sourceButton.current?.focus();
@@ -203,6 +218,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
           </div>
           <div className="min-w-0 lg:w-[350px] lg:shrink-0">
             <ProviderSelector value={provider} onChange={onProviderChange} disabled={busy} compact />
+            <SourceSelector scope={scope} onChange={changeScope} disabled={busy || scopeSaving || !loaded} />
           </div>
         </div>
       </header>
@@ -238,8 +254,8 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
           <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">
             <div className="mx-auto max-w-[720px]">
               {busy && !pending && <p role="status" className="mb-2 text-xs text-ink-soft">An answer is still being saved in another conversation.</p>}
-              <Composer onAsk={ask} pending={pending} disabled={!loaded || (busy && !pending)} value={draft} onChange={setDraft} inputRef={inputRef} />
-              <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Each question searches your files. Earlier turns are not sent to the model.</p>
+              <Composer onAsk={ask} pending={pending} disabled={!loaded || scopeSaving || (busy && !pending)} value={draft} onChange={setDraft} inputRef={inputRef} />
+              <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Recent turns help resolve follow-up questions. Answers use retrieved excerpts as evidence.</p>
             </div>
           </footer>
         </section>

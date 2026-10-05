@@ -88,6 +88,8 @@ export interface StoredFile {
   /** Null for formats without pages, and until extraction has run. */
   page_count: number | null;
   chunk_count: number;
+  no_text_pages?: number[] | null;
+  extracted_page_count?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -256,6 +258,10 @@ export interface ChatCitation {
   score: number;
   /** "Algorithms.pdf — page 34", or just the file name. */
   label: string;
+  excerpts?: string[];
+  source_hash?: string | null;
+  index_fingerprint?: string | null;
+  original_status?: "unchanged" | "changed" | "missing" | "unknown";
 }
 
 /** One turn. `error` is set when answering failed; the question is still stored. */
@@ -274,6 +280,7 @@ export interface ChatConversation {
   created_at: string;
   updated_at: string;
   messages: ChatMessage[];
+  source_scope?: string[] | null;
 }
 
 /** A conversation in the sidebar. Carries no messages — they are not shown there. */
@@ -305,11 +312,12 @@ export async function askQuestion(
   question: string,
   conversationId?: string,
   provider: GenerationProvider = "ollama",
+  fileIds?: string[] | null,
 ): Promise<AskResponse> {
   const response = await request("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, conversation_id: conversationId, provider }),
+    body: JSON.stringify({ question, conversation_id: conversationId, provider, file_ids: fileIds }),
   });
   return (await response.json()) as AskResponse;
 }
@@ -338,6 +346,14 @@ export async function renameConversation(id: string, title: string): Promise<Cha
   return (await response.json()) as ChatConversation;
 }
 
+export async function updateConversationScope(id: string, fileIds: string[] | null): Promise<ChatConversation> {
+  const response = await request(`/chat/conversations/${encodeURIComponent(id)}/scope`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ file_ids: fileIds }),
+  });
+  return (await response.json()) as ChatConversation;
+}
+
 /** Delete a conversation. The documents it drew on are untouched. */
 export async function deleteConversation(id: string): Promise<void> {
   await request(`/chat/conversations/${encodeURIComponent(id)}`, { method: "DELETE" });
@@ -346,16 +362,10 @@ export async function deleteConversation(id: string): Promise<void> {
 // --- documents ---------------------------------------------------------------
 
 /** A source a document's first draft was built from, as it was then. */
-export interface DocumentCitation {
-  file_id: string;
-  file_name: string;
-  page_number: number | null;
-  chunk_indexes: number[];
-  score: number;
-  label: string;
-}
+export type DocumentCitation = ChatCitation;
 
 export interface NoyeDocument {
+  provenance_markdown?: string;
   id: string;
   title: string;
   /** Markdown, as the user last left it. This is the document, not a cache. */
@@ -448,8 +458,8 @@ export async function deleteDocument(id: string): Promise<void> {
 }
 
 /** Where to download a document's Markdown. A plain URL, handed to the browser. */
-export function documentExportUrl(id: string): string {
-  return `${apiBaseUrl()}/documents/${encodeURIComponent(id)}/export.md`;
+export function documentExportUrl(id: string, provenance = false): string {
+  return `${apiBaseUrl()}/documents/${encodeURIComponent(id)}/export.md${provenance ? "?provenance=true" : ""}`;
 }
 
 export interface RuntimeServices {

@@ -74,7 +74,7 @@ export function PassageList({ citations }: PassagesProps) {
                 <span className="font-mono text-[11.5px] tabular-nums text-ink-soft">
                   {hasPage ? `page ${citation.page_number}` : "no pages"}
                 </span>
-                <a
+                {citation.original_status !== "missing" && <a
                   href={sourceUrl(citation.file_id, citation.page_number)}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -86,7 +86,14 @@ export function PassageList({ citations }: PassagesProps) {
                   className="ml-auto inline-flex min-h-11 items-center rounded-md border border-edge-strong px-3 text-[12px] font-semibold text-accent-ink hover:bg-brand-wash"
                 >
                   Open
-                </a>
+                </a>}
+                </div>
+                <div className="col-start-2 min-w-0 text-xs text-ink-soft">
+                  <p>Original: {citation.original_status ?? "unknown"}</p>
+                  {citation.source_hash && <p className="mt-1 [overflow-wrap:anywhere]">Version: {citation.source_hash}</p>}
+                  {citation.excerpts?.length ? citation.excerpts.map((excerpt, n) => (
+                    <blockquote key={n} className="mt-2 whitespace-pre-wrap border-l-2 border-accent pl-3 [overflow-wrap:anywhere]">{excerpt}</blockquote>
+                  )) : <p className="mt-2">No excerpt snapshot was stored for this legacy reference.</p>}
                 </div>
               </li>
             );
