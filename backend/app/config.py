@@ -7,13 +7,18 @@ so hardcoding either one would let them drift apart silently.
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #: Repository root — this file is ``<root>/backend/app/config.py``.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+GenerationProvider = Literal["ollama", "gemini", "openai", "anthropic"]
 
 
 class Settings(BaseSettings):
@@ -44,12 +49,23 @@ class Settings(BaseSettings):
     #: it costs roughly 30x the tokens and latency for no gain at answer length.
     ollama_thinking: bool = False
 
+    # Optional cloud generation only; embeddings always remain local.
+    gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    gemini_model: str = Field(default="gemini-3.8-flash", pattern=r"^[A-Za-z0-9._-]+$")
+    openai_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    openai_model: str = Field(default="gpt-4.1-mini", pattern=r"^[A-Za-z0-9._-]+$")
+    anthropic_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    anthropic_model: str = Field(default="claude-haiku-4-5", pattern=r"^[A-Za-z0-9._-]+$")
+
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "noye"
     #: Must match the output dimension of ``ollama_embedding_model``.
     qdrant_vector_size: int = 768
 
     database_url: str = "sqlite:///./data/app.db"
+    #: Desktop supplies an absolute app-data directory. The web defaults stay
+    #: unchanged; neither app bundles nor temporary extraction dirs hold data.
+    noye_data_dir: Path | None = None
 
     #: Noye's own log level. Deliberately separate from uvicorn's: raising this
     #: must not raise httpx's, which logs request bodies and would put a user's
@@ -72,9 +88,62 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def _base_settings() -> Settings:
     """Return the process-wide settings, read from the environment once."""
-    return Settings()
+    data_root = os.environ.get("NOYE_DATA_DIR")
+    settings = Settings(_env_file=Path(data_root) / ".env") if data_root else Settings()
+    if settings.noye_data_dir and "qdrant_collection" not in settings.model_fields_set:
+        # A new desktop workspace must not rebuild/drop the web workspace's
+        # derived index. Explicit advanced configuration can still override it.
+        settings.qdrant_collection = "noye_desktop"
+    return settings
+
+
+_desktop_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    # Replace whole snapshots, never mutate settings held by an in-flight job.
+    return _desktop_settings or _base_settings()
+
+
+def apply_desktop_configuration(values: dict) -> None:
+    global _desktop_settings
+    allowed = {
+        "ollama_model",
+        "gemini_model",
+        "openai_model",
+        "anthropic_model",
+        "gemini_api_key",
+        "openai_api_key",
+        "anthropic_api_key",
+    }
+    if not _base_settings().noye_data_dir or not isinstance(values, dict) or set(values) - allowed:
+        raise ValueError("Invalid desktop configuration")
+    merged = get_settings().model_dump()
+    merged.update(values)
+    updated = Settings.model_validate(merged)
+    from app.services.model_usage import canonical, deleting, lock
+
+    with lock:
+        if canonical(updated.ollama_model) in deleting:
+            raise ValueError("The selected model is being deleted")
+        _desktop_settings = updated
+
+
+def _clear_settings() -> None:
+    global _desktop_settings
+    _desktop_settings = None
+    _base_settings.cache_clear()
+
+
+get_settings.cache_clear = _clear_settings
+
+
+def data_directory() -> Path:
+    """Persistent storage root, independent of the process working directory."""
+    configured = get_settings().noye_data_dir
+    return configured.expanduser().resolve() if configured else PROJECT_ROOT / "data"
 
 
 def sources_dir() -> Path:
@@ -83,13 +152,13 @@ def sources_dir() -> Path:
     These files are Noye's source of truth: the SQLite metadata and the Qdrant
     index are both derived from them and can be rebuilt.
     """
-    path = PROJECT_ROOT / "data" / "sources"
+    path = data_directory() / "sources"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 def documents_dir() -> Path:
     """Where generated, user-editable documents are stored. Created on demand."""
-    path = PROJECT_ROOT / "data" / "documents"
+    path = data_directory() / "documents"
     path.mkdir(parents=True, exist_ok=True)
     return path

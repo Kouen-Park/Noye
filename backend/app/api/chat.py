@@ -24,6 +24,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
+from app.config import GenerationProvider
 from app.db import conversations as conversation_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
@@ -153,6 +154,7 @@ class AskRequest(BaseModel):
     #: Omit to start a new conversation, titled from this question.
     conversation_id: str | None = None
     limit: int = Field(DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)
+    provider: GenerationProvider = "ollama"
 
 
 class AskResponse(BaseModel):
@@ -238,7 +240,9 @@ def ask(
         )
 
     try:
-        generated = answer_question(question, limit=request.limit, file_ids=list(ready))
+        generated = answer_question(
+            question, limit=request.limit, file_ids=list(ready), provider=request.provider
+        )
     except (EmbeddingError, IndexingError, GenerationError) as exc:
         # Neither the question nor the answer is logged. The conversation id
         # locates the turn for anyone who needs the text, in the database

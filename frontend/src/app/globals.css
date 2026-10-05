@@ -49,6 +49,11 @@ body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Secondary copy must remain readable on the tan structural surface too. */
+.noye-sidebar {
+  --ink-soft: var(--ink-on-sunken);
+}
+
 /* Display face is used with restraint: headings only, never body copy. */
 h1,
 h2,
@@ -65,6 +70,19 @@ h2,
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
 }
+
+/* Native WebKit progress otherwise introduces an unrelated bright green. */
+progress {
+  appearance: none;
+  height: 0.5rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--sunken);
+  overflow: hidden;
+}
+progress::-webkit-progress-bar { background: var(--sunken); }
+progress::-webkit-progress-value { background: var(--brand); }
+progress::-moz-progress-bar { background: var(--brand); }
 
 /* The two pieces of motion in the library: the indexing ring and the pulse on
    the active stage segment. Both are ambient — they say "still working" — and

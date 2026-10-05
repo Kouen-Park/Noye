@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type RefObject } from "react";
 
 /**
  * The question box.
@@ -18,11 +18,16 @@ interface ComposerProps {
   pending: boolean;
   /** Disabled while a conversation is loading, or when the backend is unreachable. */
   disabled?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  inputRef?: RefObject<HTMLTextAreaElement | null>;
 }
 
-export function Composer({ onAsk, pending, disabled = false }: ComposerProps) {
+export function Composer({ onAsk, pending, disabled = false, value: controlledValue, onChange, inputRef }: ComposerProps) {
   const inputId = useId();
-  const [value, setValue] = useState("");
+  const [localValue, setLocalValue] = useState("");
+  const value = controlledValue ?? localValue;
+  const setValue = onChange ?? setLocalValue;
   const blocked = pending || disabled;
 
   const send = () => {
@@ -38,13 +43,14 @@ export function Composer({ onAsk, pending, disabled = false }: ComposerProps) {
         event.preventDefault();
         send();
       }}
-      className="mt-4 border-t border-edge pt-3"
+      className="rounded-2xl border border-edge-strong bg-card p-3 shadow-sm"
     >
-      <label htmlFor={inputId} className="block text-[13px] font-semibold text-ink-soft">
+      <label htmlFor={inputId} className="sr-only">
         Ask about your documents
       </label>
-      <div className="mt-1.5 flex flex-wrap items-end gap-2">
+      <div className="flex items-end gap-2">
         <textarea
+          ref={inputRef}
           id={inputId}
           rows={2}
           value={value}
@@ -52,25 +58,25 @@ export function Composer({ onAsk, pending, disabled = false }: ComposerProps) {
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={(event) => {
             // Enter sends, Shift+Enter breaks the line.
-            if (event.key === "Enter" && !event.shiftKey) {
+            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
               event.preventDefault();
               send();
             }
           }}
           placeholder="What do these files say about…"
-          className="min-h-11 min-w-0 flex-1 resize-y rounded-md border border-edge-strong bg-card px-3 py-2 text-[14.5px] placeholder:text-ink-faint disabled:opacity-60"
+          aria-describedby={`${inputId}-help`}
+          className="max-h-40 min-h-11 min-w-0 flex-1 resize-y rounded-md bg-card px-2 py-2 text-[15px] placeholder:text-ink-soft disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={blocked || value.trim() === ""}
-          className="min-h-11 rounded-md bg-brand px-5 text-[13.5px] font-semibold text-ink-inverse disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 shrink-0 rounded-full bg-brand px-4 text-[13px] font-semibold text-ink-inverse hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {pending ? "Thinking…" : "Ask"}
         </button>
       </div>
-      <p className="mt-1.5 text-[12px] text-ink-faint">
-        Answers come from your own files, on this machine. A local model can take a
-        while.
+      <p id={`${inputId}-help`} className="mt-2 px-2 text-[11px] leading-relaxed text-ink-soft">
+        Enter to ask · Shift+Enter for a new line. Uses your selected AI; local models can take a while.
       </p>
     </form>
   );

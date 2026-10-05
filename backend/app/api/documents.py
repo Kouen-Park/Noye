@@ -21,6 +21,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
+from app.config import GenerationProvider
 from app.db import conversations as conversation_store
 from app.db import documents as document_store
 from app.logging_config import get_logger
@@ -131,6 +132,7 @@ class GenerateRequest(BaseModel):
     instruction: str = Field(..., min_length=1)
     #: Overrides the title derived from the instruction.
     title: str | None = None
+    provider: GenerationProvider = "ollama"
 
 
 @router.post("", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
@@ -187,7 +189,9 @@ def generate_document(
         )
 
     try:
-        content = draft_document(instruction, message.content, message.citations)
+        content = draft_document(
+            instruction, message.content, message.citations, provider=request.provider
+        )
     except GenerationError as exc:
         # The instruction and the draft are the user's; only the source
         # message id and the failure go in.
@@ -199,10 +203,7 @@ def generate_document(
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=(
-                "Could not draft the document. The local model that writes it is not "
-                f"responding: {exc}"
-            ),
+            detail=f"Could not draft the document: {exc}",
         ) from exc
 
     return DocumentOut.of(
