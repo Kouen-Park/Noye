@@ -129,6 +129,8 @@ class FileOut(BaseModel):
     error: str | None
     page_count: int | None
     chunk_count: int
+    no_text_pages: list[int] | None
+    extracted_page_count: int | None
     created_at: str
     updated_at: str
 
@@ -143,6 +145,10 @@ class FileOut(BaseModel):
             error=record.error,
             page_count=record.page_count,
             chunk_count=record.chunk_count,
+            no_text_pages=record.no_text_pages,
+            extracted_page_count=(record.page_count - len(record.no_text_pages)
+                                  if record.no_text_pages is not None
+                                  and record.page_count is not None else None),
             created_at=record.created_at.isoformat(),
             updated_at=record.updated_at.isoformat(),
         )

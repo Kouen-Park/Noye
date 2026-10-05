@@ -468,3 +468,29 @@ def test_a_real_draft_is_markdown_and_editable(db) -> None:
         assert len(edited["citations"]) == 1
 
     app.dependency_overrides.clear()
+
+
+def test_provenance_export_preserves_saved_snapshot_after_conversation_deletion(client, db):
+    from app.db import conversations as conversations
+    from app.db import documents as documents
+    from app.models.conversations import MessageCitation
+    citation = MessageCitation("deleted-file", "자료.md", None, (4,), .8,
+                               excerpts=("Exact original passage",), source_hash="a" * 64,
+                               index_fingerprint="b" * 64)
+    conversation = conversations.create_conversation(db, first_question="Question")
+    document = documents.create_document(db, title="Notes", content="Edited body",
+                                         source_conversation_id=conversation.id,
+                                         citations=[citation])
+    conversations.delete_conversation(db, conversation.id)
+    body_only = client.get(f"/documents/{document.id}/export.md").text
+    exported = client.get(f"/documents/{document.id}/export.md?provenance=true").text
+    assert body_only == "Edited body"
+    assert exported.startswith(body_only)
+    assert "Exact original passage" in exported
+    assert "자료.md" in exported
+    assert "page 1" not in exported
+    assert "a" * 64 in exported
+    assert "localhost" not in exported
+    assert "do not validate later edits" in exported
+    assert client.get(f"/documents/{document.id}").json()["citations"][0][
+        "original_status"] == "missing"

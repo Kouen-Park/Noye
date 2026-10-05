@@ -31,7 +31,9 @@ from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
 from app.models.files import FileStatus
 from app.services.citations import build_citations
+from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import EmbeddingError
+from app.services.evidence import original_status
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
@@ -73,9 +75,13 @@ class CitationOut(BaseModel):
     score: float
     #: Ready-made label: "Algorithms.pdf — page 34", or just the name.
     label: str
+    excerpts: list[str] = []
+    source_hash: str | None = None
+    index_fingerprint: str | None = None
+    original_status: str = "unknown"
 
     @classmethod
-    def of(cls, citation: MessageCitation) -> CitationOut:
+    def of(cls, citation: MessageCitation, db: sqlite3.Connection | None = None) -> CitationOut:
         return cls(
             file_id=citation.file_id,
             file_name=citation.file_name,
@@ -83,6 +89,10 @@ class CitationOut(BaseModel):
             chunk_indexes=list(citation.chunk_indexes),
             score=citation.best_score,
             label=citation.label,
+            excerpts=list(citation.excerpts),
+            source_hash=citation.source_hash,
+            index_fingerprint=citation.index_fingerprint,
+            original_status=original_status(db, citation) if db is not None else "unknown",
         )
 
 
@@ -98,13 +108,13 @@ class MessageOut(BaseModel):
     created_at: str
 
     @classmethod
-    def of(cls, message: Message) -> MessageOut:
+    def of(cls, message: Message, db: sqlite3.Connection | None = None) -> MessageOut:
         return cls(
             id=message.id,
             role=message.role,
             content=message.content,
             error=message.error,
-            citations=[CitationOut.of(citation) for citation in message.citations],
+            citations=[CitationOut.of(citation, db) for citation in message.citations],
             created_at=message.created_at.isoformat(),
         )
 
@@ -117,15 +127,18 @@ class ConversationOut(BaseModel):
     created_at: str
     updated_at: str
     messages: list[MessageOut]
+    source_scope: list[str] | None = None
 
     @classmethod
-    def of(cls, conversation: Conversation) -> ConversationOut:
+    def of(cls, conversation: Conversation,
+           db: sqlite3.Connection | None = None) -> ConversationOut:
         return cls(
             id=conversation.id,
             title=conversation.title,
             created_at=conversation.created_at.isoformat(),
             updated_at=conversation.updated_at.isoformat(),
-            messages=[MessageOut.of(message) for message in conversation.messages],
+            messages=[MessageOut.of(message, db) for message in conversation.messages],
+            source_scope=conversation.source_scope,
         )
 
 
@@ -152,11 +165,12 @@ class ConversationSummary(BaseModel):
 class AskRequest(BaseModel):
     """A question, optionally continuing an existing conversation."""
 
-    question: str = Field(..., min_length=1)
+    question: str = Field(..., min_length=1, max_length=4000)
     #: Omit to start a new conversation, titled from this question.
     conversation_id: str | None = None
     limit: int = Field(DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)
     provider: GenerationProvider = "ollama"
+    file_ids: list[str] | None = Field(default=None, max_length=200)
 
 
 class AskResponse(BaseModel):
@@ -175,6 +189,20 @@ class AskResponse(BaseModel):
 
 class RenameRequest(BaseModel):
     title: str = Field(..., min_length=1)
+
+
+class ScopeRequest(BaseModel):
+    file_ids: list[str] | None = Field(default=None, max_length=200)
+
+
+@router.put("/conversations/{conversation_id}/scope", response_model=ConversationOut)
+def update_scope(conversation_id: str, request: ScopeRequest,
+                 db: sqlite3.Connection = Depends(get_db)) -> ConversationOut:
+    try:
+        conversation = conversation_store.set_source_scope(db, conversation_id, request.file_ids)
+        return ConversationOut.of(conversation)
+    except conversation_store.ConversationNotFound as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 def _ready_file_names(db: sqlite3.Connection) -> dict[str, str]:
@@ -215,6 +243,11 @@ def ask(
                 status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
             ) from exc
 
+    if "file_ids" in request.model_fields_set:
+        conversation = conversation_store.set_source_scope(db, conversation.id, request.file_ids)
+    scope = conversation.source_scope
+    previous = conversation_store.recent_messages(db, conversation.id)
+
     # Written before the model is called: generation can take minutes and can
     # fail, and the user's question must survive either.
     stored_question = conversation_store.add_message(
@@ -223,7 +256,9 @@ def ask(
 
     ready = {}
     try:
-        ready = _ready_file_names(db)
+        ready = _ready_file_names(db) if scope != [] else {}
+        if scope is not None:
+            ready = {file_id: name for file_id, name in ready.items() if file_id in scope}
 
         if not ready:
             answer = conversation_store.add_message(
@@ -242,12 +277,14 @@ def ask(
                 conversation_id=conversation.id,
                 conversation_title=conversation.title,
                 question=MessageOut.of(stored_question),
-                answer=MessageOut.of(answer),
+                answer=MessageOut.of(answer, db),
                 searched_files=0,
             )
 
         generated = answer_question(
-            question, limit=request.limit, file_ids=list(ready), provider=request.provider
+            question, limit=request.limit, file_ids=list(ready), provider=request.provider,
+            **({"history": recent_context(previous),
+                "retrieval_query": retrieval_question(question, previous)} if previous else {})
         )
     except (EmbeddingError, IndexingError, GenerationError) as exc:
         # Neither the question nor the answer is logged. The conversation id
@@ -285,6 +322,17 @@ def ask(
             page_number=citation.page_number,
             chunk_indexes=citation.chunk_indexes,
             best_score=citation.best_score,
+            excerpts=tuple(next(result.content for result in generated.sources
+                                if result.file_id == citation.file_id
+                                and result.chunk_index == chunk_index)
+                           for chunk_index in citation.chunk_indexes),
+            # Source identity belongs to retrieved points, not mutable current file rows.
+            source_hash=next(result.source_hash for result in generated.sources
+                             if result.file_id == citation.file_id
+                             and result.chunk_index == citation.chunk_indexes[0]),
+            index_fingerprint=next(result.index_fingerprint for result in generated.sources
+                                   if result.file_id == citation.file_id
+                                   and result.chunk_index == citation.chunk_indexes[0]),
         )
         for citation in build_citations(generated.sources, file_names=ready)
     ]
@@ -301,7 +349,7 @@ def ask(
         conversation_id=conversation.id,
         conversation_title=conversation.title,
         question=MessageOut.of(stored_question),
-        answer=MessageOut.of(answer),
+        answer=MessageOut.of(answer, db),
         searched_files=len(ready),
     )
 
@@ -323,7 +371,7 @@ def read_conversation(
 ) -> ConversationOut:
     """Read one conversation with its messages and their stored citations."""
     try:
-        return ConversationOut.of(conversation_store.read_conversation(db, conversation_id))
+        return ConversationOut.of(conversation_store.read_conversation(db, conversation_id), db)
     except conversation_store.ConversationNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
@@ -341,7 +389,7 @@ def rename_conversation(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
-    return ConversationOut.of(conversation_store.read_conversation(db, conversation_id))
+    return ConversationOut.of(conversation_store.read_conversation(db, conversation_id), db)
 
 
 @router.delete("/conversations/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -74,6 +74,8 @@ def answer_question(
     client: httpx.Client | None = None,
     qdrant_client=None,
     provider: GenerationProvider = "ollama",
+    history: str = "",
+    retrieval_query: str | None = None,
 ) -> Answer:
     """Retrieve relevant chunks and answer the question from them.
 
@@ -91,7 +93,7 @@ def answer_question(
         raise ValueError("Cannot answer an empty question")
 
     results = search(
-        question,
+        retrieval_query or question,
         limit=limit,
         file_ids=file_ids,
         min_score=min_score,
@@ -101,13 +103,13 @@ def answer_question(
     if not results:
         return Answer(text=NO_CONTEXT_ANSWER, sources=[])
 
-    prompt = build_prompt(question, results)
+    prompt = build_prompt(question, results, history=history)
     text = generate(prompt, client=client, provider=provider)
 
     return Answer(text=text, sources=list(results))
 
 
-def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
+def build_prompt(question: str, results: Sequence[SearchResult], *, history: str = "") -> str:
     """Render retrieved passages and the question into a single prompt.
 
     Excerpts are numbered so the model can refer to them while reasoning, and
@@ -127,7 +129,12 @@ def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
         excerpts.append(f"[{label}]\n{result.content}")
 
     joined = "\n\n".join(excerpts)
-    return f"{joined}\n\nQuestion: {question.strip()}\n\nAnswer using only the excerpts above."
+    context = (
+        "Conversation context (only to resolve references; not source evidence):\n"
+        f"{history[:2400]}\n\n" if history else ""
+    )
+    return (f"{context}{joined}\n\nQuestion: {question.strip()}\n\n"
+            "Answer using only the excerpts above.")
 
 
 def generate(

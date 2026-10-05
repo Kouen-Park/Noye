@@ -335,6 +335,8 @@ def ingest_file(
 
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
+    file_store.reset_counts(connection, record.id)
+    before_hash = hash_file(record.path)
 
     try:
         with timed(logger, "Extracted", file=record.id):
@@ -349,12 +351,18 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     content_hash = hash_file(record.path)
     if content_hash is None:
         raise IngestionError("Could not read the source file while recording its identity.")
+    if before_hash != content_hash:
+        raise IngestionError("The source changed during text extraction. "
+                             "Retry with a stable original.")
     file_store.set_content_hash(connection, record.id, content_hash)
 
     # Only meaningful for page-aware formats; Markdown and text come back as a
     # single placeholder page, and reporting "1 page" for them would be noise.
     if record.file_type.has_pages:
         file_store.set_counts(connection, record.id, page_count=len(pages))
+        file_store.set_pdf_coverage(connection, record.id, [
+            page.page_number for page in pages if not page.content.strip()
+        ])
     return pages
 
 
@@ -429,7 +437,8 @@ def _embed_and_index(
             delete_file_chunks(record.id, client=qdrant_client)
             _check_cancel(cancellation)
             index_chunks(
-                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint
+                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint,
+                source_hash=file_store.get_file(connection, record.id).content_hash,
             )
         _check_cancel(cancellation)
         if index_identity.current_index_identity(client=http_client) != identity:

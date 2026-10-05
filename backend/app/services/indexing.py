@@ -149,6 +149,7 @@ def index_chunks(
     client: QdrantClient | None = None,
     *,
     index_fingerprint: str | None = None,
+    source_hash: str | None = None,
 ) -> int:
     """Store chunk vectors with their provenance, returning the number stored.
 
@@ -196,6 +197,7 @@ def index_chunks(
             id=point_id(chunk.file_id, chunk.chunk_index),
             vector=list(vector),
             payload={
+                "source_hash": source_hash,
                 FILE_ID: chunk.file_id,
                 PAGE_NUMBER: chunk.page_number,
                 CHUNK_INDEX: chunk.chunk_index,

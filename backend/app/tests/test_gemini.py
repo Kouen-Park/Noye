@@ -205,6 +205,10 @@ def test_api_routes_forward_explicit_provider_and_preserve_failures(tmp_path, mo
     init_schema(db)
     app.dependency_overrides[chat.get_db] = lambda: db
     monkeypatch.setattr(chat, "_ready_file_names", lambda db: {"f1": "notes.md"})
+    from app.db import files as file_store
+    from app.models.files import FileType
+    file_store.create_file(db, name="notes.md", file_type=FileType.MARKDOWN,
+                           path="/tmp/synthetic-notes.md", size=10, file_id="f1")
     called = []
 
     def answer(question, **kwargs):

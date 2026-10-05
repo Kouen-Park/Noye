@@ -16,7 +16,8 @@ from qdrant_client.http.exceptions import ApiException
 
 from app.config import get_settings
 from app.services import index_identity
-from app.services.embeddings import EmbeddingError, embed_query as embed_text
+from app.services.embeddings import EmbeddingError
+from app.services.embeddings import embed_query as embed_text
 from app.services.indexing import (
     CHUNK_INDEX,
     CONTENT,
@@ -49,6 +50,8 @@ class SearchResult:
     page_number: int | None
     chunk_index: int
     score: float
+    source_hash: str | None = None
+    index_fingerprint: str | None = None
 
 
 def search(
@@ -117,6 +120,8 @@ def _to_result(point) -> SearchResult:
         page_number=payload.get(PAGE_NUMBER),
         chunk_index=payload.get(CHUNK_INDEX, 0),
         score=point.score,
+        source_hash=payload.get("source_hash"),
+        index_fingerprint=payload.get("index_fingerprint"),
     )
 
 
