@@ -17,7 +17,7 @@ def desktop_control(x_noye_control: str = Header(default="")):
         or not token
         or not hmac.compare_digest(token, x_noye_control)
     ):
-        raise HTTPException(403, "Model management is only available in the desktop app.")
+        raise HTTPException(403, "Desktop management is only available in the desktop app.")
 
 
 router = APIRouter(prefix="/models", tags=["models"], dependencies=[Depends(desktop_control)])

@@ -73,7 +73,12 @@ def test_web_data_default_is_unchanged(monkeypatch):
 
 @pytest.mark.parametrize("shutdown", ["line", "eof"])
 def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
-    env = {**os.environ, "LOG_TO_FILE": "false", "FRONTEND_ORIGINS": "tauri://localhost"}
+    env = {
+        **os.environ,
+        "LOG_TO_FILE": "false",
+        "FRONTEND_ORIGINS": "tauri://localhost",
+        "NOYE_CONTROL_TOKEN": "synthetic-service-capability",
+    }
     root = tmp_path / "workspace"
     executable = os.environ.get("NOYE_TEST_SIDECAR")
     command = (
@@ -120,6 +125,15 @@ def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
             with httpx.Client(base_url=ready["url"], timeout=3) as client:
                 assert client.get("/health").json() == {"status": "ok"}
                 assert client.get("/files").json() == []
+                assert client.get("/services").status_code == 403
+                # The frozen app includes the control route but cannot prepare
+                # a service without explicit confirmation. No daemon is started.
+                refused = client.post(
+                    "/services/start",
+                    headers={"X-Noye-Control": "synthetic-service-capability"},
+                    json={"service": "qdrant", "confirmed": False},
+                )
+                assert refused.status_code == 400
                 providers = client.get("/ai/providers")
                 assert "synthetic-desktop-sentinel" not in providers.text
                 assert next(p for p in providers.json() if p["id"] == "openai")["configured"]
@@ -135,6 +149,7 @@ def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
                 )
                 assert response.headers["access-control-allow-origin"] == "tauri://localhost"
             assert (root / "app.db").is_file()
+            assert not (root / "desktop-service-id").exists()
             if shutdown == "line":
                 child.stdin.write("shutdown\n")
                 child.stdin.flush()

@@ -32,7 +32,8 @@ fn main() {
         .expect("could not build Noye desktop")
         .run(|app, event| match event {
             // Closing the only window exits on macOS too, so no invisible
-            // backend is left behind. Do not touch Ollama/Docker/Qdrant.
+            // backend is left behind. Its shutdown only stops service handles
+            // started by this session, never external Ollama/Docker/Qdrant.
             tauri::RunEvent::WindowEvent {
                 event: tauri::WindowEvent::Destroyed,
                 ..

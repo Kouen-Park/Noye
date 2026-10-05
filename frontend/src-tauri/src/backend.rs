@@ -180,7 +180,9 @@ impl Backend {
         }
         let (mut process, _) = self
             .exit
-            .wait_timeout_while(process, Duration::from_secs(8), |process| !process.exited)
+            // Allow uvicorn's five-second drain plus bounded owned-service
+            // cleanup before falling back to killing this backend child alone.
+            .wait_timeout_while(process, Duration::from_secs(16), |process| !process.exited)
             .unwrap();
         if let Some(child) = process.child.take() {
             if !process.exited {
