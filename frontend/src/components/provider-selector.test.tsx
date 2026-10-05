@@ -41,7 +41,7 @@ describe("ProviderSelector", () => {
     render(<Harness />);
     await screen.findByRole("option", { name: /cloud-model/ });
     await userEvent.selectOptions(screen.getByRole("combobox"), "gemini");
-    expect(screen.getByText(/question and retrieved document excerpts/)).toBeInTheDocument();
+    expect(screen.getByText(/question, bounded recent conversation context and retrieved document excerpts/)).toBeInTheDocument();
     expect(screen.getByText(/cannot enforce a free tier/)).toBeInTheDocument();
     await userEvent.selectOptions(screen.getByRole("combobox"), "ollama");
     expect(screen.queryByText(/will be sent to Google/)).not.toBeInTheDocument();

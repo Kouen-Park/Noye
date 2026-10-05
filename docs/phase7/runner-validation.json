@@ -1,0 +1,16 @@
+{
+  "ollama_version": {
+    "version": "0.34.2"
+  },
+  "model": "embeddinggemma",
+  "template": "{{ .Prompt }}",
+  "context_length": {
+    "gemma3.context_length": 2048
+  },
+  "short_embedding_dimensions": 768,
+  "short_prompt_eval_count": 9,
+  "oversize_chars": 8000,
+  "oversize_error": "The embedding input exceeds the model's token limit. Nothing was truncated. Shorten the question or reduce CHUNK_SIZE and explicitly re-index the file.",
+  "truncate": false,
+  "note": "Synthetic input on an owned temporary loopback runner; no downloads or personal data."
+}

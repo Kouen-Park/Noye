@@ -11,6 +11,7 @@ depends on a module-level global.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import uuid
 from collections.abc import Sequence
@@ -47,6 +48,7 @@ def _to_file(row: sqlite3.Row) -> File:
         error=row["error"],
         page_count=row["page_count"],
         chunk_count=row["chunk_count"],
+        no_text_pages=json.loads(row["no_text_pages"]) if row["no_text_pages"] else None,
         content_hash=row["content_hash"],
         embedding_model=row["embedding_model"],
         index_fingerprint=row["index_fingerprint"],
@@ -321,7 +323,8 @@ def reset_counts(connection: sqlite3.Connection, file_id: str) -> File:
     """
     with connection:
         cursor = connection.execute(
-            "UPDATE files SET page_count = NULL, chunk_count = 0, updated_at = ? WHERE id = ?",
+            "UPDATE files SET page_count = NULL, no_text_pages = NULL, chunk_count = 0, "
+            "updated_at = ? WHERE id = ?",
             (_now_iso(), file_id),
         )
     if cursor.rowcount == 0:
@@ -390,3 +393,11 @@ def count_chunks(connection: sqlite3.Connection, file_id: str | None = None) -> 
             "SELECT COUNT(*) AS n FROM chunks WHERE file_id = ?", (file_id,)
         ).fetchone()
     return row["n"]
+
+
+def set_pdf_coverage(connection: sqlite3.Connection, file_id: str,
+                     no_text_pages: list[int] | None) -> None:
+    with connection:
+        connection.execute("UPDATE files SET no_text_pages = ? WHERE id = ?",
+                           (json.dumps(no_text_pages) if no_text_pages is not None else None,
+                            file_id))

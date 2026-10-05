@@ -29,6 +29,7 @@ from app.models.conversations import Role
 from app.models.documents import Document
 from app.models.evidence import EvidenceSnapshot
 from app.services.documents import draft_document
+from app.services.evidence import original_status, provenance_markdown
 from app.services.generation import GenerationError
 
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -46,6 +47,7 @@ class DocumentCitationOut(BaseModel):
     score: float
     label: str
     evidence: EvidenceSnapshot | None = None
+    original_status: str = "unknown"
 
 
 class DocumentOut(BaseModel):
@@ -62,13 +64,15 @@ class DocumentOut(BaseModel):
     citations: list[DocumentCitationOut]
     created_at: str
     updated_at: str
+    provenance_markdown: str = ""
 
     @classmethod
-    def of(cls, document: Document) -> DocumentOut:
+    def of(cls, document: Document, db: sqlite3.Connection | None = None) -> DocumentOut:
         return cls(
             id=document.id,
             title=document.title,
             content=document.content,
+            provenance_markdown=provenance_markdown(document.citations),
             source_conversation_id=document.source_conversation_id,
             source_message_id=document.source_message_id,
             source_instruction=document.source_instruction,
@@ -81,6 +85,7 @@ class DocumentOut(BaseModel):
                     score=citation.best_score,
                     label=citation.label,
                     evidence=citation.evidence,
+                    original_status=original_status(db, citation) if db is not None else "unknown",
                 )
                 for citation in document.citations
             ],
@@ -150,7 +155,7 @@ def create_document(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Give the document a name."
         )
     return DocumentOut.of(
-        document_store.create_document(db, content=request.content, title=title)
+        document_store.create_document(db, content=request.content, title=title), db
     )
 
 
@@ -218,7 +223,7 @@ def generate_document(
             source_conversation_id=message.conversation_id,
             source_message_id=message.id,
             citations=message.citations,
-        )
+        ), db
     )
 
 
@@ -234,7 +239,7 @@ def read_document(
 ) -> DocumentOut:
     """Read one document with its citations."""
     try:
-        return DocumentOut.of(document_store.get_document(db, document_id))
+        return DocumentOut.of(document_store.get_document(db, document_id), db)
     except document_store.DocumentNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
@@ -254,7 +259,7 @@ def update_document(
         return DocumentOut.of(
             document_store.update_document(
                 db, document_id, title=request.title, content=request.content
-            )
+            ), db
         )
     except document_store.DocumentNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
@@ -264,7 +269,7 @@ def update_document(
 
 @router.get("/{document_id}/export.md")
 def export_markdown(
-    document_id: str, db: sqlite3.Connection = Depends(get_db)
+    document_id: str, provenance: bool = False, db: sqlite3.Connection = Depends(get_db)
 ) -> Response:
     """Download the document as a `.md` file.
 
@@ -277,7 +282,8 @@ def export_markdown(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
     return Response(
-        content=document.content,
+        content=document.content + ("\n\n" + provenance_markdown(document.citations)
+                                    if provenance and document.citations else ""),
         media_type="text/markdown; charset=utf-8",
         headers={
             # RFC 5987 form, so a non-ASCII title survives the round trip.

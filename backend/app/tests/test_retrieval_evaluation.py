@@ -110,3 +110,21 @@ def test_optional_generation_saves_answers_for_manual_review(monkeypatch):
     assert calls
     assert result["rows"][0]["answer"] == "Synthetic answer"
     assert result["rows"][0]["review"] is None
+
+
+def test_reviews_are_bound_to_answers_and_negatives_have_separate_denominators():
+    from app.evaluation.review import answer_hash, apply_reviews
+    report = {"dataset_sha256": "dataset", "rows": [
+        {"question_id": "a", "answer": "Correct", "review": None, "categories": ["english"]},
+        {"question_id": "n", "answer": "I cannot answer", "review": None,
+         "categories": ["negative"]},
+    ]}
+    reviews = {"dataset_sha256": "dataset", "reviewer": "test rubric", "rows": {
+        key: {"answer_sha256": answer_hash(answer), "correct": True, "faithful": True,
+              "abstained": key == "n", "note": "Matches supplied rubric"}
+        for key, answer in (("a", "Correct"), ("n", "I cannot answer"))
+    }}
+    assert apply_reviews(report, reviews)["answer_review"]["abstention_accuracy"] == 1
+    report["rows"][0]["answer"] = "Different answer"
+    with pytest.raises(ValueError, match="exact generated answer"):
+        apply_reviews(report, reviews)

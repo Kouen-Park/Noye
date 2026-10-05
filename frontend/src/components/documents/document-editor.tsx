@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { DocumentPreview } from "@/components/documents/document-preview";
+import { ExportControls } from "@/components/documents/export-controls";
 
 /**
  * The editor.
@@ -28,6 +29,8 @@ interface DocumentEditorProps {
   saving: boolean;
   /** Reported up because PDF export needs the rendered document on screen. */
   onViewChange?: (view: Tab) => void;
+  documentId?: string;
+  provenance?: string;
 }
 
 export function DocumentEditor({
@@ -36,15 +39,19 @@ export function DocumentEditor({
   onSave,
   saving,
   onViewChange,
+  documentId,
+  provenance = "",
 }: DocumentEditorProps) {
   const bodyId = useId();
   const titleId = useId();
   const [tab, setTab] = useState<Tab>("write");
   const [draftTitle, setDraftTitle] = useState(title);
   const [draftContent, setDraftContent] = useState(content);
+  const [includeProvenance, setIncludeProvenance] = useState(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
 
   const dirty = draftTitle !== title || draftContent !== content;
+  const exportContent = draftContent + (includeProvenance && provenance ? `\n\n${provenance}` : "");
 
   // Warn before losing unsaved work. The browser's own dialog, because a custom
   // one cannot block navigation.
@@ -142,9 +149,14 @@ export function DocumentEditor({
             </p>
           </>
         ) : (
-          <DocumentPreview content={draftContent} />
+          <DocumentPreview content={draftContent} provenance={includeProvenance ? provenance : ""} />
         )}
       </div>
+      {documentId && <div className="mt-5 border-t border-edge pt-3">
+        <ExportControls documentId={documentId} previewVisible={tab === "preview"}
+          content={exportContent} title={draftTitle} includeProvenance={includeProvenance}
+          onProvenanceChange={setIncludeProvenance} />
+      </div>}
     </div>
   );
 }

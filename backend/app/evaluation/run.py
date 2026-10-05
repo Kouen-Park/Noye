@@ -27,7 +27,16 @@ from app.config import get_settings
 from app.evaluation.dataset import load_dataset
 from app.evaluation.metrics import diversify, ranking_metrics, reciprocal_rank_fusion, summarize
 from app.services.chunking import Chunk
-from app.services.embeddings import EmbeddingError, embed_text, embed_texts
+from app.services.embeddings import (
+    EmbeddingError,
+    input_format_version,
+)
+from app.services.embeddings import (
+    embed_documents as embed_texts,
+)
+from app.services.embeddings import (
+    embed_query as embed_text,
+)
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, build_prompt, generate
 from app.services.indexing import index_chunks
 from app.services.retrieval import SearchResult
@@ -166,16 +175,19 @@ def evaluate(dataset: dict, *, mode: str, ks: list[int], repeats: int,
                    "repeat_ms": timings[1:], "ranking_consistent": consistent,
                    "expected_answer": question["expected_answer"], "answer": None,
                    "answer_ms": None, "review": None}
-            if generation:
-                context = [SearchResult(by_id[p]["text"], documents[p], None,
-                                        passages.index(by_id[p]), 0.0) for p in ranking[:max(ks)]]
-                started = time.perf_counter()
-                row["answer"] = generate(build_prompt(question["text"], context)) if context \
-                    else NO_CONTEXT_ANSWER
-                row["answer_ms"] = (time.perf_counter() - started) * 1000
             rows.append(row)
         if dense and installed_digest() != dense.digest:
             raise EmbeddingError("Model changed during evaluation; discard this run.")
+        # Finish all ranking before generation: avoid swapping two local models per question.
+        if generation:
+            for row in rows:
+                context = [SearchResult(by_id[p]["text"], documents[p], None,
+                                        passages.index(by_id[p]), 0.0)
+                           for p in row["ranking"][:max(ks)]]
+                started = time.perf_counter()
+                row["answer"] = generate(build_prompt(row["question"], context)) if context \
+                    else NO_CONTEXT_ANSWER
+                row["answer_ms"] = (time.perf_counter() - started) * 1000
         categories = sorted({c for q in dataset["questions"] for c in q["categories"]})
         summaries = {}
         for k in ks:
@@ -188,7 +200,8 @@ def evaluate(dataset: dict, *, mode: str, ks: list[int], repeats: int,
         ordered_times = sorted(warm_times)
         return {"dataset": dataset["name"], "mode": mode, "diversity": diversity,
                 "k": ks, "vector_size": get_settings().qdrant_vector_size,
-                "input_format": "raw-v1", "lexical_tokenizer": "unicode-words-preserving-ids",
+                "input_format": input_format_version(),
+                "lexical_tokenizer": "unicode-words-preserving-ids",
                 "model": get_settings().ollama_embedding_model if dense else None,
                 "model_digest": dense.digest if dense else None,
                 "generation_model": get_settings().ollama_model if generation else None,

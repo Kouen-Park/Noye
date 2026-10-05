@@ -269,3 +269,40 @@ def test_real_ollama_matches_korean_question_to_korean_passage() -> None:
         return dot / norm
 
     assert similarity(question, korean_answer) > similarity(question, unrelated)
+
+
+def test_task_formats_are_separate_and_original_chunks_stay_raw(monkeypatch):
+    from app.services.embeddings import embed_query
+    settings = get_settings().model_copy(update={"embedding_input_format": "embeddinggemma-v1"})
+    monkeypatch.setattr("app.services.embeddings.get_settings", lambda: settings)
+    handler = responder(embeddings=[vector()])
+    chunk = Chunk("f", 1, 0, "한국어 원문")
+    with mock_client(handler) as client:
+        embed_query("질문?", client=client)
+        embed_chunks([chunk], client=client)
+    assert handler.seen[0]["input"] == ["task: search result | query: 질문?"]
+    assert handler.seen[1]["input"] == ["title: none | text: 한국어 원문"]
+    assert all(payload["truncate"] is False for payload in handler.seen)
+    assert chunk.content == "한국어 원문"
+
+
+def test_input_guard_counts_prefix_and_refuses_whole_batch_before_request(monkeypatch):
+    from app.services.embeddings import embed_documents
+    settings = get_settings().model_copy(update={
+        "embedding_input_format": "embeddinggemma-v1", "embedding_max_input_chars": 21,
+    })
+    monkeypatch.setattr("app.services.embeddings.get_settings", lambda: settings)
+    handler = responder(embeddings=[vector()])
+    with mock_client(handler) as client:
+        embed_documents(["a"], client=client)  # 20-character prefix plus one character
+        with pytest.raises(EmbeddingError, match="including its task prefix"):
+            embed_documents(["a", "ab"], client=client)
+    assert len(handler.seen) == 1
+
+
+def test_token_overflow_is_usable_and_never_echoes_input():
+    handler = responder(status=400, body="input length exceeds context length: PRIVATE CONTENT")
+    with mock_client(handler) as client:
+        with pytest.raises(EmbeddingError, match="Nothing was truncated") as error:
+            embed_text("private", client=client)
+    assert "PRIVATE" not in str(error.value)

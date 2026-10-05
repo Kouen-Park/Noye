@@ -21,8 +21,8 @@ import remarkGfm from "remark-gfm";
  * document uses the same tokens as the rest of Noye and needs no extra dependency.
  */
 
-export function DocumentPreview({ content }: { content: string }) {
-  if (!content.trim()) {
+export function DocumentPreview({ content, provenance = "" }: { content: string; provenance?: string }) {
+  if (!content.trim() && !provenance.trim()) {
     return (
       <p className="text-[13.5px] text-ink-soft">
         Nothing to preview yet. What you write appears here.
@@ -33,6 +33,9 @@ export function DocumentPreview({ content }: { content: string }) {
   return (
     <div data-print="document" className="max-w-[72ch] text-[14.5px] leading-relaxed">
       <MarkdownContent content={content} />
+      {provenance && <section data-print-provenance>
+        <MarkdownContent content={provenance} />
+      </section>}
     </div>
   );
 }

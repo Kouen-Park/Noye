@@ -17,7 +17,8 @@ def workspace(path):
             INSERT INTO files (id, name, file_type, path, size, status, created_at, updated_at)
             VALUES ('source', 'example.txt', 'txt', ?, 14, 'READY', 'now', 'now')
         """, (str(original),))
-        connection.execute("INSERT INTO conversations VALUES ('chat', 'Saved chat', 'now', 'now')")
+        connection.execute("INSERT INTO conversations (id, title, created_at, updated_at) "
+                           "VALUES ('chat', 'Saved chat', 'now', 'now')")
         connection.execute("""
             INSERT INTO documents (id, title, content, created_at, updated_at)
             VALUES ('doc', 'Saved doc', 'edited document', 'now', 'now')

@@ -365,6 +365,7 @@ def ingest_file(
 
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
+    file_store.reset_counts(connection, record.id)
 
     try:
         # Hash and parse the same byte copy. Checking a live path twice alone
@@ -393,6 +394,9 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     # single placeholder page, and reporting "1 page" for them would be noise.
     if record.file_type.has_pages:
         file_store.set_counts(connection, record.id, page_count=len(pages))
+        file_store.set_pdf_coverage(connection, record.id, [
+            page.page_number for page in pages if not page.content.strip()
+        ])
     return pages
 
 

@@ -554,3 +554,18 @@ reports remain historical. No personal workspace/index/container was rebuilt or
 removed, no real key/model/cloud call was used, and no rendered native PDF was
 inspected. The Phase 8 acceptance list above remains open. Open evidence/drafting
 PRs #41/#42 are separate work, and #41's index-identity base branch is retained.
+
+## Native knowledge workflow validation — 2026-10-05
+
+The [knowledge workflow record](phase7/knowledge-workflow.md) supersedes the
+earlier uninspected-export checkpoint for a distinct synthetic QA workspace.
+Actual native body-only/cited Markdown and PDF exports retained unsaved Korean
+text and the last body section; the cited PDF included both complete historical
+excerpts on a separate appendix page, with no application chrome. No personal
+workspace was imported or modified. The final combined #53/#54/#55 integration
+passes 808 backend, 227 frontend and 5 Rust tests; package/frozen-sidecar results
+and the remaining acceptance limits are recorded in that document.
+
+The full upload → live RAG → draft → export → backup/recovery acceptance flow,
+real provider access, repeat-filename WebKit download reliability and other
+operating systems remain Phase 8 work.

@@ -127,13 +127,30 @@ progress::-moz-progress-bar { background: var(--brand); }
     --edge-strong: #999999;
   }
 
+  html,
   body {
     background: #fff;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
   /* Hide the application. */
-  body :not([data-print="document"]):not(:has([data-print="document"])) {
+  body :not([data-print="document"]):not([data-print="document"] *):not(:has([data-print="document"])) {
     display: none !important;
+  }
+
+  /* Release screen grids, fixed heights and scroll containers for pagination. */
+  body :has([data-print="document"]) {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    margin: 0;
+    padding: 0;
   }
 
   [data-print="document"] {
@@ -149,14 +166,22 @@ progress::-moz-progress-bar { background: var(--brand); }
     color: #000;
   }
 
-  /* A heading should not be the last line on a page, and a table or code block
-     should not be split across one where it can be helped. */
-  [data-print="document"] :is(h1, h2, h3) {
-    break-after: avoid;
+  [data-print="document"] pre {
+    white-space: pre-wrap;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    break-inside: auto;
+    page-break-inside: auto;
   }
 
-  [data-print="document"] :is(pre, table, blockquote, li) {
-    break-inside: avoid;
+  [data-print-provenance] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Keep headings with their text; allow evidence to flow across pages. */
+  [data-print="document"] :is(h1, h2, h3) {
+    break-after: avoid;
   }
 
   /* Links print as text, so the destination has to be readable on paper. */

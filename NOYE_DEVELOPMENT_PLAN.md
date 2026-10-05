@@ -2080,7 +2080,7 @@ Features:
 -   [x] Rename — the title field, saved with the body
 -   [x] Delete
 -   [x] Export `.md`
--   [x] Export PDF — implemented, output not yet inspected (§13.6)
+-   [x] Export PDF — native synthetic output inspected (§16.8); broader acceptance remains Phase 8
 
 Example use:
 
@@ -2185,6 +2185,9 @@ someone wrote. Generating again creates a new document.
 
 
 ## 13.6 What was built, and the decisions taken along the way
+
+This is the historical Phase 5 checkpoint. §16.8 records the later native export
+inspection and fixes, including a long cited PDF without application chrome.
 
 Three branches, merged as #24 (persistence), #25 (API) and #26 (UI). Frontend
 tests went from 96 to 115; the backend suite collects 420, the documents tests
@@ -2566,11 +2569,11 @@ milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
 types and builds run with each change. Phase 8 then performs broader stability,
 quality refinement and final packaged-app acceptance.
 
-Items 1 through 8 are implemented with regression/configuration evidence; item 10
-has its evaluation foundation but remains an incomplete milestone (see §16.5).
-The other items remain separate work. Existing desktop storage, service checks
-and SQLite-copy import are partial foundations, not missing functionality to
-rebuild. Reassess current code before each item and preserve all saved work.
+All twelve items have their implementations and measured limits recorded
+(see §§16.5–16.8). This includes actual local answer/abstention evaluation and
+native cited exports; larger quality studies and the full packaged acceptance
+flow remain Phase 8 work. Reassess current code before further changes and
+preserve all saved work.
 
 ## 16.1 Approved scope and expected benefit
 
@@ -2693,7 +2696,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 9. Task-specific embedding inputs and length limits
 
--   [ ] Separate query and document embedding functions with explicit model-aware
+-   [x] Separate query and document embedding functions with explicit model-aware
     input formats. For EmbeddingGemma, verify runner behavior and compare retrieval
     task prefixes against the current baseline; record the format in item 4.
 - Detect oversized inputs, including prefixes, and request non-silent truncation
@@ -2705,7 +2708,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 10. Retrieval evaluation and measured improvements
 
--   [ ] Create a reproducible, non-personal evaluation set with Korean/English and
+-   [x] Create a reproducible, non-personal evaluation set with Korean/English and
     cross-language questions, exact identifiers, negatives and multi-document cases.
     Record the current baseline before selecting an algorithm or another model.
 - Measure Recall@K/ranking, evidence relevance, answer accuracy/abstention and
@@ -2717,9 +2720,10 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 11. Conversation context and source selection
 
--   [ ] Resolve follow-ups with bounded recent context or measured question
+-   [x] Resolve follow-ups with bounded recent context or measured question
     rewriting; pass selected source IDs through chat/retrieval and persist the
-    conversation's scope. Historical generated answers are context, not source evidence.
+    conversation's scope. Only recent user questions are included; historical
+    generated answers are excluded.
 - Define unrestricted, explicitly empty and chosen-source scopes distinctly;
   deleted/unready/incompatible files must not silently broaden a selected scope.
   Keep history within the local model's budget and compare answer quality/latency.
@@ -2729,7 +2733,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 12. Evidence inspection, cited exports and PDF coverage
 
--   [ ] Show item 2's saved excerpts and original status in the source panel;
+-   [x] Show item 2's saved excerpts and original status in the source panel;
     offer body-only and provenance-inclusive Markdown/PDF exports; report PDF pages
     with no extracted text and the actual extraction coverage.
 - Keep exports consistent with saved/unsaved editing state and the user's chosen
@@ -2881,7 +2885,71 @@ without replaying work or changing the original workspace.
 See docs/phase7/desktop-integration.md for decisions and exact acceptance limits.
 Native GUI restart/download/export, real inference interruption/latency, large
 backups and live provider access remain Phase 8. No real user data or Keychain
-entry was changed. Items 9–12 remain separate Phase 7 work.
+entry was changed. Items 9–12 were separate at this checkpoint; §16.8 records
+their implementation and export validation.
+
+------------------------------------------------------------------------
+
+## 16.8 Embedding, evaluation and selected-source workflows — 2026-10-05
+
+`feat/knowledge-workflow-completion` implements items 9–11 and item 12's cited
+exports/extraction coverage. During implementation main merged #48/#49 as
+`ce01d3f`; normal merge `5aa5416` reuses their versioned evidence serialization,
+local excerpt drafting, private cloud payload policy, byte-copy extraction and
+shared evidence panel. Normal merges `a94d6a6` and `f29aca4` retain main's #53/#54
+workspace backup/durable jobs and #55 desktop readiness/workspace integration.
+Released migrations 3/4 remain unchanged; migration 5 adds scope/coverage
+and has version-3/version-4 upgrade regressions. No published history was
+rewritten and no personal workspace was re-indexed.
+
+Item 9 separates query/document formatting, keeps raw excerpts, checks the entire
+formatted batch and uses `truncate=false`. Actual Ollama 0.34.2 runner checks
+confirmed 768 dimensions and an oversized Korean token-limit rejection. Prefixes
+remain optional and index-versioned: Lumen Recall@5 declines from 0.9762 to 0.9524,
+while Atlas ranking improves with unchanged Recall@5 of 1.0. Raw remains default.
+
+Item 10 now retains two invented bilingual corpora, actual answers, exact-answer
+rubric reviews and a bounded-follow-up comparison. Codex inspected 24 local
+answers: core correctness 22/24, faithfulness 21/24 and negative abstention 3/3.
+This is explicit agent review, not independent human review. The retained inference
+runs precede #55's generation context/output limits; they are historical measured
+baselines, not a fresh quality pass of the final package. Simple hybrid and
+unconditional diversity reduced recall. Conditional reranking was declined for
+this baseline because the measured factual failures already had the needed
+excerpts; no cross-encoder comparison is claimed. Real PDFs, chunking parameters,
+larger samples and independent review remain Phase 8 work.
+
+Item 11 distinguishes all/empty/chosen source scopes, saves checkbox changes and
+uses bounded recent user questions. Deleted/incompatible selections cannot broaden
+to all files. Prior generated prose was removed after an observed contamination
+failure. English comparison retrieval improves, but a Korean answer still treats
+an unrecorded count as zero; that numerical-faithfulness failure is retained.
+Historical §12.6 is superseded by this implementation, not a general quality pass.
+
+Integrated checks after `f29aca4`: backend **808 passed, 19 skipped, 8 warnings**;
+frontend **227 passed across 32 files**; Ruff, ESLint and TypeScript passed.
+Rust format, **5 tests** and Clippy passed. Native export inspection used a distinct
+**67.57-MiB** unsigned Apple Silicon QA app and synthetic workspace before #55's
+integration; the export code did not change in that merge. The packaged frozen
+backend passed **10 checks, 7 warnings** with temporary data on a standalone
+retry. An initial run alongside the web build hit the 20-second first-start limit
+(9 passed, 1 failed); no test timeout was changed. Final web/static builds and
+**67.66-MiB** unsigned integrated macOS packaging passed.
+
+Native observations verified scope reload, saved English/Korean excerpts and
+changed/missing originals. PDF exports retained all 96 repeated body sentences,
+the last section and unsaved Korean text: body-only **3 pages / 25,792 bytes**,
+provenance-inclusive **4 pages / 35,988 bytes** with both complete saved excerpts
+and no application chrome. The final appendix was also visually inspected.
+Separate provenance pagination fixed a reproduced long-export truncation.
+Current Markdown exports passed both modes (**6611 / 7377 bytes**), including
+unsaved edits; the stored document was unchanged after quitting.
+
+An earlier repeat of the same Markdown filename blocked inside WebKit's
+sandbox-extension call. The final unique-name exports passed, but repeat-name
+reliability is not established. The full packaged RAG, backup/recovery, real cloud
+and other-platform acceptance remains Phase 8 work. Final packaging results and
+commands are recorded in docs/phase7/knowledge-workflow.md.
 
 ------------------------------------------------------------------------
 
@@ -2926,9 +2994,8 @@ Two items carry over from earlier phases and belong here:
     Phase 5 made chat the route into documents, so this is now easier to run into.
     Phase 7 item 11 implements bounded follow-up context; Phase 8 verifies its
     answer quality and latency across the complete conversation workflow.
--   **§13.6** --- inspect a PDF exported from the native webview during Phase 8.
-    The browser print implementation alone does not establish that the packaged
-    application's PDF output works.
+-   **§13.6** --- native body-only/cited synthetic PDF output is inspected in §16.8.
+    Phase 8 still tests broader document shapes and the full packaged workflow.
 
 ## 17.2 Implemented schema migration design
 
@@ -3100,7 +3167,7 @@ Both were deferred from Phase 1 for exactly that reason.
 ### Carried over
 
 -   [ ] Recheck Phase 7 follow-up handling (§12.6, item 11) against quality/latency targets
--   [ ] Inspect a PDF exported from the packaged app (§13.6)
+-   [x] Inspect body-only and cited synthetic PDFs from a packaged QA app (§16.8)
 -   [ ] Calibrate the similarity threshold (deferred from Phase 1)
 -   [ ] Measure chunking parameters (deferred from Phase 1)
 
