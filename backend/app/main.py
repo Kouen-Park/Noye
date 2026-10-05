@@ -19,6 +19,7 @@ from app.api import (
     documents,
     files,
     index,
+    jobs,
     models,
     runtime,
     search,
@@ -26,7 +27,9 @@ from app.api import (
 )
 from app.config import get_settings
 from app.db.database import connect, init_schema
+from app.db.jobs import recover_interrupted
 from app.logging_config import configure_logging, get_logger
+from app.services.ingestion import cancel_all_ingestion
 
 # Before the routers, so anything they log during import is already captured.
 # configure_logging is idempotent, which matters here: uvicorn's reloader and the
@@ -43,14 +46,21 @@ async def lifespan(app: FastAPI):
     connection = connect()
     try:
         init_schema(connection)
+        recover_interrupted(connection)
     finally:
         connection.close()
     desktop_services.manager.closing = False
     try:
         yield
     finally:
+        cancel_all_ingestion()
         await models.manager.cancel()
         await desktop_services.manager.shutdown()
+        connection = connect()
+        try:
+            recover_interrupted(connection)
+        finally:
+            connection.close()
 
 
 app = FastAPI(
@@ -95,6 +105,7 @@ app.include_router(runtime.router)
 app.include_router(models.router)
 app.include_router(desktop_services.router)
 app.include_router(workspace.router)
+app.include_router(jobs.router)
 
 
 @app.get("/health")

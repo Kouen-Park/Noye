@@ -50,6 +50,9 @@ async def serve() -> None:
         loop = asyncio.get_running_loop()
 
         def request_shutdown() -> None:
+            from app.services.ingestion import cancel_all_ingestion
+
+            cancel_all_ingestion()
             server.should_exit = True
 
         def watch_parent() -> None:
