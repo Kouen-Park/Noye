@@ -50,6 +50,9 @@ async def serve() -> None:
         loop = asyncio.get_running_loop()
 
         def request_shutdown() -> None:
+            from app.services.ingestion import cancel_all_ingestion
+
+            cancel_all_ingestion()
             server.should_exit = True
 
         def watch_parent() -> None:
@@ -89,7 +92,20 @@ def main() -> None:
         type=Path,
         help="Copy a closed web workspace to a NEW data dir, then exit",
     )
+    parser.add_argument("--restore-backup", type=Path,
+                        help="Validate a workspace backup into a NEW data dir, then exit")
     args = parser.parse_args()
+    if args.restore_backup is not None:
+        from app.services.workspace_backup import restore_backup
+
+        if args.import_data is not None:
+            parser.error("Choose either import-data or restore-backup")
+        try:
+            report = restore_backup(args.restore_backup, args.data_dir)
+        except (ValueError, OSError) as error:
+            parser.error(str(error))
+        print(json.dumps(report))
+        return
     if args.import_data is not None:
         from app.desktop_data import import_workspace
 

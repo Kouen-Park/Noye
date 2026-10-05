@@ -157,7 +157,8 @@ class TestAddColumnIfMissing:
 
 
 class TestInitSchemaOrdering:
-    def test_released_evidence_schema_gains_scope_and_coverage(self, tmp_path):
+    @pytest.mark.parametrize("released_version", [3, 4])
+    def test_released_schema_gains_scope_and_coverage(self, tmp_path, released_version):
         connection = connect(tmp_path / "version3.db")
         connection.executescript(LEGACY_FILES + """
             ALTER TABLE files ADD COLUMN content_hash TEXT;
@@ -172,6 +173,7 @@ class TestInitSchemaOrdering:
                 '2026-10-05T00:00:00Z', '2026-10-05T00:00:00Z');
             PRAGMA user_version = 3;
         """)
+        connection.execute(f"PRAGMA user_version = {released_version}")
         init_schema(connection)
         saved = connection.execute("SELECT * FROM conversations WHERE id = 'saved'").fetchone()
         assert saved["title"] == "Keep this conversation"

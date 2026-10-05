@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from app.api.deps import get_db
 from app.config import get_settings
 from app.db import files as file_store
+from app.db import jobs as job_store
 from app.logging_config import get_logger
 from app.models.files import FileStatus
 from app.services.embeddings import EmbeddingError
@@ -195,10 +196,14 @@ def rebuild_index(
 
     try:
         for file_id in plan.file_ids:
+            job_store.queue(db, file_id)
             file_store.reset_counts(db, file_id)
             file_store.set_status(db, file_id, FileStatus.UPLOADING)
         background.add_task(_run_rebuild, plan.file_ids)
     except BaseException:
+        for file_id in plan.file_ids:
+            file_store.set_status(db, file_id, FileStatus.FAILED,
+                                  error="The rebuild could not be scheduled. Retry.")
         _release_rebuild(plan.file_ids)
         raise
 
@@ -224,5 +229,18 @@ def _run_rebuild(file_ids: tuple[str, ...]) -> None:
     try:
         for file_id in file_ids:
             ingest_in_background(file_id)
+    except BaseException:
+        from app.db.database import connect
+
+        connection = connect()
+        try:
+            for file_id in file_ids:
+                job = job_store.latest(connection, file_id)
+                if job and job["state"] in job_store.OPEN_STATES:
+                    file_store.set_status(connection, file_id, FileStatus.FAILED,
+                                          error="The rebuild was interrupted. Retry.")
+        finally:
+            connection.close()
+        raise
     finally:
         _release_rebuild(file_ids)

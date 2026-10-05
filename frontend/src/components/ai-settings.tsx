@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { getDesktopSetup, type DesktopSetup, type GenerationProvider } from "@/lib/api";
 import { modelRequest, readAiSettings, saveAiSettings, PROVIDER_NAMES, type AiSettings, type CloudProvider, type ModelJob } from "@/lib/ai-settings";
 import { ServiceSettings } from "./service-settings";
+import { WorkspaceSettings } from "./workspace-settings";
 
 const button = "min-h-11 rounded-md border border-edge-strong px-4 py-2 text-sm font-semibold hover:bg-sunken disabled:opacity-50";
 const input = "mt-1 min-h-11 w-full rounded-md border border-edge-strong bg-canvas px-3 text-sm";
@@ -21,7 +22,7 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
   const saved = useRef<AiSettings | null>(null);
   const [settings, setSettings] = useState<AiSettings | null>(null);
   const [setup, setSetup] = useState<DesktopSetup | null>(null);
-  const [tab, setTab] = useState<"models" | "cloud" | "services">("models");
+  const [tab, setTab] = useState<"models" | "cloud" | "services" | "workspace">("models");
   const [provider, setProvider] = useState<CloudProvider>("openai");
   const [secret, setSecret] = useState("");
   const [error, setError] = useState("");
@@ -99,9 +100,9 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
         </div>
         <p className="mt-2 text-sm text-ink-soft">Manage local models or connect a cloud API. Saved work stays on this computer.</p>
         <div className="mt-4 flex gap-1" aria-label="Settings sections">
-          {(["models", "cloud", "services"] as const).map((value) => <button key={value} aria-pressed={tab === value} onClick={() => { setTab(value); setSecret(""); setRemoveKey(false); if (content.current) content.current.scrollTop = 0; }}
+          {(["models", "cloud", "services", "workspace"] as const).map((value) => <button key={value} aria-pressed={tab === value} onClick={() => { setTab(value); setSecret(""); setRemoveKey(false); if (content.current) content.current.scrollTop = 0; }}
             className={`min-h-11 border-b-2 px-3 py-2 text-sm font-semibold ${tab === value ? "border-brand text-brand" : "border-transparent text-ink-soft hover:text-ink"}`}>
-            {value === "models" ? "Local models" : value === "cloud" ? "Cloud APIs" : "Services"}</button>)}
+            {value === "models" ? "Local models" : value === "cloud" ? "Cloud APIs" : value === "services" ? "Services" : "Workspace"}</button>)}
         </div>
       </header>
       <div ref={content} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7">
@@ -156,6 +157,7 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
             <p className="text-sm text-ink-soft">Cloud generation sends your question, bounded recent user questions and retrieved excerpts—or document instructions and the saved answer—to the selected provider. Extraction, embeddings and search stay local. Provider pricing and data terms apply; Noye cannot enforce a free tier.</p>
           </section>}
           {tab === "services" && <ServiceSettings settings={settings} services={setup.services} onRefresh={async (signal) => { const snapshot = await getDesktopSetup(signal); if (!signal?.aborted) setSetup(snapshot); }} />}
+          {tab === "workspace" && <WorkspaceSettings settings={settings} />}
         </>}
       </div>
       <footer className="shrink-0 border-t border-edge-strong px-5 py-3 text-xs text-ink-soft sm:px-7">Local by default · No automatic cloud fallback · Downloads stop when Noye quits</footer>
