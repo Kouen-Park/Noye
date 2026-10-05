@@ -367,6 +367,12 @@ Gemini requires internet access; local mode continues to work without a Gemini k
 The API has **no authentication** — Noye is local and single-user, so the server
 binds to `127.0.0.1`. Do not expose it on a network interface.
 
+Compose also publishes only Qdrant's REST port on `127.0.0.1:6333`; the backend
+does not use the gRPC port. CORS controls browser access and is not authentication
+or a network firewall. After changing an existing checkout, run
+`docker compose up -d qdrant` to recreate its port mapping without removing its
+storage volume. Avoid `docker compose down -v`, which deletes that derived index.
+
 ### Frontend
 
 Next.js 16 with TypeScript, Tailwind CSS 4, and the App Router.
@@ -464,7 +470,7 @@ remain deferred to Phase 8; this is not a signed public release.
 Qdrant runs in Docker; Ollama runs on the host.
 
 ```bash
-docker compose up -d          # Qdrant on :6333
+docker compose up -d          # Qdrant REST on 127.0.0.1:6333
 brew services start ollama    # Ollama on :11434
 ollama pull embeddinggemma    # embeddings, 768 dimensions
 ollama pull qwen3.5:4b        # generation
