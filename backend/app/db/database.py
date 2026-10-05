@@ -4,9 +4,9 @@ Uses the standard library's ``sqlite3`` directly. The schema is five columns
 wide and one relationship deep, so an ORM would add a dependency and a layer
 without removing any work.
 
-SQLite holds application metadata only. The files under ``data/sources/`` are
-the source of truth and the Qdrant index is derived, so this database can be
-deleted and rebuilt from the sources without losing a user's documents.
+SQLite holds conversations, edited documents and saved evidence as well as file
+metadata. Those records cannot be reconstructed from originals. Only the Qdrant
+index is derived and rebuildable; workspace backups must include this database.
 """
 
 from __future__ import annotations
@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS message_citations (
     -- that are only ever read together would cost more than it explains.
     chunk_indexes TEXT NOT NULL,
     best_score   REAL NOT NULL,
+    evidence_json TEXT,
     UNIQUE (message_id, position)
 );
 
@@ -143,6 +144,7 @@ CREATE TABLE IF NOT EXISTS document_citations (
     page_number   INTEGER,
     chunk_indexes TEXT NOT NULL,
     best_score    REAL NOT NULL,
+    evidence_json TEXT,
     UNIQUE (document_id, position)
 );
 

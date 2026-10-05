@@ -29,9 +29,10 @@ from app.db import conversations as conversation_store
 from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
+from app.models.evidence import EvidenceSnapshot
 from app.models.files import FileStatus
-from app.services.citations import build_citations
 from app.services.embeddings import EmbeddingError
+from app.services.evidence import capture_citations
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
@@ -73,6 +74,7 @@ class CitationOut(BaseModel):
     score: float
     #: Ready-made label: "Algorithms.pdf — page 34", or just the name.
     label: str
+    evidence: EvidenceSnapshot | None = None
 
     @classmethod
     def of(cls, citation: MessageCitation) -> CitationOut:
@@ -83,6 +85,7 @@ class CitationOut(BaseModel):
             chunk_indexes=list(citation.chunk_indexes),
             score=citation.best_score,
             label=citation.label,
+            evidence=citation.evidence,
         )
 
 
@@ -278,16 +281,7 @@ def ask(
 
     # Citations come from the retrieval metadata, never from the model. The file
     # name is copied in here so the citation survives that file being deleted.
-    citations = [
-        MessageCitation(
-            file_id=citation.file_id,
-            file_name=citation.file_name or ready.get(citation.file_id, citation.file_id),
-            page_number=citation.page_number,
-            chunk_indexes=citation.chunk_indexes,
-            best_score=citation.best_score,
-        )
-        for citation in build_citations(generated.sources, file_names=ready)
-    ]
+    citations = capture_citations(generated.sources, ready)
 
     answer = conversation_store.add_message(
         db,

@@ -22,9 +22,11 @@ matter more than the happy path:
 
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 import threading
 from dataclasses import replace
+from pathlib import Path
 
 import httpx
 from qdrant_client import QdrantClient
@@ -337,8 +339,14 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
 
     try:
+        # Hash and parse the same byte copy. Checking a live path twice alone
+        # cannot establish which revision a lazy PDF/text reader actually saw.
+        source_bytes = Path(record.path).read_bytes()
+        before = hashlib.sha256(source_bytes).hexdigest()
         with timed(logger, "Extracted", file=record.id):
-            pages = extract_file(record.path, record.file_type)
+            pages = extract_file(record.path, record.file_type, source_bytes=source_bytes)
+    except FileNotFoundError as exc:
+        raise IngestionError(f"File not found: {record.path}") from exc
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -349,6 +357,8 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     content_hash = hash_file(record.path)
     if content_hash is None:
         raise IngestionError("Could not read the source file while recording its identity.")
+    if before != content_hash:
+        raise IngestionError("The original changed during extraction. Retry processing it.")
     file_store.set_content_hash(connection, record.id, content_hash)
 
     # Only meaningful for page-aware formats; Markdown and text come back as a
@@ -429,7 +439,9 @@ def _embed_and_index(
             delete_file_chunks(record.id, client=qdrant_client)
             _check_cancel(cancellation)
             index_chunks(
-                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint
+                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint,
+                source_hash=file_store.get_file(connection, record.id).content_hash,
+                index_metadata=identity.metadata_json,
             )
         _check_cancel(cancellation)
         if index_identity.current_index_identity(client=http_client) != identity:

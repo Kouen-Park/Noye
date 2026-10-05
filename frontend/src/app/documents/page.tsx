@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
+import { SavedEvidence } from "@/components/saved-evidence";
 import { DocumentEditor } from "@/components/documents/document-editor";
 import { DocumentList } from "@/components/documents/document-list";
 import { ExportControls } from "@/components/documents/export-controls";
@@ -211,6 +212,7 @@ function DocumentsView() {
                       className="text-[12.5px] text-ink-soft"
                     >
                       {citation.label}
+                      <SavedEvidence citation={citation} />
                     </li>
                   ))}
                 </ul>

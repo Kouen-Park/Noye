@@ -97,6 +97,7 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
           <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-md bg-fail-wash px-2.5 py-2">
             <p className="text-[12.5px] text-fail">
               Remove {file.name}? This cannot be undone.
+              Saved excerpts in existing conversations and documents are kept.
             </p>
             <div className="ml-auto flex gap-2">
               <button
