@@ -157,6 +157,30 @@ class TestAddColumnIfMissing:
 
 
 class TestInitSchemaOrdering:
+    def test_released_evidence_schema_gains_scope_and_coverage(self, tmp_path):
+        connection = connect(tmp_path / "version3.db")
+        connection.executescript(LEGACY_FILES + """
+            ALTER TABLE files ADD COLUMN content_hash TEXT;
+            ALTER TABLE files ADD COLUMN embedding_model TEXT;
+            ALTER TABLE files ADD COLUMN index_fingerprint TEXT;
+            ALTER TABLE files ADD COLUMN index_metadata TEXT;
+            CREATE TABLE conversations (
+                id TEXT PRIMARY KEY, title TEXT NOT NULL,
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+            );
+            INSERT INTO conversations VALUES ('saved', 'Keep this conversation',
+                '2026-10-05T00:00:00Z', '2026-10-05T00:00:00Z');
+            PRAGMA user_version = 3;
+        """)
+        init_schema(connection)
+        saved = connection.execute("SELECT * FROM conversations WHERE id = 'saved'").fetchone()
+        assert saved["title"] == "Keep this conversation"
+        assert saved["source_scope"] is None
+        assert "no_text_pages" in columns(connection, "files")
+        assert current_version(connection) == LATEST_VERSION
+        assert apply_migrations(connection) == 0
+        connection.close()
+
     def test_a_fresh_database_ends_where_a_migrated_one_does(self, tmp_path):
         """Both paths have to converge, or behaviour depends on install date."""
         fresh = connect(tmp_path / "fresh.db")

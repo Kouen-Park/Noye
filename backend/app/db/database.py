@@ -4,8 +4,9 @@ Uses the standard library's ``sqlite3`` directly. The schema is five columns
 wide and one relationship deep, so an ORM would add a dependency and a layer
 without removing any work.
 
-SQLite stores irreplaceable conversations, edited documents and evidence snapshots.
-Originals can rebuild the vector index; they cannot reconstruct this saved work.
+SQLite holds conversations, edited documents and saved evidence as well as file
+metadata. Those records cannot be reconstructed from originals. Only the Qdrant
+index is derived and rebuildable; workspace backups must include this database.
 """
 
 from __future__ import annotations

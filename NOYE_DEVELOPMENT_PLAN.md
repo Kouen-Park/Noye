@@ -2566,7 +2566,7 @@ milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
 types and builds run with each change. Phase 8 then performs broader stability,
 quality refinement and final packaged-app acceptance.
 
-Items 3, 4 and 8 are implemented with regression/configuration evidence; item 10
+Items 1, 2, 3, 4 and 8 are implemented with regression/configuration evidence; item 10
 has its evaluation foundation but remains an incomplete milestone (see §16.5).
 The other items remain separate work. Existing desktop storage, service checks
 and SQLite-copy import are partial foundations, not missing functionality to
@@ -2600,18 +2600,20 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 1. Retrieved excerpts in document generation
 
--   [ ] Persist the actual excerpts used for an answer and pass that saved material
+-   [x] Persist the actual excerpts used for an answer and pass that saved material
     with the answer and instruction to `services/documents.py`. Reuse item 2's
     evidence storage; do not re-retrieve current chunks to reconstruct old evidence.
-- Update cloud payload disclosure before sending the newly included excerpts to
-  Gemini. Keep generation explicitly selected and embeddings/search local.
+- Expanded historical excerpts remain local-only: require loopback Ollama for
+  their use. Gemini/OpenAI/Anthropic drafts retain the instruction, saved answer
+  and source-name payload, with explicit UI disclosure; stored snapshots stay
+  intact. No expanded cloud payload or automatic provider fallback is added.
 - Validate captured generation requests contain source detail absent from the
   answer, while legacy messages without snapshots are clearly identified and do
   not acquire invented historical evidence.
 
 ### 2. Citation evidence and source versions
 
--   [ ] Add immutable excerpt snapshots and original source identity/version to
+-   [x] Add immutable excerpt snapshots and original source identity/version to
     stored message/document evidence using additive SQLite migrations. Preserve
     file/page/chunk metadata and any available index identity from item 4.
 - Keep historical evidence after source re-ingestion/deletion; show changed,
@@ -2797,6 +2799,46 @@ needs generated-answer/abstention review, representative data, embedding/chunkin
 comparisons and a measured reranking decision; its foundation is not completion.
 Other Phase 7 milestones and all final Phase 8 acceptance remain open. No final
 listener recreation, live dimension reset, latency or actual PDF output is claimed.
+
+## 16.6 Historical evidence and document integration — 2026-10-05
+
+The owner authorized the work from closed #41 and #42 in the same ordered,
+history-preserving workflow. The identical feature heads remain on
+`feat/evidence-snapshots` and `feat/document-evidence`; replacement PRs target main.
+Item 2 lands before item 1. The separate active working tree is left untouched.
+
+The evidence snapshot merge retains all four generation providers, saved identity
+failures and coordinated ingestion. Its only textual conflict was the shared
+chat passage panel: keep the desktop layout and put saved evidence across both
+grid columns. An added UI regression exercises that actual shared panel.
+
+Fresh checks: backend **743 passed, 19 skipped, 8 warnings**; frontend **207 passed
+across 28 files**; Ruff, ESLint, route type generation, TypeScript and the web build
+passed. Initial parallel UI/desktop checks timed out during environment delays;
+the unchanged desktop startup suite then passed **10 tests**, and the entire
+backend rerun passed. Frontend passed with a single thread worker and the default
+test timeouts. No timeout or production configuration change was committed.
+
+Item 2 lands as PR #48 with main merge `5ea0e57`. Item 1 is PR #49, replacing
+closed #42 and building on that merge. Normal refresh `bba3864` keeps one typed provider
+argument, local-only excerpt guards, API/service provider forwarding and both
+the provider selector and evidence disclosure in the creation form. Four real
+adapters are exercised through mock transports, and four UI regressions verify
+the selected provider/disclosure. The pending text now names OpenAI and Claude
+instead of incorrectly calling their generation local.
+
+Final implementation `5943ba7`: backend **755 passed, 19 skipped, 8 warnings**;
+frontend **211 passed across 28 files**; Ruff, ESLint, TypeScript, route type
+generation, web build and desktop static export passed. Unsigned Apple Silicon
+packaging succeeded at **67.54 MiB**; its actual frozen backend passed **10
+checks** with temporary data for readiness, private configuration, control/CORS
+boundaries and line/EOF shutdown. Native Rust source is unchanged; no new
+Rust test result is claimed for this batch. These checks do not run a native GUI,
+use real cloud credentials or validate live generation quality/context capacity.
+
+Items 1/2's implementations are complete, not the whole Phase 7 roadmap. Item
+12's cited exports/PDF coverage and all real-service/native-GUI acceptance remain
+separate work in their planned phases.
 
 ------------------------------------------------------------------------
 

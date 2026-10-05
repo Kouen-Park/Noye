@@ -567,13 +567,13 @@ def test_followup_uses_bounded_context_and_captures_exact_evidence(
     assert "Dijkstra" in calls[-1]["retrieval_query"]
     assert "not evidence" in calls[-1]["history"]
     citation = first["answer"]["citations"][0]
-    assert citation["excerpts"] == [chunk(file_id).content]
-    assert citation["source_hash"] == hash_file(path)
+    assert citation["evidence"]["excerpts"][0]["content"] == chunk(file_id).content
+    assert citation["evidence"]["excerpts"][0]["source_hash"] == hash_file(path)
     path.write_bytes(b"changed")
     reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
-    assert reloaded["excerpts"] == citation["excerpts"]
+    assert reloaded["evidence"] == citation["evidence"]
     assert reloaded["original_status"] == "changed"
     file_store.delete_file(db, file_id)
     reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
     assert reloaded["original_status"] == "missing"
-    assert reloaded["excerpts"] == citation["excerpts"]
+    assert reloaded["evidence"] == citation["evidence"]

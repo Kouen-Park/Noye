@@ -117,17 +117,24 @@ def _step_2_index_identity(connection: sqlite3.Connection) -> None:
     add_column_if_missing(connection, "files", "index_metadata", "TEXT")
 
 
-def _step_3_context_evidence_coverage(connection: sqlite3.Connection) -> None:
-    add_column_if_missing(connection, "conversations", "source_scope", "TEXT")
+def _step_3_citation_evidence(connection: sqlite3.Connection) -> None:
     for table in ("message_citations", "document_citations"):
-        add_column_if_missing(connection, table, "evidence_json", "TEXT")
+        if _table_exists(connection, table):
+            add_column_if_missing(connection, table, "evidence_json", "TEXT")
+
+
+def _step_4_context_coverage(connection: sqlite3.Connection) -> None:
+    add_column_if_missing(connection, "conversations", "source_scope", "TEXT")
     add_column_if_missing(connection, "files", "no_text_pages", "TEXT")
 
 
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
-    _step_3_context_evidence_coverage,
+    # Tables can be absent in older file-only workspaces. SCHEMA creates
+    # them before migrations in the application; no historical text is backfilled.
+    _step_3_citation_evidence,
+    _step_4_context_coverage,
 )
 
 #: Where a fully migrated database stands.

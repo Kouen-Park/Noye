@@ -1,4 +1,5 @@
 from app.models.conversations import Message, MessageCitation, Role
+from app.models.evidence import EvidenceExcerpt, EvidenceSnapshot
 from app.services.conversation_context import recent_context, retrieval_question
 from app.services.evidence import provenance_markdown
 from app.services.generation import build_prompt
@@ -35,7 +36,9 @@ def test_english_and_korean_comparisons_reuse_user_topics():
 
 def test_provenance_keeps_source_markdown_literal():
     raw = "![tracking](https://example.invalid/image)\n```\n<div>source</div>"
-    citation = MessageCitation("f", "[link].md", None, (0,), .9, excerpts=(raw,))
+    citation = MessageCitation("f", "[link].md", None, (0,), .9,
+                               evidence=EvidenceSnapshot("2026-10-05T00:00:00+00:00", (
+                                   EvidenceExcerpt(raw, 0, 1, .9),)))
     exported = provenance_markdown([citation])
     assert raw in exported
     assert "````text\n" + raw + "\n````" in exported

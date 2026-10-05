@@ -29,11 +29,11 @@ from app.db import conversations as conversation_store
 from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
+from app.models.evidence import EvidenceSnapshot
 from app.models.files import FileStatus
-from app.services.citations import build_citations
 from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import EmbeddingError
-from app.services.evidence import original_status
+from app.services.evidence import capture_citations, original_status
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
@@ -75,9 +75,7 @@ class CitationOut(BaseModel):
     score: float
     #: Ready-made label: "Algorithms.pdf — page 34", or just the name.
     label: str
-    excerpts: list[str] = []
-    source_hash: str | None = None
-    index_fingerprint: str | None = None
+    evidence: EvidenceSnapshot | None = None
     original_status: str = "unknown"
 
     @classmethod
@@ -89,9 +87,7 @@ class CitationOut(BaseModel):
             chunk_indexes=list(citation.chunk_indexes),
             score=citation.best_score,
             label=citation.label,
-            excerpts=list(citation.excerpts),
-            source_hash=citation.source_hash,
-            index_fingerprint=citation.index_fingerprint,
+            evidence=citation.evidence,
             original_status=original_status(db, citation) if db is not None else "unknown",
         )
 
@@ -321,27 +317,7 @@ def ask(
 
     # Citations come from the retrieval metadata, never from the model. The file
     # name is copied in here so the citation survives that file being deleted.
-    citations = [
-        MessageCitation(
-            file_id=citation.file_id,
-            file_name=citation.file_name or ready.get(citation.file_id, citation.file_id),
-            page_number=citation.page_number,
-            chunk_indexes=citation.chunk_indexes,
-            best_score=citation.best_score,
-            excerpts=tuple(next(result.content for result in generated.sources
-                                if result.file_id == citation.file_id
-                                and result.chunk_index == chunk_index)
-                           for chunk_index in citation.chunk_indexes),
-            # Source identity belongs to retrieved points, not mutable current file rows.
-            source_hash=next(result.source_hash for result in generated.sources
-                             if result.file_id == citation.file_id
-                             and result.chunk_index == citation.chunk_indexes[0]),
-            index_fingerprint=next(result.index_fingerprint for result in generated.sources
-                                   if result.file_id == citation.file_id
-                                   and result.chunk_index == citation.chunk_indexes[0]),
-        )
-        for citation in build_citations(generated.sources, file_names=ready)
-    ]
+    citations = capture_citations(generated.sources, ready)
 
     answer = conversation_store.add_message(
         db,

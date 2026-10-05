@@ -27,6 +27,7 @@ from app.db import documents as document_store
 from app.logging_config import get_logger
 from app.models.conversations import Role
 from app.models.documents import Document
+from app.models.evidence import EvidenceSnapshot
 from app.services.documents import draft_document
 from app.services.evidence import original_status, provenance_markdown
 from app.services.generation import GenerationError
@@ -37,7 +38,7 @@ logger = get_logger("api.documents")
 
 
 class DocumentCitationOut(BaseModel):
-    """A source the document's first draft was built from, as it was then."""
+    """Historical provenance retained from the answer that created the document."""
 
     file_id: str
     file_name: str
@@ -45,9 +46,7 @@ class DocumentCitationOut(BaseModel):
     chunk_indexes: list[int]
     score: float
     label: str
-    excerpts: list[str] = []
-    source_hash: str | None = None
-    index_fingerprint: str | None = None
+    evidence: EvidenceSnapshot | None = None
     original_status: str = "unknown"
 
 
@@ -85,9 +84,7 @@ class DocumentOut(BaseModel):
                     chunk_indexes=list(citation.chunk_indexes),
                     score=citation.best_score,
                     label=citation.label,
-                    excerpts=list(citation.excerpts),
-                    source_hash=citation.source_hash,
-                    index_fingerprint=citation.index_fingerprint,
+                    evidence=citation.evidence,
                     original_status=original_status(db, citation) if db is not None else "unknown",
                 )
                 for citation in document.citations

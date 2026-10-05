@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SavedEvidence } from "@/components/saved-evidence";
 
 import { type ChatCitation, sourceUrl } from "@/lib/api";
 
@@ -85,15 +86,12 @@ export function PassageList({ citations }: PassagesProps) {
                   }
                   className="ml-auto inline-flex min-h-11 items-center rounded-md border border-edge-strong px-3 text-[12px] font-semibold text-accent-ink hover:bg-brand-wash"
                 >
-                  Open
+                  Open current
                 </a>}
                 </div>
-                <div className="col-start-2 min-w-0 text-xs text-ink-soft">
+                <div className="col-span-2 min-w-0 text-xs text-ink-soft">
                   <p>Original: {citation.original_status ?? "unknown"}</p>
-                  {citation.source_hash && <p className="mt-1 [overflow-wrap:anywhere]">Version: {citation.source_hash}</p>}
-                  {citation.excerpts?.length ? citation.excerpts.map((excerpt, n) => (
-                    <blockquote key={n} className="mt-2 whitespace-pre-wrap border-l-2 border-accent pl-3 [overflow-wrap:anywhere]">{excerpt}</blockquote>
-                  )) : <p className="mt-2">No excerpt snapshot was stored for this legacy reference.</p>}
+                  <SavedEvidence citation={citation} />
                 </div>
               </li>
             );

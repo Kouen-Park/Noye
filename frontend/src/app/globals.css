@@ -165,6 +165,12 @@ progress::-moz-progress-bar { background: var(--brand); }
     color: #000;
   }
 
+  [data-print="document"] pre {
+    white-space: pre-wrap;
+    overflow: visible;
+    overflow-wrap: anywhere;
+  }
+
   /* A heading should not be the last line on a page, and a table or code block
      should not be split across one where it can be helped. */
   [data-print="document"] :is(h1, h2, h3) {

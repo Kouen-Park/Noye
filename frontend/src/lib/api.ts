@@ -249,6 +249,30 @@ export type Role = "user" | "assistant";
  * attached. The UI must say what these are rather than implying they prove
  * anything.
  */
+export async function readSourceStatus(fileId: string): Promise<{
+  status: "available" | "missing" | "unavailable";
+  current_hash: string | null;
+}> {
+  const response = await request(`/files/${encodeURIComponent(fileId)}/source-status`);
+  return response.json();
+}
+
+export interface EvidenceExcerpt {
+  content: string;
+  chunk_index: number;
+  retrieval_rank: number;
+  score: number;
+  source_hash: string | null;
+  index_fingerprint: string | null;
+  index_metadata: string | null;
+}
+
+export interface EvidenceSnapshot {
+  version: number;
+  captured_at: string;
+  excerpts: EvidenceExcerpt[];
+}
+
 export interface ChatCitation {
   file_id: string;
   file_name: string;
@@ -258,9 +282,7 @@ export interface ChatCitation {
   score: number;
   /** "Algorithms.pdf — page 34", or just the file name. */
   label: string;
-  excerpts?: string[];
-  source_hash?: string | null;
-  index_fingerprint?: string | null;
+  evidence?: EvidenceSnapshot | null;
   original_status?: "unchanged" | "changed" | "missing" | "unknown";
 }
 

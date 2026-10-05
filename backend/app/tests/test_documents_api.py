@@ -474,9 +474,12 @@ def test_provenance_export_preserves_saved_snapshot_after_conversation_deletion(
     from app.db import conversations as conversations
     from app.db import documents as documents
     from app.models.conversations import MessageCitation
+    from app.models.evidence import EvidenceExcerpt, EvidenceSnapshot
     citation = MessageCitation("deleted-file", "자료.md", None, (4,), .8,
-                               excerpts=("Exact original passage",), source_hash="a" * 64,
-                               index_fingerprint="b" * 64)
+                               evidence=EvidenceSnapshot("2026-10-05T00:00:00+00:00", (
+                                   EvidenceExcerpt("Exact original passage", 4, 1, .8,
+                                                   source_hash="a" * 64,
+                                                   index_fingerprint="b" * 64),)))
     conversation = conversations.create_conversation(db, first_question="Question")
     document = documents.create_document(db, title="Notes", content="Edited body",
                                          source_conversation_id=conversation.id,

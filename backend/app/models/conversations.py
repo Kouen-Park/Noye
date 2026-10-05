@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 
+from app.models.evidence import EvidenceSnapshot
+
 #: A title is derived from the first question rather than asked for, and a long
 #: question makes a useless sidebar entry.
 TITLE_MAX_LENGTH = 60
@@ -51,9 +53,7 @@ class MessageCitation:
     #: Every retrieved chunk that contributed, so the passages stay inspectable.
     chunk_indexes: tuple[int, ...]
     best_score: float
-    excerpts: tuple[str, ...] = ()
-    source_hash: str | None = None
-    index_fingerprint: str | None = None
+    evidence: EvidenceSnapshot | None = None
 
     @property
     def label(self) -> str:

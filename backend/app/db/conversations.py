@@ -25,6 +25,7 @@ from app.models.conversations import (
     Role,
     derive_title,
 )
+from app.models.evidence import decode_evidence, encode_evidence
 
 
 class ConversationNotFound(LookupError):
@@ -66,16 +67,13 @@ def _to_message(row: sqlite3.Row) -> Message:
 
 def _to_citation(row: sqlite3.Row) -> MessageCitation:
     raw = row["chunk_indexes"]
-    evidence = json.loads(row["evidence_json"]) if row["evidence_json"] else {}
     return MessageCitation(
         file_id=row["file_id"],
         file_name=row["file_name"],
         page_number=row["page_number"],
         chunk_indexes=tuple(int(part) for part in raw.split(",") if part != ""),
         best_score=row["best_score"],
-        excerpts=tuple(evidence.get("excerpts", [])),
-        source_hash=evidence.get("source_hash"),
-        index_fingerprint=evidence.get("index_fingerprint"),
+        evidence=decode_evidence(row["evidence_json"]),
     )
 
 
@@ -262,8 +260,7 @@ def add_message(
                     citation.page_number,
                     ",".join(str(index) for index in citation.chunk_indexes),
                     citation.best_score,
-                    json.dumps({"excerpts": citation.excerpts, "source_hash": citation.source_hash,
-                                "index_fingerprint": citation.index_fingerprint}),
+                    encode_evidence(citation.evidence),
                 )
                 for position, citation in enumerate(record.citations)
             ],
