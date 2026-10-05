@@ -21,6 +21,7 @@ from collections.abc import Sequence
 
 import httpx
 
+from app.config import GenerationProvider
 from app.models.conversations import MessageCitation
 from app.services.generation import DEFAULT_TIMEOUT_SECONDS, GenerationError, generate
 
@@ -74,6 +75,7 @@ def draft_document(
     citations: Sequence[MessageCitation] = (),
     *,
     client: httpx.Client | None = None,
+    provider: GenerationProvider = "ollama",
 ) -> str:
     """Draft Markdown from an answer and an instruction.
 
@@ -82,10 +84,10 @@ def draft_document(
 
     Raises:
         ValueError: the instruction or the answer is empty.
-        GenerationError: Ollama could not produce a draft.
+        GenerationError: the selected provider could not produce a draft.
     """
     prompt = build_document_prompt(instruction, answer, citations)
-    text = generate(prompt, client=client, system=SYSTEM_PROMPT)
+    text = generate(prompt, client=client, system=SYSTEM_PROMPT, provider=provider)
 
     if not text.strip():
         # `generate` already rejects an empty response, so this is belt and

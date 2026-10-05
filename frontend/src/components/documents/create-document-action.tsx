@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
-import { ApiError, generateDocument } from "@/lib/api";
+import { ProviderSelector } from "@/components/provider-selector";
+import { ApiError, type GenerationProvider, generateDocument } from "@/lib/api";
 
 /**
  * Turning an answer into a document.
@@ -31,6 +32,7 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
   const [instruction, setInstruction] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [provider, setProvider] = useState<GenerationProvider>("ollama");
 
   if (!open) {
     return (
@@ -49,7 +51,7 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
     if (asked === "" || pending) return;
     setPending(true);
     setError(null);
-    generateDocument(messageId, asked).then(
+    generateDocument(messageId, asked, provider).then(
       (document) => {
         // Navigate rather than clear: the reason to make a document is to work on
         // it, and leaving the person in chat would make them go looking.
@@ -66,6 +68,7 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
 
   return (
     <div className="mt-2.5 rounded-md border border-edge-strong bg-canvas px-2.5 py-2">
+      <ProviderSelector value={provider} onChange={setProvider} disabled={pending} task="document" />
       <label htmlFor={inputId} className="block text-[12px] font-semibold text-ink-soft">
         What should this become?
       </label>
@@ -121,7 +124,9 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
           Cancel
         </button>
         <span className="text-[11.5px] text-ink-faint">
-          {pending ? "The local model is writing it." : "Takes about as long as an answer."}
+          {pending
+            ? provider === "gemini" ? "Gemini is writing it." : "The local model is writing it."
+            : "Takes about as long as an answer."}
         </span>
       </div>
     </div>

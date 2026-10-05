@@ -53,3 +53,18 @@ qdrant_storage/
 
 # Throwaway design mockups
 .mockups/
+
+# Isolated desktop toolchain and generated application/sidecar builds
+.desktop-tools/
+frontend/src-tauri/target/
+frontend/src-tauri/gen/
+frontend/src-tauri/binaries/noye-backend-*
+backend/build/
+backend/*.spec
+# The icon generator also emits platforms outside this macOS milestone.
+frontend/src-tauri/icons/android/
+frontend/src-tauri/icons/ios/
+frontend/src-tauri/icons/Square*Logo.png
+frontend/src-tauri/icons/StoreLogo.png
+frontend/src-tauri/icons/icon.ico
+frontend/src-tauri/icons/64x64.png

@@ -100,6 +100,46 @@ def upload(
     return client.post("/files", files={"file": (name, content, "application/pdf")})
 
 
+def test_upload_during_maintenance_leaves_no_source_or_row(client, db, uploads):
+    ingestion.begin_rebuild()
+    try:
+        response = upload(client, name="blocked.txt", content=b"Synthetic content")
+        assert response.status_code == 409
+        assert "rebuild" in response.json()["detail"]
+        assert file_store.list_files(db) == []
+        assert list(uploads.iterdir()) == []
+    finally:
+        ingestion.end_rebuild()
+
+
+def test_reingest_delete_and_orphan_cancel_during_maintenance_are_conflicts(
+    client, db, uploads, scheduled
+):
+    response = upload(client, name="existing.txt", content=b"Synthetic content")
+    file_id = response.json()["id"]
+    finish_scheduled(db, file_id)
+    ingestion.begin_rebuild()
+    try:
+        assert client.post(f"/files/{file_id}/reingest").status_code == 409
+        assert client.delete(f"/files/{file_id}").status_code == 409
+        assert client.post(f"/files/{file_id}/cancel").status_code == 409
+        assert file_store.get_file(db, file_id).status is FileStatus.READY
+        assert len(list(uploads.iterdir())) == 1
+    finally:
+        ingestion.end_rebuild()
+
+
+def test_cancel_of_reserved_rebuild_work_is_allowed(client, db, uploads):
+    response = upload(client, name="queued.txt", content=b"Synthetic content")
+    file_id = response.json()["id"]
+    ingestion.begin_rebuild()
+    try:
+        assert client.post(f"/files/{file_id}/cancel").status_code == 202
+        assert ingestion._in_flight[file_id].is_set()
+    finally:
+        ingestion.end_rebuild()
+
+
 # --- health ------------------------------------------------------------------
 
 

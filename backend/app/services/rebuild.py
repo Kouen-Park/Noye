@@ -39,7 +39,14 @@ from app.db import files as file_store
 from app.logging_config import get_logger
 from app.services import index_identity
 from app.services.indexing import collection_vector_size, recreate_collection
-from app.services.ingestion import AlreadyIngesting, reserve_ingestion
+from app.services.ingestion import (
+    AlreadyIngesting,
+    begin_rebuild,
+    end_rebuild,
+    release_file,
+    require_idle_library,
+    reserve_rebuild_ingestion,
+)
 
 logger = get_logger("rebuild")
 
@@ -96,33 +103,42 @@ def plan_rebuild(
     index_identity.current_index_identity()
     recreated = False
 
-    if needs_recreation(client):
-        live = collection_vector_size(client)
-        logger.warning(
-            "Recreating collection: configured dimension %d, collection has %s",
-            settings.qdrant_vector_size,
-            live,
-        )
-        recreate_collection(client)
-        recreated = True
-
     queued: list[str] = []
     skipped: list[Skipped] = []
+    begin_rebuild()
+    try:
+        live = collection_vector_size(client)
+        reset = live is not None and live != settings.qdrant_vector_size
+        if reset:
+            require_idle_library()
 
-    for record in file_store.list_files(connection):
-        if not Path(record.path).exists():
-            skipped.append(
-                Skipped(record.id, record.name, "The original file is missing from disk.")
+        for record in file_store.list_files(connection):
+            if not Path(record.path).exists():
+                skipped.append(
+                    Skipped(record.id, record.name, "The original file is missing from disk.")
+                )
+                continue
+            try:
+                reserve_rebuild_ingestion(record.id)
+            except AlreadyIngesting:
+                skipped.append(Skipped(record.id, record.name, "Already being processed."))
+                continue
+            queued.append(record.id)
+
+        # Every eligible file is reserved, and new uploads/deletes are blocked,
+        # before the first destructive call. An empty plan has nothing to reset.
+        if reset and queued:
+            logger.warning(
+                "Recreating collection: configured dimension %d, collection has %s",
+                settings.qdrant_vector_size, live,
             )
-            continue
-        try:
-            reserve_ingestion(record.id)
-        except AlreadyIngesting:
-            skipped.append(
-                Skipped(record.id, record.name, "Already being processed.")
-            )
-            continue
-        queued.append(record.id)
+            recreate_collection(client)
+            recreated = True
+    except BaseException:
+        for file_id in queued:
+            release_file(file_id)
+        end_rebuild()
+        raise
 
     logger.info(
         "Rebuild planned queued=%d skipped=%d recreated=%s model=%s",

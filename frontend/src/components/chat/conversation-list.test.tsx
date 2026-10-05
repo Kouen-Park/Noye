@@ -73,7 +73,7 @@ describe("ConversationList", () => {
   it("starts a new one", async () => {
     const h = handlers();
     render(<ConversationList conversations={[]} currentId={null} {...h} />);
-    await userEvent.click(screen.getByRole("button", { name: "New" }));
+    await userEvent.click(screen.getByRole("button", { name: "New chat" }));
     expect(h.onNew).toHaveBeenCalled();
   });
 
