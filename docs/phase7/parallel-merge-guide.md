@@ -129,3 +129,48 @@ no model/key lifecycle or cloud inference was used, and no native GUI/PDF workfl
 was inspected. Final listener bindings, live dimension-changing rebuilds, actual
 generated-answer/abstention review, quality/latency and packaged acceptance remain
 open. This integrates only items 3/4/8 and item 10's foundation, not all Phase 7 work.
+
+## Evidence and document follow-up — 2026-10-05
+
+The owner then authorized #41 followed by #42 using the same workflow. Both drafts
+were closed and their `codex/` heads deleted, but identical `feat/` heads survived:
+`dd04762` on `feat/evidence-snapshots` and `9a962c4` on `feat/document-evidence`.
+The first replacement, [#48](https://github.com/Kouen-Park/Noye/pull/48), merged
+normally as `5ea0e57`; the document branch refresh builds on that actual main.
+The second replacement is [#49](https://github.com/Kouen-Park/Noye/pull/49),
+`feat/document-evidence`, targeting main after #48.
+An isolated temporary worktree keeps the separately active branch's edits intact.
+
+| Refresh | Actual conflict | Resolution |
+| --- | --- | --- |
+| Evidence `78791ba` | `frontend/src/components/chat/passages.tsx` | Retain the shared desktop `PassageList` layout and render `SavedEvidence` across both grid columns. |
+| Document `bba3864` | `backend/app/services/documents.py` | Keep one typed provider argument, `get_settings`, the loopback-only excerpt guard, cloud snapshot removal from temporary copies, and `generate(..., provider=provider)`. |
+| Document `bba3864` | `frontend/src/components/documents/create-document-action.tsx` | Keep the provider selector and the local/cloud/legacy evidence disclosure together. |
+
+Automatic API merges retain `provider=request.provider`. The evidence merge passed
+743 backend tests (19 skipped), 207 frontend tests and both UI builds. Initial
+environment-delayed timeout runs were repeated successfully without committed
+timeout changes; the frontend passed using one thread worker and default limits.
+
+Final implementation `5943ba7` adds four real-adapter mock transport regressions:
+each selected provider is called exactly once; only local Ollama receives expanded
+excerpts, and stored snapshots remain unchanged. Four creation-form UI regressions
+also verify disclosure/selection and fix OpenAI/Claude being labelled local while
+writing. Fresh checks on that complete source:
+
+- `.venv/bin/pytest app/tests/ -q -m 'not integration'`: **755 passed, 19 skipped,
+  8 warnings**; Ruff passed.
+- `npm test -- --reporter=dot --pool=threads --maxWorkers=1`: **211 passed across
+  28 files**; ESLint, route type generation and TypeScript passed.
+- Web Webpack build and desktop static export passed. Fresh unsigned Apple Silicon
+  packaging: **67.54 MiB**. Native Rust source is unchanged from the first batch.
+- `NOYE_TEST_SIDECAR=<new app>/Contents/MacOS/noye-backend .venv/bin/pytest
+  app/tests/test_desktop.py -q`: **10 passed**, checking the packaged backend with
+  temporary data, readiness, private configuration, control/CORS and line/EOF exit.
+- PyInstaller analysis includes both evidence modules and PyMuPDF metadata;
+  diff checks passed. No personal data, actual model/key operation or cloud call
+  was used. No native GUI or actual PDF output is claimed.
+
+Items 1/2's implementations now join items 3/4/8; item 10 remains a foundation and
+item 12's exports/PDF coverage remains pending. Final packaged-app acceptance is
+still Phase 8, not inferred from a successful build or lifecycle smoke test.

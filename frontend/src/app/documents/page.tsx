@@ -203,7 +203,7 @@ function DocumentsView() {
             {open.citations.length > 0 && (
               <div className="mt-4 border-t border-edge pt-3">
                 <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
-                  Passages the first draft was built from
+                  Evidence retained from the original answer
                 </h2>
                 <ul className="mt-2 space-y-1">
                   {open.citations.map((citation, index) => (
@@ -217,7 +217,7 @@ function DocumentsView() {
                   ))}
                 </ul>
                 <p className="mt-1.5 text-[11.5px] text-ink-faint">
-                  These describe the draft, not what you have written since.
+                  This records the original answer&apos;s material. It does not verify later edits.
                 </p>
               </div>
             )}

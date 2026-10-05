@@ -37,7 +37,7 @@ logger = get_logger("api.documents")
 
 
 class DocumentCitationOut(BaseModel):
-    """A source the document's first draft was built from, as it was then."""
+    """Historical provenance retained from the answer that created the document."""
 
     file_id: str
     file_name: str
