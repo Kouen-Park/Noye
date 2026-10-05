@@ -1,9 +1,10 @@
 # Phase 7 item 1: local document drafting from saved excerpts
 
-This branch depends on `codex/phase7-evidence-snapshots` (item 2), which depends on
-`feat/index-identity`. Merge those prerequisites first. This PR targets the
-evidence branch to keep its document-generation diff focused. Neither branch
-changes the ongoing Phase 6 checkout or merges into main.
+This work originally depended on the evidence-snapshot branch (item 2), which
+depended on index identity. Those prerequisites now land through PRs #43–#48.
+The replacement for closed #42 uses `feat/document-evidence`, targets main and
+preserves the original feature commits. The separate active working tree is
+left untouched.
 
 Local document drafting now receives the saved answer and the exact historical
 excerpts captured with that answer. Details omitted from a short answer, including
@@ -29,7 +30,7 @@ or a later user edit has not necessarily used every saved excerpt. Saved passage
 do not establish that every sentence is supported. The Create document form
 explains local and cloud payloads before generation.
 
-Validation on this branch: backend **553 passed, 19 skipped**, including 8 document
+Historical branch validation: backend **553 passed, 19 skipped**, including 8 document
 context cases, and frontend **137 passed**. Ruff, ESLint, route type generation,
 TypeScript and the web production build passed. Synthetic mock Ollama payloads
 include figures and Korean text absent from the short answer. Tests cover original
@@ -70,3 +71,30 @@ cloud authorization and cited exports remain unvalidated. This feature does not
 archive full binary originals or supply backup/job recovery. SQLite backups must
 include these locally retained snapshots. Phase 7 item 12 can reuse the evidence
 inspection UI; provenance-inclusive exports and PDF coverage remain separate.
+
+## Final main integration
+
+Normal merge `bba3864` integrates the already merged evidence/desktop changes
+without rewriting published history. The two actual conflicts were resolved in
+`services/documents.py` and `create-document-action.tsx`: retain one typed
+provider argument, `get_settings`, local-only excerpt guards, explicit
+`generate(..., provider=provider)` routing, the selector and the evidence
+disclosure. The document API still forwards `request.provider`.
+
+Additional committed regressions call all four real adapters through synthetic
+`httpx.MockTransport` responses: each makes exactly one request to the selected
+destination, only loopback Ollama receives the expanded excerpts, all retain the
+answer/source names and the stored snapshots are unchanged. Four UI cases retain
+the provider selector/disclosure and show the correct selected provider while
+writing; OpenAI and Claude are no longer misleadingly labelled local.
+
+Final implementation `5943ba7` passed **755 backend tests (19 skipped, 8 warnings)**
+and **211 frontend tests across 28 files**. Ruff, ESLint, route type generation,
+TypeScript, web production build and desktop static export passed. A fresh unsigned
+Apple Silicon package built successfully at **67.54 MiB**; its actual embedded
+backend passed **10 lifecycle/configuration/control/CORS checks** against
+temporary data. PyInstaller's analysis includes both evidence modules and the
+PyMuPDF package metadata required by index identity. Native Rust source is
+unchanged. No personal workspace, model operation or real cloud request was used.
+Real-service, native GUI, PDF output and final acceptance remain Phase 8 work;
+this implements items 1/2, not the remaining Phase 7 milestones.
