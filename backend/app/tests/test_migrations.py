@@ -51,6 +51,9 @@ def legacy(tmp_path) -> sqlite3.Connection:
     connection = sqlite3.connect(tmp_path / "legacy.db")
     connection.row_factory = sqlite3.Row
     connection.executescript(LEGACY_FILES)
+    # Later additive migrations require the pre-existing chat/document tables too.
+    from app.db.database import SCHEMA
+    connection.executescript(SCHEMA)
     connection.execute(
         "INSERT INTO files (id, name, file_type, path, size, status, chunk_count,"
         " created_at, updated_at) VALUES"

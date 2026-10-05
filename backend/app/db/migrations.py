@@ -117,9 +117,17 @@ def _step_2_index_identity(connection: sqlite3.Connection) -> None:
     add_column_if_missing(connection, "files", "index_metadata", "TEXT")
 
 
+def _step_3_context_evidence_coverage(connection: sqlite3.Connection) -> None:
+    add_column_if_missing(connection, "conversations", "source_scope", "TEXT")
+    for table in ("message_citations", "document_citations"):
+        add_column_if_missing(connection, table, "evidence_json", "TEXT")
+    add_column_if_missing(connection, "files", "no_text_pages", "TEXT")
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
+    _step_3_context_evidence_coverage,
 )
 
 #: Where a fully migrated database stands.

@@ -51,6 +51,9 @@ class MessageCitation:
     #: Every retrieved chunk that contributed, so the passages stay inspectable.
     chunk_indexes: tuple[int, ...]
     best_score: float
+    excerpts: tuple[str, ...] = ()
+    source_hash: str | None = None
+    index_fingerprint: str | None = None
 
     @property
     def label(self) -> str:
@@ -100,6 +103,8 @@ class Conversation:
     updated_at: datetime = field(default_factory=_now)
     #: Populated when a conversation is read with its messages; empty in a list.
     messages: list[Message] = field(default_factory=list)
+    # None = all eligible files; [] = explicitly no files. IDs survive deletion.
+    source_scope: list[str] | None = None
 
 
 def derive_title(question: str) -> str:

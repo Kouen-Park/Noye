@@ -13,6 +13,7 @@ Two things this layer refuses to do, both deliberate:
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import uuid
 from collections.abc import Sequence
@@ -49,12 +50,16 @@ def _to_document(row: sqlite3.Row) -> Document:
 
 def _to_citation(row: sqlite3.Row) -> MessageCitation:
     raw = row["chunk_indexes"]
+    evidence = json.loads(row["evidence_json"]) if row["evidence_json"] else {}
     return MessageCitation(
         file_id=row["file_id"],
         file_name=row["file_name"],
         page_number=row["page_number"],
         chunk_indexes=tuple(int(part) for part in raw.split(",") if part != ""),
         best_score=row["best_score"],
+        excerpts=tuple(evidence.get("excerpts", [])),
+        source_hash=evidence.get("source_hash"),
+        index_fingerprint=evidence.get("index_fingerprint"),
     )
 
 
@@ -69,8 +74,8 @@ def _write_citations(
         """
         INSERT INTO document_citations
             (id, document_id, position, file_id, file_name, page_number,
-             chunk_indexes, best_score)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             chunk_indexes, best_score, evidence_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         [
             (
@@ -82,6 +87,8 @@ def _write_citations(
                 citation.page_number,
                 ",".join(str(index) for index in citation.chunk_indexes),
                 citation.best_score,
+                json.dumps({"excerpts": citation.excerpts, "source_hash": citation.source_hash,
+                            "index_fingerprint": citation.index_fingerprint}),
             )
             for position, citation in enumerate(citations)
         ],

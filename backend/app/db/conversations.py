@@ -12,6 +12,7 @@ behind it.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import uuid
 from collections.abc import Sequence
@@ -48,6 +49,7 @@ def _to_conversation(row: sqlite3.Row) -> Conversation:
         title=row["title"],
         created_at=datetime.fromisoformat(row["created_at"]),
         updated_at=datetime.fromisoformat(row["updated_at"]),
+        source_scope=json.loads(row["source_scope"]) if row["source_scope"] else None,
     )
 
 
@@ -64,12 +66,16 @@ def _to_message(row: sqlite3.Row) -> Message:
 
 def _to_citation(row: sqlite3.Row) -> MessageCitation:
     raw = row["chunk_indexes"]
+    evidence = json.loads(row["evidence_json"]) if row["evidence_json"] else {}
     return MessageCitation(
         file_id=row["file_id"],
         file_name=row["file_name"],
         page_number=row["page_number"],
         chunk_indexes=tuple(int(part) for part in raw.split(",") if part != ""),
         best_score=row["best_score"],
+        excerpts=tuple(evidence.get("excerpts", [])),
+        source_hash=evidence.get("source_hash"),
+        index_fingerprint=evidence.get("index_fingerprint"),
     )
 
 
@@ -243,8 +249,8 @@ def add_message(
             """
             INSERT INTO message_citations
                 (id, message_id, position, file_id, file_name, page_number,
-                 chunk_indexes, best_score)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                 chunk_indexes, best_score, evidence_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
                 (
@@ -256,6 +262,8 @@ def add_message(
                     citation.page_number,
                     ",".join(str(index) for index in citation.chunk_indexes),
                     citation.best_score,
+                    json.dumps({"excerpts": citation.excerpts, "source_hash": citation.source_hash,
+                                "index_fingerprint": citation.index_fingerprint}),
                 )
                 for position, citation in enumerate(record.citations)
             ],
@@ -325,3 +333,21 @@ def count_messages(connection: sqlite3.Connection, conversation_id: str | None =
             (conversation_id,),
         ).fetchone()
     return row["n"]
+
+
+def set_source_scope(connection: sqlite3.Connection, conversation_id: str,
+                     file_ids: list[str] | None) -> Conversation:
+    get_conversation(connection, conversation_id)
+    with connection:
+        connection.execute("UPDATE conversations SET source_scope = ?, updated_at = ? WHERE id = ?",
+                           (json.dumps(file_ids) if file_ids is not None else None,
+                            _now_iso(), conversation_id))
+    return get_conversation(connection, conversation_id)
+
+
+def recent_messages(connection: sqlite3.Connection, conversation_id: str) -> list[Message]:
+    rows = connection.execute(
+        "SELECT * FROM messages WHERE conversation_id = ? AND error IS NULL "
+        "ORDER BY created_at DESC, id DESC LIMIT 4", (conversation_id,),
+    ).fetchall()
+    return [_to_message(row) for row in reversed(rows)]
