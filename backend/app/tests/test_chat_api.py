@@ -525,6 +525,7 @@ def test_selected_scope_survives_reload_deletion_and_never_broadens(client, db, 
     followup = client.post("/chat", json={"question": "And that?", "conversation_id": cid}).json()
     assert followup["searched_files"] == 0
     assert followup["answer"]["citations"] == []
+    assert "None of the selected files" in followup["answer"]["content"]
     assert file_store.get_file(db, other).is_ready
     assert client.put(f"/chat/conversations/{cid}/scope", json={"file_ids": []}).json()[
         "source_scope"] == []
@@ -539,6 +540,7 @@ def test_empty_scope_skips_readiness_and_generation(client, monkeypatch):
     monkeypatch.setattr(chat_api, "answer_question", forbidden)
     body = client.post("/chat", json={"question": "Question", "file_ids": []}).json()
     assert body["searched_files"] == 0
+    assert "No files are selected" in body["answer"]["content"]
 
 
 def test_followup_uses_bounded_context_and_captures_exact_evidence(

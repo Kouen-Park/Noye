@@ -28,7 +28,7 @@ def recent_context(messages: Sequence[Message]) -> str:
 
 def retrieval_question(question: str, messages: Sequence[Message]) -> str:
     # Include the recent user topics for anaphora without a second inference call.
-    # Assistant prose is available only to generation, never indexed as evidence.
+    # Assistant prose is excluded from both generation history and retrieval.
     dependent = re.search(
         r"\b(it|this|these|that|those|they|their|which|second|former|latter|both|compare)\b|"
         r"^(and|what about|how about)\b|그것|이것|그럼|두 번째|둘|이 둘|앞서|비교|차이",

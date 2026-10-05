@@ -266,6 +266,12 @@ def ask(
                 conversation.id,
                 role=Role.ASSISTANT,
                 content=(
+                    "No files are selected for this conversation. Select a file to answer from."
+                    if scope == []
+                    else "None of the selected files has a compatible, ready index. "
+                    "Open the library to check the selected files."
+                    if scope is not None
+                    else
                     "No compatible index is available for the ready files. "
                     "Open the library to check index compatibility and rebuild when needed."
                     if any(r.status is FileStatus.READY for r in file_store.list_files(db))
