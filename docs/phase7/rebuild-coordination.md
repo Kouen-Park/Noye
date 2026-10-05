@@ -31,3 +31,13 @@ The guard deliberately supports one backend process. It is not a durable job
 queue or a multi-worker lock; Phase 7 item 6 owns restart recovery and batch-level
 cancellation. Packaged Tauri interaction and live dimension-changing rebuilds
 were not tested; no personal index was reset.
+
+## Final integration — 2026-10-05
+
+`feat/rebuild-coordination` retains closed #38's feature head `10066cf` and
+normally merges main `817489f` (Phase 6 plus the local Qdrant publication fix).
+The merge was conflict-free. A fresh full non-live backend run passed **682 tests,
+19 skipped, 8 warnings**; Ruff and `git diff --check` passed. The merged service/API
+diff was inspected for reservation-before-reset, guard lifetime and cleanup;
+desktop startup/lifecycle and model/provider checks remain in the passing suite.
+No independent review, live dimension reset or packaged UI check is claimed.
