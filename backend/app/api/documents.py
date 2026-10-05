@@ -26,6 +26,7 @@ from app.db import documents as document_store
 from app.logging_config import get_logger
 from app.models.conversations import Role
 from app.models.documents import Document
+from app.models.evidence import EvidenceSnapshot
 from app.services.documents import draft_document
 from app.services.generation import GenerationError
 
@@ -43,6 +44,7 @@ class DocumentCitationOut(BaseModel):
     chunk_indexes: list[int]
     score: float
     label: str
+    evidence: EvidenceSnapshot | None = None
 
 
 class DocumentOut(BaseModel):
@@ -77,6 +79,7 @@ class DocumentOut(BaseModel):
                     chunk_indexes=list(citation.chunk_indexes),
                     score=citation.best_score,
                     label=citation.label,
+                    evidence=citation.evidence,
                 )
                 for citation in document.citations
             ],

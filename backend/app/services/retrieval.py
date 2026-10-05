@@ -49,6 +49,9 @@ class SearchResult:
     page_number: int | None
     chunk_index: int
     score: float
+    source_hash: str | None = None
+    index_fingerprint: str | None = None
+    index_metadata: str | None = None
 
 
 def search(
@@ -117,6 +120,9 @@ def _to_result(point) -> SearchResult:
         page_number=payload.get(PAGE_NUMBER),
         chunk_index=payload.get(CHUNK_INDEX, 0),
         score=point.score,
+        source_hash=payload.get("source_hash"),
+        index_fingerprint=payload.get("index_fingerprint"),
+        index_metadata=payload.get("index_metadata"),
     )
 
 

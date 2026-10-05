@@ -117,9 +117,18 @@ def _step_2_index_identity(connection: sqlite3.Connection) -> None:
     add_column_if_missing(connection, "files", "index_metadata", "TEXT")
 
 
+def _add_evidence_columns(connection: sqlite3.Connection) -> None:
+    for table in ("message_citations", "document_citations"):
+        if _table_exists(connection, table):
+            add_column_if_missing(connection, table, "evidence_json", "TEXT")
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
+    # Tables can be absent in file-only legacy migration fixtures. SCHEMA creates
+    # them before migrations in the application; no historical text is backfilled.
+    _add_evidence_columns,
 )
 
 #: Where a fully migrated database stands.

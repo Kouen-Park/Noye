@@ -15,6 +15,7 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 from pathlib import Path
+from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
@@ -35,6 +36,7 @@ from app.services.ingestion import (
     reserve_delete,
     reserve_ingestion,
 )
+from app.services.integrity import hash_file
 
 router = APIRouter(prefix="/files", tags=["files"])
 
@@ -441,6 +443,31 @@ def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileR
         # The display name, not the `{id}__{name}` used on disk.
         filename=record.name,
         content_disposition_type="inline",
+    )
+
+
+class SourceStatus(BaseModel):
+    status: Literal["available", "missing", "unavailable"]
+    current_hash: str | None = None
+
+
+@router.get("/{file_id}/source-status", response_model=SourceStatus)
+def source_status(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> SourceStatus:
+    """Explicitly inspect a current original; history reads never hash whole files."""
+    try:
+        record = file_store.get_file(db, file_id)
+    except file_store.FileRecordNotFound:
+        return SourceStatus(status="missing")
+    try:
+        path = Path(record.path).resolve()
+        path.relative_to(sources_dir().resolve())
+        if not path.is_file():
+            return SourceStatus(status="missing")
+        digest = hash_file(path)
+    except (OSError, ValueError):
+        return SourceStatus(status="unavailable")
+    return SourceStatus(
+        status="available" if digest is not None else "unavailable", current_hash=digest
     )
 
 
