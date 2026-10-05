@@ -306,6 +306,8 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
         before = hashlib.sha256(source_bytes).hexdigest()
         with timed(logger, "Extracted", file=record.id):
             pages = extract_file(record.path, record.file_type, source_bytes=source_bytes)
+    except FileNotFoundError as exc:
+        raise IngestionError(f"File not found: {record.path}") from exc
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
