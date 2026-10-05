@@ -157,8 +157,9 @@ def data_directory() -> Path:
 def sources_dir() -> Path:
     """Where original uploads are stored. Created on demand.
 
-    These files are Noye's source of truth: the SQLite metadata and the Qdrant
-    index are both derived from them and can be rebuilt.
+    Originals are the source of truth for extraction. SQLite also contains
+    conversations, edited documents and historical evidence requiring backup;
+    only the vector index is wholly derived and rebuildable.
     """
     path = data_directory() / "sources"
     path.mkdir(parents=True, exist_ok=True)
