@@ -66,6 +66,11 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
 
   return (
     <div className="mt-2.5 rounded-md border border-edge-strong bg-canvas px-2.5 py-2">
+      <p className="mb-2 text-[12px] text-ink-soft">
+        Local Ollama drafts use the saved answer and any saved source excerpts.
+        Cloud drafts use the answer and source names only; saved excerpts stay local.
+        Older answers without saved excerpts use the answer and references only.
+      </p>
       <label htmlFor={inputId} className="block text-[12px] font-semibold text-ink-soft">
         What should this become?
       </label>
