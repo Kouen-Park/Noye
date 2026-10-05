@@ -24,3 +24,14 @@ Validated on 2026-10-05:
 
 Not validated: live Ollama embeddings, access from another physical machine,
 or the final packaged Tauri workflow.
+
+## Final integration — 2026-10-05
+
+The original draft #37 was closed when its `codex/` remote branch was replaced.
+`feat/qdrant-localhost` retains the identical feature commit `bc21669` and now
+includes Phase 6 main `141fa47` through a normal merge, without rewriting history.
+README's desktop/cloud instructions and this network boundary both remain intact.
+`docker compose config --format json` was repeated: exactly one TCP publication,
+`127.0.0.1:6333:6333`, pinned image and unchanged named storage volume.
+The earlier isolated listener/REST smoke check above is historical evidence; no
+running personal container was recreated during this final integration.
