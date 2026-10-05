@@ -2,6 +2,7 @@
 
 mod backend;
 mod preferences;
+mod workspaces;
 
 use std::sync::Arc;
 use tauri::Manager;
@@ -26,7 +27,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             backend::backend_status,
             preferences::ai_settings,
-            preferences::save_ai_settings
+            preferences::save_ai_settings,
+            workspaces::workspace_locations,
+            workspaces::select_workspace
         ])
         .build(tauri::generate_context!())
         .expect("could not build Noye desktop")

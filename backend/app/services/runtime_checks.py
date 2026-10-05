@@ -25,6 +25,33 @@ class ServiceSnapshot(BaseModel):
     installed_models: list[InstalledModel]
 
 
+def readiness(settings: Settings, services: ServicesOut) -> dict:
+    reasons = []
+    if not services.ollama:
+        reasons.append("Start Ollama in Services.")
+    elif not services.embedding_model:
+        reasons.append("Install the configured embedding model in Local models.")
+    if not services.qdrant:
+        reasons.append("Start Qdrant in Services.")
+    if services.ollama and not services.generation_model:
+        reasons.append("Install or select the configured generation model in Local models.")
+    return {
+        "indexing_available": services.ollama and services.embedding_model and services.qdrant,
+        "local_generation_available": services.ollama and services.generation_model,
+        "cloud_configuration": {
+            name: bool(getattr(settings, name + "_api_key").get_secret_value().strip())
+            for name in ("openai", "anthropic", "gemini")
+        },
+        "cloud_access_verified": False,
+        "reasons": reasons,
+        "context_tokens": settings.generation_context_tokens,
+        "output_tokens": settings.generation_output_tokens,
+        "input_byte_limit": settings.generation_context_tokens
+        - settings.generation_output_tokens
+        - 512,
+    }
+
+
 def model_installed(configured: str, installed: set[str]) -> bool:
     canonical = configured if ":" in configured else f"{configured}:latest"
     return canonical in installed
@@ -32,6 +59,7 @@ def model_installed(configured: str, installed: set[str]) -> bool:
 
 async def inspect_services(settings: Settings) -> ServiceSnapshot:
     async with httpx.AsyncClient(timeout=1.5, follow_redirects=False) as client:
+
         async def ollama_models() -> tuple[bool, list[InstalledModel]]:
             try:
                 response = await client.get(f"{settings.ollama_base_url.rstrip('/')}/api/tags")
@@ -66,7 +94,8 @@ async def inspect_services(settings: Settings) -> ServiceSnapshot:
     names = {model.name for model in models}
     return ServiceSnapshot(
         services=ServicesOut(
-            ollama=ollama, qdrant=qdrant,
+            ollama=ollama,
+            qdrant=qdrant,
             generation_model=model_installed(settings.ollama_model, names),
             embedding_model=model_installed(settings.ollama_embedding_model, names),
         ),

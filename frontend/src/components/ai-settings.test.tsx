@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({ read: vi.fn(), save: vi.fn(), setup: vi.fn(), 
 vi.mock("@/lib/ai-settings", async (original) => ({ ...await original<typeof import("@/lib/ai-settings")>(),
   readAiSettings: mocks.read, saveAiSettings: mocks.save, modelRequest: mocks.model }));
 vi.mock("@/lib/api", () => ({ getDesktopSetup: mocks.setup }));
+vi.mock("./workspace-settings", () => ({ WorkspaceSettings: () => <p>Workspace backup controls</p> }));
 
 const settings = { provider: "ollama", ollama_model: "qwen3.5:4b", openai_model: "gpt-4.1-mini",
   anthropic_model: "claude-haiku-4-5", gemini_model: "gemini-3.8-flash", openai_configured: false,
@@ -33,6 +34,14 @@ it("shows a recommendation without starting any model operation", async () => {
   const rows = screen.getAllByRole("listitem");
   expect(within(rows[0]).getByRole("button", { name: "Delete" })).toBeDisabled();
   expect(within(rows[1]).getByRole("button", { name: "Delete" })).toBeDisabled();
+});
+
+it("keeps workspace backup available when AI readiness cannot be checked", async () => {
+  mocks.setup.mockRejectedValue(new Error("Backend probe failed."));
+  render(<AiSettingsDialog onClose={vi.fn()} />);
+  await screen.findByText(/Workspace backup remains available/);
+  await userEvent.click(screen.getByRole("button", { name: "Workspace" }));
+  expect(screen.getByText("Workspace backup controls")).toBeVisible();
 });
 
 it("requires storage confirmation before requesting download", async () => {
