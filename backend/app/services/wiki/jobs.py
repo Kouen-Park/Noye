@@ -1,24 +1,38 @@
 """Use A's durable worker: Wiki failures/cancellation are independent from source indexing."""
 
+from app.db import wiki as store
 from app.models.wiki import WikiScope
 from app.services.wiki import service, sources
 
 
 def handler(context, payload):
-    result = service.generate_source(
-        context.connection,
-        payload["source_id"],
-        WikiScope.model_validate(context.scope),
-        context.manifest,
-        checkpoint=lambda: context.checkpoint("checking"),
-        progress=lambda completed, total, stage: context.checkpoint(stage, completed, total),
-    )
-    # Output committed before terminal status; even a late cancellation keeps its artifact link.
-    with context.connection:
-        context.connection.execute(
-            "UPDATE knowledge_jobs SET artifact_id=? WHERE id=?",
-            (result["wiki_id"], context.job["id"]),
+    try:
+        result = service.generate_source(
+            context.connection,
+            payload["source_id"],
+            WikiScope.model_validate(context.scope),
+            context.manifest,
+            checkpoint=lambda: context.checkpoint("checking"),
+            progress=lambda completed, total, stage: context.checkpoint(stage, completed, total),
         )
+    finally:
+        # A source revision may commit before topic refresh fails or is cancelled. Preserve
+        # its link in the failed job too; only accept output matching the frozen source version.
+        page = store.find(context.connection, f"source:{payload['source_id']}")
+        frozen = next((s for s in context.manifest if s["source_id"] == payload["source_id"]), None)
+        if page and frozen:
+            for old in store.revisions(context.connection, page["id"]):
+                revision = store.revision(context.connection, old["id"])
+                source = revision["metadata"].get("source", {})
+                if revision["origin"] in ("generated", "proposal") and (
+                    source.get("source_version") == frozen["version"]
+                ):
+                    with context.connection:
+                        context.connection.execute(
+                            "UPDATE knowledge_jobs SET artifact_id=? WHERE id=?",
+                            (page["id"], context.job["id"]),
+                        )
+                    break
     return result["wiki_id"]
 
 
