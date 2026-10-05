@@ -22,6 +22,7 @@ class GenerateWiki(StrictModel):
 class AdoptWiki(StrictModel):
     expected_revision: str
     revision_id: str
+    scope: WikiScope = Field(default_factory=WikiScope)
 
 
 def guard(action):
@@ -33,7 +34,9 @@ def guard(action):
         raise HTTPException(409, str(error)) from None
 
 
-def detail(connection, identifier):
+def detail(connection, identifier, scope=None):
+    if scope is not None and scope.mode == "empty":
+        raise ValueError("No Wiki pages are readable in an empty material scope.")
     page = store.page(connection, identifier)
     current = None
     if page["current_revision"]:
@@ -44,12 +47,30 @@ def detail(connection, identifier):
             publication.materialize(connection, identifier)
         page = store.page(connection, identifier)
         current = store.revision(connection, page["current_revision"])
+        if scope is not None and not sources.in_scope(current, scope):
+            raise ValueError("This Wiki page is outside the selected material scope.")
         current["evidence"] = service.provenance(connection, current["evidence"])
+    links = store.relations(connection, identifier)
+    if scope is not None:
+        links = [
+            link
+            for link in links
+            if sources.in_scope(
+                store.revision(
+                    connection,
+                    store.page(
+                        connection,
+                        link["target_id"] if link["origin_id"] == identifier else link["origin_id"],
+                    )["current_revision"],
+                ),
+                scope,
+            )
+        ]
     return {
         **page,
         "revision": current,
         "revisions": store.revisions(connection, identifier),
-        "relations": store.relations(connection, identifier),
+        "relations": links,
     }
 
 
@@ -110,6 +131,11 @@ def read(identifier: str, db: sqlite3.Connection = Depends(get_db)):
     return guard(lambda: detail(db, identifier))
 
 
+@router.post("/{identifier}/read")
+def scoped_read(identifier: str, scope: WikiScope, db: sqlite3.Connection = Depends(get_db)):
+    return guard(lambda: detail(db, identifier, scope))
+
+
 @router.get("/{identifier}/revisions/{revision_id}")
 def read_revision(identifier: str, revision_id: str, db: sqlite3.Connection = Depends(get_db)):
     revision = guard(lambda: store.revision(db, revision_id))
@@ -119,16 +145,28 @@ def read_revision(identifier: str, revision_id: str, db: sqlite3.Connection = De
     return revision
 
 
+@router.post("/{identifier}/revisions/{revision_id}/read")
+def scoped_revision(
+    identifier: str, revision_id: str, scope: WikiScope, db: sqlite3.Connection = Depends(get_db)
+):
+    revision = read_revision(identifier, revision_id, db)
+    if not sources.in_scope(revision, scope):
+        raise HTTPException(409, "This historical revision is outside the selected material scope.")
+    return revision
+
+
 @router.patch("/{identifier}")
 def edit(identifier: str, request: EditWiki, db: sqlite3.Connection = Depends(get_db)):
+    guard(lambda: detail(db, identifier, request.scope))
     guard(lambda: service.edit(db, identifier, request))
-    return detail(db, identifier)
+    return detail(db, identifier, request.scope)
 
 
 @router.post("/{identifier}/adopt")
 def adopt(identifier: str, request: AdoptWiki, db: sqlite3.Connection = Depends(get_db)):
+    guard(lambda: scoped_revision(identifier, request.revision_id, request.scope, db))
     guard(lambda: service.adopt(db, identifier, request.revision_id, request.expected_revision))
-    return detail(db, identifier)
+    return detail(db, identifier, request.scope)
 
 
 @router.post("/{identifier}/related")

@@ -77,6 +77,18 @@ def capture_disk_edit(connection, identifier):
         )
 
 
+def capture_if_accessible(connection, identifier):
+    try:
+        capture_disk_edit(connection, identifier)
+    except (ValueError, OSError):
+        # Disconnected output must not block authored SQLite edits/history.
+        with connection:
+            connection.execute(
+                "UPDATE wiki_pages SET publication_error=? WHERE id=?",
+                ("Markdown unavailable. SQLite revisions are preserved.", identifier),
+            )
+
+
 def materialize(connection, identifier):
     try:
         capture_disk_edit(connection, identifier)

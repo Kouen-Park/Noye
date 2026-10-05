@@ -12,13 +12,17 @@ from app.services.wiki.local import PROMPT_VERSION, WikiError, require_local
 
 
 def known_categories(connection):
-    return sorted(
-        {
-            json.loads(p["metadata"]).get("primary_category", "Unclassified")
-            for p in store.list_pages(connection)
-            if p["metadata"]
-        }
-    )
+    known = {
+        json.loads(p["metadata"]).get("primary_category", "Unclassified")
+        for p in store.list_pages(connection)
+        if p["metadata"]
+    }
+    for record in sources.catalog(connection).list_sources():
+        parts = record["relative_path"].split("/")[:-1]
+        known.update(parts)
+        if record.get("manual_category"):
+            known.add(record["manual_category"])
+    return sorted(known)
 
 
 def generate_source(
@@ -163,7 +167,7 @@ def refresh_topics(connection, source_id, scope, manifest, root_id):
             page, contributors = store.find(connection, identity), {}
             if page is None:
                 continue
-        publication.capture_disk_edit(connection, page["id"])
+        publication.capture_if_accessible(connection, page["id"])
         page = store.page(connection, page["id"])
         evidence, references = {}, []
         parts = [
@@ -218,7 +222,7 @@ def refresh_topics(connection, source_id, scope, manifest, root_id):
 
 
 def edit(connection, identifier, patch):
-    publication.capture_disk_edit(connection, identifier)
+    publication.capture_if_accessible(connection, identifier)
     page = store.page(connection, identifier)
     prior = store.revision(connection, page["current_revision"])
     links = [
@@ -242,7 +246,7 @@ def edit(connection, identifier, patch):
 
 
 def adopt(connection, identifier, revision_id, expected):
-    publication.capture_disk_edit(connection, identifier)
+    publication.capture_if_accessible(connection, identifier)
     proposal = store.revision(connection, revision_id)
     if proposal["wiki_id"] != identifier or proposal["origin"] != "proposal":
         raise ValueError("Select a proposed revision of this Wiki page.")
