@@ -103,8 +103,9 @@ In particular:
     sync, or agent frameworks into the MVP unless explicitly requested.
 -   Build Tauri in Phase 6 after the relevant existing unit/API/UI checks,
     lint, types and builds pass. Phase 7 implements the twelve approved core
-    workflow improvements; Phase 8 follows with stability/quality refinement
-    and final packaged-app end-to-end acceptance. Validate each change as it lands.
+    workflow improvements. Phase 7.5 adds folder-based knowledge, maintained wiki
+    pages and prompt-driven source documents; Phase 8 follows with stability/quality
+    refinement and final packaged-app acceptance. Validate each change as it lands.
 -   Do not copy Memex or another project's implementation wholesale.
     Noye should remain independently implemented.
 
@@ -140,6 +141,15 @@ Desktop credentials use macOS Keychain, not plaintext preferences, and only
 availability is returned to the UI. Local remains the first-launch default;
 subsequent work can use an explicitly saved default provider. No automatic
 provider fallback, inference on key save, tools or embedding switch is added.
+
+**Scope update, 2026-10-05 (Phase 7.5 planning):** the owner requested user-selected
+local knowledge folders, automatic source classification, maintained source/topic
+wiki pages and related-document links. Chat should interpret a general prompt,
+discover and inspect relevant files within the user's enabled source scope, and
+create an editable document with Markdown/PDF export without requiring a prior
+assistant answer. Course-note synthesis is an example, not a course-only feature.
+This is approved planned work after Phase 7 and before Phase 8; no implementation
+is claimed. See §16A for ownership, local processing and acceptance requirements.
 
 ## 0.5 Citation and provenance rules
 
@@ -180,6 +190,11 @@ Citation display
 
 Do not discard provenance at an intermediate stage.
 
+Phase 7.5 extends this rule to wiki summaries, links and synthesized documents:
+preserve source IDs, versions and actual original locations through every derived
+layer. Wiki links and generated prose are not substitutes for original evidence;
+map citations from validated source metadata, not invented model references.
+
 ## 0.6 Data safety rules
 
 Agents must be conservative with user data.
@@ -187,6 +202,10 @@ Agents must be conservative with user data.
 -   Never mutate original source files unless explicitly requested.
 -   Generated/editable documents belong separately from original
     sources.
+-   Phase 7.5 automatic filing may move originals only inside an area the user
+    enabled for organization; never rewrite their bytes or overwrite collisions.
+    Connected existing folders retain their structure by default. Disconnecting
+    a folder does not authorize deleting its files. Preserve user-edited wiki pages.
 -   File deletion must eventually clean associated metadata and vectors.
 -   Destructive operations should be explicit.
 -   Never commit personal source documents, generated databases,
@@ -399,6 +418,13 @@ The differentiator is the full workflow:
 **source files → searchable knowledge → source-grounded answers →
 editable reusable documents**
 
+**Planned Phase 7.5 experience:** choose a local knowledge folder, add files in
+Finder, and let Noye maintain source summaries and related topic pages. A prompt
+can ask the AI to discover relevant files and produce a report, comparison or study
+note directly from them. Original passages remain available for exact details and
+provenance. This extends the current upload/RAG/answer-to-document workflow; it is
+not implemented yet.
+
 ### Product principles
 
 1.  **Local-first**
@@ -438,6 +464,8 @@ Example Noye use cases:
 -   Ask questions across several course documents.
 -   Find information from old project documentation.
 -   Generate study notes from selected sources.
+-   Planned in Phase 7.5: ask for a document in chat and let AI find and inspect
+    relevant local sources, including but not limited to lecture collections.
 -   Turn research into an editable Markdown document.
 -   Search personal technical notes.
 -   Produce a cited summary from multiple documents.
@@ -475,6 +503,17 @@ Example Noye use cases:
 -   [x] Visible processing states
 -   [x] Delete files and associated vectors
 -   [x] Basic error handling
+
+### Approved Phase 7.5 extension (planned)
+
+-   [ ] User-selected knowledge folders, connected sources and change detection
+-   [ ] Automatic filing, source summaries, related links and maintained topic wiki
+-   [ ] Wiki-first questions with inspectable original evidence
+-   [ ] Prompt-driven source discovery and document generation from chat
+-   [ ] Compatible backup/recovery and source-based Markdown/PDF output
+
+Existing completed MVP items above retain their status. See §16A for delivery
+order and §17.10 for the expanded final acceptance.
 
 ### Explicitly out of scope for the first MVP
 
@@ -554,12 +593,15 @@ Phase 6: Tauri Desktop Application
         ↓
 Phase 7: Twelve Core Workflow Improvements
         ↓
+Phase 7.5: Knowledge Wiki and Source-Driven Documents
+        ↓
 Phase 8: Reliability, Quality and Final Acceptance
 ```
 
 Build the knowledge workflow first, then the desktop app and the twelve approved
-workflow improvements, followed by stability/quality refinement and final acceptance. Validate each change as
-it lands rather than postponing all testing to Phase 8.
+workflow improvements, then Phase 7.5's folder/wiki and prompt-driven document
+workflow, followed by stability/quality refinement and final acceptance. Validate
+each change as it lands rather than postponing all testing to Phase 8.
 
 ------------------------------------------------------------------------
 
@@ -648,7 +690,13 @@ Stores:
 
 Keep original sources separate from AI/user-generated documents.
 
-Suggested structure:
+The initial upload layout below is retained for compatibility. Current generated
+and edited document bodies live in SQLite; `documents/` may contain portable files.
+Phase 7.5's user-selected folders and Markdown wiki are planned separately in
+§16A.2. Folder selection is not permission to move an existing workspace database
+or reorganize all connected originals.
+
+Initial layout:
 
 ``` text
 data/
@@ -2566,8 +2614,9 @@ Export
 
 Implement the twelve improvements approved on 2026-10-03 after the Phase 6 Tauri
 milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
-types and builds run with each change. Phase 8 then performs broader stability,
-quality refinement and final packaged-app acceptance.
+types and builds run with each change. Phase 7.5 then adds the approved folder/wiki
+and prompt-driven document workflow; Phase 8 performs broader stability/quality
+refinement and final packaged-app acceptance.
 
 All twelve items have their implementations and measured limits recorded
 (see §§16.5–16.8). This includes actual local answer/abstention evaluation and
@@ -2596,8 +2645,9 @@ Hybrid retrieval and reranking are evaluation-gated options in item 10. A measur
 finding that an option does not improve the baseline is a valid documented result;
 adding an extra model or service is not required to mark the evaluation complete.
 Item 12 includes PDF extraction coverage reporting, not mandatory OCR, layout
-models or a new document parser. Notebook/workspace organization remains a later
-feature; item 11 supplies source selection within the existing workflow.
+models or a new document parser. Folder/topic wiki organization and prompt-driven
+source documents are now planned in Phase 7.5 (§16A); item 11 supplies source
+selection within the existing Phase 7 workflow.
 
 ## 16.2 Implementation milestones
 
@@ -2758,7 +2808,7 @@ items may share schema prerequisites, but do not put all twelve into one large
 feature commit. Preserve existing user data and keep unrelated in-progress work
 out of each change. No database/framework replacement is required by this phase.
 
-## 16.4 Completion and handoff to Phase 8
+## 16.4 Completion and handoff to Phase 7.5
 
 - Items 1–9, 11 and 12 are implemented and have their relevant regression/API/UI
   checks and remaining limits recorded. Reused Phase 6 behavior counts when the
@@ -2772,8 +2822,10 @@ out of each change. No database/framework replacement is required by this phase.
   fallback/retry or implicit model download is introduced.
 - Relevant suites, lint, types and web/desktop builds pass for affected surfaces.
   Record unavailable live checks rather than marking them complete.
-- Phase 8 expands stability/quality evaluation and runs the full packaged workflow.
-  Phase 7 completion alone does not close the final MVP acceptance checklist.
+- Phase 7.5 builds on these integrated foundations. Phase 8 then expands
+  stability/quality evaluation and runs the full packaged workflow, including the
+  new folder/wiki and prompt-driven document path. Phase 7 completion alone does
+  not close the final MVP acceptance checklist.
 
 ------------------------------------------------------------------------
 
@@ -2953,11 +3005,240 @@ commands are recorded in docs/phase7/knowledge-workflow.md.
 
 ------------------------------------------------------------------------
 
+# 16A. Phase 7.5 --- Knowledge Wiki and Source-Driven Documents
+
+**Approved planning scope, 2026-10-05; not implemented.** The owner requested a
+folder-based knowledge workspace that maintains summaries and links, and creates
+documents directly from relevant local files through a general chat prompt.
+Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
+broader stability/quality refinement and final desktop acceptance. Keep Phase 7's
+twelve IDs, completed work and recorded limits intact.
+
+## 16A.1 Intended experience
+
+The primary desktop workflow becomes:
+
+``` text
+Choose a local knowledge folder or connect an existing source folder
+        ↓
+Add or edit supported files using Finder or the app
+        ↓
+Detect changes / catch up when the app next opens
+        ↓
+Extract and preserve source locations
+        ↓
+Classify + write source summaries + maintain related topic pages
+        ↓
+Describe a task in chat → discover and inspect relevant files → draft a document
+        ↓
+Edit and save the document → export Markdown or PDF
+```
+
+Originals remain on the user's computer. Folder-based intake becomes the primary
+Tauri workflow; existing upload and answer-to-document flows remain compatible.
+The initial supported formats remain PDF, Markdown and TXT. Folder access initially
+targets the macOS desktop app, not arbitrary client paths submitted to the web API.
+
+Example request in chat:
+
+> 지금까지의 COMPSCI 210 렉쳐노트를 기반으로 요약 정리 노트 생성해줘.
+
+The course is an example, not a required input or a special-purpose feature.
+A general request such as “compare the design decisions across my projects” or
+“create a report on this topic from my files” should cause the AI to interpret the
+purpose, discover relevant files in the user's enabled knowledge folders, inspect
+supporting sources and produce the requested document. The user need not select
+every file or first obtain an assistant answer. Explicit source/folder selections
+remain authoritative; discovery never expands an empty or restricted scope.
+
+The chat shows progress and a link to an independently saved, editable artifact;
+the document workspace supplies editing and Markdown/PDF export. Conversation
+history may clarify the task, but the transcript is not the document's evidence.
+
+## 16A.2 Storage, ownership and existing foundations
+
+A new managed knowledge folder may use this layout; exact names are configurable
+implementation details, not a migration already performed:
+
+``` text
+<user-selected knowledge folder>/
+├── sources/
+│   ├── inbox/
+│   ├── Learning/COMPSCI 210/
+│   ├── Projects/
+│   └── Unclassified/
+├── wiki/
+│   ├── sources/
+│   ├── concepts/
+│   ├── projects/
+│   └── analyses/
+└── documents/                 # authored outputs or portable exports
+```
+
+- A **managed folder** permits organization inside the area the user enabled for
+  automatic filing. A **connected existing folder** retains its originals and
+  directory structure by default; enable file organization separately per folder.
+  Removing a connection does not delete the user's external files.
+- Preserve source bytes, stable file IDs, relative paths and version hashes. A path
+  change must update the registry without breaking historical citations. Resolve
+  ambiguous rename/copy events explicitly instead of guessing from equal hashes.
+- Use Markdown for readable wiki content and SQLite for source registrations,
+  links, versions, processing and provenance. Current document bodies are stored
+  in SQLite; this proposed layout does not relocate them or `app.db` automatically.
+  Define database/workspace locations and migrate existing sources non-destructively
+  before implementing a new layout. Keep credentials and model preferences separate.
+- Reuse Next.js, Tauri, FastAPI, SQLite, Qdrant and Ollama. Qdrant may index wiki
+  content as well as original passages. A new graph database or agent framework is
+  not required. Wiki summaries are interpretations, not replacement primary evidence.
+- Retain page-aware extraction, original passage retrieval and saved evidence.
+  Long inputs still need bounded sections/batches; a wiki-first workflow does not
+  remove model context limits or the need to verify numbers and exceptions.
+- Reuse Phase 7 evidence/versioning, library coordination, durable jobs, local
+  inference limits, source scopes and evaluation. Extend backups to cover new
+  authored wiki content and connections. User edits and saved documents cannot be
+  reconstructed by rebuilding vectors.
+- Classification, wiki maintenance and source-driven document synthesis use local
+  Ollama. Preserve the owner's local-only excerpt drafting policy and existing
+  explicit cloud payload boundaries; this phase must not silently send originals,
+  saved excerpts or expanded wiki/document context to a cloud provider. Display the
+  local provider for these jobs; do not silently switch a user-selected provider.
+
+## 16A.3 Ordered implementation milestones
+
+### 7.5-1. User-selected folders and reliable change detection
+
+- [ ] Add native folder selection and persistent registration for a managed root
+  and connected source folders. Keep this separate from Phase 7's backup
+  workspace switching. Limit file access to registered roots using canonical path
+  checks and native authorization; prevent traversal or links escaping those roots.
+- [ ] Scan existing supported files, observe stable additions/edits/moves and run a
+  startup reconciliation scan for changes while the app was closed. Coalesce events
+  and avoid reading a half-written file or queuing the same work repeatedly.
+- [ ] Exclude generated wiki/output, temporary and application data from source
+  intake. Handle permissions, disconnected drives and missing folders as visible
+  unavailable states; do not infer deletion from an inaccessible root.
+- [ ] Show the real folder tree, connection and processing states, per-folder
+  processing controls and Open in Finder. Reuse durable jobs for cancellation,
+  explicit retry and interrupted work; no closed-app background daemon is assumed.
+
+### 7.5-2. Automatic filing and source-summary pages
+
+- [ ] Generate structured classification and a faithful summary with local Ollama.
+  Prefer existing categories, allow new categories when justified, use one primary
+  folder plus multiple tags, and keep uncertain classifications in Unclassified.
+- [ ] Create `wiki/sources` pages with stable IDs, source/version references,
+  original page or passage locators, summary, key points and uncertainties. Record
+  model/prompt version and processing time; never invent a page or citation.
+- [ ] Validate AI-proposed destinations in application code before creating folders
+  or moving a file. Preserve bytes, prevent name collisions and journal path/registry
+  changes for recovery. Respect manually fixed categories and user folder names.
+- [ ] Make a path-only organization change independent of re-embedding unchanged
+  content. Extend exclusion/loop detection so the app's own moves do not reprocess
+  indefinitely. Keep source indexing and summary-generation failures distinguishable.
+
+### 7.5-3. Related sources and maintained topic knowledge
+
+- [ ] Find candidate related sources and wiki pages; store validated target IDs,
+  backlinks, relation type and an explanation. Distinguish shared subject,
+  supporting evidence, alternative approaches and contradictions.
+- [ ] Maintain concept/project pages across sources, record tensions and update
+  history, and offer to file reusable analyses. Bound link traversal and avoid
+  duplicate concepts or a growing set of links based only on shared vocabulary.
+- [ ] Refresh affected generated content when source versions change. Preserve
+  user-authored edits with revision/conflict handling; do not overwrite edited pages
+  during regeneration. Missing or superseded sources leave explicit provenance.
+
+### 7.5-4. Wiki-first questions with original evidence
+
+- [ ] Resolve the selected folder/course/source scope, find relevant summaries and
+  topics, follow useful links within that scope, and consult original passages for
+  supporting detail. Compare this route with the existing retrieval baseline.
+- [ ] Keep all/empty/chosen scopes distinct. Connected documents and wiki links
+  cannot broaden a selected scope. Distinguish source facts from wiki interpretation,
+  reject stale evidence for current claims and retain historical snapshots honestly.
+- [ ] Present wiki links and underlying original references together. Exact-detail
+  questions must be able to reach material omitted from a short summary. Do not turn
+  prior assistant answers into evidence or claim that the model has been trained.
+
+### 7.5-5. Prompt-driven document creation with automatic source discovery
+
+- [ ] Add an explicit document-generation intent to chat and a source-driven
+  generation service/API that does not require a previous assistant message ID.
+  Show an artifact card with progress, Open document and export actions; preserve
+  the existing answer-to-document option.
+- [ ] Interpret the user's goal, topic, output type and language, then discover
+  candidate files through the catalog, source summaries, search and related links
+  within enabled roots and the conversation's allowed scope. Read relevant original
+  sections when summaries are insufficient. Course labels and named collections are
+  optional filters, not mandatory input; discovery is application-controlled rather
+  than arbitrary model filesystem commands.
+- [ ] Show the selected sources and actual coverage; clarify only unresolved task
+  or scope ambiguity. A request for “all COMPSCI 210 lecture notes so far” must
+  enumerate that collection; a general report must find material relevant to the
+  prompt without claiming that every local file was read. Freeze source versions
+  when consumed and record the final source manifest. An all-source request freezes
+  its inventory at job start; later discoveries remain within that initial scope.
+- [ ] Plan an outline and aggregate material across that set with bounded local
+  per-source/section processing and synthesis. A normal chat's top-five passages
+  cannot establish collection-wide coverage. Long documents need staged generation and
+  progress, not silent input truncation or a single over-budget prompt.
+- [ ] Generate an editable document shaped by the prompt: study notes, a project
+  analysis, a comparison or a report. Use supported definitions/examples and a
+  source/coverage report. List unprocessed, missing or no-text requested material,
+  label partial results, and explain insufficient evidence instead of inventing
+  conclusions. Study notes may organize by lecture/topic, but that is one output
+  form, not a restriction on document generation.
+- [ ] Attach validated source locators and saved excerpt/version snapshots from the
+  actual inputs. Save the artifact independently of the chat, preserve user edits,
+  and expose cancellation/retry without duplicating or replacing saved notes.
+- [ ] Export the current chosen document revision to Markdown and PDF with optional
+  provenance. Existing PDF output uses the print path; a new PDF renderer is not
+  assumed. Validate actual native output, Unicode and long-document pagination.
+  A chat request alone is not evidence that a PDF has been exported successfully.
+
+### 7.5-6. Recovery, portability and acceptance evidence
+
+- [ ] Extend backup/restore for wiki files, user edits, link/version metadata and
+  document jobs. Make external-original inclusion explicit; never describe an
+  index-only/connection-only backup as containing those original files. Restore into
+  a new destination, report unavailable roots and require explicit reconnection.
+- [ ] Coordinate scans, filing, wiki refresh, deletion and rebuilds with ongoing
+  reads/jobs. Separate disconnecting, removing derived records and deleting a
+  physical original. Capture source versions consistently during synthesis.
+- [ ] Validate each milestone using synthetic material, then record a real native
+  folder → detected files → summaries/links → prompt-driven document → edit/save →
+  Markdown/PDF workflow. Verify restart catch-up, cancellation, moves, changed or
+  missing sources, unchanged user edits and portable backup/restore.
+- [ ] Extend the existing evaluation with whole-collection coverage, summary
+  faithfulness, link usefulness, cross-source reasoning, exact details, partial
+  extraction, Korean/English output and ingestion/generation latency. Record actual
+  model/hardware and limits; do not assume local-model parity with the current
+  SecondBrain agent or claim independent review without it.
+
+## 16A.4 Delivery order and handoff
+
+Keep folder registration, filing/summaries, topic maintenance, query orchestration
+and prompt-driven document generation in focused Conventional Commits and reviewable
+branches/PRs. Begin implementation from integrated Phase 7, not an unrelated live
+feature branch. Preserve published history and existing workspaces; use additive
+schema migrations and version new wiki indexes separately from original passages.
+Recovery and backup changes accompany the features that need them rather than
+waiting until milestone 7.5-6 to protect data.
+
+Phase 7.5 is complete only when the intended source-driven workflow exists and
+its relevant checks pass. Keep every checklist open until implementation and
+validation are recorded. Phase 8 then broadens real-data quality/latency evaluation
+and performs the final packaged-app acceptance for both the new folder/wiki workflow
+and compatible upload/answer-based document flows.
+
+------------------------------------------------------------------------
+
 # 17. Phase 8 --- Reliability and Quality
 
-Phase 8 follows Phase 6 desktop implementation and the twelve Phase 7 core
-workflow improvements. Refine stability and quality using the completed features,
-then perform final packaged-app end-to-end acceptance before the desktop MVP release.
+Phase 8 follows Phase 6 desktop implementation, the twelve Phase 7 core workflow
+improvements and Phase 7.5's folder/wiki and prompt-driven source documents. Refine
+stability and quality using the completed features, then perform final packaged-app
+end-to-end acceptance before the desktop MVP release.
 
 **Sequence update, 2026-10-03:** the user assigned the twelve comparison-review
 improvements to Phase 7 and moved the previous reliability/quality phase to Phase 8.
@@ -3247,9 +3528,9 @@ PDF checks are deferred to Phase 8 at the user's request.
 
 ## 17.10 Stability/quality refinement and final acceptance
 
-Start after Phase 6 desktop milestones and all twelve Phase 7 items are completed
-with their relevant validation. Reassess remaining defects rather than repeating
-the completed reliability branches or Phase 7 implementations. Prioritize data
+Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
+milestones are completed with their relevant validation. Reassess remaining defects
+rather than repeating the completed reliability branches or Phase 7 implementations. Prioritize data
 preservation, index/rebuild correctness and source provenance, then measure
 retrieval, answer quality and inference latency.
 
@@ -3266,75 +3547,49 @@ retrieval, answer quality and inference latency.
 -   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
     reload → document generation → edit/save → Markdown/PDF export → clean deletion
     in the packaged macOS app. Inspect actual exported files from the native webview.
+-   [ ] Run the Phase 7.5 native folder/wiki workflow, including changes made while
+    closed, unavailable roots, automatic filing, preserved user edits, link updates,
+    disconnect versus deletion and backup/restore of authored knowledge.
+-   [ ] Verify general chat prompts discover relevant files and create independently
+    saved documents without a previous assistant answer. Measure requested-source
+    coverage and faithfulness; inspect long Korean/English Markdown/PDF outputs.
+-   [ ] Compare original retrieval and wiki-assisted discovery on exact details and
+    cross-source questions. Record summary omissions, wrong links and stale claims.
 -   [ ] Measure local and cloud latency separately. Mocked responses do not establish
     live speed or answer quality; record checks that require unavailable services/keys.
 -   [ ] Record final acceptance evidence and close the MVP checklist only for
-    behavior actually verified. Notebook/source grouping and output templates follow
-    the completed MVP.
+    behavior actually verified. Folder/topic grouping and prompt-driven documents
+    are Phase 7.5 scope; advanced notebook organization and reusable template systems
+    beyond those milestones follow the completed MVP.
 
 ------------------------------------------------------------------------
 
-# 18. V2 --- Folder Watch
+# 18. Folder Watch --- Promoted to Phase 7.5
 
-One of the first post-MVP features should be folder watching.
-
-Example:
-
-``` text
-~/Noye/
-├── University/
-│   └── CS220/
-│       └── lecture.pdf
-├── Projects/
-│   └── BirdieBuddy/
-│       └── architecture.md
-└── Research/
-    └── paper.pdf
-```
-
-Noye watches this folder.
-
-When a new supported file appears:
-
-``` text
-Detected
-   ↓
-Extract
-   ↓
-Chunk
-   ↓
-Embed
-   ↓
-Ready
-```
-
-This makes Noye feel less like an upload website and more like a
-persistent personal knowledge system.
+The earlier post-MVP folder-watch proposal is now approved Phase 7.5 work (§16A).
+Native folder selection, change detection, startup reconciliation and folder-based
+knowledge maintenance precede Phase 8. They remain planned, not implemented.
+Do not schedule or build a second folder-watch pipeline after MVP acceptance.
 
 ------------------------------------------------------------------------
 
 # 19. Future Ideas --- Not MVP
 
-Possible later features. Phase 6 desktop/model management and Phase 7 source
-selection and evaluation-gated hybrid/reranking work are now explicitly in scope;
-advanced versions beyond those milestones remain future work.
+Possible later features. Phase 6 desktop/model management, Phase 7 source selection
+and evaluation, and Phase 7.5 folder intake, tags, source links, maintained wiki and
+prompt-driven documents are explicitly in scope. Do not defer those approved
+milestones to this list; advanced versions beyond them remain future work.
 
--   Folder watch
--   Automatic re-index when source changes
--   Knowledge collections/workspaces
--   Tags
--   Source linking
+-   Advanced notebook/collection management beyond Phase 7.5 folders and topics
 -   OCR for scanned PDFs
 -   DOCX support
 -   PPTX support
 -   Better semantic chunking
 -   Knowledge graph experiments
 -   Multiple embedding models
--   Conversation-to-document workflows
--   Document templates
--   Automatic study guides
+-   Reusable document template systems beyond prompt-directed output
 -   Flashcard generation
--   Additional cloud model providers beyond the requested optional Gemini path
+-   Additional cloud model providers beyond the requested optional providers
 -   Optional sync
 
 Do not build these until the basic workflow is reliable.
@@ -3791,9 +4046,9 @@ Follow this order:
         ↓
 17. Twelve core workflow improvements (Phase 7)
         ↓
-18. Reliability + quality + final desktop acceptance (Phase 8)
+18. Folder intake + knowledge wiki + prompt-driven documents (Phase 7.5)
         ↓
-19. Folder Watch
+19. Reliability + quality + final desktop acceptance (Phase 8)
 ```
 
 ------------------------------------------------------------------------
@@ -3860,16 +4115,26 @@ Follow this order:
 -   evidence inspection, cited exports and PDF coverage
 -   validate each focused change before moving on
 
+## After Week 7 --- Knowledge Wiki and Source Documents (Phase 7.5)
+
+-   user-selected folders, change detection and restart catch-up
+-   automatic filing, source summaries, related links and maintained topic pages
+-   wiki-first questions with original evidence and preserved source scopes
+-   general chat prompts that discover sources and create editable documents
+-   compatible migrations, recovery, backups and Markdown/PDF output
+-   validate each focused milestone in §16A; no fixed one-week estimate
+
 ## Week 8 --- Reliability and Quality (Phase 8)
 
 -   remaining error handling and data/index safety fixes
 -   retrieval and answer-quality measurement
 -   inference latency and chunking/threshold calibration
--   final packaged-app end-to-end acceptance, including exports
+-   final packaged-app acceptance, including folder/wiki and source-document exports
 -   README/demo evidence and initial desktop release
 
-The timeline is directional, not a deadline. Phase 7 contains twelve milestones
-and may span multiple weeks; the week labels describe order, not effort estimates.
+The timeline is directional, not a deadline. Phase 7 contains twelve milestones;
+Phase 7.5 adds the planned knowledge workflow. Both may span multiple weeks, and
+Phase 8 starts after them; week labels describe order, not effort estimates.
 
 ------------------------------------------------------------------------
 
@@ -3910,28 +4175,26 @@ A recruiter should be able to understand the project quickly:
 
 # 25. Demo Goal
 
-The eventual portfolio demo should show one continuous workflow:
+The eventual portfolio demo should show Phase 7.5's primary desktop workflow.
+Keep the existing upload and answer-to-document route as a compatibility demo.
+The new flow is planned, not verified:
 
 ``` text
-Drag PDF into Noye
+Choose a local knowledge folder
        ↓
-Processing stages appear
+Add supported files in Finder
        ↓
-File becomes Ready
+Noye detects, classifies, summarizes and links them
        ↓
-Ask a question
+Ask chat to create notes, a comparison or a report
        ↓
-Noye answers
+AI discovers and reads relevant permitted sources
        ↓
-Exact source + page citation appears
+A saved editable document appears with source coverage and provenance
        ↓
-Click "Create Document"
+Open and edit the document
        ↓
-Noye creates Markdown
-       ↓
-Edit document
-       ↓
-Export PDF
+Export Markdown or PDF
 ```
 
 This should become the main demo video/GIF on the GitHub README and
@@ -3983,6 +4246,12 @@ The MVP is complete when a user can:
 -   [ ] Start a new conversation
 -   [ ] Return to previous conversations
 -   [ ] Turn an answer into a Markdown document
+-   [ ] Choose/connect a local knowledge folder and detect files added while closed
+-   [ ] Inspect maintained source summaries, topic pages and related-document links
+-   [ ] Preserve original bytes and user edits during automatic filing/wiki updates
+-   [ ] Ask chat to discover relevant files and create a document without a prior answer
+-   [ ] Inspect actual source coverage and evidence behind a synthesized document
+-   [ ] Back up and recover connected-folder metadata, authored wiki and documents
 -   [ ] Edit the document
 -   [ ] Save it
 -   [ ] Export Markdown

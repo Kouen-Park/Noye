@@ -11,6 +11,11 @@ own API key for chat or document drafting.
 
 > 🚧 **Noye is currently under active development.** The features below describe the planned MVP unless marked complete.
 
+**Planned Phase 7.5:** choose local knowledge folders, let Noye classify files and
+maintain a linked wiki, then describe a task in chat. AI will discover and inspect
+relevant files to create editable notes, comparisons or reports with Markdown/PDF
+export. This folder/wiki and prompt-driven document workflow is not implemented yet.
+
 ## Why Noye?
 
 Knowledge is often scattered across lecture notes, PDFs, project documentation, research papers, and personal files.
@@ -35,6 +40,9 @@ Noye aims to provide one local workspace where you can:
 - Editable Markdown documents
 - Markdown and PDF export
 - Visible file-processing states
+- User-selected knowledge folders and automatic change detection *(Phase 7.5 planned)*
+- Source summaries, related links and maintained topic wiki *(Phase 7.5 planned)*
+- Prompt-driven source discovery and document creation from chat *(Phase 7.5 planned)*
 
 ## Tech Stack
 
@@ -100,6 +108,29 @@ Retrieved Knowledge + User Instruction
                  v
           Edit -> Save -> Export
 ```
+
+### Planned Phase 7.5 workflow
+
+```text
+Choose/connect a local folder → Add files in Finder → Detect and extract
+    → Classify → Source summaries + linked topic wiki
+Chat prompt → Discover relevant permitted files → Inspect sources
+    → Synthesize an editable document → Edit/save → Markdown/PDF export
+```
+
+For example, “summarize my COMPSCI 210 lecture notes” can create study notes;
+“compare the design decisions across my projects” can create a comparison. Courses
+and named collections are optional filters. Users need not pick every file or
+first obtain a chat answer: the task guides source discovery within enabled folders
+and any explicit source selection. Outputs report the material actually consulted
+and missing coverage, with references back to original files/pages.
+
+A managed knowledge folder can file originals into category folders. Connected
+existing folders retain their structure by default; automatic filing is enabled
+separately. Wiki summaries stay separate from originals, and user edits are
+preserved. Original extraction and passage retrieval remain available for detail
+omitted from summaries. These are planned behaviors; today's document route still
+starts from a saved answer and PDF export uses the print dialog.
 
 ## Project Structure
 
@@ -205,6 +236,21 @@ Completed implementation checks and remaining limits are recorded in the
 Hybrid search/reranking adoption depends on measured benefit. Broader quality
 and packaged workflow acceptance remain Phase 8 work.
 
+### Phase 7.5 — Knowledge Wiki and Source-Driven Documents *(planned)*
+
+- [ ] User-selected managed/connected folders, native change detection and restart catch-up
+- [ ] Automatic category folders/tags and source-summary wiki pages
+- [ ] Related-source links, backlinks and maintained concept/project pages
+- [ ] Wiki-first questions with original evidence and preserved source scope
+- [ ] General chat prompts that discover/read relevant files and create editable documents
+- [ ] Compatible recovery/backups and source-driven Markdown/PDF output
+
+This phase follows integrated Phase 7 and precedes Phase 8. It reuses the existing
+stack, evidence snapshots and durable jobs. New classification/wiki/document
+synthesis runs through local Ollama and retains the current cloud payload policy.
+The [development plan](NOYE_DEVELOPMENT_PLAN.md) specifies folder ownership,
+source coverage, edit preservation, milestones and acceptance checks.
+
 ### Phase 8 — Reliability and Quality
 
 - [x] Upload size limits
@@ -214,12 +260,14 @@ and packaged workflow acceptance remain Phase 8 work.
 - [x] Handle a change of embedding model
 - [x] Surface index integrity in the library
 
-- [ ] Stability and quality refinement after the twelve Phase 7 improvements
+- [ ] Stability and quality refinement after Phase 7 and Phase 7.5
+- [ ] Folder/wiki recovery, summary/link quality and prompt-driven document coverage checks
 - [ ] Expanded retrieval/answer quality and local/cloud latency validation
 - [ ] Final desktop end-to-end verification, including native Markdown/PDF export
 
 Completed safeguards above retain their status from earlier work. Phase 6 builds
-out the desktop app; Phase 7 implements the twelve improvements; Phase 8 refines
+out the desktop app; Phase 7 implements the twelve improvements; Phase 7.5 adds
+the folder/wiki and prompt-driven source-document workflow. Phase 8 then refines
 stability/quality and validates the packaged workflow before MVP release. Relevant
 tests, lint, types and builds run throughout implementation.
 
@@ -229,6 +277,10 @@ tests, lint, types and builds run throughout implementation.
 Selecting Gemini sends the question, bounded recent user questions and retrieved excerpts to Google; document
 drafting sends the instruction, stored answer and cited file names. Original files,
 embeddings, search and saved work remain local.
+
+Planned Phase 7.5 classification, wiki maintenance and source-driven synthesis
+remain local. Folder selection does not enable cloud storage or expand the existing
+cloud drafting payload; originals and saved excerpts are not silently transmitted.
 
 **Sources over hallucinations.** Generated answers should remain connected to the information they came from.
 
@@ -437,6 +489,11 @@ naming its file and page, with a link that opens the original at that page.
 **Documents** is where an answer becomes yours: press *Create document* on an
 answer, say what it should become, and edit the draft as Markdown with a rendered
 preview beside it.
+
+Phase 7.5 plans a second entry point: describe the desired document in chat, let
+AI discover and inspect relevant files in the permitted knowledge folders, and
+open the resulting artifact in this editor. Study notes are one example; reports
+and comparisons follow the same prompt-driven workflow. This is not implemented yet.
 
 A document is stored text, not a cached generation — nothing regenerates behind
 you, and the citations shown describe the first draft rather than what you have
