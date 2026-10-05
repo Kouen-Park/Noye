@@ -222,7 +222,7 @@ function CloudGuide({ configured }: { configured: boolean }) {
     <p className="mt-2 text-sm">{configured
       ? "A Gemini key is already configured in the backend. Select Gemini in the chat or document AI selector when you want to use it."
       : "No Gemini key is configured. Open AI Settings to securely save a Gemini API key in macOS Keychain."}</p>
-    <p className="mt-3 text-sm text-ink-soft">Chat sends your question and retrieved excerpts to Google. Document drafting sends your instruction, saved answer and cited file names. Files, embeddings and search stay local, so Ollama embeddings and Qdrant are still needed.</p>
+    <p className="mt-3 text-sm text-ink-soft">Chat sends your question, bounded recent user questions and retrieved excerpts to Google. Document drafting sends your instruction, saved answer and cited file names. Files, embeddings and search stay local, so Ollama embeddings and Qdrant are still needed.</p>
     <p className="mt-3 text-sm text-ink-soft">Free-tier content may be used to improve Google products. Avoid confidential material. Your API project controls billing; Noye cannot enforce free-only usage.</p>
     <p className="mt-3 text-sm text-ink-soft">Opening this guide does not select Gemini, send content, validate your key or activate billing. There is no automatic cloud fallback.</p>
     <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 items-center text-sm underline">Google data terms</a>

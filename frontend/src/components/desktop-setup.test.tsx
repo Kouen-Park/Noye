@@ -68,7 +68,7 @@ describe("desktop setup guidance", () => {
     render(<DesktopSetupDialog onClose={vi.fn()} />);
     await user.click(await screen.findByRole("radio", { name: /Gemini API/ }));
     expect(screen.getByText(/No Gemini key is configured/)).toBeVisible();
-    expect(screen.getByText(/Chat sends your question and retrieved excerpts/)).toBeVisible();
+    expect(screen.getByText(/Chat sends your question, bounded recent user questions and retrieved excerpts/)).toBeVisible();
     expect(screen.getByText(/cannot enforce free-only usage/)).toBeVisible();
     expect(screen.getByText(/does not select Gemini/)).toBeVisible();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();

@@ -153,7 +153,7 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
             </div>
             <label className="block text-sm font-semibold">Default AI for new work<select className={input} value={settings.provider} disabled={busy} onChange={(e) => setSettings({ ...settings, provider: e.target.value as GenerationProvider })}>{(["ollama", ...cloudProviders] as const).map((p) => <option key={p} value={p} disabled={p !== "ollama" && !settings[`${p}_configured`]}>{PROVIDER_NAMES[p]}</option>)}</select></label>
             <button className={button} disabled={busy} onClick={() => act(() => saveAiSettings(preference("provider")), "Default provider saved. Existing AI selections are unchanged.")}>Save default AI</button>
-            <p className="text-sm text-ink-soft">Cloud generation sends your question and retrieved excerpts—or document instructions and the saved answer—to the selected provider. Extraction, embeddings and search stay local. Provider pricing and data terms apply; Noye cannot enforce a free tier.</p>
+            <p className="text-sm text-ink-soft">Cloud generation sends your question, bounded recent user questions and retrieved excerpts—or document instructions and the saved answer—to the selected provider. Extraction, embeddings and search stay local. Provider pricing and data terms apply; Noye cannot enforce a free tier.</p>
           </section>}
           {tab === "services" && <ServiceSettings settings={settings} services={setup.services} onRefresh={async (signal) => { const snapshot = await getDesktopSetup(signal); if (!signal?.aborted) setSetup(snapshot); }} />}
         </>}
