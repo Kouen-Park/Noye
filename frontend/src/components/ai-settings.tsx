@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { getDesktopSetup, type DesktopSetup, type GenerationProvider } from "@/lib/api";
 import { modelRequest, readAiSettings, saveAiSettings, PROVIDER_NAMES, type AiSettings, type CloudProvider, type ModelJob } from "@/lib/ai-settings";
+import { ServiceSettings } from "./service-settings";
 
 const button = "min-h-11 rounded-md border border-edge-strong px-4 py-2 text-sm font-semibold hover:bg-sunken disabled:opacity-50";
 const input = "mt-1 min-h-11 w-full rounded-md border border-edge-strong bg-canvas px-3 text-sm";
@@ -154,7 +155,7 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
             <button className={button} disabled={busy} onClick={() => act(() => saveAiSettings(preference("provider")), "Default provider saved. Existing AI selections are unchanged.")}>Save default AI</button>
             <p className="text-sm text-ink-soft">Cloud generation sends your question and retrieved excerpts—or document instructions and the saved answer—to the selected provider. Extraction, embeddings and search stay local. Provider pricing and data terms apply; Noye cannot enforce a free tier.</p>
           </section>}
-          {tab === "services" && <section aria-label="Local service status"><h3 className="text-lg text-ink-display">Local services</h3><p className="mt-1 text-sm text-ink-soft">Cloud generation still needs Ollama embeddings and Qdrant search.</p><dl className="mt-5 divide-y divide-edge-strong">{Object.entries(setup.services).map(([name, ready]) => <div key={name} className="flex items-center justify-between gap-3 py-3 text-sm"><dt>{({ ollama: "Ollama", qdrant: "Qdrant", generation_model: "Generation model", embedding_model: "Embedding model" })[name]}</dt><dd className={ready ? "text-ink-soft" : "text-fail"}>{ready ? "Ready" : "Needs setup"}</dd></div>)}</dl><button className={`${button} mt-4`} disabled={busy} onClick={() => act(async () => {}, "Service status refreshed.")}>Refresh status</button><p className="mt-4 text-sm text-ink-soft">Open Ollama before downloading models. Qdrant currently requires separate setup; Noye does not stop services used by other apps.</p></section>}
+          {tab === "services" && <ServiceSettings settings={settings} services={setup.services} onRefresh={async (signal) => { const snapshot = await getDesktopSetup(signal); if (!signal?.aborted) setSetup(snapshot); }} />}
         </>}
       </div>
       <footer className="shrink-0 border-t border-edge-strong px-5 py-3 text-xs text-ink-soft sm:px-7">Local by default · No automatic cloud fallback · Downloads stop when Noye quits</footer>

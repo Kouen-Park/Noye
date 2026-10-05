@@ -25,6 +25,18 @@ export interface ModelJob {
   total: number;
   error: string | null;
 }
+export interface DesktopServiceState {
+  state: "offline" | "starting" | "ready" | "failed";
+  ownership: "none" | "noye" | "external";
+  detail: string;
+  can_start: boolean;
+}
+export interface DesktopServiceStatus {
+  ollama: DesktopServiceState;
+  qdrant: DesktopServiceState;
+  docker_installed: boolean;
+  docker_open_available: boolean;
+}
 export function readAiSettings() { return invoke<AiSettings>("ai_settings"); }
 export async function saveAiSettings(settings: AiSettings, provider?: CloudProvider, credential?: string, removeKey = false) {
   // Whitelist preferences: neither the control capability nor key-availability
@@ -36,12 +48,27 @@ export async function saveAiSettings(settings: AiSettings, provider?: CloudProvi
   window.dispatchEvent(new Event(AI_SETTINGS_EVENT));
 }
 export async function modelRequest<T>(settings: AiSettings, path: string, method = "GET", body?: object, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${apiBaseUrl()}/models${path}`, { method, signal,
+  return controlRequest<T>(settings, `/models${path}`, method, body, signal);
+}
+export async function desktopServiceRequest<T>(settings: AiSettings, path = "", method = "GET", body?: object, signal?: AbortSignal): Promise<T> {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  if (signal?.aborted) controller.abort();
+  signal?.addEventListener("abort", abort, { once: true });
+  const timer = setTimeout(abort, 10_000);
+  try {
+    return await controlRequest<T>(settings, `/services${path}`, method, body, controller.signal);
+  } finally {
+    clearTimeout(timer); signal?.removeEventListener("abort", abort);
+  }
+}
+async function controlRequest<T>(settings: AiSettings, path: string, method: string, body?: object, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(`${apiBaseUrl()}${path}`, { method, signal,
     headers: { "X-Noye-Control": settings.control_token, "Content-Type": "application/json" },
     ...(body ? { body: JSON.stringify(body) } : {}) });
   if (!response.ok) {
     const result = await response.json().catch(() => null);
-    throw new Error(typeof result?.detail === "string" ? result.detail : "Model operation failed. Try again.");
+    throw new Error(typeof result?.detail === "string" ? result.detail : "Desktop operation failed. Try again.");
   }
   return response.json();
 }
