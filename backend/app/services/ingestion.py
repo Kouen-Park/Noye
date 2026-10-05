@@ -299,6 +299,9 @@ def ingest_file(
                 identity=identity,
             )
             _check_cancel(cancellation)
+            from app.services.source_catalog import save_extraction
+
+            save_extraction(connection, file_id)
         except (IngestionError, EmbeddingError) as exc:
             # The full reason is the user's and reaches the UI through the file
             # row. The log keeps only its first sentence: the rest is advice

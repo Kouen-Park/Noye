@@ -137,6 +137,14 @@ def _step_5_context_coverage(connection: sqlite3.Connection) -> None:
     add_column_if_missing(connection, "files", "no_text_pages", "TEXT")
 
 
+def _step_6_folder_foundation(connection: sqlite3.Connection) -> None:
+    from app.db.sources import SOURCE_SCHEMA
+
+    for statement in SOURCE_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
@@ -145,6 +153,7 @@ MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_3_citation_evidence,
     _step_4_durable_jobs,
     _step_5_context_coverage,
+    _step_6_folder_foundation,
 )
 
 #: Where a fully migrated database stands.
