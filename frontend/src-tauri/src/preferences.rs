@@ -7,7 +7,13 @@ use std::sync::{Arc, Mutex};
 use tauri::Manager;
 
 const PROVIDERS: [&str; 3] = ["openai", "anthropic", "gemini"];
-const SERVICE: &str = "app.noye.desktop.ai";
+fn credential_service(identifier: &str) -> String {
+    if identifier == "com.noye.desktop" {
+        "app.noye.desktop.ai".into() // Preserve the released app's existing credentials.
+    } else {
+        format!("{identifier}.ai") // QA/dev bundles must not request the user's production keys.
+    }
+}
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
@@ -59,20 +65,21 @@ impl Preferences {
 
 pub struct PreferenceStore {
     path: PathBuf,
+    service: String,
     values: Mutex<Preferences>,
     operation: Mutex<()>,
     pub token: String,
 }
 
-fn key(provider: &str) -> Result<keyring::Entry, String> {
+fn key(service: &str, provider: &str) -> Result<keyring::Entry, String> {
     if !PROVIDERS.contains(&provider) {
         return Err("Unsupported cloud provider.".into());
     }
-    keyring::Entry::new(SERVICE, provider).map_err(|_| "Could not access macOS Keychain.".into())
+    keyring::Entry::new(service, provider).map_err(|_| "Could not access macOS Keychain.".into())
 }
 
-fn read_key(provider: &str) -> Result<String, String> {
-    match key(provider)?.get_password() {
+fn read_key(service: &str, provider: &str) -> Result<String, String> {
+    match key(service, provider)?.get_password() {
         Ok(value) => Ok(value),
         Err(keyring::Error::NoEntry) => Ok(String::new()),
         Err(_) => Err("Could not read macOS Keychain. Allow Noye access and try again.".into()),
@@ -96,6 +103,7 @@ impl PreferenceStore {
         values.validate()?;
         Ok(Self {
             path,
+            service: credential_service(&app.config().identifier),
             values: Mutex::new(values),
             operation: Mutex::new(()),
             token: uuid::Uuid::new_v4().to_string(),
@@ -105,7 +113,7 @@ impl PreferenceStore {
     pub fn configuration(&self) -> Result<Value, String> {
         let mut config = self.local_configuration()?;
         for provider in PROVIDERS {
-            config[format!("{provider}_api_key")] = json!(read_key(provider)?);
+            config[format!("{provider}_api_key")] = json!(read_key(&self.service, provider)?);
         }
         Ok(config)
     }
@@ -129,7 +137,8 @@ pub async fn ai_settings(app: tauri::AppHandle) -> Result<Value, String> {
         let mut result = serde_json::to_value(store.values.lock().unwrap().clone())
             .map_err(|_| "Could not read settings.")?;
         for provider in PROVIDERS {
-            result[format!("{provider}_configured")] = json!(!read_key(provider)?.is_empty());
+            result[format!("{provider}_configured")] =
+                json!(!read_key(&store.service, provider)?.is_empty());
         }
         result["control_token"] = json!(store.token);
         // A suggestion only: the user must confirm Ollama's actual storage volume.
@@ -158,7 +167,7 @@ pub async fn save_ai_settings(
         let _operation = store.operation.lock().unwrap();
         let mut current = store.values.lock().unwrap();
         if let Some(provider) = credential_provider {
-            let entry = key(&provider)?;
+            let entry = key(&store.service, &provider)?;
             if remove_key {
                 match entry.delete_credential() {
                     Ok(()) | Err(keyring::Error::NoEntry) => {},
@@ -187,6 +196,17 @@ pub async fn save_ai_settings(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn keeps_released_credentials_and_isolates_qa_bundles() {
+        assert_eq!(
+            credential_service("com.noye.desktop"),
+            "app.noye.desktop.ai"
+        );
+        assert_ne!(
+            credential_service("com.noye.phase75qa20261006"),
+            credential_service("com.noye.desktop")
+        );
+    }
     #[test]
     fn validates_known_providers_and_identifiers_only() {
         let mut values = Preferences::default();
