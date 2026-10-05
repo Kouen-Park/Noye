@@ -193,11 +193,14 @@ def set_status(
         raise ValueError("A FAILED status requires an error message")
 
     stored_error = error if status is FileStatus.FAILED else None
+    from app.db.jobs import file_stage
+
     with connection:
         cursor = connection.execute(
             "UPDATE files SET status = ?, error = ?, updated_at = ? WHERE id = ?",
             (status.value, stored_error, _now_iso(), file_id),
         )
+        file_stage(connection, file_id, status.value, stored_error)
     if cursor.rowcount == 0:
         raise FileRecordNotFound(f"No file with id {file_id}")
     return get_file(connection, file_id)

@@ -123,12 +123,22 @@ def _step_3_citation_evidence(connection: sqlite3.Connection) -> None:
             add_column_if_missing(connection, table, "evidence_json", "TEXT")
 
 
+def _step_4_durable_jobs(connection: sqlite3.Connection) -> None:
+    from app.db.jobs import JOB_SCHEMA
+
+    # executescript would commit the runner's transaction before executing.
+    for statement in JOB_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
     # Tables can be absent in older file-only workspaces. SCHEMA creates
     # them before migrations in the application; no historical text is backfilled.
     _step_3_citation_evidence,
+    _step_4_durable_jobs,
 )
 
 #: Where a fully migrated database stands.

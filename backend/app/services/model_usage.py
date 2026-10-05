@@ -2,13 +2,15 @@
 
 from collections import Counter
 from contextlib import contextmanager
-from threading import Lock
+from threading import BoundedSemaphore, Lock
 
 from fastapi import HTTPException
 
 lock = Lock()
 active = Counter()
 deleting = set()
+slots = BoundedSemaphore(1)
+WAIT_SECONDS = 30.0
 
 
 class ModelBusyError(RuntimeError):
@@ -26,9 +28,17 @@ def inference(model):
         if name in deleting:
             raise ModelBusyError("This model is being deleted. Choose another local model.")
         active[name] += 1
+    acquired = False
     try:
+        acquired = slots.acquire(timeout=WAIT_SECONDS)
+        if not acquired:
+            raise ModelBusyError(
+                "Local inference is busy. Wait for processing to finish and retry."
+            )
         yield
     finally:
+        if acquired:
+            slots.release()
         with lock:
             active[name] -= 1
             if not active[name]:
