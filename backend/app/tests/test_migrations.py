@@ -218,16 +218,19 @@ def test_phase75_additive_upgrade_preserves_phase7_writing_and_registry(tmp_path
     for step in MIGRATIONS[:prior_version]:
         step(db)
     db.execute(
-        "INSERT INTO documents(id,title,content,created_at,updated_at) VALUES ('authored','Keep','한국어 authored body','2026','2026')"
+        "INSERT INTO documents(id,title,content,created_at,updated_at) "
+        "VALUES ('authored','Keep','한국어 authored body','2026','2026')"
     )
     db.execute(
-        "INSERT INTO conversations(id,title,created_at,updated_at) VALUES ('chat','Keep chat','2026','2026')"
+        "INSERT INTO conversations(id,title,created_at,updated_at) "
+        "VALUES ('chat','Keep chat','2026','2026')"
     )
     db.execute(f"PRAGMA user_version={prior_version}")
     db.commit()
     if prior_version == 6:
         db.execute(
-            "INSERT INTO source_roots(id,name,path,kind,device,inode,created_at,updated_at) VALUES ('root','Keep root','/synthetic','connected',1,2,'2026','2026')"
+            "INSERT INTO source_roots(id,name,path,kind,device,inode,created_at,updated_at) "
+            "VALUES ('root','Keep root','/synthetic','connected',1,2,'2026','2026')"
         )
         db.commit()
     init_schema(db)

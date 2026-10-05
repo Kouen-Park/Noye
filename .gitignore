@@ -36,6 +36,8 @@ data/app.db-shm
 # was in fact trackable.
 data/sources/*
 !data/sources/.gitkeep
+data/wiki/
+data/knowledge/
 data/documents/*
 !data/documents/.gitkeep
 # Logs carry no user content by design, but they are machine state, not source,
