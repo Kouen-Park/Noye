@@ -558,6 +558,12 @@ def test_failure_clears_the_chunk_count_it_no_longer_has(db, qdrant, tmp_path) -
 
 def test_mixed_pdf_coverage_retains_physical_page_numbers(db, qdrant, tmp_path):
     record = add_pdf(db, tmp_path, ["First text", None, "Third text", None])
+    # One blank page and one real image-only page both have no extracted text.
+    with pymupdf.open(record.path) as pdf:
+        image = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 10, 10), False)
+        image.clear_with(255)
+        pdf[3].insert_image(pymupdf.Rect(72, 72, 172, 172), pixmap=image)
+        pdf.saveIncr()
     with ollama_client() as http:
         result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
     assert result.status is FileStatus.READY
