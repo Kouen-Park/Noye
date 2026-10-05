@@ -60,7 +60,12 @@ def make_batches(passages, categories, settings, topics=()):
     for fragment in fragments(passages, max_bytes=max(64, available // 2)):
         candidate = [*batch, fragment]
         if batch and (
-            request_size(prompt_for(candidate, categories, topics), SectionSummary) > budget - 400
+            request_size(
+                prompt_for(candidate, categories, topics),
+                SectionSummary,
+                {"evidence_id": [p.id for p in candidate]},
+            )
+            > budget - 400
         ):
             yield batch
             batch = [fragment]
@@ -104,7 +109,11 @@ def summarize(
     for position, batch in enumerate(batches):
         checkpoint()
         result = structured(
-            prompt_for(batch, categories, topics), SectionSummary, settings=settings, client=client
+            prompt_for(batch, categories, topics),
+            SectionSummary,
+            settings=settings,
+            client=client,
+            constraints={"evidence_id": [p.id for p in batch]},
         )
         for claim in [result.summary, *result.key_points]:
             verify_claim(claim, {p.id: p for p in batch})
