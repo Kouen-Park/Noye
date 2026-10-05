@@ -179,8 +179,9 @@ noye/
 - [x] Persistent app-data directory and explicit workspace import
 - [x] Local macOS application bundle
 - [x] Chat-focused layout with conversation navigation and passage inspection
-- [ ] Hardware recommendations and model installation
-- [ ] Persistent model/provider settings and OS-protected API keys
+- [x] Hardware recommendations and explicit model installation/deletion
+- [x] Persistent model/provider settings and macOS Keychain API keys
+- [x] Opt-in Ollama/Qdrant preparation, ownership-aware retry and shutdown
 - [ ] Signed/notarized distribution
 - [ ] Windows support
 
@@ -322,6 +323,13 @@ actual model-storage volume first. Ollama must already be running. Current
 generation, fixed embeddings and models used by Noye inference are protected.
 See [desktop setup and validation](docs/DESKTOP.md) for remaining limits.
 
+**Settings → Services** can start an installed Ollama and prepare Qdrant through
+local Docker Desktop after explicit confirmation. It can open Docker Desktop or
+official installation guides; it does not run prerequisite installers. Qdrant's
+pinned image may be downloaded, with persistent app-data storage and only localhost
+port 6333 published. Already-running services are reused, not adopted or stopped.
+Only services started by this Noye session stop on quit; Docker and data remain.
+
 Web: configure OpenAI using `OPENAI_API_KEY`/`OPENAI_MODEL` and Claude using
 `ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL` in the repository-root `.env`, never frontend
 environment variables. Gemini web configuration follows:
@@ -436,17 +444,20 @@ per colour scheme.
 
 The macOS shell bundles the static frontend and a frozen Python backend; it does
 not need Next.js or Python servers running separately. It starts its own loopback
-backend on an available port and stops only that process when you quit or close
-the window. Qdrant and Ollama still run separately; a banner reports missing
-services or models rather than starting Docker or downloading anything silently.
+backend on an available port. Installed Ollama and local Docker Desktop remain
+prerequisites; Settings can prepare services explicitly. Quit stops the owned
+backend and service handles started by that session, never unrelated services.
+Nothing starts Docker, downloads models or enables cloud usage silently.
 
 See [the desktop build and data guide](docs/DESKTOP.md) for prerequisites,
 packaging, validation and a non-destructive import of existing web data. The
 chat-focused interface is included: conversations on the left, a bottom composer,
 local/cloud provider selection and an answer-specific passage panel. First-run
-recommendations, model installation, changing installed models and secure in-app
-API-key settings are the next milestones, not included in this preview.
-The final full workflow and native PDF export remain unverified.
+recommendations, model management, Keychain-backed API settings and opt-in service
+preparation are included. Dark mode uses neutral charcoal and muted blue; light
+mode retains the original paper/forest palette. Implementation checks pass, but
+live setup, credential/model management, full workflow and native PDF acceptance
+remain deferred to Phase 8; this is not a signed public release.
 
 ### Supporting services
 

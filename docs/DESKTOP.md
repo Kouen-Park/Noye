@@ -1,8 +1,10 @@
-# macOS desktop foundation
+# macOS desktop preview
 
 This is a local development preview, not the completed desktop MVP or a signed
-public release. The app packages the UI and backend; Ollama and Qdrant remain
-external prerequisites. Missing services/models are reported inside the app.
+public release. The app packages the UI and backend. Installed Ollama and local
+Docker Desktop remain prerequisites; Settings offers explicit service preparation,
+model management and Keychain-backed cloud configuration. Nothing runs an installer
+or enables cloud usage silently. Missing services/models are reported in the app.
 
 Roadmap order: Phase 6 implements the Tauri application; Phase 7 implements the
 twelve core workflow improvements; Phase 8 follows with stability/quality refinement
@@ -43,12 +45,14 @@ development workflow using Next's dev server; packaged builds use no dev server.
 
 ## Lifecycle and storage
 
-- Only the bundled backend is managed. The app does not kill processes by port or
-  name, and it never controls Docker/Qdrant/Ollama in this milestone.
+- The app manages its bundled backend and only Ollama/Qdrant handles explicitly
+  started by that backend session. It never kills processes by port/name, stops
+  an existing external service or shuts down Docker Desktop.
 - The backend reserves a random `127.0.0.1` port and signals readiness after
   schema initialization. API consumers and source/export URLs use that address.
 - App close/quit sends a graceful shutdown line. Closed parent stdin also stops
-  the backend; the app has an eight-second fallback for its own child process.
+  the backend; the app has a 16-second fallback for its own backend child, allowing
+  uvicorn's five-second drain and bounded owned-service cleanup.
 - A single-instance guard brings the existing window forward instead of opening
   another backend against the same data.
 - Storage is `~/Library/Application Support/com.noye.desktop/`: `app.db`,
@@ -57,14 +61,59 @@ development workflow using Next's dev server; packaged builds use no dev server.
   `noye`. Do not configure two independent workspaces to share one collection.
 - No repository `.env` is copied or implicitly read by the desktop backend.
   Environment configuration (or app-data `.env` for non-secret development
-  configuration) is supported, but in-app key entry and OS-protected credentials
-  are not implemented yet. Never put a key in frontend configuration or Git.
+  configuration) is supported. In-app cloud keys use macOS Keychain and private
+  backend stdin; never put a key in frontend configuration, plaintext `.env` or Git.
 - Local embeddings and Qdrant are still required when Gemini generates answers.
   This foundation does not solve local inference latency or native PDF export.
 
 The existing API remains local/single-user without authentication. It binds only
 to loopback and allows the native webview/dev origins; do not expose it remotely.
 The frontend has no general shell or filesystem permissions.
+
+## Explicit local service preparation
+
+Open **Settings → Services**, review the confirmation, and start Ollama/Qdrant
+individually. This performs no inference or model download. Install missing
+prerequisites yourself from the offered official guides; only those two fixed
+URLs open in the system browser, with no arbitrary URL/command API. If Docker's
+engine is stopped, **Open Docker Desktop**, wait for its engine, then retry Qdrant.
+Docker Desktop itself remains shared infrastructure and is never closed by Noye.
+
+The desktop capability protects `/services`, `/services/start`, `/services/docker`
+and `/services/guide`; the normal web backend cannot use these controls. OS commands
+use fixed executables/argument arrays, no shell, bounded output and timeouts. Child
+environments are allowlisted; backend keys/control tokens are not inherited.
+
+- Start supports default HTTP localhost/127.0.0.1 services on ports 11434/6333
+  on macOS. Advanced/custom endpoints are checked but remain externally managed.
+- Ollama runs as an owned `ollama serve` child, bound to `127.0.0.1:11434` with
+  `OLLAMA_NO_CLOUD=1`. Its existing model location is preserved; no weights are
+  downloaded or deleted by service preparation. An existing healthy Ollama is reused.
+- Qdrant uses `qdrant/qdrant:v1.19.1`, matching the repository pin. Only HTTP
+  `127.0.0.1:6333:6333` is published. The container has no restart policy, no extra
+  capabilities and bounded Docker logs. The image uses its upstream default user;
+  this is not a claim of a comprehensive container security audit.
+- Only local Docker Desktop socket paths are used; inherited remote Docker hosts
+  and contexts are ignored. The pinned public image downloads only after explicit
+  confirmation and can take up to ten minutes. Startup health waiting is bounded
+  at twenty seconds; no fabricated overall download percentage is shown.
+- App-data `desktop-service-id` stores a non-secret stable UUID. Container naming
+  and owner labels use it; vectors persist in `qdrant/storage`. Escaping/linked
+  storage and separator-containing Docker mount paths are refused. Existing stopped
+  containers are reused only after validating ID, image, owner, mount and bindings.
+- Ready external services are reused without taking ownership. Unknown occupied
+  ports and unhealthy previous-session containers are not killed/restarted. Retry
+  may stop/restart only this session's owned unhealthy service. Ownership that
+  cannot be verified is not labelled app-owned.
+- Normal quit cancels owned preparation/download work, terminates the exact owned
+  Ollama child and stops a revalidated immutable Qdrant container ID. It never runs
+  container removal, volume pruning or a collection reset; Docker and data persist.
+  Forced-kill/crash cleanup and real active-job shutdown still require Phase 8 checks.
+
+A newly prepared Qdrant store does not copy vectors from an external server.
+Originals/conversations/documents stay in app-data. If the workspace previously used
+another Qdrant store, use Library's stored-index check and explicit rebuild; no
+automatic import, re-embedding or destructive rebuild runs during preparation.
 
 ## Optional import of existing web data
 
@@ -389,7 +438,83 @@ secure text field. No actual key was saved/removed, paid request made, or model
 downloaded/deleted. Native chat-text automation was inconclusive; newly proven
 draft preservation applies to browser fixtures/component checks, not native input.
 
-Remaining: service preparation/recovery (especially Qdrant), native Keychain
-permission/credential persistence across signed updates, live opt-in model
-management and cloud authorization, signed distribution, and Phase 8
-RAG/latency/PDF acceptance. Opening Settings does not install/start Ollama/Qdrant.
+At this checkpoint, service preparation/recovery was pending; the new service
+section above supersedes that implementation limit. Actual Keychain permission/
+persistence, live model management, cloud authorization and RAG/latency/PDF
+acceptance remain Phase 8 checks. Opening Settings alone starts nothing.
+
+### Dark-palette continuation checkpoint (historical)
+
+The owner requested neutral charcoal, off-white text and muted blue actions.
+Only dark color tokens and design documentation changed; light mode and service
+implementation are unchanged. ESLint and all 182 frontend tests passed. Computed
+dark text contrast is recorded in `DESIGN.md`; control-border/card contrast is
+3.07:1. Browser/native visual inspection and macOS bundle regeneration had not
+been performed at this checkpoint; the continuation below records the new build.
+
+Ollama/Qdrant preparation/recovery and safe owned lifecycle were still pending.
+Per the owner's clarification, real model/Keychain/cloud/RAG/PDF acceptance belongs
+to Phase 8, not a blocker requiring live tests during Phase 6 implementation.
+
+## Service/palette continuation validation — 2026-10-05
+
+Executed against the final implementation:
+
+- `backend/.venv/bin/pytest app/tests/ -q -m 'not integration'`: **670 passed,
+  19 skipped, 8 warnings**. The service-controller tests use fake process/Docker
+  boundaries and temporary storage, not live model/container operations. A final
+  focused rerun of `app/tests/test_desktop_services.py` passed **38 tests** after
+  adding capability and arbitrary-guide rejection assertions.
+- `backend/.venv/bin/ruff check app/ desktop.py`: passed.
+- `npm test -- --reporter=dot`: **196 passed in 27 files**. New checks cover
+  explicit preparation confirmation, external ownership, missing prerequisites,
+  bounded service requests, cancellation on panel close, accessible first-check
+  retry, fixed-guide requests and model-inventory refresh.
+- `npm run lint`, `npx tsc --noEmit`: passed.
+- `cargo fmt --manifest-path src-tauri/Cargo.toml --check`, `cargo test --locked`
+  (**3 passed**) and `cargo clippy --locked --all-targets -- -D warnings`: passed.
+- `npm run desktop:build -- --no-sign -- --locked`: passed, including static UI,
+  frozen backend and the final **67.52 MiB** Apple Silicon `Noye.app`. Exported
+  CSS contains the new charcoal token. The app was rebuilt, not visually inspected.
+- With `NOYE_TEST_SIDECAR` pointing at the final bundle,
+  `.venv/bin/pytest app/tests/test_desktop.py -q`: **10 passed, 7 warnings**.
+  Temporary-data checks include protected service routes, unconfirmed-start refusal,
+  no service-storage creation, private settings acknowledgement, readiness and
+  shutdown line/EOF. No prerequisite daemon is started by these checks.
+
+Initial sandboxed full-suite execution had two lifecycle failures because binding
+temporary loopback sockets was denied. The authorized rerun passed. Dependency
+deprecation/Qdrant compatibility warnings remain; they were not hidden or counted
+as failures. The final process check found no matching Noye/backend/dev-server
+processes from this work. No browser/native GUI session, installer, Docker image
+download, model mutation, real credential operation or cloud inference was run.
+
+Implementation review repaired cancellation during process creation, bounded
+streaming-probe/output behavior, ownership of a stopped container with an external
+listener, safe container identity revalidation and first-status-failure retry.
+The installed macOS WebKit code was inspected: without a new-window handler,
+`target="_blank"` is not a system-browser opener. Fixed guide URLs therefore use
+the bounded capability-protected OS-open path. Its real browser interaction remains
+unvalidated. No independent reviewer or new browser/axe pass ran in this continuation.
+
+Design skills guided these concrete changes:
+
+| Area | Before | After |
+| --- | --- | --- |
+| Dark palette | Forest/brass and brown headings | Charcoal, off-white and muted blue semantic tokens; light mode unchanged |
+| Service setup | Read-only booleans and external setup instructions | Quiet ownership-labelled rows, explicit confirmation, 44px start/retry/open actions |
+| Failure handling | First status failure could leave no retry action | Reachable refresh action, bounded requests and separate polling errors |
+
+Calculated color contrast is in `DESIGN.md`; it is not a rendered WCAG or visual
+acceptance result. Docker's [CLI reference](https://docs.docker.com/reference/cli/docker/container/run/),
+[stop semantics](https://docs.docker.com/reference/cli/docker/container/stop/),
+[Ollama configuration](https://docs.ollama.com/faq) and the
+[Qdrant quickstart](https://qdrant.tech/documentation/quickstart/) informed the fixed
+command plan. Native/macOS behavior is not claimed from Docker/Linux fixtures.
+
+The requested Phase 6 macOS implementation is ready for focused Phase 7 work.
+Phase 8 still owns real Docker/Ollama startup/recovery/shutdown, permission prompts,
+model/key lifecycle, cloud authorization, latest-palette visual inspection, live
+RAG/citations, data persistence under active-job crashes, latency and actual native
+Markdown/PDF exports. Signed/notarized distribution, other Macs and Windows remain
+unvalidated. These checks were deferred, not marked passed or silently removed.

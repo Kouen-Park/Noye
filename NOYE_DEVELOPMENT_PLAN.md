@@ -2268,8 +2268,8 @@ Desktop work includes:
 -   [x] Tauri setup
 -   [x] Start/manage the app's own backend
 -   [x] Manage local data directory and explicit copy-only web-data import
--   [ ] Manage Qdrant
--   [x] Ollama availability and installed-model detection (no install/start yet)
+-   [x] Opt-in Qdrant preparation, verified ownership, persistent storage and shutdown
+-   [x] Ollama availability, explicit installed-service start and model management
 -   [x] Application packaging (local unsigned preview)
 -   [x] macOS build (Apple Silicon; other machines not validated)
 -   [ ] Windows build
@@ -2454,12 +2454,38 @@ TypeScript and unsigned macOS packaging passed. Browser fixtures exercised fake
 key save, downloads, cancel and draft/focus preservation. Native non-secret save
 and secure input rendering were observed. Exact evidence is in `docs/DESKTOP.md`.
 
-Remaining before Phase 6 handoff: Ollama/Qdrant service preparation/recovery,
-stronger native credential-lifecycle verification and live model-management
-acceptance. Real cloud authorization, live RAG/quality/latency, PDF export and
-final packaged-app E2E remain unvalidated; final acceptance stays Phase 8.
-Do not declare Phase 6 complete or start all twelve Phase 7 items from these
-settings controls alone.
+At this checkpoint, Ollama/Qdrant service preparation/recovery was still pending.
+The owner clarified that native credential lifecycle, live model management and
+other real-service acceptance belong to Phase 8, not a live-test gate for Phase 6.
+The implementation update below supersedes the service limitation. Actual cloud
+authorization, RAG/quality/latency, PDF export and packaged-app E2E remain unvalidated.
+
+### Service preparation and implementation handoff — 2026-10-05
+
+Settings now explicitly starts an installed local-only Ollama and prepares pinned
+Qdrant through local Docker Desktop. It opens Docker or fixed official prerequisite
+guides on request; no package installer, automatic model download or cloud fallback.
+Custom service URLs remain externally managed. Existing healthy services are reused,
+never adopted. Occupied/unhealthy external ports or previous-session containers are
+left untouched. Retry only restarts an unhealthy child/container owned by this session.
+
+Qdrant persists in app-data `qdrant/storage`, with a stable workspace UUID, exact
+container ID, owner label, pinned image, verified mount and localhost-only REST port.
+No gRPC publishing, container/volume deletion, index reset or remote Docker context.
+Shutdown cancels app-owned preparation/model jobs and stops only owned handles;
+the native backend fallback allows 16 seconds for drain and bounded cleanup.
+New Qdrant storage does not import old vectors; Library check/rebuild stays explicit.
+
+The requested dark palette is neutral charcoal, off-white and muted blue; light
+mode is unchanged. Design skills guided semantic tokens, ownership-labelled rows,
+44px actions, quiet separators and clear confirmation/retry states.
+
+Relevant unit/API/UI checks, lint, types and macOS packaging are recorded in
+`docs/DESKTOP.md`. This finishes the requested Phase 6 macOS implementation scope
+and unblocks focused Phase 7 work, beginning with §16.3's Compose exposure fix.
+It is not MVP acceptance: real Docker/Ollama preparation and shutdown, model/key
+lifecycle, browser/native visual inspection, RAG, latency and actual exported PDFs
+remain Phase 8 checks. Windows and signed/notarized distribution are not delivered.
 
 ------------------------------------------------------------------------
 
