@@ -2566,9 +2566,11 @@ milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
 types and builds run with each change. Phase 8 then performs broader stability,
 quality refinement and final packaged-app acceptance.
 
-These items are pending as complete milestones. Existing desktop storage, service
-checks and SQLite-copy import are partial foundations, not missing functionality
-to rebuild. Reassess current code before each item and preserve all saved work.
+Items 3, 4 and 8 are implemented with regression/configuration evidence; item 10
+has its evaluation foundation but remains an incomplete milestone (see §16.5).
+The other items remain separate work. Existing desktop storage, service checks
+and SQLite-copy import are partial foundations, not missing functionality to
+rebuild. Reassess current code before each item and preserve all saved work.
 
 ## 16.1 Approved scope and expected benefit
 
@@ -2621,7 +2623,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 3. Rebuild and ingestion coordination
 
--   [ ] Coordinate library-wide maintenance with ingestion/deletion before any
+-   [x] Coordinate library-wide maintenance with ingestion/deletion before any
     collection reset. Refuse or safely drain conflicting work; reserve eligible
     work before destructive operations. Keep the ordinary non-reset rebuild path.
 - Start with the existing single-process architecture and a shared maintenance
@@ -2632,7 +2634,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 4. Index identity and compatibility
 
--   [ ] Persist an index fingerprint covering embedding model identity/digest,
+-   [x] Persist an index fingerprint covering embedding model identity/digest,
     vector dimension, input-format version, and extraction/chunking configuration.
     Store source revisions separately and expose when an explicit rebuild is needed.
 - Reuse existing migrations and integrity checks. Mark legacy identity as unknown;
@@ -2680,7 +2682,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 8. Local-only Qdrant exposure
 
--   [ ] Bind Docker-published Qdrant ports to `127.0.0.1`; remove the gRPC mapping
+-   [x] Bind Docker-published Qdrant ports to `127.0.0.1`; remove the gRPC mapping
     unless used. Keep app-owned backend binds local and remove documentation that
     treats CORS as authentication or a substitute for network access control.
 - Validate Compose configuration and effective listener bindings when Docker is
@@ -2766,6 +2768,35 @@ out of each change. No database/framework replacement is required by this phase.
   Record unavailable live checks rather than marking them complete.
 - Phase 8 expands stability/quality evaluation and runs the full packaged workflow.
   Phase 7 completion alone does not close the final MVP acceptance checklist.
+
+------------------------------------------------------------------------
+
+## 16.5 First ordered integration — 2026-10-05
+
+The owner authorized merging Phase 6 followed by the work from #37, #38, #39
+and #40. Those four drafts were closed after their `codex/` remote heads were
+replaced by identical `feat/` heads. Their original feature commits are preserved;
+normal main refreshes and merge commits avoid rewriting published history.
+
+Phase 6 is #43, local Qdrant exposure is #44 (replaces #37), rebuild coordination
+is #45 (replaces #38), and index identity is #46 (replaces #39). Retrieval evaluation
+uses `feat/retrieval-evaluation` (replaces #40), refreshed only after those merges.
+The merge guide in `docs/phase7/parallel-merge-guide.md` retains historical preview
+evidence and records fresh final-source checks and the four actual resolutions.
+
+Final combined implementation `f1cdc8b`: backend **734 passed, 19 skipped, 8 warnings**;
+frontend **199 passed across 27 files**; native Rust **3 passed** at the unchanged
+native source; final frozen-backend checks **10 passed**. Ruff, ESLint, TypeScript,
+route type generation, web build, desktop UI export, Rust format/Clippy and unsigned
+Apple Silicon packaging passed. The app is **67.53 MiB**. The model-free lexical
+pilot reproduced Recall@5 **0.7143** and nDCG@5 **0.7656**. No personal workspace,
+model lifecycle, real cloud call or native GUI acceptance was used for these checks.
+
+Items 3/4/8's implementations and relevant regressions are complete. Item 10 still
+needs generated-answer/abstention review, representative data, embedding/chunking
+comparisons and a measured reranking decision; its foundation is not completion.
+Other Phase 7 milestones and all final Phase 8 acceptance remain open. No final
+listener recreation, live dimension reset, latency or actual PDF output is claimed.
 
 ------------------------------------------------------------------------
 

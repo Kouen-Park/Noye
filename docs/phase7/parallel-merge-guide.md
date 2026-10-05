@@ -82,3 +82,50 @@ the evaluation foundation for item **10**. Item 10 still needs actual generated
 answer/abstention review, representative data, embedding-input/chunking
 comparisons and a measured decision on reranking. The other eight Phase 7
 items remain separate work; this batch does not mark Phase 7 complete.
+
+## Final ordered integration — 2026-10-05
+
+The owner explicitly authorized this sequence after Phase 6 implementation was
+complete at `ab225fd`. Original #37–#40 were closed and their `codex/` remote heads
+deleted; their `feat/` replacements had exactly the same feature SHAs:
+
+| Original work | Replacement | Original head |
+| --- | --- | --- |
+| Phase 6 | [#43](https://github.com/Kouen-Park/Noye/pull/43), `feat/tauri-macos` | `ab225fd` |
+| #37 | [#44](https://github.com/Kouen-Park/Noye/pull/44), `feat/qdrant-localhost` | `bc21669` |
+| #38 | [#45](https://github.com/Kouen-Park/Noye/pull/45), `feat/rebuild-coordination` | `10066cf` |
+| #39 | [#46](https://github.com/Kouen-Park/Noye/pull/46), `feat/index-identity` | `a46a012` |
+| #40 | Replacement on `feat/retrieval-evaluation` | `f550315` |
+
+Each Phase 7 head was refreshed with the newly merged main in order, without
+rebasing/force-pushing. Local exposure and maintenance merged cleanly. Identity
+had the same four textual conflicts listed above; normal merge `9fe73f4` preserved
+both sides. In README, "cloud setup" now includes all three providers and model/
+service controls, not only the earlier Gemini milestone. Configuration retains
+SecretStr, desktop snapshots and chunk validation; chat retains readiness inside
+its saved-failure handler and explicit provider forwarding; index retains 409
+maintenance and 503 identity preflight handlers. Automatic ingestion/rebuild/types
+were inspected, and desktop lifecycle files/dependency manifests remain unchanged.
+`38b9d05` adds eight all-provider/failure-preservation regression cases.
+
+The resulting complete implementation is `f1cdc8b`, which also includes retrieval
+evaluation. Fresh checks on that source (not the older preview above):
+
+- Backend non-live suite: **734 passed, 19 skipped, 8 warnings**; Ruff passed.
+- Frontend: **199 passed across 27 files**; ESLint and TypeScript passed. Route
+  types, web Webpack build and desktop UI export passed on the identity snapshot;
+  evaluation changes no frontend source, and final static export passed again.
+- Native Rust tests: **3 passed** on unchanged native source; format and Clippy
+  passed. Final unsigned Apple Silicon packaging: **67.53 MiB**.
+- Final frozen backend: **10 passed**, using temporary data to check readiness,
+  private configuration acknowledgement, control refusal, CORS and line/EOF exit.
+- Model-free lexical CLI: Recall@5 **0.7143**, nDCG@5 **0.7656**, p50/p95
+  **0.0467/0.0749 ms**. This is tiny synthetic ranking time, not AI/app latency.
+- Compose config still publishes only `127.0.0.1:6333:6333`; diff checks passed.
+
+No GitHub CI checks were reported; these are local checks. Earlier live reports
+are historical, not fresh model runs. No personal container/index was recreated,
+no model/key lifecycle or cloud inference was used, and no native GUI/PDF workflow
+was inspected. Final listener bindings, live dimension-changing rebuilds, actual
+generated-answer/abstention review, quality/latency and packaged acceptance remain
+open. This integrates only items 3/4/8 and item 10's foundation, not all Phase 7 work.

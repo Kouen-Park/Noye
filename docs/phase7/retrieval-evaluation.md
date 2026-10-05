@@ -82,3 +82,20 @@ despite nearest-neighbor passages. No arbitrary relevance threshold was installe
 - PDF parsing, chunk-size/input-prefix comparisons, a representative larger corpus,
   conditional reranking and final packaged-app acceptance remain open. This item
   supplies the foundation for those later measurements rather than claiming them.
+
+## Final integration — 2026-10-05
+
+`feat/retrieval-evaluation` retains closed #40's feature head `f550315` and normally
+merges main `9334d56` after Phase 6, local exposure, maintenance and identity landed.
+The final implementation `f1cdc8b` merged cleanly. Fresh full backend: **734 passed,
+19 skipped, 8 warnings**; frontend: **199 passed**. Ruff, ESLint, TypeScript,
+unsigned macOS packaging/static export (**67.53 MiB**), Rust format/Clippy and final
+frozen-backend checks (**10 passed**) passed. The prior merged source also passed
+route types/web build and unchanged native Rust tests (**3 passed**).
+
+A fresh lexical-only CLI run reproduced Recall@5 **0.7143**, nDCG@5 **0.7656**,
+and all three negatives returning some context; p50/p95 was **0.0467/0.0749 ms**.
+Its report was temporary, not a replacement for the historical committed model
+comparisons. No model/Qdrant call or generation was made by that lexical run.
+Dense/hybrid reports above retain their original environment/hashes and were not
+regenerated. Production ranking remains unchanged. Item 10 is still partial.
