@@ -88,8 +88,9 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
           {" · "}{root.availability}{" · "}{root.processing ? "Processing enabled" : "Processing paused"}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button className={actionClass} disabled={busy || !root.connected} onClick={() => void act(() => revealFolder(root.id))}>Open in Finder</button>
+        <button className={actionClass} disabled={busy || !root.connected || root.availability !== "available"} onClick={() => void act(() => revealFolder(root.id))}>Open in Finder</button>
         {root.connected ? <>
+          {root.availability === "unavailable" && <button className={actionClass} disabled={busy} onClick={() => void act(() => chooseSourceFolder(root.kind, root.id))}>Re-select folder</button>}
           <button className={actionClass} disabled={busy} onClick={() => void act(() => update({ processing: !root.processing }))}>
             {root.processing ? "Pause processing" : "Resume processing"}</button>
           <button className={actionClass} disabled={busy} onClick={() => void act(() => folderRequest(`/${root.id}/reconcile`, "POST"))}>Reconcile & recover</button>
@@ -109,7 +110,7 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
         <select className="min-h-11 rounded border border-edge-strong bg-canvas px-2" value={area}
           disabled={busy || !!root.organization_prefix} onChange={event => setArea(event.target.value)}>
           <option value="">Choose a subfolder</option>
-          {entries.filter(entry => entry.kind === "directory" && !entry.excluded).map(entry =>
+          {entries.filter(entry => entry.kind === "directory" && !entry.excluded && !entry.remembered).map(entry =>
             <option key={entry.relative_path} value={entry.relative_path}>{entry.relative_path}</option>)}
           {root.organization_prefix && !entries.some(entry => entry.relative_path === root.organization_prefix) &&
             <option value={root.organization_prefix}>{root.organization_prefix}</option>}
@@ -131,7 +132,7 @@ function FolderBranch({ entries, prefix, busy, act, root }: {
   const children = entries.filter(entry => entry.relative_path.slice(0, entry.relative_path.lastIndexOf("/") + 1) === prefix);
   return <ul className="space-y-1 pl-3">
     {children.map(entry => entry.kind === "directory"
-      ? <li key={entry.relative_path}><details open><summary className="min-h-8 cursor-pointer py-1 text-sm font-medium">{entry.relative_path.split("/").pop()}{entry.excluded && " · Excluded from intake"}</summary>
+      ? <li key={entry.relative_path}><details open><summary className="min-h-8 cursor-pointer py-1 text-sm font-medium">{entry.relative_path.split("/").pop()}{entry.excluded && " · Excluded from intake"}{entry.remembered && " · Registered location"}</summary>
           <FolderBranch entries={entries} prefix={entry.relative_path + "/"} busy={busy} act={act} root={root} />
         </details></li>
       : <SourceRow key={entry.relative_path} entry={entry} root={root} busy={busy} act={act} />)}
@@ -155,7 +156,7 @@ function SourceRow({ entry, root, busy, act }: {
         {source.job && (jobIsActive(source.job)
           ? <button className={actionClass} disabled={busy || source.job.state === "cancelling"} onClick={() => void act(() => actOnJob(source.job!.id, "cancel"))}>Cancel processing</button>
           : source.job.state !== "complete" && <button className={actionClass} disabled={busy || !root.processing || source.availability !== "available"} onClick={() => void act(() => actOnJob(source.job!.id, "resume"))}>Retry from original</button>)}
-        {root.organization_prefix && <button className={actionClass} disabled={busy} onClick={() => setFiling(!filing)}>File manually</button>}
+        {root.organization_prefix && <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => setFiling(!filing)}>File manually</button>}
       </>}
     </div>
     {source?.job && source.job.total > 0 && <p className="mt-1 text-xs text-ink-soft">{source.job.stage} · {source.job.completed} / {source.job.total} · attempt {source.job.attempt}</p>}

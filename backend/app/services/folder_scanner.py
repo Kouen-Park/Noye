@@ -165,8 +165,6 @@ class FolderScanner:
                 if (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns) != signature:
                     self.observed.pop(key, None)
                     continue
-                if not data:
-                    continue  # Empty files can be the first phase of a write.
                 moved = False
                 if source is None and identities[signature[:2]] == 1:
                     candidates = [
@@ -254,6 +252,10 @@ class FolderScanner:
                                 else "reconnected",
                                 source=current,
                             )
+                        if not changed and source["availability"] != "available":
+                            indexed = file_store.get_file(connection, file_id)
+                            if indexed.status.value == "READY" and indexed.content_hash == version:
+                                emit(connection, "ready", source=current)
                     if changed:
                         if self.dispatch:
                             self.dispatch(file_id)

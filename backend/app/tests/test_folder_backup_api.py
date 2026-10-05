@@ -151,3 +151,25 @@ def test_failed_reconnection_write_retains_recovery_bytes_and_never_publishes_pa
     assert recovered.read_bytes() == b"Recovered complete authored bytes"
     assert not (root / "wiki/sources/test.md").exists()
     assert not list((root / "wiki/sources").glob(".noye-reconnect-*"))
+
+
+def test_unavailable_nested_source_remains_visible_in_registered_tree(folder, monkeypatch):
+    db, root, root_id, scan, _ = folder
+    record = discover(folder, "deep/nested/note.txt")
+    monkeypatch.setenv("NOYE_CONTROL_TOKEN", "synthetic-control")
+    root.rename(root.with_name("unmounted"))
+    scan()
+    app.dependency_overrides[get_db] = lambda: db
+    try:
+        client = TestClient(app)
+        headers = {"X-Noye-Control": "synthetic-control"}
+        tree = client.get(f"/folders/{root_id}/tree", headers=headers).json()
+        assert any(e["relative_path"] == "deep/nested" and e["remembered"] for e in tree["entries"])
+        assert (
+            next(e["source"] for e in tree["entries"] if e["kind"] == "file")["source_id"]
+            == record.id
+        )
+        assert tree["root"]["availability"] == "unavailable"
+        assert client.get("/folders/unknown/tree", headers=headers).status_code == 400
+    finally:
+        app.dependency_overrides.clear()
