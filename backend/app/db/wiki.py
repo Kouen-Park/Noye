@@ -10,6 +10,10 @@ import uuid
 from datetime import UTC, datetime
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS wiki_consumers (
+    name TEXT PRIMARY KEY,
+    sequence INTEGER NOT NULL DEFAULT 0
+);
 CREATE TABLE IF NOT EXISTS wiki_pages (
     id TEXT PRIMARY KEY,
     kind TEXT NOT NULL CHECK(kind IN ('source','concept','project','analysis')),
@@ -115,23 +119,39 @@ def revision(connection, identifier):
         raise LookupError("This Wiki revision does not exist.")
     result = dict(row)
     result["metadata"] = json.loads(result["metadata"])
-    result["evidence"] = [json.loads(row[0]) for row in connection.execute(
-        "SELECT snapshot FROM wiki_evidence WHERE revision_id=? ORDER BY evidence_id",
-        (identifier,),
-    )]
+    result["evidence"] = [
+        json.loads(row[0])
+        for row in connection.execute(
+            "SELECT snapshot FROM wiki_evidence WHERE revision_id=? ORDER BY evidence_id",
+            (identifier,),
+        )
+    ]
     return result
 
 
-def write_revision(connection, identifier, *, title, content, metadata, evidence,
-                   expected, origin="generated", relations=()):
+def write_revision(
+    connection,
+    identifier,
+    *,
+    title,
+    content,
+    metadata,
+    evidence,
+    expected,
+    origin="generated",
+    relations=(),
+):
     """Compare-and-publish in one transaction; concurrent/user edits become proposals."""
     revision_id = str(uuid.uuid4())
     timestamp = now()
     connection.execute("BEGIN IMMEDIATE")
     try:
         current = page(connection, identifier)
-        prior = (revision(connection, current["current_revision"])
-                 if current["current_revision"] else None)
+        prior = (
+            revision(connection, current["current_revision"])
+            if current["current_revision"]
+            else None
+        )
         conflict = current["current_revision"] != expected
         if origin == "user" and conflict:
             raise ValueError("This page changed. Reload before saving your edit.")
@@ -139,25 +159,49 @@ def write_revision(connection, identifier, *, title, content, metadata, evidence
             origin = "proposal"
         connection.execute(
             "INSERT INTO wiki_revisions VALUES (?,?,?,?,?,?,?,?)",
-            (revision_id, identifier, current["current_revision"], origin,
-             title, content, encode(metadata), timestamp),
+            (
+                revision_id,
+                identifier,
+                current["current_revision"],
+                origin,
+                title,
+                content,
+                encode(metadata),
+                timestamp,
+            ),
         )
         for item in evidence:
-            connection.execute("INSERT INTO wiki_evidence VALUES (?,?,?,?,?)", (
-                revision_id, item["id"], item["source"]["source_id"],
-                item["source"]["source_version"], encode(item),
-            ))
+            connection.execute(
+                "INSERT INTO wiki_evidence VALUES (?,?,?,?,?)",
+                (
+                    revision_id,
+                    item["id"],
+                    item["source"]["source_id"],
+                    item["source"]["source_version"],
+                    encode(item),
+                ),
+            )
         for relation in relations:
-            connection.execute("INSERT INTO wiki_relations VALUES (?,?,?,?,?,?,?,?,?)", (
-                str(uuid.uuid4()), identifier, relation["target_id"], revision_id,
-                relation["kind"], relation["reason"], relation["origin_evidence_id"],
-                relation["target_evidence_id"], relation["target_revision"],
-            ))
+            connection.execute(
+                "INSERT INTO wiki_relations VALUES (?,?,?,?,?,?,?,?,?)",
+                (
+                    str(uuid.uuid4()),
+                    identifier,
+                    relation["target_id"],
+                    revision_id,
+                    relation["kind"],
+                    relation["reason"],
+                    relation["origin_evidence_id"],
+                    relation["target_evidence_id"],
+                    relation["target_revision"],
+                ),
+            )
         if origin != "proposal":
             connection.execute(
                 "UPDATE wiki_pages SET title=?,current_revision=?,updated_at=?,"
                 "publication_error=NULL "
-                "WHERE id=?", (title, revision_id, timestamp, identifier),
+                "WHERE id=?",
+                (title, revision_id, timestamp, identifier),
             )
             reindex(connection, identifier, revision_id, title, content, metadata)
         connection.commit()
@@ -169,34 +213,54 @@ def write_revision(connection, identifier, *, title, content, metadata, evidence
 
 def reindex(connection, identifier, revision_id, title, content, metadata):
     # Independent of source-vector identity, including revision and schema/input format.
-    fingerprint = digest(encode({"format": "wiki-lexical-v1", "revision": revision_id,
-                                 "content_hash": digest(content)}))
-    connection.execute("INSERT OR REPLACE INTO wiki_index VALUES (?,?,?,?,?)", (
-        identifier, revision_id, fingerprint, title + "\n" + content,
-        encode(metadata.get("tags", [])),
-    ))
+    fingerprint = digest(
+        encode(
+            {"format": "wiki-lexical-v1", "revision": revision_id, "content_hash": digest(content)}
+        )
+    )
+    connection.execute(
+        "INSERT OR REPLACE INTO wiki_index VALUES (?,?,?,?,?)",
+        (
+            identifier,
+            revision_id,
+            fingerprint,
+            title + "\n" + content,
+            encode(metadata.get("tags", [])),
+        ),
+    )
 
 
 def list_pages(connection, limit=200):
-    return [dict(row) for row in connection.execute(
-        "SELECT p.*,r.origin,r.metadata FROM wiki_pages p "
-        "LEFT JOIN wiki_revisions r ON r.id=p.current_revision ORDER BY p.updated_at DESC LIMIT ?",
-        (limit,),
-    )]
+    return [
+        dict(row)
+        for row in connection.execute(
+            "SELECT p.*,r.origin,r.metadata FROM wiki_pages p "
+            "LEFT JOIN wiki_revisions r ON r.id=p.current_revision "
+            "ORDER BY p.updated_at DESC LIMIT ?",
+            (limit,),
+        )
+    ]
 
 
 def revisions(connection, identifier):
-    return [dict(row) for row in connection.execute(
-        "SELECT id,parent_id,origin,title,created_at FROM wiki_revisions "
-        "WHERE wiki_id=? ORDER BY rowid DESC", (identifier,),
-    )]
+    return [
+        dict(row)
+        for row in connection.execute(
+            "SELECT id,parent_id,origin,title,created_at FROM wiki_revisions "
+            "WHERE wiki_id=? ORDER BY rowid DESC",
+            (identifier,),
+        )
+    ]
 
 
 def relations(connection, identifier):
     # Only published revisions, including backlinks. Proposals cannot change the live graph.
-    return [dict(row) for row in connection.execute(
-        "SELECT r.*,p.title AS target_title,o.title AS origin_title FROM wiki_relations r "
-        "JOIN wiki_pages o ON o.id=r.origin_id JOIN wiki_pages p ON p.id=r.target_id "
-        "WHERE r.revision_id=o.current_revision AND (origin_id=? OR target_id=?) LIMIT 60",
-        (identifier, identifier),
-    )]
+    return [
+        dict(row)
+        for row in connection.execute(
+            "SELECT r.*,p.title AS target_title,o.title AS origin_title FROM wiki_relations r "
+            "JOIN wiki_pages o ON o.id=r.origin_id JOIN wiki_pages p ON p.id=r.target_id "
+            "WHERE r.revision_id=o.current_revision AND (origin_id=? OR target_id=?) LIMIT 60",
+            (identifier, identifier),
+        )
+    ]

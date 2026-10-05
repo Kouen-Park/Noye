@@ -85,6 +85,7 @@ class EditWiki(StrictModel):
     expected_revision: str
     title: str = Field(min_length=1, max_length=160)
     content: str = Field(max_length=200_000)
+    scope: WikiScope = Field(default_factory=WikiScope)
 
 
 class SaveAnalysis(StrictModel):
