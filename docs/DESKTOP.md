@@ -1,5 +1,10 @@
 # macOS desktop preview
 
+Phase 7 adds [workspace backups](phase7/workspace-backup.md),
+[durable processing jobs](phase7/durable-jobs.md) and
+[verified workspace switching/readiness](phase7/desktop-integration.md).
+These implementation checks do not replace Phase 8 native GUI acceptance.
+
 This is a local development preview, not the completed desktop MVP or a signed
 public release. The app packages the UI and backend. Installed Ollama and local
 Docker Desktop remain prerequisites; Settings offers explicit service preparation,

@@ -2566,7 +2566,7 @@ milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
 types and builds run with each change. Phase 8 then performs broader stability,
 quality refinement and final packaged-app acceptance.
 
-Items 1, 2, 3, 4 and 8 are implemented with regression/configuration evidence; item 10
+Items 1 through 8 are implemented with regression/configuration evidence; item 10
 has its evaluation foundation but remains an incomplete milestone (see §16.5).
 The other items remain separate work. Existing desktop storage, service checks
 and SQLite-copy import are partial foundations, not missing functionality to
@@ -2647,7 +2647,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 5. Complete workspace backup and restore
 
--   [ ] Build a user-visible backup/restore workflow covering originals, SQLite
+-   [x] Build a user-visible backup/restore workflow covering originals, SQLite
     conversations, edited documents and evidence snapshots. Reuse SQLite's backup
     API and the desktop import's copy-first/no-overwrite behavior, including WAL data.
 - Define a consistent snapshot boundary with active writes/jobs. Include versioned
@@ -2660,7 +2660,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 6. Durable jobs and responsive cancellation
 
--   [ ] Persist job identity, status/progress and interruption reason in SQLite;
+-   [x] Persist job identity, status/progress and interruption reason in SQLite;
     recover interrupted work on startup and expose safe resume/retry. Use bounded
     local workers rather than introducing Redis/Celery by default.
 - Check cancellation between embedding batches, bound simultaneous local inference,
@@ -2672,7 +2672,7 @@ feature; item 11 supplies source selection within the existing workflow.
 
 ### 7. Desktop data, service and model integration
 
--   [ ] Reuse Phase 6 app-data paths, owned backend lifecycle, service/model checks,
+-   [x] Reuse Phase 6 app-data paths, owned backend lifecycle, service/model checks,
     onboarding and persistent AI settings; complete remaining integration gaps.
 - Distinguish configuration, service availability, installed model and readiness.
   Preserve work across app replacement, imports and provider/model changes. Bound
@@ -2839,6 +2839,40 @@ use real cloud credentials or validate live generation quality/context capacity.
 Items 1/2's implementations are complete, not the whole Phase 7 roadmap. Item
 12's cited exports/PDF coverage and all real-service/native-GUI acceptance remain
 separate work in their planned phases.
+
+------------------------------------------------------------------------
+
+## 16.7 Workspace recovery and desktop integration — 2026-10-05
+
+Items 5, 6 and 7 are implemented on three ordered branches: workspace backup
+(draft PR #50), durable jobs (draft PR #51) and the dependent desktop integration.
+Merge in that order and retarget each successor to main after its predecessor
+lands; these draft PRs have not been merged by this task.
+
+Backups preserve SQLite/WAL, originals, edited documents and historical evidence,
+validate checksums/schema/inventory, and restore into new folders. Native
+selection explicitly restarts into a verified restore and preserves the original
+and previous workspace. UUID-derived restored collections prevent vector reuse
+between workspaces. Preferences and Keychain credentials remain outside backups.
+
+Jobs persist attempts/progress/cancellation, settle unfinished work on startup,
+and offer an explicit retry from the original. One ingestion pipeline and one
+local inference request run at a time; cancellation is checked between embedding
+batches. Partial files stay excluded from search. There is no cloud replay.
+
+Readiness distinguishes configured/installed models and running services; saved
+keys do not prove cloud API access. Local generation has context/output bounds
+and a conservative UTF-8 input check, without silently trimming saved evidence.
+The user's local-only document-excerpt policy remains in force.
+
+Final validation: backend 792 passed, 19 skipped; frontend 220 passed; Ruff,
+ESLint, route types, TypeScript, default web build and desktop static export
+passed. Rust tests: 5 passed; fmt/Clippy passed. Frozen sidecar: 10 desktop
+checks passed using temporary data. Unsigned macOS packaging: 67.65 MiB.
+See docs/phase7/desktop-integration.md for decisions and exact acceptance limits.
+Native GUI restart/download/export, real inference interruption/latency, large
+backups and live provider access remain Phase 8. No real user data or Keychain
+entry was changed. Items 9–12 remain separate Phase 7 work.
 
 ------------------------------------------------------------------------
 
