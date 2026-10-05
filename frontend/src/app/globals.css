@@ -127,8 +127,13 @@ progress::-moz-progress-bar { background: var(--brand); }
     --edge-strong: #999999;
   }
 
+  html,
   body {
     background: #fff;
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
   /* Hide the application. */
