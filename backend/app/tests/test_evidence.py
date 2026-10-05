@@ -209,8 +209,8 @@ def test_changed_source_during_extraction_is_refused(tmp_path, monkeypatch):
     )
     extract = ingestion.extract_file
 
-    def changing(path, file_type):
-        pages = extract(path, file_type)
+    def changing(path, file_type, **kwargs):
+        pages = extract(path, file_type, **kwargs)
         original.write_text("changed during extraction")
         return pages
 
@@ -218,4 +218,28 @@ def test_changed_source_during_extraction_is_refused(tmp_path, monkeypatch):
     with pytest.raises(ingestion.IngestionError, match="changed during extraction"):
         ingestion._extract(db, record)
     assert files_db.get_file(db, record.id).content_hash is None
+    db.close()
+
+
+def test_transient_edits_cannot_change_the_bytes_being_parsed(tmp_path, monkeypatch):
+    db = connect(tmp_path / "transient.db")
+    init_schema(db)
+    original = tmp_path / "source.txt"
+    original.write_text("first version")
+    record = files_db.create_file(
+        db, name="source.txt", file_type=FileType.TEXT, path=str(original), size=13
+    )
+    extract = ingestion.extract_file
+
+    def changing(path, file_type, **kwargs):
+        original.write_text("temporary replacement")
+        pages = extract(path, file_type, **kwargs)
+        original.write_text("first version")
+        return pages
+
+    monkeypatch.setattr(ingestion, "extract_file", changing)
+    assert ingestion._extract(db, record)[0].content == "first version"
+    assert files_db.get_file(db, record.id).content_hash == hashlib.sha256(
+        b"first version"
+    ).hexdigest()
     db.close()

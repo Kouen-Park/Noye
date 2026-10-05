@@ -22,9 +22,11 @@ matter more than the happy path:
 
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 import threading
 from dataclasses import replace
+from pathlib import Path
 
 import httpx
 from qdrant_client import QdrantClient
@@ -297,11 +299,13 @@ def ingest_file(
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
 
-    before = hash_file(record.path)
-
     try:
+        # Hash and parse the same byte copy. Checking a live path twice alone
+        # cannot establish which revision a lazy PDF/text reader actually saw.
+        source_bytes = Path(record.path).read_bytes()
+        before = hashlib.sha256(source_bytes).hexdigest()
         with timed(logger, "Extracted", file=record.id):
-            pages = extract_file(record.path, record.file_type)
+            pages = extract_file(record.path, record.file_type, source_bytes=source_bytes)
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
