@@ -518,3 +518,34 @@ model/key lifecycle, cloud authorization, latest-palette visual inspection, live
 RAG/citations, data persistence under active-job crashes, latency and actual native
 Markdown/PDF exports. Signed/notarized distribution, other Macs and Windows remain
 unvalidated. These checks were deferred, not marked passed or silently removed.
+
+## Ordered Phase 7 integration validation — 2026-10-05
+
+Phase 6 final source `ab225fd` was merged as #43, followed by #44 (closed #37's
+local exposure change), #45 (closed #38's maintenance coordination) and #46
+(closed #39's identity change). The identical `feat/` heads were refreshed with
+main using normal merges. The four identity conflicts retain desktop settings,
+provider forwarding, saved failure turns and both maintenance/identity errors.
+Retrieval evaluation then merged cleanly into complete source `f1cdc8b`.
+
+- Final backend: **734 passed, 19 skipped, 8 warnings**; Ruff passed.
+- Final frontend: **199 passed across 27 files**; ESLint and TypeScript passed.
+  Route type generation/web build passed on the preceding identity snapshot;
+  evaluation changes no UI source. Desktop static export passed again.
+- Rust tests: **3 passed** at unchanged native source; final format/Clippy passed.
+- `npm run desktop:build -- --no-sign -- --locked`: passed, **67.53 MiB** unsigned
+  Apple Silicon `Noye.app`, including all integrated backend changes. PyMuPDF's
+  distribution metadata required by the fingerprint is present in the build TOC.
+- Final `NOYE_TEST_SIDECAR=... .venv/bin/pytest app/tests/test_desktop.py -q`:
+  **10 passed, 7 warnings**. Temporary storage, readiness, private configuration
+  acknowledgement, control refusal, CORS and line/EOF exit only; no model/daemon
+  preparation or native GUI launch.
+- Diff/Compose checks passed. A model-free lexical pilot reproduced Recall@5
+  **0.7143** and nDCG@5 **0.7656**, not a live AI quality/latency result.
+
+Starlette/PyMuPDF deprecation and an existing Qdrant compatibility warning remain.
+No GitHub CI checks were reported; these results are local. Earlier live-service
+reports remain historical. No personal workspace/index/container was rebuilt or
+removed, no real key/model/cloud call was used, and no rendered native PDF was
+inspected. The Phase 8 acceptance list above remains open. Open evidence/drafting
+PRs #41/#42 are separate work, and #41's index-identity base branch is retained.
