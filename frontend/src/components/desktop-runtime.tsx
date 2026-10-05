@@ -1,6 +1,7 @@
 "use client";
 
 import { invoke, isTauri } from "@tauri-apps/api/core";
+import { openWorkspace } from "@/lib/native-workspace";
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 
 import { getRuntimeServices, type RuntimeServices } from "@/lib/api";
@@ -73,6 +74,10 @@ export function DesktopRuntime({ children }: { children: ReactNode }) {
         {state === "failed" ? error : "Opening your local workspace…"}
       </p>
       {state === "failed" && <p className="text-sm text-ink-soft">Quit and reopen the app. Your saved files and conversations are unchanged.</p>}
+      {state === "failed" && <button className="min-h-11 rounded-md border border-edge-strong p-3"
+        onClick={() => void openWorkspace(null).catch((cause) => setError(String(cause)))}>
+        Reopen original workspace
+      </button>}
     </main>
   );
 }

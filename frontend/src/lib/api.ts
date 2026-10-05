@@ -69,6 +69,16 @@ export interface DesktopSetup {
   installed_models: { name: string; size_bytes: number | null }[];
   configured_generation_model: string;
   gemini_configured: boolean;
+  readiness?: {
+    indexing_available: boolean;
+    local_generation_available: boolean;
+    cloud_configuration: Record<"openai" | "anthropic" | "gemini", boolean>;
+    cloud_access_verified: boolean;
+    reasons: string[];
+    context_tokens: number;
+    output_tokens: number;
+    input_byte_limit: number;
+  };
 }
 
 /** Read-only setup guidance; no model pulls, provider changes or key contents. */

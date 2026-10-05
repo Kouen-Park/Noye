@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 
 import type { AiSettings } from "@/lib/ai-settings";
+import { openWorkspace, readWorkspaceLocations, type WorkspaceLocations } from "@/lib/native-workspace";
 import { downloadBackup, readWorkspace, restoreWorkspace, type RestoredWorkspace, type WorkspaceInfo } from "@/lib/workspace";
 
 const button = "min-h-11 rounded-md border border-edge-strong px-4 py-2 text-sm font-semibold disabled:opacity-50";
@@ -15,12 +16,19 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [restored, setRestored] = useState<RestoredWorkspace | null>(null);
+  const [locations, setLocations] = useState<WorkspaceLocations | null>(null);
+  const [selected, setSelected] = useState<string | null | undefined>(undefined);
+  const [confirmed, setConfirmed] = useState(false);
+  const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
     readWorkspace(settings, controller.signal).then(setWorkspace).catch((cause) => {
       if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Could not read workspace.");
     });
+    readWorkspaceLocations().then((value) => {
+      if (!controller.signal.aborted) setLocations(value);
+    }).catch(() => { /* Native selection is unavailable in the web client. */ });
     return () => controller.abort();
   }, [settings]);
 
@@ -37,6 +45,16 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not complete this operation.");
     } finally { setBusy(null); }
+  }
+
+  async function switchWorkspace() {
+    if (selected === undefined || !confirmed) return;
+    setSwitching(true); setError("");
+    try { await openWorkspace(selected); }
+    catch (cause) {
+      setError(cause instanceof Error ? cause.message : String(cause));
+      setSwitching(false);
+    }
   }
 
   return <section aria-label="Workspace backup and restore" className="space-y-6">
@@ -60,7 +78,34 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
         <p className="mt-2 break-all font-mono text-xs">{restored.destination}</p>
         <p className="mt-2 text-sm text-ink-soft">{restored.missing_sources.length ? restored.missing_sources.length + " originals were missing from the backup. Saved conversations and documents remain available." : "Originals, saved conversations and documents are ready. Rebuild the index before searching."}</p>
         <p className="mt-2 text-sm text-ink-soft">Your current workspace stays open.</p>
+        <button className={button + " mt-3"} disabled={busy !== null || switching}
+          onClick={() => { setSelected(restored.destination); setConfirmed(false); }}>
+          Open restored workspace
+        </button>
       </div>}
     </div>
+    {locations && locations.current !== locations.original && <div className="border-t border-edge-strong pt-5">
+      <h3 className="text-lg text-ink-display">Other saved workspaces</h3>
+      <button className={button + " mt-3"} disabled={switching}
+        onClick={() => { setSelected(null); setConfirmed(false); }}>Reopen original workspace</button>
+      {locations.previous && locations.previous !== locations.original && locations.previous !== locations.current &&
+        <button className={button + " ml-2 mt-3"} disabled={switching}
+          onClick={() => { setSelected(locations.previous); setConfirmed(false); }}>Reopen previous workspace</button>}
+    </div>}
+    {selected !== undefined && <div className="rounded-md border border-edge-strong bg-card p-4">
+      <h3 className="font-semibold">Switch workspace and restart Noye</h3>
+      <p className="mt-2 break-all text-sm">{selected ?? locations?.original ?? "Original workspace"}</p>
+      <p className="mt-2 text-sm text-ink-soft">
+        Save document edits first. Unsaved text will close. Active processing stops;
+        unfinished jobs will offer a retry. Both workspace folders remain on disk.
+      </p>
+      <label className="mt-3 flex items-start gap-2 text-sm"><input type="checkbox" checked={confirmed}
+        disabled={switching} onChange={(event) => setConfirmed(event.target.checked)} />
+        I saved my edits and want to restart in this workspace.</label>
+      <button className={button + " mt-3"} disabled={!confirmed || switching}
+        onClick={() => void switchWorkspace()}>{switching ? "Restarting Noye…" : "Confirm switch and restart"}</button>
+      <button className={button + " ml-2 mt-3"} disabled={switching}
+        onClick={() => setSelected(undefined)}>Keep current workspace</button>
+    </div>}
   </section>;
 }
