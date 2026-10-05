@@ -8,7 +8,7 @@ from app.services.integrity import hash_file
 
 
 def validate_scope(scope):
-    scope = scope or {"mode": "all"}
+    scope = {"mode": "all"} if scope is None else scope
     if not isinstance(scope, dict) or scope.get("mode") not in {"all", "empty", "chosen"}:
         raise SourceError("out_of_scope", "Choose an explicit all, empty or chosen source scope.")
     for key in ("source_ids", "root_ids"):

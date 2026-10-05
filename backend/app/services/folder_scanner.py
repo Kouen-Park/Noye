@@ -12,7 +12,7 @@ from app.config import sources_dir
 from app.db import files as file_store
 from app.db import jobs
 from app.db.database import connect, init_schema
-from app.models.files import FileStatus, FileType
+from app.models.files import FileType
 from app.services import ingestion
 from app.services.folders import (
     SourceError,
@@ -30,7 +30,7 @@ POLL_SECONDS = 1.0
 MAX_ENTRIES = 100_000
 
 
-def collect(root):
+def collect(root, *, show_excluded=False):
     inventory, tree = {}, []
     with root_handle(root) as root_fd:
 
@@ -39,6 +39,15 @@ def collect(root):
                 for entry in entries:
                     relative = prefix + entry.name
                     if excluded(relative) or entry.is_symlink():
+                        if show_excluded:
+                            info = entry.stat(follow_symlinks=False)
+                            tree.append(
+                                {
+                                    "relative_path": relative,
+                                    "kind": "directory" if stat.S_ISDIR(info.st_mode) else "file",
+                                    "excluded": True,
+                                }
+                            )
                         continue
                     info = entry.stat(follow_symlinks=False)
                     if len(tree) >= MAX_ENTRIES:
@@ -297,40 +306,27 @@ class FolderWatcher:
         self.scanner = None
 
     def start(self):
-        self.stop_event.clear()
+        self.stop_event = threading.Event()
         self.pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="folder-ingestion")
-        self.scanner = FolderScanner(
-            dispatch=lambda file_id: self.pool.submit(self.process, file_id)
+        pool = self.pool
+        self.scanner = FolderScanner(dispatch=lambda file_id: pool.submit(self.process, file_id))
+        self.thread = threading.Thread(
+            target=self.run,
+            args=(self.stop_event, self.scanner),
+            daemon=True,
+            name="folder-reconciliation",
         )
-        self.thread = threading.Thread(target=self.run, daemon=True, name="folder-reconciliation")
         self.thread.start()
 
     def process(self, file_id):
         ingestion.ingest_in_background(file_id)
-        with request_access():
-            connection = connect()
-            try:
-                row = connection.execute(
-                    "SELECT * FROM sources WHERE file_id=?", (file_id,)
-                ).fetchone()
-                file = file_store.get_file(connection, file_id)
-                if row:
-                    with connection:
-                        emit(
-                            connection,
-                            "ready" if file.status is FileStatus.READY else "failed",
-                            source=dict(row),
-                            error=file.error,
-                        )
-            finally:
-                connection.close()
 
-    def run(self):
+    def run(self, stop_event, scanner):
         from app.logging_config import get_logger
         from app.services.filing import recover_filing
 
         logger = get_logger("folder_watcher")
-        while not self.stop_event.is_set():
+        while not stop_event.is_set():
             try:
                 with request_access():
                     connection = connect()
@@ -339,16 +335,16 @@ class FolderWatcher:
                         recover_filing(connection)
                         roots = connection.execute("SELECT id FROM source_roots WHERE connected=1")
                         for root in roots.fetchall():
-                            if self.stop_event.is_set():
+                            if stop_event.is_set():
                                 break
-                            self.scanner.scan_root(connection, root["id"])
+                            scanner.scan_root(connection, root["id"])
                     finally:
                         connection.close()
             except WorkspaceBusy:
                 pass
             except Exception:
                 logger.exception("Folder reconciliation failed")
-            self.stop_event.wait(POLL_SECONDS)
+            stop_event.wait(POLL_SECONDS)
 
     def stop(self):
         self.stop_event.set()

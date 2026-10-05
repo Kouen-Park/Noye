@@ -103,12 +103,15 @@ class WorkCancelled(RuntimeError):
 
 
 class WorkContext:
-    def __init__(self, connection, job):
+    def __init__(self, connection, job, stop_event=None):
         self.connection, self.job = connection, job
         self.scope, self.manifest = job["scope"], job["manifest"]
+        self.stop_event = stop_event
 
     def checkpoint(self, stage, completed=0, total=0):
-        if get(self.connection, self.job["id"])["cancel_requested"] or worker.stop_event.is_set():
+        if get(self.connection, self.job["id"])["cancel_requested"] or (
+            self.stop_event and self.stop_event.is_set()
+        ):
             raise WorkCancelled("Knowledge processing was cancelled.")
         with self.connection:
             self.connection.execute(
@@ -123,8 +126,10 @@ class KnowledgeWorker:
         self.thread = None
 
     def start(self):
-        self.stop_event.clear()
-        self.thread = threading.Thread(target=self.run, daemon=True, name="knowledge-jobs")
+        self.stop_event = threading.Event()
+        self.thread = threading.Thread(
+            target=self.run, args=(self.stop_event,), daemon=True, name="knowledge-jobs"
+        )
         self.thread.start()
 
     def stop(self):
@@ -132,7 +137,7 @@ class KnowledgeWorker:
         if self.thread:
             self.thread.join(timeout=3)
 
-    def run_one(self, connection, job_id):
+    def run_one(self, connection, job_id, stop_event=None):
         job = get(connection, job_id)
         if job["state"] != "queued":
             return
@@ -140,7 +145,7 @@ class KnowledgeWorker:
             connection.execute(
                 "UPDATE knowledge_jobs SET state='running',updated_at=? WHERE id=?", (now(), job_id)
             )
-        context = WorkContext(connection, job)
+        context = WorkContext(connection, job, stop_event or self.stop_event)
         try:
             context.checkpoint("starting")
             parsed = urlparse(get_settings().ollama_base_url)
@@ -172,10 +177,10 @@ class KnowledgeWorker:
                     (str(exc), now(), job_id),
                 )
 
-    def run(self):
+    def run(self, stop_event):
         from app.logging_config import get_logger
 
-        while not self.stop_event.is_set():
+        while not stop_event.is_set():
             try:
                 with request_access():
                     connection = connect()
@@ -185,14 +190,14 @@ class KnowledgeWorker:
                             "ORDER BY rowid LIMIT 1"
                         ).fetchone()
                         if row:
-                            self.run_one(connection, row["id"])
+                            self.run_one(connection, row["id"], stop_event)
                     finally:
                         connection.close()
             except WorkspaceBusy:
                 pass
             except Exception:  # noqa: BLE001 — errors do not terminate the polling worker
                 get_logger("knowledge_jobs").exception("Knowledge worker failed")
-            self.stop_event.wait(0.5)
+            stop_event.wait(0.5)
 
 
 worker = KnowledgeWorker()
