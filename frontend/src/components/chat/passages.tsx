@@ -89,7 +89,7 @@ export function PassageList({ citations }: PassagesProps) {
                   Open current
                 </a>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-0">
                   <SavedEvidence citation={citation} />
                 </div>
               </li>

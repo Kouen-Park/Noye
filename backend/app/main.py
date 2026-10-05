@@ -12,7 +12,18 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import ai, chat, desktop_services, documents, files, index, models, runtime, search
+from app.api import (
+    ai,
+    chat,
+    desktop_services,
+    documents,
+    files,
+    index,
+    models,
+    runtime,
+    search,
+    workspace,
+)
 from app.config import get_settings
 from app.db.database import connect, init_schema
 from app.logging_config import configure_logging, get_logger
@@ -83,6 +94,7 @@ app.include_router(ai.router)
 app.include_router(runtime.router)
 app.include_router(models.router)
 app.include_router(desktop_services.router)
+app.include_router(workspace.router)
 
 
 @app.get("/health")
