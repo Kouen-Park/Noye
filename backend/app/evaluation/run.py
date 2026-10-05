@@ -175,16 +175,19 @@ def evaluate(dataset: dict, *, mode: str, ks: list[int], repeats: int,
                    "repeat_ms": timings[1:], "ranking_consistent": consistent,
                    "expected_answer": question["expected_answer"], "answer": None,
                    "answer_ms": None, "review": None}
-            if generation:
-                context = [SearchResult(by_id[p]["text"], documents[p], None,
-                                        passages.index(by_id[p]), 0.0) for p in ranking[:max(ks)]]
-                started = time.perf_counter()
-                row["answer"] = generate(build_prompt(question["text"], context)) if context \
-                    else NO_CONTEXT_ANSWER
-                row["answer_ms"] = (time.perf_counter() - started) * 1000
             rows.append(row)
         if dense and installed_digest() != dense.digest:
             raise EmbeddingError("Model changed during evaluation; discard this run.")
+        # Finish all ranking before generation: avoid swapping two local models per question.
+        if generation:
+            for row in rows:
+                context = [SearchResult(by_id[p]["text"], documents[p], None,
+                                        passages.index(by_id[p]), 0.0)
+                           for p in row["ranking"][:max(ks)]]
+                started = time.perf_counter()
+                row["answer"] = generate(build_prompt(row["question"], context)) if context \
+                    else NO_CONTEXT_ANSWER
+                row["answer_ms"] = (time.perf_counter() - started) * 1000
         categories = sorted({c for q in dataset["questions"] for c in q["categories"]})
         summaries = {}
         for k in ks:

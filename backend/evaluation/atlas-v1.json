@@ -1,0 +1,561 @@
+{
+  "version": 1,
+  "name": "atlas-study-workspace-v1",
+  "description": "Authored fictional lecture/lab/research/meeting/PDF logs with closely numbered controls. Representative workflow types, not representative personal data or measured real experiments. Parallel EN/KO evidence and deliberately absent measurements.",
+  "passages": [
+    {
+      "id": "graph-lab-en",
+      "document_id": "graph-lab",
+      "language": "en",
+      "text": "AT-201 used a binary heap. The shortest-path run visited 48 vertices in 12 milliseconds; negative edges were excluded."
+    },
+    {
+      "id": "graph-lab-ko",
+      "document_id": "graph-lab",
+      "language": "ko",
+      "text": "AT-201은 이진 힙을 사용했다. 최단 경로 실행은 정점 48개를 방문했고 12밀리초가 걸렸다. 음수 간선은 실험에서 제외했다."
+    },
+    {
+      "id": "graph-lab-procedure",
+      "document_id": "graph-lab",
+      "language": "en",
+      "text": "Graph experiment procedure: record the run identifier AT-201 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "graph-control-en",
+      "document_id": "graph-control",
+      "language": "en",
+      "text": "AT-210 used a linear scan instead of a heap. It visited the same 48 vertices in 39 milliseconds. This is a separate control run, not AT-201."
+    },
+    {
+      "id": "graph-control-ko",
+      "document_id": "graph-control",
+      "language": "ko",
+      "text": "AT-210은 힙 대신 선형 탐색을 사용했다. 같은 정점 48개를 방문하는 데 39밀리초가 걸렸다. AT-201과는 별도 대조군이다."
+    },
+    {
+      "id": "graph-control-procedure",
+      "document_id": "graph-control",
+      "language": "en",
+      "text": "Graph control procedure: record the run identifier AT-210 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "database-lab-en",
+      "document_id": "database-lab",
+      "language": "en",
+      "text": "DB-318 copied the database with its write-ahead log committed through the backup API. The result contained 87 conversations and 14 edited notes. Vector files were excluded."
+    },
+    {
+      "id": "database-lab-ko",
+      "document_id": "database-lab",
+      "language": "ko",
+      "text": "DB-318은 백업 API로 WAL의 커밋된 내용을 함께 복사했다. 결과에는 대화 87개와 편집된 노트 14개가 들어 있었다. 벡터 파일은 제외했다."
+    },
+    {
+      "id": "database-lab-procedure",
+      "document_id": "database-lab",
+      "language": "en",
+      "text": "Database experiment procedure: record the run identifier DB-318 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "database-control-en",
+      "document_id": "database-control",
+      "language": "en",
+      "text": "DB-381 restored 6 demonstration notes into a new folder. It did not overwrite the working database. This control has no record of 87 conversations."
+    },
+    {
+      "id": "database-control-ko",
+      "document_id": "database-control",
+      "language": "ko",
+      "text": "DB-381은 시연 노트 6개를 새 폴더에 복원했다. 작업 중인 데이터베이스를 덮어쓰지 않았다. 대화 87개에 대한 기록은 이 대조군에 없다."
+    },
+    {
+      "id": "database-control-procedure",
+      "document_id": "database-control",
+      "language": "en",
+      "text": "Database control procedure: record the run identifier DB-381 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "research-notes-en",
+      "document_id": "research-notes",
+      "language": "en",
+      "text": "RS-044 compared two fictional coating recipes. Recipe Cedar dried in 18 minutes; recipe Birch dried in 31 minutes. The notebook did not measure durability or safety."
+    },
+    {
+      "id": "research-notes-ko",
+      "document_id": "research-notes",
+      "language": "ko",
+      "text": "RS-044는 가상 코팅 레시피 두 개를 비교했다. Cedar는 18분, Birch는 31분 만에 건조했다. 내구성이나 안전성은 측정하지 않았다."
+    },
+    {
+      "id": "research-notes-procedure",
+      "document_id": "research-notes",
+      "language": "en",
+      "text": "Research notes procedure: record the run identifier RS-044 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "research-control-en",
+      "document_id": "research-control",
+      "language": "en",
+      "text": "RS-040 recorded room temperature as 22 degrees Celsius and humidity as 45 percent. It did not test Cedar or Birch. This environmental log does not establish recipe durability."
+    },
+    {
+      "id": "research-control-ko",
+      "document_id": "research-control",
+      "language": "ko",
+      "text": "RS-040의 실내 온도는 섭씨 22도, 습도는 45퍼센트였다. Cedar나 Birch를 시험하지 않았다. 환경 기록으로 코팅 내구성을 판단할 수 없다."
+    },
+    {
+      "id": "research-control-procedure",
+      "document_id": "research-control",
+      "language": "en",
+      "text": "Research control procedure: record the run identifier RS-040 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "seminar-agenda-en",
+      "document_id": "seminar-agenda",
+      "language": "en",
+      "text": "SM-812 allocated 25 minutes to source inspection and 10 minutes to questions. The room was Kauri 3. Attendance was capped at 16 people, not 160."
+    },
+    {
+      "id": "seminar-agenda-ko",
+      "document_id": "seminar-agenda",
+      "language": "ko",
+      "text": "SM-812는 출처 확인에 25분, 질문에 10분을 배정했다. 장소는 Kauri 3이며 인원 상한은 160명이 아닌 16명이었다."
+    },
+    {
+      "id": "seminar-agenda-procedure",
+      "document_id": "seminar-agenda",
+      "language": "en",
+      "text": "Seminar agenda procedure: record the run identifier SM-812 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "seminar-minutes-en",
+      "document_id": "seminar-minutes",
+      "language": "en",
+      "text": "SM-821 recorded 13 attendees and a decision to postpone the export demo. The group requested a saved PDF sample before the next meeting. It did not change the SM-812 agenda."
+    },
+    {
+      "id": "seminar-minutes-ko",
+      "document_id": "seminar-minutes",
+      "language": "ko",
+      "text": "SM-821에는 참석자 13명과 export 시연 연기 결정이 기록됐다. 모임은 다음 회의 전에 저장된 PDF 샘플을 요청했다. SM-812 일정은 변경하지 않았다."
+    },
+    {
+      "id": "seminar-minutes-procedure",
+      "document_id": "seminar-minutes",
+      "language": "en",
+      "text": "Seminar minutes procedure: record the run identifier SM-821 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "capture-log-en",
+      "document_id": "capture-log",
+      "language": "en",
+      "text": "PX-606 contained 8 physical PDF pages. Text extraction found text on pages 1, 2, 4, 6 and 8. Pages 3, 5 and 7 had no extracted text; no OCR or scan classification was performed."
+    },
+    {
+      "id": "capture-log-ko",
+      "document_id": "capture-log",
+      "language": "ko",
+      "text": "PX-606 PDF는 8쪽이었다. 1, 2, 4, 6, 8쪽에서 텍스트를 추출했고 3, 5, 7쪽은 텍스트가 없었다. OCR이나 스캔 분류는 수행하지 않았다."
+    },
+    {
+      "id": "capture-log-procedure",
+      "document_id": "capture-log",
+      "language": "en",
+      "text": "PDF capture log procedure: record the run identifier PX-606 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    },
+    {
+      "id": "capture-control-en",
+      "document_id": "capture-control",
+      "language": "en",
+      "text": "PX-660 was a four-page PDF with extracted text on all four pages. The associated Markdown note had no physical page numbers. PX-660 is not the eight-page PX-606 sample."
+    },
+    {
+      "id": "capture-control-ko",
+      "document_id": "capture-control",
+      "language": "ko",
+      "text": "PX-660은 4쪽 모두에서 텍스트를 추출한 PDF였다. 함께 저장된 Markdown 노트에는 실제 페이지 번호가 없다. 8쪽인 PX-606과 다른 샘플이다."
+    },
+    {
+      "id": "capture-control-procedure",
+      "document_id": "capture-control",
+      "language": "en",
+      "text": "PDF capture control procedure: record the run identifier PX-660 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result."
+    }
+  ],
+  "questions": [
+    {
+      "id": "AT-201-en",
+      "text": "Which queue and latency were recorded for AT-201?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "graph-lab-en": 2,
+        "graph-lab-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Binary heap; 12 milliseconds."
+    },
+    {
+      "id": "AT-201-ko",
+      "text": "AT-201은 어떤 큐를 사용했고 얼마나 걸렸나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "graph-lab-en": 2,
+        "graph-lab-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Binary heap; 12 milliseconds."
+    },
+    {
+      "id": "AT-210-en",
+      "text": "How long did the AT-210 control take?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "graph-control-en": 2,
+        "graph-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "39 milliseconds; linear scan."
+    },
+    {
+      "id": "AT-210-ko",
+      "text": "AT-210 대조군의 소요 시간은?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "graph-control-en": 2,
+        "graph-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "39 milliseconds; linear scan."
+    },
+    {
+      "id": "DB-318-en",
+      "text": "Which saved work was copied by DB-318?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "database-lab-en": 2,
+        "database-lab-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "87 conversations and 14 edited notes; committed WAL included; vectors excluded."
+    },
+    {
+      "id": "DB-318-ko",
+      "text": "DB-318은 어떤 작업물을 복사했나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "database-lab-en": 2,
+        "database-lab-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "87 conversations and 14 edited notes; committed WAL included; vectors excluded."
+    },
+    {
+      "id": "DB-381-en",
+      "text": "Did DB-381 overwrite the working database?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "database-control-en": 2,
+        "database-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "No; 6 demonstration notes restored into a new folder."
+    },
+    {
+      "id": "DB-381-ko",
+      "text": "DB-381은 기존 데이터베이스를 덮어썼나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "database-control-en": 2,
+        "database-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "No; 6 demonstration notes restored into a new folder."
+    },
+    {
+      "id": "RS-044-en",
+      "text": "Which RS-044 coating dried faster, and what was not measured?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "research-notes-en": 2,
+        "research-notes-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Cedar (18 minutes vs Birch 31); durability and safety unmeasured."
+    },
+    {
+      "id": "RS-044-ko",
+      "text": "RS-044에서 더 빨리 마른 코팅은 무엇이며 측정하지 않은 항목은?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "research-notes-en": 2,
+        "research-notes-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Cedar (18 minutes vs Birch 31); durability and safety unmeasured."
+    },
+    {
+      "id": "RS-040-en",
+      "text": "What humidity did RS-040 record?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "research-control-en": 2,
+        "research-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "45 percent."
+    },
+    {
+      "id": "RS-040-ko",
+      "text": "RS-040에 기록된 습도는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "research-control-en": 2,
+        "research-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "45 percent."
+    },
+    {
+      "id": "SM-812-en",
+      "text": "How much time and which room did SM-812 reserve for source inspection?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "seminar-agenda-en": 2,
+        "seminar-agenda-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "25 minutes; Kauri 3."
+    },
+    {
+      "id": "SM-812-ko",
+      "text": "SM-812 출처 확인 시간과 장소는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "seminar-agenda-en": 2,
+        "seminar-agenda-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "25 minutes; Kauri 3."
+    },
+    {
+      "id": "SM-821-en",
+      "text": "What did the SM-821 group request before the next meeting?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "seminar-minutes-en": 2,
+        "seminar-minutes-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "A saved PDF sample; export demo postponed."
+    },
+    {
+      "id": "SM-821-ko",
+      "text": "SM-821 모임은 다음 회의 전에 무엇을 요청했나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "seminar-minutes-en": 2,
+        "seminar-minutes-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "A saved PDF sample; export demo postponed."
+    },
+    {
+      "id": "PX-606-en",
+      "text": "Which PX-606 pages lacked extracted text?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "capture-log-en": 2,
+        "capture-log-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Pages 3, 5, 7; no OCR or scan classification."
+    },
+    {
+      "id": "PX-606-ko",
+      "text": "PX-606에서 텍스트가 추출되지 않은 페이지는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "capture-log-en": 2,
+        "capture-log-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Pages 3, 5, 7; no OCR or scan classification."
+    },
+    {
+      "id": "PX-660-en",
+      "text": "How many PX-660 pages had text?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "capture-control-en": 2,
+        "capture-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "All four pages; Markdown has no physical pages."
+    },
+    {
+      "id": "PX-660-ko",
+      "text": "PX-660에서 텍스트가 있던 페이지 수는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "capture-control-en": 2,
+        "capture-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "All four pages; Markdown has no physical pages."
+    },
+    {
+      "id": "compare-graphs",
+      "text": "Compare the runtimes of AT-201 and AT-210.",
+      "categories": [
+        "english",
+        "multi-document"
+      ],
+      "relevance": {
+        "graph-lab-en": 2,
+        "graph-control-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "12 ms versus 39 ms; heap run is 27 ms faster."
+    },
+    {
+      "id": "compare-pdf",
+      "text": "PX-606과 PX-660의 텍스트 추출 범위를 비교해 주세요.",
+      "categories": [
+        "korean",
+        "multi-document"
+      ],
+      "relevance": {
+        "capture-log-ko": 2,
+        "capture-control-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "5/8 pages vs 4/4; missing PX-606 pages 3,5,7."
+    },
+    {
+      "id": "durability-negative",
+      "text": "Did RS-044 prove Cedar is safer and more durable?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "No durability or safety measurement is available; decline that conclusion."
+    },
+    {
+      "id": "identifier-negative",
+      "text": "What was measured in AT-999?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "No AT-999 record; do not confuse AT-201 or AT-210."
+    },
+    {
+      "id": "fees-negative",
+      "text": "SM-812 세미나 참가비는 얼마인가요?",
+      "categories": [
+        "korean",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "No attendance fee is supplied; decline rather than inventing a price."
+    },
+    {
+      "id": "recovery-negative",
+      "text": "What recovery time did DB-318 guarantee?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "No recovery-time guarantee is supplied; counts are not a recovery-time benchmark."
+    }
+  ]
+}

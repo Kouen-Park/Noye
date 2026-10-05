@@ -289,12 +289,12 @@ def test_task_formats_are_separate_and_original_chunks_stay_raw(monkeypatch):
 def test_input_guard_counts_prefix_and_refuses_whole_batch_before_request(monkeypatch):
     from app.services.embeddings import embed_documents
     settings = get_settings().model_copy(update={
-        "embedding_input_format": "embeddinggemma-v1", "embedding_max_input_chars": 20,
+        "embedding_input_format": "embeddinggemma-v1", "embedding_max_input_chars": 21,
     })
     monkeypatch.setattr("app.services.embeddings.get_settings", lambda: settings)
     handler = responder(embeddings=[vector()])
     with mock_client(handler) as client:
-        embed_documents(["a"], client=client)  # 19-character prefix plus one character
+        embed_documents(["a"], client=client)  # 20-character prefix plus one character
         with pytest.raises(EmbeddingError, match="including its task prefix"):
             embed_documents(["a", "ab"], client=client)
     assert len(handler.seen) == 1
