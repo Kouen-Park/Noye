@@ -24,6 +24,7 @@ from pydantic import BaseModel
 from app.api.deps import get_db
 from app.config import get_settings, sources_dir
 from app.db import files as file_store
+from app.db import jobs as job_store
 from app.logging_config import get_logger
 from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
@@ -290,10 +291,13 @@ def upload_file(
             file_id=file_id,
             content_hash=content_hash,
         )
+        job_store.queue(db, record.id)
         background.add_task(_ingest_in_background, record.id)
         return FileOut.of(record)
     except BaseException:
         release_file(file_id)
+        db.execute("DELETE FROM files WHERE id=?", (file_id,))
+        db.commit()
         target.unlink(missing_ok=True)
         raise
 
@@ -353,6 +357,10 @@ def reingest_file(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="The original file is missing from disk. Upload it again to retry.",
             )
+        try:
+            job_store.queue(db, file_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
         file_store.reset_counts(db, file_id)
         record = file_store.set_status(db, file_id, FileStatus.UPLOADING)
         background.add_task(_ingest_in_background, file_id)
@@ -369,7 +377,7 @@ def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileO
         record = file_store.get_file(db, file_id)
     except file_store.FileRecordNotFound as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    if cancel_ingestion(file_id):
+    if cancel_ingestion(file_id, db):
         return FileOut.of(record)
     try:
         reserve_ingestion(file_id)

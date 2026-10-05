@@ -7,6 +7,7 @@ import { CrossIcon } from "@/components/icons";
 import { DropZone } from "@/components/library/drop-zone";
 import { FileCard } from "@/components/library/file-card";
 import { IntegrityPanel } from "@/components/library/integrity-panel";
+import { JobsPanel } from "@/components/library/jobs-panel";
 import { useLibrary } from "@/hooks/use-library";
 import { isProcessing } from "@/lib/api";
 import { GROUPS, groupOf } from "@/lib/status";
@@ -103,6 +104,10 @@ export default function LibraryPage() {
         uploading={library.uploading}
         disabled={library.phase === "error"}
       />
+      {library.phase === "ready" && <JobsPanel
+        revision={library.files.map((file) => file.id + ":" + file.status).join(",")}
+        onChange={library.reload}
+      />}
 
       {library.rejected.length > 0 && (
         <ul className="mt-3 space-y-2">

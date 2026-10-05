@@ -33,13 +33,14 @@ from qdrant_client import QdrantClient
 
 from app.config import get_settings
 from app.db import files as file_store
+from app.db import jobs as job_store
 from app.db.database import connect, init_schema
 from app.logging_config import get_logger, timed
 from app.models.files import Chunk as ChunkRow
 from app.models.files import File, FileStatus
 from app.services import index_identity
 from app.services.chunking import chunk_pages
-from app.services.embeddings import EmbeddingError, embed_chunks
+from app.services.embeddings import DEFAULT_BATCH_SIZE, EmbeddingError, embed_chunks
 from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
 from app.services.integrity import hash_file
@@ -126,6 +127,7 @@ class MaintenanceBusy(AlreadyIngesting):
 _in_flight: dict[str, threading.Event | None] = {}
 _in_flight_lock = threading.Lock()
 _rebuilding = False
+_pipeline_slot = threading.Semaphore(1)
 
 
 def begin_rebuild() -> None:
@@ -185,14 +187,24 @@ def reserve_delete(file_id: str) -> None:
     _claim(file_id)
 
 
-def cancel_ingestion(file_id: str) -> bool:
+def cancel_ingestion(file_id: str, connection: sqlite3.Connection | None = None) -> bool:
     """Ask a queued or running pipeline to stop at its next safe checkpoint."""
     with _in_flight_lock:
         cancellation = _in_flight.get(file_id)
         if cancellation is None:
             return False
+        if connection is not None:
+            job_store.request_cancel(connection, file_id)
         cancellation.set()
         return True
+
+
+def cancel_all_ingestion() -> None:
+    """Called as soon as the desktop parent closes, before ASGI begins draining."""
+    with _in_flight_lock:
+        for cancellation in _in_flight.values():
+            if cancellation is not None:
+                cancellation.set()
 
 
 def release_file(file_id: str) -> None:
@@ -253,8 +265,18 @@ def ingest_file(
     else:
         cancellation = threading.Event()
         _claim(file_id, cancellation)
+    acquired = False
     try:
         try:
+            job = job_store.latest(connection, file_id)
+            if job is None or job["state"] not in job_store.OPEN_STATES:
+                job_store.queue(connection, file_id)
+            if record.status is FileStatus.READY:
+                file_store.set_status(connection, file_id, FileStatus.UPLOADING)
+            while not acquired:
+                _check_cancel(cancellation)
+                acquired = _pipeline_slot.acquire(timeout=0.1)
+            _check_cancel(cancellation)
             logger.info(
                 "Ingestion started file=%s type=%s size=%d",
                 record.id,
@@ -268,7 +290,11 @@ def ingest_file(
             chunks = _chunk(connection, record, pages)
             _check_cancel(cancellation)
             _embed_and_index(
-                connection, record, chunks, qdrant_client=qdrant_client, http_client=http_client,
+                connection,
+                record,
+                chunks,
+                qdrant_client=qdrant_client,
+                http_client=http_client,
                 cancellation=cancellation,
                 identity=identity,
             )
@@ -332,6 +358,8 @@ def ingest_file(
         logger.info("Ingestion cancelled file=%s", file_id)
         return _fail(connection, record, "Processing was cancelled.", qdrant_client=qdrant_client)
     finally:
+        if acquired:
+            _pipeline_slot.release()
         _release(file_id, cancellation)
 
 
@@ -368,9 +396,7 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     return pages
 
 
-def _chunk(
-    connection: sqlite3.Connection, record: File, pages: list[ExtractedPage]
-) -> list:
+def _chunk(connection: sqlite3.Connection, record: File, pages: list[ExtractedPage]) -> list:
     file_store.set_status(connection, record.id, FileStatus.CHUNKING)
 
     settings = get_settings()
@@ -424,7 +450,14 @@ def _embed_and_index(
             chunks=len(chunks),
             model=get_settings().ollama_embedding_model,
         ):
-            vectors = embed_chunks(chunks, client=http_client)
+            vectors = []
+            job_store.progress(connection, record.id, 0, len(chunks))
+            for start in range(0, len(chunks), DEFAULT_BATCH_SIZE):
+                _check_cancel(cancellation)
+                batch = chunks[start : start + DEFAULT_BATCH_SIZE]
+                vectors.extend(embed_chunks(batch, client=http_client))
+                job_store.progress(connection, record.id, len(vectors), len(chunks))
+                _check_cancel(cancellation)
         if index_identity.current_index_identity(client=http_client) != identity:
             raise IngestionError("The embedding configuration changed during processing. Retry.")
     except Exception as exc:
@@ -435,11 +468,15 @@ def _embed_and_index(
     # otherwise leave the tail of the first run searchable.
     try:
         _check_cancel(cancellation)
+        job_store.progress(connection, record.id, len(chunks), len(chunks), "indexing")
         with timed(logger, "Indexed", file=record.id, points=len(chunks)):
             delete_file_chunks(record.id, client=qdrant_client)
             _check_cancel(cancellation)
             index_chunks(
-                chunks, vectors, client=qdrant_client, index_fingerprint=identity.fingerprint,
+                chunks,
+                vectors,
+                client=qdrant_client,
+                index_fingerprint=identity.fingerprint,
                 source_hash=file_store.get_file(connection, record.id).content_hash,
                 index_metadata=identity.metadata_json,
             )
@@ -452,9 +489,7 @@ def _embed_and_index(
     # After the write, not before. This column is read to decide whether a file's
     # vectors are from the current embedding space, so it must never name a model
     # for vectors that were not actually stored.
-    file_store.set_embedding_model(
-        connection, record.id, get_settings().ollama_embedding_model
-    )
+    file_store.set_embedding_model(connection, record.id, get_settings().ollama_embedding_model)
     file_store.set_index_identity(
         connection, record.id, identity.fingerprint, identity.metadata_json
     )

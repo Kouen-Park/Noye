@@ -17,6 +17,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from app.config import PROJECT_ROOT, data_directory, get_settings
+from app.db.jobs import JOB_SCHEMA
 from app.db.migrations import apply_migrations
 
 SCHEMA = """
@@ -156,6 +157,9 @@ CREATE INDEX IF NOT EXISTS idx_document_citations_document
 CREATE INDEX IF NOT EXISTS idx_documents_updated_at
     ON documents(updated_at DESC);
 """
+
+
+SCHEMA += JOB_SCHEMA
 
 
 def database_path() -> Path:

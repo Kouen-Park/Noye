@@ -20,6 +20,7 @@ import httpx
 
 from app.config import get_settings
 from app.services.chunking import Chunk
+from app.services.model_usage import ModelBusyError, inference
 
 #: Texts sent per Ollama request. Ollama accepts a list and returns embeddings
 #: in the same order, so batching cuts request overhead; the cap keeps a large
@@ -121,7 +122,10 @@ def _request_embeddings(
     url = f"{settings.ollama_base_url.rstrip('/')}/api/embed"
 
     try:
-        response = client.post(url, json={"model": model, "input": list(batch)})
+        with inference(model):
+            response = client.post(url, json={"model": model, "input": list(batch)})
+    except ModelBusyError as exc:
+        raise EmbeddingError(str(exc)) from None
     except httpx.RequestError as exc:
         raise EmbeddingError(
             f"Could not reach Ollama at {settings.ollama_base_url}. "
