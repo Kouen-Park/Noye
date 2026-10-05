@@ -28,6 +28,7 @@ from app.models.files import File, FileStatus, FileType
 from app.services.indexing import IndexingError, delete_file_chunks
 from app.services.ingestion import (
     AlreadyIngesting,
+    MaintenanceBusy,
     cancel_ingestion,
     cancel_orphaned_file,
     ingest_in_background,
@@ -272,7 +273,11 @@ def upload_file(
             ),
         )
 
-    reserve_ingestion(file_id)
+    try:
+        reserve_ingestion(file_id)
+    except MaintenanceBusy as exc:
+        target.unlink(missing_ok=True)
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     try:
         record = file_store.create_file(
             db,
@@ -328,6 +333,8 @@ def reingest_file(
     """
     try:
         reserve_ingestion(file_id)
+    except MaintenanceBusy as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except AlreadyIngesting as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -364,6 +371,8 @@ def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileO
         return FileOut.of(record)
     try:
         reserve_ingestion(file_id)
+    except MaintenanceBusy as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except AlreadyIngesting as exc:
         raise HTTPException(status_code=409, detail="This file is busy.") from exc
     try:
@@ -455,6 +464,8 @@ def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     """
     try:
         reserve_delete(file_id)
+    except MaintenanceBusy as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except AlreadyIngesting as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

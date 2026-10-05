@@ -106,6 +106,10 @@ class AlreadyIngesting(RuntimeError):
     """
 
 
+class MaintenanceBusy(AlreadyIngesting):
+    """Library maintenance conflicts with this operation."""
+
+
 # Which files are being ingested in this process, right now.
 #
 # This is the only reliable answer to "is this file busy?". A row's status
@@ -118,6 +122,32 @@ class AlreadyIngesting(RuntimeError):
 # multi-process deployment would need this in SQLite instead.
 _in_flight: dict[str, threading.Event | None] = {}
 _in_flight_lock = threading.Lock()
+_rebuilding = False
+
+
+def begin_rebuild() -> None:
+    """Block new writes before inspecting or changing the collection."""
+    global _rebuilding
+    with _in_flight_lock:
+        if _rebuilding:
+            raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
+        _rebuilding = True
+
+
+def require_idle_library() -> None:
+    """A destructive reset cannot overlap any existing ingestion or deletion."""
+    with _in_flight_lock:
+        if _in_flight:
+            raise MaintenanceBusy(
+                "Files are being processed or removed. Wait for them to finish "
+                "before rebuilding an index with a different vector size."
+            )
+
+
+def end_rebuild() -> None:
+    global _rebuilding
+    with _in_flight_lock:
+        _rebuilding = False
 
 
 def is_ingesting(file_id: str) -> bool:
@@ -126,8 +156,12 @@ def is_ingesting(file_id: str) -> bool:
         return file_id in _in_flight
 
 
-def _claim(file_id: str, cancellation: threading.Event | None = None) -> None:
+def _claim(
+    file_id: str, cancellation: threading.Event | None = None, *, rebuilding: bool = False
+) -> None:
     with _in_flight_lock:
+        if _rebuilding and not rebuilding:
+            raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
         if file_id in _in_flight:
             raise AlreadyIngesting(f"File {file_id} is already being ingested")
         _in_flight[file_id] = cancellation
@@ -136,6 +170,11 @@ def _claim(file_id: str, cancellation: threading.Event | None = None) -> None:
 def reserve_ingestion(file_id: str) -> None:
     """Reserve a file before its background task is scheduled."""
     _claim(file_id, threading.Event())
+
+
+def reserve_rebuild_ingestion(file_id: str) -> None:
+    """Reserve maintenance's own work while ordinary writes are blocked."""
+    _claim(file_id, threading.Event(), rebuilding=True)
 
 
 def reserve_delete(file_id: str) -> None:
