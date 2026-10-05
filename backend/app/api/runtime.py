@@ -7,7 +7,7 @@ from starlette.concurrency import run_in_threadpool
 from app.config import data_directory, get_settings
 from app.services.hardware import HardwareInfo, inspect_hardware
 from app.services.model_recommendations import Recommendation, recommend_models
-from app.services.runtime_checks import InstalledModel, ServicesOut, inspect_services
+from app.services.runtime_checks import InstalledModel, ServicesOut, inspect_services, readiness
 
 router = APIRouter(prefix="/runtime", tags=["runtime"])
 
@@ -30,6 +30,7 @@ class SetupOut(BaseModel):
     installed_models: list[InstalledModel]
     configured_generation_model: str
     gemini_configured: bool
+    readiness: dict
 
 
 @router.get("/setup", response_model=SetupOut)
@@ -43,4 +44,5 @@ async def setup() -> SetupOut:
         services=snapshot.services, installed_models=snapshot.installed_models,
         configured_generation_model=settings.ollama_model,
         gemini_configured=bool(settings.gemini_api_key.get_secret_value().strip()),
+        readiness=readiness(settings, snapshot.services),
     )

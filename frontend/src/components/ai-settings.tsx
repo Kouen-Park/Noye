@@ -5,6 +5,7 @@ import { getDesktopSetup, type DesktopSetup, type GenerationProvider } from "@/l
 import { modelRequest, readAiSettings, saveAiSettings, PROVIDER_NAMES, type AiSettings, type CloudProvider, type ModelJob } from "@/lib/ai-settings";
 import { ServiceSettings } from "./service-settings";
 import { WorkspaceSettings } from "./workspace-settings";
+import { RuntimeReadiness } from "./runtime-readiness";
 
 const button = "min-h-11 rounded-md border border-edge-strong px-4 py-2 text-sm font-semibold hover:bg-sunken disabled:opacity-50";
 const input = "mt-1 min-h-11 w-full rounded-md border border-edge-strong bg-canvas px-3 text-sm";
@@ -49,11 +50,15 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
     const element = dialog.current;
     element?.showModal(); title.current?.focus();
     let active = true;
-    Promise.all([readAiSettings(), getDesktopSetup()]).then(([values, snapshot]) => {
+    readAiSettings().then((values) => {
       if (!active) return;
-      saved.current = values; setSettings(values); setSetup(snapshot); setStorage(values.storage_path);
-      if (snapshot.recommendation.generation) setDownload(snapshot.recommendation.generation.name);
+      saved.current = values; setSettings(values); setStorage(values.storage_path);
     }).catch(() => { if (active) setError("Could not load AI settings. Check Keychain access and reopen Settings."); });
+    getDesktopSetup().then((snapshot) => {
+      if (!active) return;
+      setSetup(snapshot);
+      if (snapshot.recommendation.generation) setDownload(snapshot.recommendation.generation.name);
+    }).catch(() => { if (active) setError("Could not check AI readiness. Workspace backup remains available."); });
     return () => { active = false; element?.close(); if (previous instanceof HTMLElement && previous.isConnected) previous.focus(); };
   }, []);
 
@@ -77,8 +82,10 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
     try {
       await action();
       setSecret(""); setRemoveKey(false); setDeleting(null); setDeleteName("");
-      const [values, snapshot] = await Promise.all([readAiSettings(), getDesktopSetup()]);
-      saved.current = values; setSettings(values); setSetup(snapshot); setNotice(message);
+      const values = await readAiSettings();
+      saved.current = values; setSettings(values); setNotice(message);
+      try { setSetup(await getDesktopSetup()); }
+      catch { setError("The change was saved, but AI readiness could not be refreshed."); }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : typeof cause === "string" ? cause : "Could not complete this change.");
     } finally { setBusy(false); }
@@ -109,7 +116,13 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
         {error && <p role="alert" className="mb-4 rounded-md border border-edge-strong bg-card p-3 text-sm text-fail">{error}</p>}
         {notice && <p role="status" className="mb-4 text-sm text-ink-soft">{notice}</p>}
         {!settings && !error && <p role="status">Opening secure settings…</p>}
-        {settings && setup && <>
+        {settings && tab === "workspace" && <WorkspaceSettings settings={settings} />}
+        {settings && !setup && tab !== "workspace" && <button className={button}
+          onClick={() => { setError(""); getDesktopSetup().then(setSetup).catch(() => setError("Could not check AI readiness. Workspace backup remains available.")); }}>
+          Refresh AI readiness
+        </button>}
+        {settings && setup && tab !== "workspace" && <>
+          <RuntimeReadiness setup={setup} />
           {tab === "models" && <section aria-label="Local model management" className="space-y-6">
             <div><h3 className="text-lg text-ink-display">Generation model</h3><p className="mt-1 text-sm text-ink-soft">Switching generation models does not rebuild your document index.</p>
               <label className="mt-3 block text-sm font-semibold" htmlFor={`${id}-local`}>Selected local model</label>
@@ -157,7 +170,6 @@ export function AiSettingsDialog({ onClose }: { onClose: () => void }) {
             <p className="text-sm text-ink-soft">Cloud generation sends your question, bounded recent user questions and retrieved excerpts—or document instructions and the saved answer—to the selected provider. Extraction, embeddings and search stay local. Provider pricing and data terms apply; Noye cannot enforce a free tier.</p>
           </section>}
           {tab === "services" && <ServiceSettings settings={settings} services={setup.services} onRefresh={async (signal) => { const snapshot = await getDesktopSetup(signal); if (!signal?.aborted) setSetup(snapshot); }} />}
-          {tab === "workspace" && <WorkspaceSettings settings={settings} />}
         </>}
       </div>
       <footer className="shrink-0 border-t border-edge-strong px-5 py-3 text-xs text-ink-soft sm:px-7">Local by default · No automatic cloud fallback · Downloads stop when Noye quits</footer>

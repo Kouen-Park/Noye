@@ -161,6 +161,15 @@ def generate(
 
     settings = get_settings()
     system_prompt = system or SYSTEM_PROMPT
+    if provider == "ollama":
+        # Conservative byte bound, not an exact tokenizer measurement. Never
+        # silently trim historical evidence or the user's instructions.
+        available = settings.generation_context_tokens - settings.generation_output_tokens - 512
+        if len(prompt.encode("utf-8")) + len(system_prompt.encode("utf-8")) > available:
+            raise GenerationError(
+                "This request exceeds the local model input budget. "
+                "Use fewer excerpts or a shorter instruction."
+            )
     if provider not in ("ollama", "gemini", "openai", "anthropic"):
         raise ValueError("Unknown generation provider")
     if provider in ("openai", "anthropic"):
@@ -255,6 +264,10 @@ def _request_generation(
         "system": system_prompt,
         "stream": False,
         "think": settings.ollama_thinking,
+        "options": {
+            "num_ctx": settings.generation_context_tokens,
+            "num_predict": settings.generation_output_tokens,
+        },
     }
 
     try:
@@ -283,6 +296,8 @@ def _request_generation(
         raise GenerationError("Ollama returned a non-JSON response") from exc
 
     text = body.get("response")
+    if body.get("done") is False or body.get("done_reason") == "length":
+        raise GenerationError("The local model reached its output limit. Request a shorter answer.")
     if not isinstance(text, str) or not text.strip():
         raise GenerationError(f"Ollama returned no answer text (keys: {sorted(body)})")
 

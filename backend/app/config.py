@@ -7,7 +7,9 @@ so hardcoding either one would let them drift apart silently.
 
 from __future__ import annotations
 
+import json
 import os
+import uuid
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -51,6 +53,8 @@ class Settings(BaseSettings):
     #: qwen3.5 is a reasoning model; thinking stays off for RAG answers because
     #: it costs roughly 30x the tokens and latency for no gain at answer length.
     ollama_thinking: bool = False
+    generation_context_tokens: int = Field(default=16384, ge=2048, le=32768)
+    generation_output_tokens: int = Field(default=2048, ge=128, le=4096)
 
     # Optional cloud generation only; embeddings always remain local.
     gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
@@ -71,6 +75,8 @@ class Settings(BaseSettings):
     def validate_chunk_window(self) -> Settings:
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError("CHUNK_OVERLAP must be smaller than CHUNK_SIZE")
+        if self.generation_output_tokens + 512 >= self.generation_context_tokens:
+            raise ValueError("Generation context must leave room for the prompt and output")
         return self
 
     database_url: str = "sqlite:///./data/app.db"
@@ -107,6 +113,13 @@ def _base_settings() -> Settings:
         # A new desktop workspace must not rebuild/drop the web workspace's
         # derived index. Explicit advanced configuration can still override it.
         settings.qdrant_collection = "noye_desktop"
+        receipt = settings.noye_data_dir / "noye-workspace.json"
+        if receipt.exists():
+            marker = json.loads(receipt.read_text())
+            if marker.get("format") != "noye-restored-workspace" or marker.get("version") != 1:
+                raise ValueError("Invalid restored workspace identity")
+            identifier = uuid.UUID(marker["id"]).hex
+            settings.qdrant_collection = "noye_desktop_" + identifier
     return settings
 
 

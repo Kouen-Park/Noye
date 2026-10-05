@@ -12,11 +12,12 @@ from app.config import Settings
 from app.db import conversations as conversations_db
 from app.db import documents as documents_db
 from app.db import files as files_db
+from app.db import jobs as jobs_db
 from app.db.database import connect, init_schema
 from app.db.migrations import LATEST_VERSION
 from app.main import app
 from app.models.conversations import Role
-from app.models.files import FileType
+from app.models.files import FileStatus, FileType
 from app.services import ingestion, workspace_backup
 from app.services.evidence import capture_citations
 from app.services.retrieval import SearchResult
@@ -113,6 +114,36 @@ def test_round_trip_preserves_wal_writing_and_independent_evidence(saved_workspa
     ).read_bytes()
     assert documents_db.get_document(original_db, document.id).content.startswith("# User")
     assert files_db.get_file(original_db, record.id).path == record.path
+
+
+def test_restored_job_keeps_progress_without_replaying_work(saved_workspace, tmp_path):
+    root, original_db, record, message, document = saved_workspace
+    job = jobs_db.queue(original_db, record.id)
+    files_db.set_status(original_db, record.id, FileStatus.EMBEDDING)
+    jobs_db.progress(original_db, record.id, 16, 40, "embedding")
+    archive = archive_for(saved_workspace, tmp_path)
+    destination = tmp_path / "noye-restored-job"
+    assert restore_backup(archive, destination)["rebuild_required"]
+    with connect(destination / "app.db") as restored:
+        init_schema(restored)
+        assert jobs_db.recover_interrupted(restored) == 0
+        recovered = jobs_db.get(restored, job["id"])
+        assert recovered["state"] == "interrupted"
+        assert recovered["error"] == "Restored from backup."
+        assert (recovered["attempt"], recovered["completed"], recovered["total"]) == (1, 16, 40)
+        source = files_db.get_file(restored, record.id)
+        assert source.status is FileStatus.FAILED
+        assert source.index_fingerprint is None and source.chunk_count == 0
+        assert files_db.list_chunks(restored, record.id) == []
+        assert documents_db.get_document(restored, document.id).content == (
+            "# User edited writing\n한국어"
+        )
+        assert conversations_db.get_message(restored, message.id).citations == message.citations
+    assert (destination / "sources" / "source.md").read_bytes() == (
+        root / "sources" / "source.md"
+    ).read_bytes()
+    assert jobs_db.get(original_db, job["id"])["state"] == "running"
+    assert files_db.get_file(original_db, record.id).status is FileStatus.EMBEDDING
 
 
 @pytest.mark.parametrize("empty", [False, True])
