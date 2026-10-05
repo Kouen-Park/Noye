@@ -89,3 +89,17 @@ it("offers return to the original without overwriting either workspace", async (
   await userEvent.click(screen.getByRole("button", { name: "Confirm switch and restart" }));
   await waitFor(() => expect(openWorkspace).toHaveBeenCalledWith(null));
 });
+
+it("offers the previous restore after returning to the original workspace", async () => {
+  vi.mocked(readWorkspaceLocations).mockResolvedValue({
+    current: "/synthetic/original", original: "/synthetic/original", previous: "/synthetic/restored",
+  });
+  render(<WorkspaceSettings settings={settings} />);
+  await userEvent.click(await screen.findByRole("button", { name: "Reopen previous workspace" }));
+  expect(screen.queryByRole("button", { name: "Reopen original workspace" })).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Confirm switch and restart" })).toBeDisabled();
+  expect(openWorkspace).not.toHaveBeenCalled();
+  await userEvent.click(screen.getByRole("checkbox"));
+  await userEvent.click(screen.getByRole("button", { name: "Confirm switch and restart" }));
+  await waitFor(() => expect(openWorkspace).toHaveBeenCalledWith("/synthetic/restored"));
+});

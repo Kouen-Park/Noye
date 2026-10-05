@@ -84,10 +84,12 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
         </button>
       </div>}
     </div>
-    {locations && locations.current !== locations.original && <div className="border-t border-edge-strong pt-5">
+    {locations && (locations.current !== locations.original ||
+      (locations.previous && locations.previous !== locations.current && locations.previous !== locations.original)) &&
+      <div className="border-t border-edge-strong pt-5">
       <h3 className="text-lg text-ink-display">Other saved workspaces</h3>
-      <button className={button + " mt-3"} disabled={switching}
-        onClick={() => { setSelected(null); setConfirmed(false); }}>Reopen original workspace</button>
+      {locations.current !== locations.original && <button className={button + " mt-3"} disabled={switching}
+        onClick={() => { setSelected(null); setConfirmed(false); }}>Reopen original workspace</button>}
       {locations.previous && locations.previous !== locations.original && locations.previous !== locations.current &&
         <button className={button + " ml-2 mt-3"} disabled={switching}
           onClick={() => { setSelected(locations.previous); setConfirmed(false); }}>Reopen previous workspace</button>}
