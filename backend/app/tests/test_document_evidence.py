@@ -7,7 +7,7 @@ import pytest
 
 from app.config import Settings
 from app.models.conversations import MessageCitation
-from app.services import documents
+from app.services import documents, generation
 from app.services.documents import build_document_prompt, draft_document
 from app.services.evidence import capture_citations
 from app.services.generation import GenerationError
@@ -91,3 +91,67 @@ def test_saved_excerpts_are_not_sent_to_a_remote_ollama_server(monkeypatch):
     monkeypatch.setattr(documents, "generate", lambda *args, **kwargs: pytest.fail("network"))
     with pytest.raises(GenerationError, match="local Ollama"):
         draft_document("notes", "answer", saved_citations())
+
+
+@pytest.mark.parametrize("provider", ["ollama", "gemini", "openai", "anthropic"])
+def test_real_adapters_route_once_and_keep_expanded_evidence_local(monkeypatch, provider):
+    configured = Settings(
+        _env_file=None, ollama_base_url="http://127.0.0.1:11434",
+        gemini_api_key="synthetic-gemini", openai_api_key="synthetic-openai",
+        anthropic_api_key="synthetic-anthropic",
+    )
+    monkeypatch.setattr(documents, "get_settings", lambda: configured)
+    monkeypatch.setattr(generation, "get_settings", lambda: configured)
+    destinations = {
+        "ollama": "http://127.0.0.1:11434/api/generate",
+        "gemini": (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{configured.gemini_model}:generateContent"
+        ),
+        "openai": "https://api.openai.com/v1/responses",
+        "anthropic": "https://api.anthropic.com/v1/messages",
+    }
+    replies = {
+        "ollama": {"response": "# Notes"},
+        "gemini": {"candidates": [{
+            "finishReason": "STOP", "content": {"parts": [{"text": "# Notes"}]},
+        }]},
+        "openai": {"status": "completed", "output": [{
+            "type": "message", "role": "assistant",
+            "content": [{"type": "output_text", "text": "# Notes"}],
+        }]},
+        "anthropic": {
+            "stop_reason": "end_turn", "content": [{"type": "text", "text": "# Notes"}],
+        },
+    }
+    calls = []
+
+    def handler(request):
+        assert request.method == "POST"
+        assert str(request.url) == destinations[provider]
+        calls.append(json.loads(request.content))
+        return httpx.Response(200, json=replies[provider])
+
+    citations = saved_citations()
+    snapshots = [citation.evidence for citation in citations]
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        assert draft_document(
+            "make notes", "The trial was successful.", citations,
+            provider=provider, client=client,
+        ) == "# Notes"
+    assert len(calls) == 1
+    payload = calls[0]
+    if provider == "ollama":
+        prompt = payload["prompt"]
+    elif provider == "gemini":
+        prompt = payload["contents"][0]["parts"][0]["text"]
+    elif provider == "openai":
+        prompt = payload["input"]
+    else:
+        prompt = payload["messages"][0]["content"]
+    assert "make notes" in prompt
+    assert "The trial was successful." in prompt
+    assert "One.pdf" in prompt
+    for detail in ("742 units", "0.8%", "한국어 사례", "19 NZD"):
+        assert (detail in prompt) is (provider == "ollama")
+    assert [citation.evidence for citation in citations] == snapshots
