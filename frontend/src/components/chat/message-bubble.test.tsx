@@ -90,4 +90,14 @@ describe("MessageBubble", () => {
     );
     expect(screen.getByText(/line one/)).toHaveClass("whitespace-pre-wrap");
   });
+
+  it("renders answer Markdown without running embedded HTML", () => {
+    const { container } = render(<MessageBubble message={message({ content: "**Key idea**\n\n- First point\n\n<script>window.evil = true</script>\n\n[Unsafe](javascript:alert(1))\n\n![Remote image](https://example.com/image.png)" })} />);
+    expect(screen.getByText("Key idea").tagName).toBe("STRONG");
+    expect(screen.getByText("First point").tagName).toBe("LI");
+    expect(container.querySelector("script")).toBeNull();
+    expect(screen.getByText("Unsafe").getAttribute("href")).not.toContain("javascript:");
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.querySelector('[data-print="document"]')).toBeNull();
+  });
 });

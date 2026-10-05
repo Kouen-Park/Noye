@@ -52,7 +52,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
-from app.config import PROJECT_ROOT, get_settings
+from app.config import data_directory, get_settings
 
 #: Every Noye logger hangs off this name, so configuration touches Noye's own
 #: output and leaves uvicorn, httpx and qdrant-client to their own defaults.
@@ -70,7 +70,7 @@ _configured = False
 
 def log_directory() -> Path:
     """Where the log file lives. Beside the database and the sources, not in /tmp."""
-    return PROJECT_ROOT / "data" / "logs"
+    return data_directory() / "logs"
 
 
 def get_logger(name: str) -> logging.Logger:
