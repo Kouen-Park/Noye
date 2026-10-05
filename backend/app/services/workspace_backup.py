@@ -263,7 +263,12 @@ def restore_backup(archive: Path, destination: Path) -> dict:
         destination.mkdir()
         try:
             for item in staged.iterdir():
+                if item.name == "noye-workspace.json":
+                    continue
                 item.rename(destination / item.name)
+            # The native chooser treats this receipt as the publication marker.
+            # Publish it only after every verified payload reached the new folder.
+            (staged / "noye-workspace.json").rename(destination / "noye-workspace.json")
         except BaseException:
             shutil.rmtree(destination)
             raise

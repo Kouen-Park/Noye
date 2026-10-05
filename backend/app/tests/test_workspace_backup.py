@@ -2,6 +2,7 @@
 
 import stat
 import zipfile
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -33,23 +34,43 @@ def saved_workspace(tmp_path):
     db = connect(root / "app.db")
     init_schema(db)
     record = files_db.create_file(
-        db, name="source.md", file_type=FileType.MARKDOWN,
-        path=str(original), size=original.stat().st_size,
+        db,
+        name="source.md",
+        file_type=FileType.MARKDOWN,
+        path=str(original),
+        size=original.stat().st_size,
     )
-    citations = capture_citations([SearchResult(
-        file_id=record.id, content="saved old excerpt", chunk_index=0,
-        page_number=None, score=0.9,
-    )], {record.id: record.name})
+    citations = capture_citations(
+        [
+            SearchResult(
+                file_id=record.id,
+                content="saved old excerpt",
+                chunk_index=0,
+                page_number=None,
+                score=0.9,
+            )
+        ],
+        {record.id: record.name},
+    )
     conversation = conversations_db.create_conversation(db, first_question="Original question")
     message = conversations_db.add_message(
-        db, conversation.id, role=Role.ASSISTANT, content="saved answer", citations=citations,
+        db,
+        conversation.id,
+        role=Role.ASSISTANT,
+        content="saved answer",
+        citations=citations,
     )
     document = documents_db.create_document(db, content="first draft", citations=citations)
     db.execute("PRAGMA wal_autocheckpoint = 0")
     documents_db.update_document(db, document.id, content="# User edited writing\n한국어")
     (root / "documents" / "export.md").write_text("a separate export")
-    for secret in (".env", "preferences.json", "logs/private.log", "models/weights",
-                   "qdrant/storage/vector"):
+    for secret in (
+        ".env",
+        "preferences.json",
+        "logs/private.log",
+        "models/weights",
+        "qdrant/storage/vector",
+    ):
         path = root / secret
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("excluded synthetic secret")
@@ -71,7 +92,10 @@ def test_round_trip_preserves_wal_writing_and_independent_evidence(saved_workspa
     archive = archive_for(saved_workspace, tmp_path)
     with zipfile.ZipFile(archive) as packed:
         assert set(packed.namelist()) == {
-            "manifest.json", "app.db", "sources/source.md", "documents/export.md",
+            "manifest.json",
+            "app.db",
+            "sources/source.md",
+            "documents/export.md",
         }
     destination = tmp_path / "restored"
     report = restore_backup(archive, destination)
@@ -197,6 +221,45 @@ def test_backup_detects_external_source_edits(saved_workspace, tmp_path, monkeyp
         create_backup(root, root / "app.db", tmp_path / "backup.zip")
 
 
+def test_backup_never_removes_an_archive_created_by_another_writer(
+    saved_workspace, tmp_path, monkeypatch
+):
+    root, *_ = saved_workspace
+    archive = tmp_path / "backup.zip"
+    real_open = Path.open
+
+    def raced_open(path, mode="r", *args, **kwargs):
+        if path == archive and mode == "xb":
+            archive.write_bytes(b"another writer owns this file")
+        return real_open(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", raced_open)
+    with pytest.raises(FileExistsError):
+        create_backup(root, root / "app.db", archive)
+    assert archive.read_bytes() == b"another writer owns this file"
+
+
+def test_restore_publishes_its_receipt_only_after_the_complete_payload(
+    saved_workspace, tmp_path, monkeypatch
+):
+    root, *_ = saved_workspace
+    archive, destination = tmp_path / "backup.zip", tmp_path / "restored"
+    create_backup(root, root / "app.db", archive)
+    real_rename = Path.rename
+    publications = []
+
+    def observe(path, target):
+        if Path(target).parent == destination:
+            assert not (destination / "noye-workspace.json").exists()
+            publications.append(path.name)
+        return real_rename(path, target)
+
+    monkeypatch.setattr(Path, "rename", observe)
+    restore_backup(archive, destination)
+    assert publications[-1] == "noye-workspace.json"
+    assert (destination / "app.db").is_file()
+
+
 def test_snapshot_blocks_requests_and_processing_and_releases_after_failure():
     with request_access(), pytest.raises(WorkspaceBusy):
         with snapshot_access():
@@ -230,7 +293,8 @@ def test_desktop_api_download_restore_and_capability(saved_workspace, monkeypatc
     headers = {"X-Noye-Control": "synthetic-control"}
     backup = client.post("/workspace/backup", headers=headers)
     assert backup.status_code == 200 and backup.content.startswith(b"PK")
-    restored = client.post("/workspace/restore", headers=headers,
-                           files={"file": ("backup.zip", backup.content)})
+    restored = client.post(
+        "/workspace/restore", headers=headers, files={"file": ("backup.zip", backup.content)}
+    )
     assert restored.status_code == 201 and restored.json()["rebuild_required"]
     assert restored.json()["destination"].startswith(str(root.parent / "noye-restored-"))
