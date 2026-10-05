@@ -4,7 +4,10 @@
 
 Noye is a **local-first AI knowledge workspace** that turns your files into searchable, reusable knowledge.
 
-Upload PDFs, Markdown files, and notes. Noye is designed to process them locally, let you search and ask questions across your knowledge base, preserve source citations, and turn useful results into editable documents.
+Upload PDFs, Markdown files, and notes. Noye processes and searches them locally,
+preserves source citations, and turns useful results into editable documents.
+Generation defaults to local Ollama; you can explicitly select Gemini, OpenAI or Claude with your
+own API key for chat or document drafting.
 
 > 🚧 **Noye is currently under active development.** The features below describe the planned MVP unless marked complete.
 
@@ -44,7 +47,7 @@ Noye aims to provide one local workspace where you can:
 | Vector Search | Qdrant |
 | Local AI | Ollama |
 | Infrastructure | Docker |
-| Desktop | Tauri *(planned)* |
+| Desktop | Tauri 2 *(macOS foundation implemented; final acceptance pending)* |
 
 ## Architecture
 
@@ -169,7 +172,38 @@ noye/
 - [x] Markdown export
 - [x] PDF export *(via your browser's print dialog)*
 
-### Phase 6 — Reliability and Quality
+### Phase 6 — Desktop Application
+
+- [x] Tauri integration with a bundled static UI
+- [x] Start and stop the app's own backend
+- [x] Persistent app-data directory and explicit workspace import
+- [x] Local macOS application bundle
+- [x] Chat-focused layout with conversation navigation and passage inspection
+- [x] Hardware recommendations and explicit model installation/deletion
+- [x] Persistent model/provider settings and macOS Keychain API keys
+- [x] Opt-in Ollama/Qdrant preparation, ownership-aware retry and shutdown
+- [ ] Signed/notarized distribution
+- [ ] Windows support
+
+### Phase 7 — Core Workflow Improvements
+
+- [ ] Store retrieved excerpts and pass them to document generation
+- [ ] Preserve citation excerpts and original source versions
+- [ ] Coordinate rebuilds with active ingestion/deletion
+- [ ] Version indexes by embedding model, chunking and input format
+- [ ] Back up and restore SQLite together with source files
+- [ ] Persist jobs, recover after restart and cancel between batches
+- [ ] Complete desktop data/service/model integration using Phase 6 foundations
+- [ ] Restrict Qdrant port publishing to localhost
+- [ ] Separate query/document embedding formats and validate input length
+- [ ] Establish retrieval evaluation and assess hybrid search/reranking
+- [ ] Support bounded conversation context and selected sources
+- [ ] Improve evidence inspection, cited exports and PDF extraction coverage
+
+These twelve milestones are planned work; existing partial foundations remain
+implemented. Hybrid search/reranking adoption depends on measured benefit.
+
+### Phase 8 — Reliability and Quality
 
 - [x] Upload size limits
 - [x] Duplicate detection
@@ -178,17 +212,21 @@ noye/
 - [x] Handle a change of embedding model
 - [x] Surface index integrity in the library
 
-### Phase 7 — Desktop Application
+- [ ] Stability and quality refinement after the twelve Phase 7 improvements
+- [ ] Expanded retrieval/answer quality and local/cloud latency validation
+- [ ] Final desktop end-to-end verification, including native Markdown/PDF export
 
-- [ ] Tauri integration
-- [ ] Start and manage the backend
-- [ ] macOS packaging
-- [ ] Folder watching
-- [ ] Windows support
+Completed safeguards above retain their status from earlier work. Phase 6 builds
+out the desktop app; Phase 7 implements the twelve improvements; Phase 8 refines
+stability/quality and validates the packaged workflow before MVP release. Relevant
+tests, lint, types and builds run throughout implementation.
 
 ## Privacy Philosophy
 
 **Local by default.** Personal knowledge should not require cloud storage.
+Selecting Gemini sends the question and retrieved excerpts to Google; document
+drafting sends the instruction, stored answer and cited file names. Original files,
+embeddings, search and saved work remain local.
 
 **Sources over hallucinations.** Generated answers should remain connected to the information they came from.
 
@@ -199,8 +237,9 @@ noye/
 ### Backend
 
 The backend serves ingestion, search, chat and documents over the routes listed
-below. Everything runs against local services — Qdrant and Ollama — so both have
-to be up for anything beyond `/health`.
+below. Ingestion and search need local Qdrant and Ollama embeddings, including
+when Gemini handles generation. Generation uses the provider explicitly selected
+for each request, defaulting to Ollama.
 
 ```bash
 cd backend
@@ -243,6 +282,8 @@ Available endpoints:
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
+| `GET` | `/ai/providers` | Generation model names and cloud-key availability; never returns credentials |
+| `GET` | `/runtime/services` | Bounded Ollama/Qdrant and installed-model checks; never generates or downloads |
 | `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
@@ -277,8 +318,69 @@ The library distinguishes an unknown/changed index from an unavailable Ollama mo
 requires rebuilding. Search filters Qdrant points by the verified fingerprint as
 well as eligible file IDs, so incompatible or legacy points cannot join a ranking.
 
+### Optional cloud generation
+
+Desktop: open **Settings → Cloud APIs** for OpenAI, Claude and Gemini key
+entry/removal using macOS Keychain. Saved keys are never returned to the UI.
+An explicit default-provider preference applies to new work, not existing selections.
+Saving keys never sends a validation request or activates billing.
+
+**Settings → Local models** downloads supported recommendations, reports layer
+progress, cancels/retries downloads, switches installed generation models and
+deletes unused models after exact-name confirmation. Confirm a folder on Ollama's
+actual model-storage volume first. Ollama must already be running. Current
+generation, fixed embeddings and models used by Noye inference are protected.
+See [desktop setup and validation](docs/DESKTOP.md) for remaining limits.
+
+**Settings → Services** can start an installed Ollama and prepare Qdrant through
+local Docker Desktop after explicit confirmation. It can open Docker Desktop or
+official installation guides; it does not run prerequisite installers. Qdrant's
+pinned image may be downloaded, with persistent app-data storage and only localhost
+port 6333 published. Already-running services are reused, not adopted or stopped.
+Only services started by this Noye session stop on quit; Docker and data remain.
+
+Web: configure OpenAI using `OPENAI_API_KEY`/`OPENAI_MODEL` and Claude using
+`ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL` in the repository-root `.env`, never frontend
+environment variables. Gemini web configuration follows:
+
+Set these values in the repository-root `.env` (not `frontend/.env.local`), then
+restart the backend:
+
+```dotenv
+GEMINI_API_KEY=your-key-here
+GEMINI_MODEL=gemini-3.8-flash
+```
+
+Obtain a key from [Google AI Studio](https://aistudio.google.com/apikey).
+The model is configurable; choose one available to your project using the
+[official model list](https://ai.google.dev/gemini-api/docs/models).
+The chat screen and Create document form each have a provider selector. They
+start in local mode even when a Gemini key exists; no key enables cloud mode
+automatically. Without a key, Gemini is disabled and setup guidance is shown.
+
+Only FastAPI reads the key and sends it to Google in a header. Do not commit it,
+put it in a `NEXT_PUBLIC_*` variable, or paste it into a conversation. Provider
+errors never include Gemini's raw response body, which could echo private input.
+Noye makes one request and does not retry or switch providers on failure.
+
+Your API project's billing determines charges. Noye cannot turn a paid project
+into a free one or enforce Google's free quota; use a project without activated
+billing for free-only testing. A quota/rate-limit failure is shown as an error.
+Free-tier inputs and outputs may be used to improve Google products, so avoid
+confidential material and review the
+[data terms](https://ai.google.dev/gemini-api/terms) before selecting cloud mode.
+
+This does not change the embedding model or invalidate the local vector index.
+Gemini requires internet access; local mode continues to work without a Gemini key.
+
 The API has **no authentication** — Noye is local and single-user, so the server
 binds to `127.0.0.1`. Do not expose it on a network interface.
+
+Compose also publishes only Qdrant's REST port on `127.0.0.1:6333`; the backend
+does not use the gRPC port. CORS controls browser access and is not authentication
+or a network firewall. After changing an existing checkout, run
+`docker compose up -d qdrant` to recreate its port mapping without removing its
+storage volume. Avoid `docker compose down -v`, which deletes that derived index.
 
 ### Frontend
 
@@ -353,12 +455,31 @@ plain custom properties with no framework dependency; components never hardcode
 a colour, and never need a `dark:` variant, because each token resolves itself
 per colour scheme.
 
+### macOS desktop preview
+
+The macOS shell bundles the static frontend and a frozen Python backend; it does
+not need Next.js or Python servers running separately. It starts its own loopback
+backend on an available port. Installed Ollama and local Docker Desktop remain
+prerequisites; Settings can prepare services explicitly. Quit stops the owned
+backend and service handles started by that session, never unrelated services.
+Nothing starts Docker, downloads models or enables cloud usage silently.
+
+See [the desktop build and data guide](docs/DESKTOP.md) for prerequisites,
+packaging, validation and a non-destructive import of existing web data. The
+chat-focused interface is included: conversations on the left, a bottom composer,
+local/cloud provider selection and an answer-specific passage panel. First-run
+recommendations, model management, Keychain-backed API settings and opt-in service
+preparation are included. Dark mode uses neutral charcoal and muted blue; light
+mode retains the original paper/forest palette. Implementation checks pass, but
+live setup, credential/model management, full workflow and native PDF acceptance
+remain deferred to Phase 8; this is not a signed public release.
+
 ### Supporting services
 
 Qdrant runs in Docker; Ollama runs on the host.
 
 ```bash
-docker compose up -d          # Qdrant on :6333
+docker compose up -d          # Qdrant REST on 127.0.0.1:6333
 brew services start ollama    # Ollama on :11434
 ollama pull embeddinggemma    # embeddings, 768 dimensions
 ollama pull qwen3.5:4b        # generation

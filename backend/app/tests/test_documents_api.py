@@ -163,7 +163,7 @@ def test_a_failed_draft_stores_nothing(client, db, monkeypatch) -> None:
     )
 
     assert response.status_code == 503
-    assert "not responding" in response.json()["detail"]
+    assert response.json()["detail"] == "Could not draft the document: Could not reach Ollama."
     assert document_store.count_documents(db) == 0
     assert client.get("/documents").json() == []
 

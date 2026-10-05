@@ -46,14 +46,21 @@ export function Passages({ citations }: PassagesProps) {
         {citations.length} {citations.length === 1 ? "passage" : "passages"} consulted
       </button>
 
-      {open && (
-        <ol className="mt-2 space-y-1.5">
+      {open && <PassageList citations={citations} />}
+    </div>
+  );
+}
+
+/** Shared by the inline disclosure and the chat inspection panel. */
+export function PassageList({ citations }: PassagesProps) {
+  return (
+        <ol className="mt-3 space-y-3">
           {citations.map((citation, index) => {
             const hasPage = citation.page_number !== null;
             return (
               <li
                 key={`${citation.file_id}:${citation.page_number}:${index}`}
-                className="flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md border border-edge border-t-2 border-t-accent bg-canvas px-2.5 py-2"
+                className="grid grid-cols-[20px_minmax(0,1fr)] items-start gap-x-2 gap-y-2 rounded-md border border-edge-strong border-t-2 border-t-accent bg-card px-3 py-3"
               >
                 <span
                   aria-hidden="true"
@@ -61,9 +68,10 @@ export function Passages({ citations }: PassagesProps) {
                 >
                   {index + 1}
                 </span>
-                <span className="truncate text-[12.5px] font-semibold" title={citation.file_name}>
+                <span className="min-w-0 text-[13px] font-semibold [overflow-wrap:anywhere]" title={citation.file_name}>
                   {citation.file_name}
                 </span>
+                <div className="col-start-2 flex flex-wrap items-center justify-between gap-2">
                 <span className="font-mono text-[11.5px] tabular-nums text-ink-soft">
                   {hasPage ? `page ${citation.page_number}` : "no pages"}
                 </span>
@@ -76,16 +84,17 @@ export function Passages({ citations }: PassagesProps) {
                       ? `Open ${citation.file_name} at page ${citation.page_number}`
                       : `Open ${citation.file_name}`
                   }
-                  className="ml-auto rounded-md border border-edge-strong px-2 py-1 text-[11.5px] font-semibold text-accent-ink hover:bg-brand-wash"
+                  className="ml-auto inline-flex min-h-11 items-center rounded-md border border-edge-strong px-3 text-[12px] font-semibold text-accent-ink hover:bg-brand-wash"
                 >
                   Open current
                 </a>
-                <SavedEvidence citation={citation} />
+                </div>
+                <div className="col-span-2">
+                  <SavedEvidence citation={citation} />
+                </div>
               </li>
             );
           })}
         </ol>
-      )}
-    </div>
   );
 }
