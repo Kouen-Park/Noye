@@ -2844,10 +2844,13 @@ separate work in their planned phases.
 
 ## 16.7 Workspace recovery and desktop integration — 2026-10-05
 
-Items 5, 6 and 7 are implemented on three ordered branches: workspace backup
-(draft PR #50), durable jobs (draft PR #51) and the dependent desktop integration.
-Merge in that order and retarget each successor to main after its predecessor
-lands; these draft PRs have not been merged by this task.
+Items 5, 6 and 7 use the ordered integration sequence
+[workspace backup #53](https://github.com/Kouen-Park/Noye/pull/53) →
+[durable jobs #54](https://github.com/Kouen-Park/Noye/pull/54) →
+[desktop integration #55](https://github.com/Kouen-Park/Noye/pull/55).
+These replace closed draft PRs #50, #51 and #52, respectively, using matching
+feat branches. Each successor integrates main after its predecessor. Ordinary
+merges preserve the published feature history without rebase or force push.
 
 Backups preserve SQLite/WAL, originals, edited documents and historical evidence,
 validate checksums/schema/inventory, and restore into new folders. Native
@@ -2865,10 +2868,16 @@ keys do not prove cloud API access. Local generation has context/output bounds
 and a conservative UTF-8 input check, without silently trimming saved evidence.
 The user's local-only document-excerpt policy remains in force.
 
-Final validation: backend 792 passed, 19 skipped; frontend 220 passed; Ruff,
-ESLint, route types, TypeScript, default web build and desktop static export
-passed. Rust tests: 5 passed; fmt/Clippy passed. Frozen sidecar: 10 desktop
-checks passed using temporary data. Unsigned macOS packaging: 67.65 MiB.
+Fresh integrated implementation bfc1d6d: backend 793 passed, 19 skipped,
+8 warnings; frontend 221 passed in 31 files; Ruff, ESLint, route types,
+TypeScript, explicit Webpack web build and desktop static export passed.
+Rust tests: 5 passed; fmt/Clippy passed. The newly packaged app's frozen sidecar:
+10 desktop checks passed with 7 warnings using temporary data. Unsigned macOS
+packaging: 67.65 MiB. Subsequent checkpoint changes are documentation-only.
+Integration inspection fixed previous-workspace recovery after returning to the
+original location, with a failing-then-passing UI regression. A reproducible
+backup/job test preserves unfinished 16/40 progress and saved writing/evidence
+without replaying work or changing the original workspace.
 See docs/phase7/desktop-integration.md for decisions and exact acceptance limits.
 Native GUI restart/download/export, real inference interruption/latency, large
 backups and live provider access remain Phase 8. No real user data or Keychain

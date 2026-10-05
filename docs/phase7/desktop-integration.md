@@ -16,7 +16,8 @@ The chooser accepts the original location or a canonical, non-linked restored
 sibling with the complete payload and valid versioned receipt. Backup restore
 publishes the receipt last. Missing/invalid selected folders produce a startup
 error and an explicit Reopen original workspace action; there is no silent switch
-to another database. Settings also offers the original and previous workspace.
+to another database. Settings also offers the original and previous workspace,
+including returning to the previous restore after reopening the original location.
 
 Existing desktop workspaces retain the noye_desktop collection. Each restored
 receipt supplies a new UUID-derived collection, so its explicit rebuild cannot
@@ -57,22 +58,45 @@ unchanged. Durable ingestion progress/cancellation is described in
 
 ## Validation and acceptance boundaries
 
-- Final integrated backend: 792 passed, 19 skipped; Ruff passed.
-- Final frontend: 220 passed; ESLint, Next type generation, TypeScript, default
-  Turbopack web build and desktop static Webpack export passed.
-- Rust fmt, locked tests (5 passed) and Clippy with warnings denied passed.
-- The actual frozen macOS sidecar ran the desktop lifecycle suite: 10 passed,
-  including loopback readiness, private settings delivery, shutdown line and parent
-  EOF in temporary data directories. No daemon was started or cloud inference sent.
-- Unsigned macOS app packaging passed: 67.65 MiB. No Apple identity/notarization
-  was used; the bundle is an ignored local preview, not a distribution release.
-- A separate synthetic backup/restore check preserved an unfinished job's 16/40
-  progress, marked it interrupted, retained saved document edits and originals,
-  and required rebuilding before search.
-- Integration inspection corrected macOS path aliases by canonicalizing the
-  original root, and made the restore receipt the final publication marker.
-  The initial Turbopack dependency-symlink issue was resolved by independent
-  dependency copies without changing versions or build configuration.
+Fresh validation of integrated implementation bfc1d6d (later checkpoint commits
+change documentation only):
+
+- Backend: `.venv/bin/pytest app/tests/ -q -m 'not integration'` — 793 passed,
+  19 skipped, 8 warnings; `.venv/bin/ruff check app/ desktop.py` passed.
+- Frontend: `npm test -- --reporter=dot --pool=threads --maxWorkers=1` —
+  221 passed in 31 files. ESLint, `next typegen`, `tsc --noEmit`, explicit
+  `npm run build -- --webpack` and desktop static export passed.
+- Rust: `cargo fmt --check`, `cargo test --locked` (5 passed), and
+  `cargo clippy --locked --all-targets -- -D warnings` passed with the existing
+  project-local toolchain.
+- `npm run desktop:build -- --no-sign -- --locked` produced a fresh unsigned
+  Apple Silicon Noye.app at 67.65 MiB. No Apple identity/notarization was used;
+  the bundle is an ignored local preview, not a distribution release.
+- The newly packaged app's actual frozen backend, selected with
+  `NOYE_TEST_SIDECAR`, ran `pytest app/tests/test_desktop.py -q`: 10 passed,
+  7 warnings. Includes loopback readiness, private settings delivery, control
+  refusal, CORS, shutdown line and parent EOF in temporary data directories.
+  No daemon was started or cloud inference sent.
+- PyInstaller analysis includes jobs, workspace backup, runtime checks, saved
+  evidence modules and PyMuPDF distribution metadata.
+- A new reproducible backup/job regression preserves an unfinished attempt's
+  identity and 16/40 progress, marks it interrupted without replay, retains
+  edited writing, historical citations and original bytes, requires rebuilding,
+  and leaves the source workspace unchanged. All 18 backup cases passed.
+- Same-agent integration inspection found that returning to the original hid
+  the previous restore. A new UI case reproduced the failure before the fix
+  and passed in the full suite afterward; saved-edit confirmation remains
+  required. No separate reviewer or native GUI pass ran.
+- Existing canonical-root handling and final receipt publication were retained.
+  Dependencies were reused through worktree symlinks with explicit Webpack;
+  no dependency versions, lockfiles or build configuration changed.
+- `git diff --check` passed. GitHub reported no status checks; local results
+  do not claim a CI pass or native GUI acceptance.
+
+Ordered replacement PRs: [#53](https://github.com/Kouen-Park/Noye/pull/53)
+(closed #50), [#54](https://github.com/Kouen-Park/Noye/pull/54) (closed #51),
+then [#55](https://github.com/Kouen-Park/Noye/pull/55) (closed #52). Each
+successor targets main after an ordinary history-preserving main refresh.
 
 Native GUI restart/download/export, sleep/force-kill during real inference,
 very-large-workspace memory/disk behavior, model latency and live provider access
