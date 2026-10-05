@@ -203,6 +203,8 @@ def update_root(
             connection.execute(
                 "UPDATE source_roots SET processing=? WHERE id=?", (processing, root_id)
             )
+            if bool(processing) != bool(root["processing"]):
+                emit(connection, "resumed" if processing else "paused", root_id=root_id)
         if set_organization:
             connection.execute(
                 "UPDATE source_roots SET organization_prefix=? WHERE id=?",

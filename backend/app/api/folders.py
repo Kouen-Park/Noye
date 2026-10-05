@@ -1,6 +1,7 @@
 """Folder controls take registered IDs; selection is native/private stdin only."""
 
 import sqlite3
+from pathlib import PurePosixPath
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -70,7 +71,10 @@ def control(root_id: str, body: RootPatch, db: sqlite3.Connection = Depends(get_
 
 @router.get("/{root_id}/tree")
 def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
-    root = root_record(db, root_id)
+    try:
+        root = root_record(db, root_id)
+    except SourceError as exc:
+        fail(exc)
     sources = SourceCatalog(db).list_sources({"mode": "chosen", "root_ids": [root_id]})
     try:
         _, entries = collect(root, show_excluded=True)
@@ -83,6 +87,13 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
         {"relative_path": path, "kind": "file", "source": source}
         for path, source in by_path.items()
     )
+    known = {entry["relative_path"] for entry in entries}
+    for entry in list(entries):
+        for parent in PurePosixPath(entry["relative_path"]).parents:
+            relative = parent.as_posix()
+            if relative != "." and relative not in known:
+                entries.append({"relative_path": relative, "kind": "directory", "remembered": True})
+                known.add(relative)
     return {
         "root": public_root(root),
         "entries": sorted(entries, key=lambda row: row["relative_path"]),

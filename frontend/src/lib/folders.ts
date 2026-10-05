@@ -14,7 +14,7 @@ export interface FolderSource {
   error: string | null; manual_category: string | null; job: IngestionJob | null;
 }
 export interface FolderEntry {
-  relative_path: string; kind: "directory" | "file"; source?: FolderSource | null; excluded?: boolean;
+  relative_path: string; kind: "directory" | "file"; source?: FolderSource | null; excluded?: boolean; remembered?: boolean;
 }
 export interface FolderTree { root: FolderRoot; entries: FolderEntry[] }
 export interface FilingRecord {

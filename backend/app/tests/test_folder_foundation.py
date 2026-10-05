@@ -263,3 +263,31 @@ def test_permission_failure_is_unavailable_and_generated_tree_is_visible(folder,
     scan()
     assert SourceCatalog(db).get(first.id)["availability"] == "unavailable"
     assert not any(e["kind"] == "missing" for e in SourceCatalog(db).changes())
+
+
+def test_stable_empty_original_is_registered_and_reports_no_text_failure(folder):
+    db, root, _, scan, _ = folder
+    (root / "empty.txt").write_bytes(b"")
+    assert scan() == []
+    (identifier,) = scan()
+    result = ingestion.ingest_file(db, identifier, reserved=True)
+    assert result.status is FileStatus.FAILED
+    assert "text" in result.error.lower()
+    assert Path(result.path).read_bytes() == b""
+    assert SourceCatalog(db).get(identifier)["availability"] == "available"
+
+
+def test_resume_and_reconnected_ready_events_do_not_reembed(folder):
+    db, root, root_id, scan, _ = folder
+    record = discover(folder)
+    update_root(db, root_id, processing=False)
+    update_root(db, root_id, processing=True)
+    assert any(e["kind"] == "resumed" for e in SourceCatalog(db).changes())
+    root.rename(root.with_name("unmounted"))
+    scan()
+    root.with_name("unmounted").rename(root)
+    scan()
+    scan()
+    events = [e for e in SourceCatalog(db).changes() if e["kind"] == "ready"]
+    assert len(events) == 2 and events[-1]["source_id"] == record.id
+    assert jobs.latest(db, record.id)["attempt"] == 1
