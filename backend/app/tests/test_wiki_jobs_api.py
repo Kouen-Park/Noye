@@ -6,8 +6,9 @@ from app.api.deps import get_db
 from app.api.wiki import router
 from app.db import jobs as ingestion_jobs
 from app.db import wiki as store
+from app.models.wiki import WikiScope
 from app.services import knowledge_jobs
-from app.services.wiki import jobs, pipeline, relations
+from app.services.wiki import jobs, pipeline, relations, service
 from app.services.wiki.local import WikiError
 from app.tests.test_folder_foundation import discover, folder, ingest
 from app.tests.test_wiki_integration import generate, model, workspace
@@ -126,3 +127,25 @@ def test_real_pdf_page_locations(workspace):
     revision = store.revision(db, result["revision_id"])
     assert {p["page_number"] for p in revision["evidence"]} == {1, 2}
     assert "page 2" in revision["content"] and "page 99" not in revision["content"]
+
+
+def test_topic_failure_keeps_committed_source_artifact(workspace, monkeypatch):
+    db, *_ = workspace
+    record = discover(workspace)
+    jobs.register()
+    install_model(monkeypatch)
+
+    def fail(*args, **kwargs):
+        raise WikiError("Topic projection failed after source revision committed")
+
+    monkeypatch.setattr(service, "refresh_topics", fail)
+    job = jobs.enqueue(db, record.id, WikiScope())
+    worker = knowledge_jobs.KnowledgeWorker()
+    knowledge_jobs.worker.stop_event.clear()
+    worker.run_one(db, job["id"])
+    failed = knowledge_jobs.get(db, job["id"])
+    assert failed["state"] == "failed" and failed["artifact_id"]
+    page = store.page(db, failed["artifact_id"])
+    assert store.revision(db, page["current_revision"])["metadata"]["source"]["source_id"] == (
+        record.id
+    )
