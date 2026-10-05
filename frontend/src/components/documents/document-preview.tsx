@@ -32,9 +32,19 @@ export function DocumentPreview({ content }: { content: string }) {
 
   return (
     <div data-print="document" className="max-w-[72ch] text-[14.5px] leading-relaxed">
+      <MarkdownContent content={content} />
+    </div>
+  );
+}
+
+/** Safe shared prose renderer. Chat never opts into document-only printing. */
+export function MarkdownContent({ content, allowImages = true }: { content: string; allowImages?: boolean }) {
+  return (
+    <div className="[overflow-wrap:anywhere]">
       <Markdown
         remarkPlugins={[remarkGfm]}
         components={{
+          ...(!allowImages ? { img: ({ alt }: { alt?: string }) => <span>{alt ? `[Image: ${alt}]` : "[Image omitted]"}</span> } : {}),
           h1: (props) => (
             <h1 className="mb-3 mt-5 font-display text-[22px] first:mt-0" {...props} />
           ),

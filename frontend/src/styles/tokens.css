@@ -17,53 +17,54 @@
   /* ---- Surfaces -------------------------------------------------------- */
 
   /* The page. */
-  --canvas: light-dark(#f4efe6, #121714);
+  --canvas: light-dark(#f4efe6, #17191c);
 
   /* Raised panel: file cards, answer panel, drop zone.
      Light: barely above the canvas (1.08:1) — the border draws the card.
-     Dark:  a real fill step (1.38:1) because fills flatten at low luminance. */
-  --card: light-dark(#fbf8f2, #27332a);
+     Dark: neutral charcoal fill; borders keep panels distinct. */
+  --card: light-dark(#fbf8f2, #22252a);
 
   /* Structural / inset areas: sidebar, wells, the tan of the original palette. */
-  --sunken: light-dark(#ded0b6, #0e1310);
+  --sunken: light-dark(#ded0b6, #111316);
 
   /* Borders. --edge for quiet separators, --edge-strong to define a card. */
-  --edge: light-dark(#d9cdb5, #303c33);
-  --edge-strong: light-dark(#c3b191, #3f4d43);
+  --edge: light-dark(#d9cdb5, #30343c);
+  --edge-strong: light-dark(#c3b191, #667080);
 
   /* ---- Text ------------------------------------------------------------ */
 
-  --ink: light-dark(#292421, #ece7dc);        /* 13.40:1 / 10.69:1 */
-  --ink-soft: light-dark(#6a6055, #9ca79e);   /* secondary copy, facts */
-  --ink-faint: light-dark(#98907f, #6d7872);  /* eyebrows, disabled */
+  --ink: light-dark(#292421, #f0f1f3);
+  --ink-soft: light-dark(#6a6055, #b3b9c4);   /* secondary copy, facts */
+  --ink-on-sunken: light-dark(#5b5349, #b3b9c4);
+  --ink-faint: light-dark(#98907f, #858e9b);  /* eyebrows, disabled */
 
   /* Text placed ON a filled --brand or --accent surface. */
-  --ink-inverse: light-dark(#f4efe6, #0e1310);
+  --ink-inverse: light-dark(#f4efe6, #15191f);
 
-  /* Display headings. Coffee brown rather than black, for warmth. 8.20:1. */
-  --ink-display: light-dark(#5c4033, #c9a98a);
+  /* Display headings: light coffee brown (8.20:1); dark off-white. */
+  --ink-display: light-dark(#5c4033, #f0f1f3);
 
   /* ---- Brand ----------------------------------------------------------- */
 
-  /* Forest green. Anything the person acts on: primary buttons, active nav,
+  /* Light: forest green. Dark: muted blue. Primary buttons, active nav,
      focus rings, citation badges. Never used to mean "success" (see DESIGN.md). */
-  --brand: light-dark(#344e41, #7faa8c);
-  --brand-hover: light-dark(#2a4035, #92b99d);
-  --brand-wash: light-dark(#e4eae4, #18231c);
+  --brand: light-dark(#344e41, #a9b8cc);
+  --brand-hover: light-dark(#2a4035, #c4d0e0);
+  --brand-wash: light-dark(#e4eae4, #252c36);
 
-  /* ---- Accent (brass) -------------------------------------------------- */
+  /* ---- Accent (light: brass; dark: slate) ------------------------------ */
 
-  /* DECORATION ONLY — 2.70:1 on canvas. Fills, rules, edges, progress bars,
+  /* DECORATION ONLY — light brass is 2.70:1 on canvas. Fills, rules, edges, progress,
      the spine marker on a file card. Never text, never a thin stroke. */
-  --accent: light-dark(#b08d57, #d9b478);
+  --accent: light-dark(#b08d57, #a5adb9);
 
   /* The text-safe brass. Use wherever brass must carry words. 5.41:1. */
-  --accent-ink: light-dark(#7a5c28, #d9b478);
+  --accent-ink: light-dark(#7a5c28, #bcc5d2);
 
-  --accent-wash: light-dark(#efe6d4, #241f14);
+  --accent-wash: light-dark(#efe6d4, #272b32);
 
   /* Text placed on a filled --accent surface: dark (4.96:1), never white. */
-  --ink-on-accent: #292421;
+  --ink-on-accent: light-dark(#292421, #15191f);
 
   /* ---- Status ---------------------------------------------------------- */
 
@@ -71,10 +72,10 @@
   --busy: var(--accent-ink);
   --busy-wash: var(--accent-wash);
 
-  /* Failed. 1.01:1 against --brand, so NEVER rely on this colour alone —
+  /* Failed. Light oxblood is 1.01:1 against --brand; NEVER rely on colour alone —
      always an icon and a word too. */
-  --fail: light-dark(#8c1d33, #ef8a95);
-  --fail-wash: light-dark(#f6e6e6, #2a1518);
+  --fail: light-dark(#8c1d33, #eca0a7);
+  --fail-wash: light-dark(#f6e6e6, #35272b);
 
   /* Ready has no colour by design: it is the resting state of nearly every
      file, and colouring it would drown the card that needs attention. */
