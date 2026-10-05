@@ -76,11 +76,12 @@ def test_knowledge_jobs_execute_progress_cancel_restart_and_retry(folder):
         return "artifact-123"
 
     knowledge_jobs.register("test-wiki", handler)
-    knowledge_jobs.worker.run_one(db, retry["id"])
+    worker = knowledge_jobs.KnowledgeWorker()
+    worker.run_one(db, retry["id"])
     assert knowledge_jobs.get(db, retry["id"])["artifact_id"] == "artifact-123"
     other = knowledge_jobs.enqueue(
         db, kind="test-wiki", subject_id="other", payload={}, scope={"mode": "empty"}
     )
     knowledge_jobs.cancel(db, other["id"])
-    knowledge_jobs.worker.run_one(db, other["id"])
+    worker.run_one(db, other["id"])
     assert knowledge_jobs.get(db, other["id"])["state"] == "cancelled"

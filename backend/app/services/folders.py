@@ -57,17 +57,17 @@ def root_handle(root):
         if path.resolve(strict=True) != path:
             raise SourceError("invalid_path", "The registered folder path now contains a link.")
         fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
-        try:
-            info = os.fstat(fd)
-            if (info.st_dev, info.st_ino) != (root["device"], root["inode"]):
-                raise SourceError("unavailable", "The folder identity changed. Re-select it.")
-            yield fd
-        finally:
-            os.close(fd)
     except OSError as exc:
         raise SourceError(
             "unavailable", "Folder unavailable. Check its drive and permissions."
         ) from exc
+    try:
+        info = os.fstat(fd)
+        if (info.st_dev, info.st_ino) != (root["device"], root["inode"]):
+            raise SourceError("unavailable", "The folder identity changed. Re-select it.")
+        yield fd
+    finally:
+        os.close(fd)
 
 
 @contextmanager
@@ -234,3 +234,17 @@ def output_path(connection, root_id, relative):
         except FileNotFoundError:
             pass
     return Path(root["path"]) / relative
+
+
+def validate_folder_retry(connection, file_id):
+    source = connection.execute("SELECT * FROM sources WHERE file_id=?", (file_id,)).fetchone()
+    if source is None:
+        return
+    root = root_record(connection, source["root_id"])
+    if not root["processing"]:
+        raise SourceError("unavailable", "Resume folder processing before retrying.")
+    _, version, _ = read_original(root, source["relative_path"])
+    if version != source["version"]:
+        raise SourceError(
+            "stale_version", "The original changed. Wait for stable folder reconciliation."
+        )

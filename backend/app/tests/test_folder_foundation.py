@@ -70,7 +70,7 @@ def ingest(db, file_id):
 def discover(
     folder, relative="note.txt", content="Original fact: the limit is 37, except on Sundays."
 ):
-    db, root, root_id, scan, _ = folder
+    db, root, _, scan, _ = folder
     path = root / relative
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
@@ -239,3 +239,27 @@ def test_all_empty_chosen_and_frozen_inventory_cannot_expand(folder):
         catalog.assert_allowed(first.id, {"mode": "empty"})
 
 
+def test_invalid_scope_cannot_silently_expand_to_all(folder):
+    db, _, _, _, _ = folder
+    discover(folder)
+    with pytest.raises(SourceError):
+        SourceCatalog(db).list_sources({})
+
+
+def test_permission_failure_is_unavailable_and_generated_tree_is_visible(folder, monkeypatch):
+    from app.services.folder_scanner import collect
+
+    db, root, root_id, scan, _ = folder
+    first = discover(folder)
+    (root / "wiki").mkdir()
+    (root / "wiki/generated.md").write_text("excluded")
+    inventory, tree = collect(root_record(db, root_id), show_excluded=True)
+    assert "wiki/generated.md" not in inventory
+    assert any(e["relative_path"] == "wiki" and e["excluded"] for e in tree)
+    monkeypatch.setattr(
+        "app.services.folder_scanner.collect",
+        lambda *args: (_ for _ in ()).throw(PermissionError("denied")),
+    )
+    scan()
+    assert SourceCatalog(db).get(first.id)["availability"] == "unavailable"
+    assert not any(e["kind"] == "missing" for e in SourceCatalog(db).changes())
