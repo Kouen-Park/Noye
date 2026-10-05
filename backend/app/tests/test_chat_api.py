@@ -250,6 +250,51 @@ def test_the_question_is_trimmed(client, db, monkeypatch) -> None:
 # --- failures keep the question ----------------------------------------------
 
 
+@pytest.mark.parametrize("provider", ["ollama", "gemini", "openai", "anthropic"])
+def test_compatible_index_preserves_explicit_provider(client, db, monkeypatch, provider):
+    """The identity/desktop merge must retain both readiness and provider forwarding."""
+    file_id = add_ready_file(db)
+    calls = []
+
+    def answer(question, **kwargs):
+        calls.append((question, kwargs))
+        return Answer(text="A recorded answer", sources=[chunk(file_id)])
+
+    monkeypatch.setattr(chat_api, "answer_question", answer)
+    response = client.post("/chat", json={"question": "Use my source", "provider": provider})
+
+    assert response.status_code == 201
+    assert response.json()["searched_files"] == 1
+    assert calls == [("Use my source", {
+        "limit": chat_api.DEFAULT_LIMIT, "file_ids": [file_id], "provider": provider,
+    })]
+    assert response.json()["answer"]["citations"][0]["file_id"] == file_id
+
+
+@pytest.mark.parametrize("provider", ["ollama", "gemini", "openai", "anthropic"])
+def test_identity_failure_is_a_saved_turn_before_any_generation(
+    client, db, monkeypatch, provider
+):
+    add_ready_file(db)
+
+    def unavailable(**kwargs):
+        raise EmbeddingError("Cannot verify installed embedding identity")
+
+    monkeypatch.setattr(index_identity, "current_index_identity", unavailable)
+    monkeypatch.setattr(chat_api, "answer_question", lambda *args, **kwargs: pytest.fail(
+        "Generation must not run when compatibility lookup fails"
+    ))
+    response = client.post("/chat", json={"question": "Keep my question", "provider": provider})
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["searched_files"] == 0
+    assert body["answer"]["error"] == "Cannot verify installed embedding identity"
+    stored = conversation_store.list_messages(db, body["conversation_id"])
+    assert [message.content for message in stored] == ["Keep my question", ""]
+    assert stored[1].error == body["answer"]["error"]
+
+
 @pytest.mark.parametrize(
     "failure",
     [
