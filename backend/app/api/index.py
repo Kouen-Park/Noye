@@ -20,6 +20,7 @@ from app.config import get_settings
 from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.files import FileStatus
+from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError
 from app.services.ingestion import (
     MaintenanceBusy,
@@ -47,6 +48,8 @@ class FileProblems(BaseModel):
     #: Qdrant unreachable — which is deliberately not the same as zero.
     indexed_points: int | None = None
     expected_points: int | None = None
+    index_fingerprint: str | None = None
+    expected_fingerprint: str | None = None
 
     @classmethod
     def of(cls, report: FileIntegrity) -> FileProblems:
@@ -57,6 +60,8 @@ class FileProblems(BaseModel):
             searchable=report.is_searchable,
             indexed_points=report.indexed_points,
             expected_points=report.expected_points,
+            index_fingerprint=report.index_fingerprint,
+            expected_fingerprint=report.expected_fingerprint,
         )
 
 
@@ -79,6 +84,7 @@ class IndexStatus(BaseModel):
     #: than every file with an empty problem list, which would make the response
     #: grow with the library and say nothing.
     problems: list[FileProblems]
+    rebuild_required: bool = False
 
 
 @router.get("/status", response_model=IndexStatus)
@@ -122,6 +128,11 @@ def index_status(
         deep=deep,
         point_check_complete=point_check_complete,
         problems=[FileProblems.of(report) for report in reports if not report.is_sound],
+        rebuild_required=any(
+            any(p in (Problem.MODEL_CHANGED, Problem.INDEX_UNKNOWN, Problem.INDEX_CHANGED)
+                for p in report.problems)
+            for report in reports
+        ),
     )
 
 
@@ -173,6 +184,8 @@ def rebuild_index(
         plan = plan_rebuild(db)
     except MaintenanceBusy as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except EmbeddingError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     except IndexingError as exc:
         logger.warning("Rebuild could not start error=%s: %s", type(exc).__name__, exc)
         raise HTTPException(

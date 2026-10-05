@@ -47,6 +47,8 @@ from app.config import get_settings
 from app.db import files as file_store
 from app.logging_config import get_logger
 from app.models.files import File, FileStatus
+from app.services import index_identity
+from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError, count_chunks
 
 logger = get_logger("integrity")
@@ -66,17 +68,24 @@ class Problem(str, Enum):
     SOURCE_CHANGED = "SOURCE_CHANGED"
     MODEL_CHANGED = "MODEL_CHANGED"
     POINTS_MISSING = "POINTS_MISSING"
+    INDEX_UNKNOWN = "INDEX_UNKNOWN"
+    INDEX_CHANGED = "INDEX_CHANGED"
+    IDENTITY_UNAVAILABLE = "IDENTITY_UNAVAILABLE"
 
     @property
     def blocks_search(self) -> bool:
         """Whether this problem makes the file unsafe to search.
 
-        Only a model change does. A changed source or a partly missing index makes
+        Unknown, changed or unverifiable processing identity blocks search.
+        A changed source or a partly missing index makes
         results *incomplete* or *out of date*, which is disappointing; mixing
         embedding spaces makes them *wrong while looking right*, which is not
         recoverable by the user noticing.
         """
-        return self is Problem.MODEL_CHANGED
+        return self in (
+            Problem.MODEL_CHANGED, Problem.INDEX_UNKNOWN, Problem.INDEX_CHANGED,
+            Problem.IDENTITY_UNAVAILABLE,
+        )
 
 
 @dataclass(frozen=True)
@@ -89,6 +98,8 @@ class FileIntegrity:
     #: Present only when the expensive check ran.
     indexed_points: int | None = None
     expected_points: int | None = None
+    index_fingerprint: str | None = None
+    expected_fingerprint: str | None = None
 
     @property
     def is_sound(self) -> bool:
@@ -121,6 +132,8 @@ def check_file(
     expected_model: str | None = None,
     qdrant_client: QdrantClient | None = None,
     check_points: bool = False,
+    expected_identity: index_identity.IndexIdentity | None = None,
+    identity_checked: bool = False,
 ) -> FileIntegrity:
     """Assess one file. Only READY files have an index entry to be wrong about.
 
@@ -148,9 +161,24 @@ def check_file(
         # damaged on upgrade alone.
         problems.append(Problem.SOURCE_CHANGED)
 
-    if record.embedding_model is not None and record.embedding_model != model:
+    if not identity_checked:
+        try:
+            expected_identity = index_identity.current_index_identity()
+        except EmbeddingError:
+            expected_identity = None
+
+    if record.embedding_model is not None and (
+        index_identity.normalize_model_tag(record.embedding_model)
+        != index_identity.normalize_model_tag(model)
+    ):
         # Again only when known. An unrecorded model is not evidence of a mismatch.
         problems.append(Problem.MODEL_CHANGED)
+    elif record.index_fingerprint is None:
+        problems.append(Problem.INDEX_UNKNOWN)
+    elif expected_identity is None:
+        problems.append(Problem.IDENTITY_UNAVAILABLE)
+    elif record.index_fingerprint != expected_identity.fingerprint:
+        problems.append(Problem.INDEX_CHANGED)
 
     if check_points:
         expected = record.chunk_count
@@ -175,6 +203,8 @@ def check_file(
         tuple(problems),
         indexed_points=indexed,
         expected_points=expected,
+        index_fingerprint=record.index_fingerprint,
+        expected_fingerprint=expected_identity.fingerprint if expected_identity else None,
     )
 
 
@@ -186,14 +216,23 @@ def check_library(
 ) -> list[FileIntegrity]:
     """Assess every file. The configuration is read once, not per file."""
     model = get_settings().ollama_embedding_model
+    records = file_store.list_files(connection)
+    identity = None
+    if any(record.status is FileStatus.READY and record.index_fingerprint for record in records):
+        try:
+            identity = index_identity.current_index_identity()
+        except EmbeddingError:
+            pass  # Report unavailability separately from corruption or an unknown old index.
     return [
         check_file(
             record,
             expected_model=model,
             qdrant_client=qdrant_client,
             check_points=check_points,
+            expected_identity=identity,
+            identity_checked=True,
         )
-        for record in file_store.list_files(connection)
+        for record in records
     ]
 
 
@@ -205,26 +244,35 @@ def searchable_file_ids(connection: sqlite3.Connection) -> dict[str, str]:
     it is no longer sufficient, because a READY file can hold vectors from an
     embedding space the current model knows nothing about.
 
-    Uses only the cheap checks. The Qdrant count is a round trip per file and has no
-    business on the search path; a partly missing index gives incomplete results,
-    which is a different and lesser harm than a meaningless ranking.
+    Resolves the installed model digest once and compares recorded fingerprints.
+    Qdrant counts and source hashing stay off this path. A legacy fingerprint is
+    unknown and requires explicit rebuilding, rather than guessed compatibility.
     """
     model = get_settings().ollama_embedding_model
+    records = file_store.list_files(connection)
+    known = [r for r in records if r.status is FileStatus.READY and r.index_fingerprint]
+    identity = index_identity.current_index_identity() if known else None
     searchable: dict[str, str] = {}
     excluded: list[str] = []
 
-    for record in file_store.list_files(connection):
+    for record in records:
         if record.status is not FileStatus.READY:
             continue
-        if record.embedding_model is not None and record.embedding_model != model:
+        if record.embedding_model is not None and (
+            index_identity.normalize_model_tag(record.embedding_model)
+            != index_identity.normalize_model_tag(model)
+        ):
+            excluded.append(record.id)
+            continue
+        if identity is None or record.index_fingerprint != identity.fingerprint:
             excluded.append(record.id)
             continue
         searchable[record.id] = record.name
 
     if excluded:
         logger.warning(
-            "Excluded %d file(s) from search: vectors are from a superseded "
-            "embedding model, current=%s files=%s",
+            "Excluded %d file(s) from search: index identity is unknown or "
+            "incompatible, current=%s files=%s",
             len(excluded),
             model,
             ",".join(excluded),

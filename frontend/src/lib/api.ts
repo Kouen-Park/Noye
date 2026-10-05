@@ -470,6 +470,9 @@ export type IndexProblem =
   | "MISSING_SOURCE"
   | "SOURCE_CHANGED"
   | "MODEL_CHANGED"
+  | "INDEX_UNKNOWN"
+  | "INDEX_CHANGED"
+  | "IDENTITY_UNAVAILABLE"
   | "POINTS_MISSING";
 
 /** One file whose original or derived index no longer agrees with SQLite. */

@@ -111,7 +111,16 @@ def _step_1_file_provenance(connection: sqlite3.Connection) -> None:
 
 #: Ordered steps. Append only — never renumber or edit a released step, because a
 #: database that already ran it will not run it again.
-MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (_step_1_file_provenance,)
+def _step_2_index_identity(connection: sqlite3.Connection) -> None:
+    # NULL remains unknown. A model name alone cannot establish compatibility.
+    add_column_if_missing(connection, "files", "index_fingerprint", "TEXT")
+    add_column_if_missing(connection, "files", "index_metadata", "TEXT")
+
+
+MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
+    _step_1_file_provenance,
+    _step_2_index_identity,
+)
 
 #: Where a fully migrated database stands.
 LATEST_VERSION = len(MIGRATIONS)

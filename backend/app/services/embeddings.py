@@ -25,6 +25,8 @@ from app.services.chunking import Chunk
 #: in the same order, so batching cuts request overhead; the cap keeps a large
 #: document from becoming one enormous request.
 DEFAULT_BATCH_SIZE = 16
+# Increment when model input formatting changes; original excerpts stay raw.
+INPUT_FORMAT_VERSION = "raw-v1"
 
 #: Embedding a batch on local hardware is slow enough that the default httpx
 #: timeout of 5 seconds is not workable.

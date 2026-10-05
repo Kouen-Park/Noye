@@ -29,6 +29,12 @@ const COPY: Record<Exclude<IndexProblem, "POINTS_MISSING">, string> = {
     "The saved original changed after it was indexed. Re-index it to use the current contents.",
   MODEL_CHANGED:
     "Its passages were created by an older embedding model, so this file is not searchable.",
+  INDEX_UNKNOWN:
+    "Its processing version was not recorded. Rebuild the index before searching this file.",
+  INDEX_CHANGED:
+    "The embedding or document processing settings changed. Rebuild the index before searching this file.",
+  IDENTITY_UNAVAILABLE:
+    "The installed embedding model could not be verified. Check Ollama and its model installation, then check again.",
 };
 
 function problemCopy(file: FileIntegrityProblem, problem: IndexProblem): string {
@@ -43,7 +49,7 @@ function needsWholeRebuild(status: IndexStatus | null): boolean {
   return Boolean(
     status?.problems.some((file) =>
       file.problems.some(
-        (problem) => problem === "MODEL_CHANGED" || problem === "POINTS_MISSING",
+        (problem) => ["MODEL_CHANGED", "POINTS_MISSING", "INDEX_UNKNOWN", "INDEX_CHANGED"].includes(problem),
       ),
     ),
   );
@@ -109,7 +115,7 @@ export function IntegrityPanel({
 
       {status && !status.deep && (
         <p className="mt-2 text-[12.5px] text-ink-faint">
-          Source files and embedding models were checked. Use “Check stored index” to compare
+          Source versions and index compatibility are checked here. Use “Check stored index” to compare
           the expected passages with Qdrant.
         </p>
       )}
@@ -141,7 +147,10 @@ export function IntegrityPanel({
             const canReingest =
               file.problems.includes("SOURCE_CHANGED") &&
               !file.problems.includes("MODEL_CHANGED") &&
-              !file.problems.includes("POINTS_MISSING");
+              !file.problems.includes("POINTS_MISSING") &&
+              !file.problems.includes("INDEX_UNKNOWN") &&
+              !file.problems.includes("INDEX_CHANGED") &&
+              !file.problems.includes("IDENTITY_UNAVAILABLE");
             const busy = busyFileIds.includes(file.file_id);
             return (
               <li
