@@ -132,8 +132,19 @@ progress::-moz-progress-bar { background: var(--brand); }
   }
 
   /* Hide the application. */
-  body :not([data-print="document"]):not(:has([data-print="document"])) {
+  body :not([data-print="document"]):not([data-print="document"] *):not(:has([data-print="document"])) {
     display: none !important;
+  }
+
+  /* Release screen grids, fixed heights and scroll containers for pagination. */
+  body :has([data-print="document"]) {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0;
+    padding: 0;
   }
 
   [data-print="document"] {

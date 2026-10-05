@@ -120,3 +120,37 @@ describe("DocumentEditor", () => {
     expect(onViewChange).toHaveBeenCalledWith("preview");
   });
 });
+
+it("exports the current unsaved body and the selected provenance in both formats", async () => {
+  const createUrl = vi.fn<(blob: Blob) => string>(() => "blob:test");
+  vi.stubGlobal("URL", { createObjectURL: createUrl, revokeObjectURL: vi.fn() });
+  const print = vi.spyOn(window, "print").mockImplementation(() => {});
+  render(<DocumentEditor title="Notes" content="# Original" saving={false} onSave={vi.fn()}
+    documentId="doc" provenance={"## Provenance\n\nSaved exact excerpt"} />);
+  await userEvent.type(body(), " edited");
+  await userEvent.click(screen.getByRole("checkbox", { name: "Include provenance" }));
+  await userEvent.click(screen.getByRole("tab", { name: "Preview" }));
+  expect(screen.getByText("Saved exact excerpt").closest('[data-print="document"]')).toBeInTheDocument();
+  const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+  await userEvent.click(screen.getByRole("link", { name: "Export .md" }));
+  const blob = createUrl.mock.calls[0][0] as Blob;
+  const text = await new Promise<string>((resolve) => {
+    const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.readAsText(blob);
+  });
+  expect(text).toBe("# Original edited\n\n## Provenance\n\nSaved exact excerpt");
+  await userEvent.click(screen.getByRole("button", { name: "Export PDF" }));
+  expect(print).toHaveBeenCalledOnce();
+  await userEvent.click(screen.getByRole("checkbox", { name: "Include provenance" }));
+  expect(screen.queryByText("Saved exact excerpt")).not.toBeInTheDocument();
+  click.mockRestore(); print.mockRestore(); vi.unstubAllGlobals();
+});
+
+it("reports a rejected native print request", async () => {
+  const print = vi.spyOn(window, "print").mockImplementation(() => Promise.reject(new Error("denied")));
+  render(<DocumentEditor title="Notes" content="# Body" saving={false} onSave={vi.fn()}
+    documentId="doc" />);
+  await userEvent.click(screen.getByRole("tab", { name: "Preview" }));
+  await userEvent.click(screen.getByRole("button", { name: "Export PDF" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Could not open the print dialog");
+  print.mockRestore();
+});

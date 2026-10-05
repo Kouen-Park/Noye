@@ -158,7 +158,7 @@ def create_document(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Give the document a name."
         )
     return DocumentOut.of(
-        document_store.create_document(db, content=request.content, title=title)
+        document_store.create_document(db, content=request.content, title=title), db
     )
 
 
@@ -226,7 +226,7 @@ def generate_document(
             source_conversation_id=message.conversation_id,
             source_message_id=message.id,
             citations=message.citations,
-        )
+        ), db
     )
 
 
@@ -262,7 +262,7 @@ def update_document(
         return DocumentOut.of(
             document_store.update_document(
                 db, document_id, title=request.title, content=request.content
-            )
+            ), db
         )
     except document_store.DocumentNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
