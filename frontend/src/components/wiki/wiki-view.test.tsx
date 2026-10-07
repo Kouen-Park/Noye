@@ -4,13 +4,30 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { WikiView } from "@/components/wiki/wiki-view";
 import * as api from "@/lib/wiki";
 
-vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), listWiki: vi.fn(), listWikiSources: vi.fn(), listWikiJobs: vi.fn(), generateWiki: vi.fn(), wikiJobAction: vi.fn() }));
+const query = vi.hoisted(() => ({ value: "" }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams(query.value) }));
+vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), listWiki: vi.fn(), listWikiSources: vi.fn(), listWikiJobs: vi.fn(), readWiki: vi.fn(), readWikiRevision: vi.fn(), generateWiki: vi.fn(), wikiJobAction: vi.fn() }));
 const sources: api.WikiSource[] = ["one", "two"].map(id => ({ source_id: id, root_id: "root", relative_path: id + ".txt", name: id, version: "hash", availability: "available", processing_state: "READY", error: null }));
 beforeEach(() => {
   vi.clearAllMocks();
+  query.value = "";
   vi.mocked(api.listWiki).mockResolvedValue([]);
   vi.mocked(api.listWikiSources).mockResolvedValue(sources);
   vi.mocked(api.listWikiJobs).mockResolvedValue([]);
+});
+
+it("closes historical content when the material scope changes", async () => {
+  query.value = "w=wiki";
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated", title: "Notes", content: "Current summary", created_at: "2026-10-07", evidence: [], metadata: {} };
+  const old = { ...revision, id: "old", content: "Historical broader material" };
+  vi.mocked(api.readWiki).mockResolvedValue({ id: "wiki", title: "Notes", kind: "source", current_revision: "current", publication_error: null, updated_at: "2026-10-07", proposal_count: 0, revision, revisions: [old], relations: [] });
+  vi.mocked(api.readWikiRevision).mockResolvedValue(old);
+  render(<WikiView />);
+  await userEvent.click(await screen.findByRole("button", { name: /generated.*Notes/ }));
+  expect(await screen.findByText("Historical broader material")).toBeInTheDocument();
+  await userEvent.click(screen.getAllByRole("checkbox")[1]);
+  await waitFor(() => expect(screen.queryByText("Historical broader material")).not.toBeInTheDocument());
+  expect(screen.queryByRole("button", { name: "Return to current" })).not.toBeInTheDocument();
 });
 
 it("deselecting one source from all preserves the remaining chosen scope", async () => {

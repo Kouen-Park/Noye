@@ -70,17 +70,19 @@ export function WikiView() {
 
 function WikiDetail({ identifier, scope, jobStates, onSaved }: { identifier: string; scope: WikiScope; jobStates: string; onSaved: () => void }) {
   const [page, setPage] = useState<WikiPage | null>(null);
-  const [historical, setHistorical] = useState<WikiRevision | null>(null);
+  const [historySelection, setHistorySelection] = useState<{ revision: WikiRevision; scope: string } | null>(null);
+  const scopeKey = JSON.stringify(scope);
+  const historical = historySelection?.scope === scopeKey ? historySelection.revision : null;
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     const controller = new AbortController();
     readWiki(identifier, scope, controller.signal).then(result => { setPage(result); setError(null); }, cause => { if (!controller.signal.aborted) { setPage(null); setError(cause.message); } });
     return () => controller.abort();
   }, [identifier, jobStates, scope]);
-  async function inspect(revision: string) { try { setHistorical(await readWikiRevision(identifier, revision, scope)); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not open the revision."); } }
+  async function inspect(revision: string) { try { setHistorySelection({ revision: await readWikiRevision(identifier, revision, scope), scope: scopeKey }); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not open the revision."); } }
   async function adopt() {
     if (!historical || !page?.current_revision) return;
-    try { setPage(await adoptWiki(identifier, historical.id, page.current_revision, scope)); setHistorical(null); onSaved(); }
+    try { setPage(await adoptWiki(identifier, historical.id, page.current_revision, scope)); setHistorySelection(null); onSaved(); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Could not adopt this proposal."); }
   }
   const revision = historical ?? page?.revision;
@@ -90,7 +92,7 @@ function WikiDetail({ identifier, scope, jobStates, onSaved }: { identifier: str
     {page?.publication_error && <p role="status" className="text-fail">{page.publication_error}</p>}
     {!page ? <p role="status">Opening Wiki…</p> : !page.revision ? <p>No published revision yet. Check the Wiki job.</p> : <>
       <p className="text-sm text-ink-soft">{revision?.origin} revision · {revision?.metadata.model ?? "Maintained Wiki"}{revision?.metadata.processing_seconds !== undefined && ` · ${revision.metadata.processing_seconds.toFixed(1)}s`} · {revision?.metadata.prompt_version}<br />Wiki is interpretation. Verify exact facts, numbers and exceptions in originals.</p>
-      {historical ? <section className="rounded-lg border border-edge bg-card p-5"><div className="mb-4 flex gap-3"><button className={button} onClick={() => setHistorical(null)}>Return to current</button>{historical.origin === "proposal" && <button className={button} onClick={adopt}>Adopt proposal · keep history</button>}</div><MarkdownContent content={historical.content} allowImages={false} /></section> : <WikiEditor key={page.id} page={page} scope={scope} onSaved={saved => { if (saved.id === page.id) setPage(saved); onSaved(); }} />}
+      {historical ? <section className="rounded-lg border border-edge bg-card p-5"><div className="mb-4 flex gap-3"><button className={button} onClick={() => setHistorySelection(null)}>Return to current</button>{historical.origin === "proposal" && <button className={button} onClick={adopt}>Adopt proposal · keep history</button>}</div><MarkdownContent content={historical.content} allowImages={false} /></section> : <WikiEditor key={page.id} page={page} scope={scope} onSaved={saved => { if (saved.id === page.id) setPage(saved); onSaved(); }} />}
       <details className="rounded-lg border border-edge bg-card p-4"><summary className="cursor-pointer font-semibold">Original evidence · {revision?.evidence.length ?? 0} passages</summary><ul className="mt-3 space-y-4">{revision?.evidence.map(e => <li key={e.id} className="border-t border-edge pt-3 text-sm"><p>{e.source.name}{e.page_number !== null && ` · page ${e.page_number}`} · {e.current_status}</p><p className="break-all font-mono text-xs text-ink-soft">Source {e.source.source_id} · version {e.source.source_version}<br />Passage {e.passage_index}, characters {e.start}–{e.end}</p><blockquote className="mt-2 whitespace-pre-wrap border-l-2 border-edge-strong pl-3">{e.text}</blockquote>{e.current_status === "available" && <a href={wikiOriginalUrl(e)} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center text-accent-ink underline">Open original</a>}</li>)}</ul></details>
       <section className="rounded-lg border border-edge bg-card p-4"><h2 className="font-semibold">Relations & backlinks</h2>{page.relations.length === 0 && <p className="mt-2 text-sm text-ink-soft">No verified related pages.</p>}<ul className="mt-2 space-y-3">{page.relations.map(r => { const back = r.target_id === page.id; return <li key={r.id} className="text-sm"><Link href={`/wiki?w=${encodeURIComponent(back ? r.origin_id : r.target_id)}`} className="text-accent-ink underline">{back ? r.origin_title : r.target_title}</Link> · {r.kind.replaceAll("_", " ")}{back && " · backlink"}{r.target_current_revision && r.target_current_revision !== r.target_revision && " · earlier target revision"}<p className="text-ink-soft">{r.reason}</p></li>; })}</ul>{revision?.metadata.contributors?.map(c => <Link key={c.wiki_id} href={`/wiki?w=${encodeURIComponent(c.wiki_id)}`} className="mt-2 block text-sm text-accent-ink underline">Source summary · {c.wiki_id}</Link>)}</section>
       <details className="rounded-lg border border-edge bg-card p-4"><summary className="cursor-pointer font-semibold">Revision history · {page.revisions.length}</summary><ul className="mt-2">{page.revisions.map(r => <li key={r.id}><button className={`${button} my-1 text-left`} onClick={() => void inspect(r.id)}>{r.origin} · {new Date(r.created_at).toLocaleString()} · {r.title}</button></li>)}</ul></details>
