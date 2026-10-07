@@ -1,3 +1,4 @@
+import type { WikiJob } from "./wiki";
 import { invoke } from "@tauri-apps/api/core";
 import { apiBaseUrl } from "./runtime";
 import { readAiSettings } from "./ai-settings";
@@ -11,7 +12,7 @@ export interface FolderRoot {
 export interface FolderSource {
   source_id: string; root_id: string; relative_path: string; name: string;
   version: string; availability: string; processing_state: string;
-  error: string | null; manual_category: string | null; job: IngestionJob | null;
+  error: string | null; manual_category: string | null; job: IngestionJob | null; knowledge_job?: WikiJob | null;
 }
 export interface FolderEntry {
   relative_path: string; kind: "directory" | "file"; source?: FolderSource | null; excluded?: boolean; remembered?: boolean;

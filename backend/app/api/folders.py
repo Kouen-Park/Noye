@@ -81,6 +81,13 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
     except (SourceError, OSError):
         entries = []
     by_path = {source["relative_path"]: source for source in sources}
+    for source in sources:
+        latest = db.execute(
+            "SELECT id FROM knowledge_jobs WHERE kind='wiki' AND subject_id=? "
+            "ORDER BY rowid DESC LIMIT 1",
+            (source["source_id"],),
+        ).fetchone()
+        source["knowledge_job"] = knowledge_jobs.get(db, latest["id"]) if latest else None
     for entry in entries:
         entry["source"] = by_path.pop(entry["relative_path"], None)
     entries.extend(

@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { KnowledgeJobStages } from "@/components/knowledge-job-stages";
+import { wikiJobAction, wikiHref } from "@/lib/wiki";
 import { actOnJob, jobIsActive } from "@/lib/jobs";
 import { isDesktopRuntime } from "@/lib/runtime";
 import { chooseSourceFolder, folderRequest, revealFolder, revealSource,
@@ -160,6 +163,17 @@ function SourceRow({ entry, root, busy, act }: {
       </>}
     </div>
     {source?.job && source.job.total > 0 && <p className="mt-1 text-xs text-ink-soft">{source.job.stage} · {source.job.completed} / {source.job.total} · attempt {source.job.attempt}</p>}
+    {source?.knowledge_job && <div className="mt-2 rounded border border-edge p-3" aria-label="Source knowledge processing">
+      <p>Local knowledge · {source.knowledge_job.state} · {source.knowledge_job.stage}</p>
+      <KnowledgeJobStages events={source.knowledge_job.events} />
+      {source.knowledge_job.error && <p className="mt-1 text-fail">{source.knowledge_job.error}</p>}
+      <div className="mt-2 flex flex-wrap gap-2">
+        {source.knowledge_job.artifact_id && <Link className={actionClass} href={wikiHref(source.knowledge_job.artifact_id, { mode: "chosen", root_ids: [root.id], source_ids: [] })}>Open Wiki</Link>}
+        {["queued", "running", "cancelling"].includes(source.knowledge_job.state)
+          ? <button className={actionClass} disabled={busy || source.knowledge_job.state === "cancelling"} onClick={() => void act(() => wikiJobAction(source.knowledge_job!.id, "cancel"))}>Cancel knowledge job</button>
+          : ["failed", "interrupted", "cancelled"].includes(source.knowledge_job.state) && <button className={actionClass} disabled={busy || !root.connected || !root.processing} onClick={() => void act(() => wikiJobAction(source.knowledge_job!.id, "resume"))}>Retry knowledge stages</button>}
+      </div>
+    </div>}
     {source?.manual_category && <p className="mt-1 text-xs text-ink-soft">Manually fixed: {source.manual_category}</p>}
     {source?.error && <p className="mt-1 text-fail">{source.error}</p>}
     {filing && source && <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => {

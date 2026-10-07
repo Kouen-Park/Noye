@@ -1,3 +1,4 @@
+import type { KnowledgeStageEvent } from "@/components/knowledge-job-stages";
 import { ApiError, sourceUrl } from "@/lib/api";
 import { apiBaseUrl } from "@/lib/runtime";
 
@@ -52,6 +53,7 @@ export interface WikiPage extends WikiSummary {
     target_current_revision?: string }[];
 }
 export interface WikiJob {
+  events?: KnowledgeStageEvent[];
   id: string; kind: string; subject_id: string; state: string; stage: string;
   completed: number; total: number; error: string | null; artifact_id: string | null;
 }
