@@ -23,6 +23,7 @@ export function SourceDocumentDetails({ document, onRevision }: {
         {citation.current_status === "available" && <a href={wikiOriginalUrl(citation)} target="_blank" rel="noreferrer" className="ml-2 inline-flex min-h-11 items-center text-brand underline">Open original</a>}
         <p className="mt-1 break-all text-xs text-ink-soft">Version: {citation.source.source_version} · characters {citation.quote_start}–{citation.quote_end}</p>
         <blockquote className="mt-1 whitespace-pre-wrap border-l border-edge pl-3 text-xs">{citation.quote}</blockquote>
+        <details className="mt-1"><summary className="min-h-11 cursor-pointer text-xs">Saved original passage context</summary><p className="whitespace-pre-wrap text-xs">{citation.text}</p></details>
       </li>)}</ul>
       <p className="mt-2 text-xs text-ink-soft">{document.revision.metadata.model} · {document.revision.metadata.prompt_version} · {document.revision.metadata.processing_seconds}s. Saved evidence describes the first draft; user edits are not re-verified.</p>
     </details>
