@@ -11,6 +11,7 @@
  * changes with it.
  */
 
+import type { KnowledgeSnapshot } from "@/components/chat/knowledge-evidence";
 import { apiBaseUrl } from "@/lib/runtime";
 
 /** Where a file is in the ingestion pipeline. Mirrors `FileStatus`. */
@@ -298,6 +299,7 @@ export interface ChatCitation {
 
 /** One turn. `error` is set when answering failed; the question is still stored. */
 export interface ChatMessage {
+  knowledge?: KnowledgeSnapshot | null;
   id: string;
   role: Role;
   content: string;
