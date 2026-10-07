@@ -267,7 +267,7 @@ local document proxy bypass and model-written inline citation labels. No indepen
 The branch already includes B's feature commits and A's final shared wiring. Review
 and merge the combined knowledge PR first when separately authorized; avoid duplicate
 B migration/registration patches. Phase 7.5 implementation is delivered on this
-combined draft branch. At the owner's instruction, actual native full-workflow
+combined branch. At the owner's instruction, actual native full-workflow
 verification and fresh/broader model/PDF quality are open Phase 8 acceptance work,
 with B's document validation record preserving observed failures. No main merge,
 history rewrite or successful final acceptance is claimed by this work.

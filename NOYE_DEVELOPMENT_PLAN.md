@@ -3013,7 +3013,7 @@ core. See [folder acceptance](docs/phase75/folder-foundation.md),
 [source contract](docs/phase75/source-contract.md) and
 [Wiki contract](docs/phase75/wiki-core.md) for implemented behavior, measured
 checks and limits. Stage 2 adds Wiki-first chat and prompt-driven documents in
-the combined draft PR #60; that delivery is not yet merged into main. The owner requested a
+the combined PR #60; that delivery is not yet merged into main. The owner requested a
 folder-based knowledge workspace that maintains summaries and links, and creates
 documents directly from relevant local files through a general chat prompt.
 Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
@@ -3241,7 +3241,7 @@ comparison. B's real document pipeline/chat/editor is integrated, with its
 document/edit/Markdown/PDF workflow and broad document faithfulness are still
 unverified and, following the owner's later instruction, are tracked as open
 Phase 8 acceptance checks. Stage 1 acceptance is retained. Phase 7.5 implementation
-is delivered on the combined draft branch; final acceptance is not claimed.
+is delivered on the combined branch; final acceptance is not claimed.
 
 ## 16A.4 Delivery order and handoff
 
@@ -3260,7 +3260,7 @@ do not hold implementation delivery for the deferred native/model/PDF checks.
 Keep all corresponding Phase 8 acceptance checkboxes open until actually verified,
 including observed quality failures. Phase 8 performs the final packaged-app
 acceptance for the folder/wiki workflow and compatible upload/answer-based flows.
-The combined draft branch still requires review and separate merge authorization.
+The combined branch still requires review and separate merge authorization.
 
 ------------------------------------------------------------------------
 
