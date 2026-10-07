@@ -50,6 +50,8 @@ def _validate(root, source, destination, manual):
 
     if not root["connected"] or root["availability"] != "available":
         raise SourceError("unavailable", "Reconnect this folder before filing.")
+    if not manual and not root["processing"]:
+        raise SourceError("busy", "Resume processing before automatic filing.")
     if not (
         _within(source["relative_path"], root["organization_prefix"])
         and _within(destination, root["organization_prefix"])

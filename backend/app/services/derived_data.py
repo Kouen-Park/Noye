@@ -29,6 +29,11 @@ def remove_source_index(connection, source_id):
             any(item["source_id"] == source_id for item in json.loads(row[0])) for row in active
         ):
             raise SourceError("busy", "Wait for active knowledge/document jobs to stop first.")
+        if connection.execute(
+            "SELECT 1 FROM filing_journal WHERE source_id=? AND state IN ('prepared','moved')",
+            (source_id,),
+        ).fetchone():
+            raise SourceError("busy", "Recover the pending original move before removing indexes.")
         ingestion.reserve_delete(source_id)
         try:
             # Do not mark the DB cleared if the remote derived index could not be removed.

@@ -89,3 +89,26 @@ def test_rebuild_respects_disconnected_and_paused_folder_controls(workspace):
             )
         finally:
             ingestion.end_rebuild()
+
+
+def test_pending_move_blocks_derived_removal_until_recovery(workspace, monkeypatch):
+    from app.services import filing
+
+    db, root, root_id, *_ = workspace
+    record = discover(workspace, "sources/inbox/note.txt")
+    update_root(db, root_id, set_organization=True, organization_prefix="sources")
+    monkeypatch.setattr(
+        filing, "_move", lambda *args: (_ for _ in ()).throw(OSError("interrupted"))
+    )
+    with pytest.raises(SourceError):
+        filing.file_source(db, record.id, "sources/Learning/note.txt", record.content_hash)
+    update_root(db, root_id, processing=False)
+    monkeypatch.setattr(
+        derived_data,
+        "delete_file_chunks",
+        lambda *args: pytest.fail("No index mutation while a move is pending"),
+    )
+    with pytest.raises(SourceError, match="pending original move"):
+        derived_data.remove_source_index(db, record.id)
+    assert (root / "sources/inbox/note.txt").exists()
+    assert db.execute("SELECT COUNT(*) FROM chunks").fetchone()[0] > 0

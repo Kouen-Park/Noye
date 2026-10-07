@@ -99,3 +99,24 @@ def test_manually_fixed_category_and_wiki_user_revision_survive_refresh(workspac
     current = store.revision(db, store.page(db, page["id"])["current_revision"])
     assert current["origin"] == "user" and current["content"] == "User interpretation stays."
     assert any(r["origin"] == "proposal" for r in store.revisions(db, page["id"]))
+
+
+def test_pause_at_move_boundary_blocks_automatic_filing(workspace, monkeypatch):
+    from app.services import filing
+
+    db, root, root_id, *_ = workspace
+    record = discover(workspace, "sources/inbox/note.txt")
+    update_root(db, root_id, set_organization=True, organization_prefix="sources")
+    original = filing.file_source
+
+    def paused(*args, **kwargs):
+        update_root(db, root_id, processing=False)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(filing, "file_source", paused)
+    job = run(db, record, monkeypatch)
+    assert job["state"] == "failed" and job["stage"] == "filing"
+    assert "Resume processing" in job["error"]
+    assert (root / "sources/inbox/note.txt").exists()
+    assert not (root / "sources/Learning/note.txt").exists()
+    assert db.execute("SELECT COUNT(*) FROM filing_journal").fetchone()[0] == 0
