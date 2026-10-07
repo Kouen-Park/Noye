@@ -40,9 +40,9 @@ adapters. The [shared contract](integration-contract.md) and
 
 ## Automated checks, 2026-10-08
 
-Combined source through `5460198`, including B's v3 fallback/outline and terminal-
-card fixes and A's archive-selection fix: **944 passed, 19 skipped, 10 warnings,
-17.89 seconds**. This full run predates the subsequent per-source observation fix.
+Final combined code through `ada721a`, including scoped per-source observations,
+local proxy/redirect protection and model citation-label rejection:
+**955 passed, 19 skipped, 10 warnings, 17.99 seconds**.
 Normal application settings and production timeouts were retained. A one-off pytest
 collection plugin explicitly skipped availability-marked Ollama/Qdrant checks while
 actual inference was measured separately. This does not claim those skipped service
@@ -88,6 +88,22 @@ passed. Its new regression rejects publishing an unsupported per-source “other
 project does not exist” observation while retaining source/batch/evidence provenance
 and `verified=false` in audit metadata. No model, native app or desktop build was
 started during B's reserved model slot.
+
+A subsequent transport audit found that loopback URLs still honored environment
+HTTP proxies. B's document fix is integrated as `d8e36ab`; A's `7b20a6a` also makes
+owned Wiki/question/original-embedding and installed embedding-digest clients bypass
+proxy environment and disable redirects. Explicit legacy cloud-provider transport
+behavior is retained. Two real loopback servers (direct and spoof proxy), with
+`NO_PROXY` cleared, verify preflight and synthetic original requests reach only the
+direct server, and redirects never send them to the other server. These are actual
+HTTP transport checks with controlled responses, not real Ollama inference.
+
+After these changes, the local-proof/document/session/query/portability suite passed
+**57 tests, 8 warnings, 1.86 seconds**. The generation/cloud/embedding/identity/Wiki
+suite passed **96 tests, 7 explicitly separated live skips, 7 warnings, 0.83 seconds**.
+Ruff passed for the full app and desktop entrypoint. The actual-document evaluator's
+`--help` confirms `--retry-job`; its attempt-specific reports preserve earlier
+failures instead of replacing them.
 
 The targeted checks use real synthetic filesystem/SQLite/extraction and controlled
 model/search responses. They verify scope escape attempts, empty scope, stale/missing
@@ -158,7 +174,7 @@ empty headings and requested-language failures prevent document-quality acceptan
 Eight and 14 structured model stages also demonstrate a material latency limit
 on this host; coverage is not evidence of comprehension or polished output.
 
-The final integrated `source-document-v3` pipeline deduplicates retained original
+The integrated `source-document-v3` change deduplicates retained original
 paragraphs and asks for a compact topical outline. Controlled regressions pass;
 B then reported an actual v3 comparison in **164.835 seconds**, with both originals,
 three topical sections and seven verified citations, saved as partial. Review found
@@ -167,8 +183,20 @@ collection conclusions. B's focused fix, integrated as `c5b14ba`, excludes these
 unverified observations from authored content, retains scoped audit metadata, and
 makes each bounded extraction call's limits explicit. The prompt is now
 `source-document-v4`, with `source-document-markdown-v2` rendering. Its controlled
-regression passes; fresh actual v4 partial/collection/comparison quality remains
-pending B's coordinated model execution. [B's validation record](source-document-validation.md) includes
+regression passes. B subsequently reported an actual v4 partial retry in
+**281.427 seconds**, preserving the same request and four frozen entries: two
+readable originals processed, an empty TXT marked indexing_failed and a missing
+placeholder marked missing; six valid citations and no published unverified absence
+memo. A v4 collection failed closed in **63.834 seconds**; explicit attempt 2 saved
+an explicit partial artifact in **104.630 seconds**, processing both originals with
+five valid citations and one retained Beta original paragraph. Requested-language,
+comparison and heading quality acceptance remains open. B's final measured record is integrated as `83f2453`: 29 saved v2/v3/v4
+citations matched actual original hashes and quote spans. A real v4 user edit and
+same-generation-request replay retained the current user revision and document
+count. Selected Markdown files were 1,478 / 5,589 / 1,343 bytes. The final 66,923-byte
+archive restored all six artifacts, current bodies/revisions, user edits and evidence
+exactly into a new destination, with external roots disconnected. These are B's
+actual service/artifact checks, distinct from native UI and model-quality acceptance. [B's validation record](source-document-validation.md) includes
 actual browser user edits, selected-revision Markdown files and the real three-
 artifact backup/restore. It distinguishes those observations from native/PDF work.
 Do not infer successful quality from an artifact pointer, model entailment or a
@@ -176,20 +204,22 @@ processed-character count.
 
 ## Desktop build and native observation
 
-Combined source through the archive-selection fix (`5460198`); these packaged
-checks predate the subsequent v4 per-source observation fix (`c5b14ba`):
+Final combined code through `ada721a`, including the v4 observations, local
+transport and reserved citation-label fixes:
 
 - `npm run desktop:prepare`: passed. PyInstaller 6.22.3/Python 3.14.7 frozen arm64
-  sidecar build: **31.169 seconds**. Next 16.3.8 Webpack static export: **10 routes**,
-  **1.509-second compilation** and **2.0-second type check**.
-- Tauri debug application build: passed, **4.72-second** incremental Rust build;
+  sidecar build: **30.941 seconds**. Next 16.3.8 Webpack static export: **10 routes**,
+  **1.156-second compilation** and **1.009-second type check**.
+- Tauri debug application build: passed, **4.64-second** incremental Rust build;
   separate `Noye Knowledge QA.app` bundle, **92.79 MiB**. QA identifier
   `com.noye.knowledgeqa20261008` isolates application data and Keychain namespace.
 - `NOYE_TEST_SIDECAR=<built arm64 sidecar> .venv/bin/python -m pytest
-  app/tests/test_desktop.py -q`: **10 passed, 7 warnings, 19.98 seconds**.
+  app/tests/test_desktop.py -q`: **10 passed, 7 warnings, 23.83 seconds**.
   Actual frozen private-control/configuration/start-stop protocol was exercised.
 
-The actual native QA window, Chat and Settings were observed. An earlier session
+The actual native QA window, Chat and Settings were observed in the archive-fix
+build. The final package was rebuilt after the later transport/citation guards;
+those build/control checks do not establish additional native UI acceptance. An earlier session
 showed running local services and installed models. During the final chooser check,
 Ollama/Qdrant were stopped and the UI correctly reported that state; no inference
 is attributed to that session.
@@ -223,7 +253,8 @@ cloud-model alias checks, cloud requests with connected originals, terminal stag
 loss, worker-test isolation, restored approved-trigger handling and native ZIP
 selection filtering. Their focused
 regressions passed. B's own review corrected document entailment fallback, provenance
-revision export and conversation history filtering. No independent review is claimed.
+revision export, conversation history filtering, per-source observation rendering,
+local document proxy bypass and model-written inline citation labels. No independent review is claimed.
 
 The branch already includes B's feature commits and A's final shared wiring. Review
 and merge the combined knowledge PR first when separately authorized; avoid duplicate
