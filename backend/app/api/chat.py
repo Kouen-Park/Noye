@@ -27,10 +27,12 @@ from app.api.deps import get_db
 from app.config import GenerationProvider
 from app.db import conversations as conversation_store
 from app.db import files as file_store
+from app.db import knowledge as knowledge_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
 from app.models.evidence import EvidenceSnapshot
 from app.models.files import FileStatus
+from app.services import knowledge_query
 from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import EmbeddingError
 from app.services.evidence import capture_citations, original_status
@@ -38,6 +40,8 @@ from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_q
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT
+from app.services.source_catalog import SourceError
+from app.services.wiki.local import WikiError
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -102,6 +106,7 @@ class MessageOut(BaseModel):
     error: str | None
     citations: list[CitationOut]
     created_at: str
+    knowledge: dict | None = None
 
     @classmethod
     def of(cls, message: Message, db: sqlite3.Connection | None = None) -> MessageOut:
@@ -112,6 +117,7 @@ class MessageOut(BaseModel):
             error=message.error,
             citations=[CitationOut.of(citation, db) for citation in message.citations],
             created_at=message.created_at.isoformat(),
+            knowledge=knowledge_store.read(db, message.id) if db is not None else None,
         )
 
 
@@ -126,8 +132,9 @@ class ConversationOut(BaseModel):
     source_scope: list[str] | None = None
 
     @classmethod
-    def of(cls, conversation: Conversation,
-           db: sqlite3.Connection | None = None) -> ConversationOut:
+    def of(
+        cls, conversation: Conversation, db: sqlite3.Connection | None = None
+    ) -> ConversationOut:
         return cls(
             id=conversation.id,
             title=conversation.title,
@@ -192,8 +199,9 @@ class ScopeRequest(BaseModel):
 
 
 @router.put("/conversations/{conversation_id}/scope", response_model=ConversationOut)
-def update_scope(conversation_id: str, request: ScopeRequest,
-                 db: sqlite3.Connection = Depends(get_db)) -> ConversationOut:
+def update_scope(
+    conversation_id: str, request: ScopeRequest, db: sqlite3.Connection = Depends(get_db)
+) -> ConversationOut:
     try:
         conversation = conversation_store.set_source_scope(db, conversation_id, request.file_ids)
         return ConversationOut.of(conversation)
@@ -225,9 +233,7 @@ def ask(
     """
     question = request.question.strip()
     if not question:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Ask something first."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ask something first.")
 
     if request.conversation_id is None:
         conversation = conversation_store.create_conversation(db, first_question=question)
@@ -235,9 +241,7 @@ def ask(
         try:
             conversation = conversation_store.get_conversation(db, request.conversation_id)
         except conversation_store.ConversationNotFound as exc:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-            ) from exc
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
     if "file_ids" in request.model_fields_set:
         conversation = conversation_store.set_source_scope(db, conversation.id, request.file_ids)
@@ -251,6 +255,7 @@ def ask(
     )
 
     ready = {}
+    context = None
     try:
         ready = _ready_file_names(db) if scope != [] else {}
         if scope is not None:
@@ -267,8 +272,7 @@ def ask(
                     else "None of the selected files has a compatible, ready index. "
                     "Open the library to check the selected files."
                     if scope is not None
-                    else
-                    "No compatible index is available for the ready files. "
+                    else "No compatible index is available for the ready files. "
                     "Open the library to check index compatibility and rebuild when needed."
                     if any(r.status is FileStatus.READY for r in file_store.list_files(db))
                     else "There is nothing in your library to answer from yet. Add a file, or "
@@ -283,12 +287,41 @@ def ask(
                 searched_files=0,
             )
 
-        generated = answer_question(
-            question, limit=request.limit, file_ids=list(ready), provider=request.provider,
-            **({"history": recent_context(previous),
-                "retrieval_query": retrieval_question(question, previous)} if previous else {})
-        )
-    except (EmbeddingError, IndexingError, GenerationError) as exc:
+        # Expanded Wiki/original context stays local. Explicit cloud requests keep
+        # the existing retrieval payload and provider; no automatic switching occurs.
+        if (
+            request.provider == "ollama"
+            and db.execute(
+                "SELECT 1 FROM sources UNION SELECT 1 FROM wiki_pages LIMIT 1"
+            ).fetchone()
+        ):
+            material_scope = (
+                {"mode": "all"} if scope is None else {"mode": "chosen", "source_ids": scope}
+            )
+            context = knowledge_query.discover(
+                db,
+                retrieval_question(question, previous),
+                material_scope,
+                file_ids=list(ready),
+                limit=request.limit,
+            )
+            generated = knowledge_query.answer(context, question, history=recent_context(previous))
+        else:
+            generated = answer_question(
+                question,
+                limit=request.limit,
+                file_ids=list(ready),
+                provider=request.provider,
+                **(
+                    {
+                        "history": recent_context(previous),
+                        "retrieval_query": retrieval_question(question, previous),
+                    }
+                    if previous
+                    else {}
+                ),
+            )
+    except (EmbeddingError, IndexingError, GenerationError, SourceError, WikiError) as exc:
         # Neither the question nor the answer is logged. The conversation id
         # locates the turn for anyone who needs the text, in the database
         # where the user already keeps it.
@@ -319,13 +352,32 @@ def ask(
     # name is copied in here so the citation survives that file being deleted.
     citations = capture_citations(generated.sources, ready)
 
-    answer = conversation_store.add_message(
-        db,
-        conversation.id,
-        role=Role.ASSISTANT,
-        content=generated.text,
-        citations=citations,
-    )
+    def save_answer():
+        stored = conversation_store.add_message(
+            db,
+            conversation.id,
+            role=Role.ASSISTANT,
+            content=generated.text,
+            citations=citations,
+        )
+        if context is not None:
+            knowledge_store.save(db, stored.id, context.snapshot)
+        return stored
+
+    if context is not None:
+        try:
+            with context.session.commit_guard():
+                answer = save_answer()
+        except SourceError as exc:
+            answer = conversation_store.add_message(
+                db,
+                conversation.id,
+                role=Role.ASSISTANT,
+                content="",
+                error=str(exc),
+            )
+    else:
+        answer = save_answer()
 
     return AskResponse(
         conversation_id=conversation.id,
@@ -340,9 +392,7 @@ def ask(
 def list_conversations(db: sqlite3.Connection = Depends(get_db)) -> list[ConversationSummary]:
     """List conversations, most recently active first."""
     return [
-        ConversationSummary.of(
-            conversation, conversation_store.count_messages(db, conversation.id)
-        )
+        ConversationSummary.of(conversation, conversation_store.count_messages(db, conversation.id))
         for conversation in conversation_store.list_conversations(db)
     ]
 
@@ -375,9 +425,7 @@ def rename_conversation(
 
 
 @router.delete("/conversations/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_conversation(
-    conversation_id: str, db: sqlite3.Connection = Depends(get_db)
-) -> None:
+def delete_conversation(conversation_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     """Delete a conversation and its messages.
 
     Only the record of the discussion goes; the documents it drew on are
