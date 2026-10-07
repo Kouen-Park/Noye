@@ -40,8 +40,9 @@ adapters. The [shared contract](integration-contract.md) and
 
 ## Automated checks, 2026-10-08
 
-Final combined source, including B's v3 fallback/outline and terminal-card fixes
-and A's archive-selection fix: **944 passed, 19 skipped, 10 warnings, 17.89 seconds**.
+Combined source through `5460198`, including B's v3 fallback/outline and terminal-
+card fixes and A's archive-selection fix: **944 passed, 19 skipped, 10 warnings,
+17.89 seconds**. This full run predates the subsequent per-source observation fix.
 Normal application settings and production timeouts were retained. A one-off pytest
 collection plugin explicitly skipped availability-marked Ollama/Qdrant checks while
 actual inference was measured separately. This does not claim those skipped service
@@ -70,7 +71,7 @@ Ollama; the uncontended final run passed without extending the three-second test
 startup deadline. An earlier retry test depended on a globally stopped worker;
 its fixture now creates a fresh worker. Failed runs are not counted as acceptance.
 
-- `ruff check app desktop.py`: passed on the final combined source.
+- `ruff check app desktop.py`: passed, including the subsequent v4 fix.
 - `npm test -- --maxWorkers=1`: **259 passed, 40 files, 22.71 seconds**.
 - `npm run lint`, `next typegen`, `tsc --noEmit`: passed on that source.
 - Historical-navigation and archive-selection regressions also passed in the
@@ -79,6 +80,14 @@ its fixture now creates a fresh worker. Failed runs are not counted as acceptanc
   even if the current page gained outside contributors. Current relations are
   excluded from historical view. Invalid selected archives display the restore
   service error without claiming success or switching workspaces.
+
+After B's `540a740` observation fix was integrated as `c5b14ba`, the controlled
+source-document/session, maintenance/portability/query, Wiki-job, workspace-backup
+and local-model-boundary suite passed **76 tests, 8 warnings, 2.16 seconds**; Ruff
+passed. Its new regression rejects publishing an unsupported per-source “other
+project does not exist” observation while retaining source/batch/evidence provenance
+and `verified=false` in audit metadata. No model, native app or desktop build was
+started during B's reserved model slot.
 
 The targeted checks use real synthetic filesystem/SQLite/extraction and controlled
 model/search responses. They verify scope escape attempts, empty scope, stale/missing
@@ -151,8 +160,15 @@ on this host; coverage is not evidence of comprehension or polished output.
 
 The final integrated `source-document-v3` pipeline deduplicates retained original
 paragraphs and asks for a compact topical outline. Controlled regressions pass;
-actual v3 collection/comparison/missing-source runs are pending B's coordinated
-model execution. [B's validation record](source-document-validation.md) includes
+B then reported an actual v3 comparison in **164.835 seconds**, with both originals,
+three topical sections and seven verified citations, saved as partial. Review found
+that per-source “other project information absent” observations were published as
+collection conclusions. B's focused fix, integrated as `c5b14ba`, excludes these
+unverified observations from authored content, retains scoped audit metadata, and
+makes each bounded extraction call's limits explicit. The prompt is now
+`source-document-v4`, with `source-document-markdown-v2` rendering. Its controlled
+regression passes; fresh actual v4 partial/collection/comparison quality remains
+pending B's coordinated model execution. [B's validation record](source-document-validation.md) includes
 actual browser user edits, selected-revision Markdown files and the real three-
 artifact backup/restore. It distinguishes those observations from native/PDF work.
 Do not infer successful quality from an artifact pointer, model entailment or a
@@ -160,7 +176,8 @@ processed-character count.
 
 ## Desktop build and native observation
 
-Final combined source, including the archive-selection fix:
+Combined source through the archive-selection fix (`5460198`); these packaged
+checks predate the subsequent v4 per-source observation fix (`c5b14ba`):
 
 - `npm run desktop:prepare`: passed. PyInstaller 6.22.3/Python 3.14.7 frozen arm64
   sidecar build: **31.169 seconds**. Next 16.3.8 Webpack static export: **10 routes**,
