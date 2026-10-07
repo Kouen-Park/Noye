@@ -4,7 +4,7 @@ Owner A: `feat/folder-foundation`. B owns Wiki/classification/generation service
 Migration 6 belongs to A (roots, sources, versions, change events, filing journal,
 knowledge jobs); released migrations 1–5 must remain unchanged. B supplies its
 feature schema as an idempotent function in `app/db/wiki.py`; A allocates migration
-7 when integrating it. Do not edit shared initialization/routers in the feature commit.
+7 installs it; both additive migrations are implemented and tested. Do not edit shared initialization/routers in the feature commit.
 
 ## SourceCatalog and EvidenceReader
 
@@ -34,8 +34,13 @@ paths are private to application services and must never enter a model tool sche
 
 `changes(after=0, limit=100)` returns ordered committed events: `sequence`, kind
 (`added`, `changed`, `moved`, `missing`, `unavailable`, `disconnected`, `reconnected`,
-`ready`, `failed`), root/source IDs, relative path, source version and error. Save a
-consumer cursor only after completing an idempotent update. Error codes include
+`ready`, `failed`, `paused`, `resumed`), root/source IDs, relative path, source
+version and error. Save a consumer cursor only after an idempotent update. `ready`/`failed` are
+committed with ingestion status. `paused`/`resumed` are root events; a consumer
+revisits enabled READY subjects on resume and retains per-subject progress while
+a cancelling attempt settles. Reconnection emits `ready` again only after current
+bytes and indexed version are verified, without re-embedding unchanged content.
+Error codes include
 `out_of_scope`, `stale_version`, `unavailable`, `not_ready`, `invalid_path`, `busy`.
 
 ## Durable work
@@ -49,8 +54,8 @@ provides progress/checkpoint cancellation. States match ingestion:
 queued/running/cancelling/complete/failed/cancelled/interrupted. Startup marks active
 work interrupted; retry is explicit and creates a new attempt, preserving payload
 and manifest. Local-only jobs validate loopback Ollama before inference; no cloud
-fallback. B registers `wiki` / `source_document` handlers at integration. Persist
-output/artifact identity before marking complete; retries must not replace user edits.
+fallback. B registers the implemented `wiki` handler; source-driven document
+generation remains a later milestone. Persist output/artifact identity before marking complete; retries must not replace user edits.
 
 ## Filing and generated outputs
 
@@ -63,7 +68,8 @@ updates preserve file ID and do not queue embedding for unchanged bytes.
 Classification only proposes a path; models have no filesystem capability.
 `app.services.folders.output_path(connection, root_id, relative_path)` is an
 application-only helper restricted to `wiki/` or `documents/`, with root/path safety.
-B must journal or atomically save output revisions and preserve edited Markdown.
+B publishes output revisions atomically, records provenance and preserves edited
+Markdown as revisions/proposals.
 
 ## Backup and integration
 
@@ -80,5 +86,31 @@ of authored work on disconnect/source removal.
 
 Integration order: A contract/foundation → B feature schema migration 7 → B services
 and routers/handler registration → B clients/components → full shared checks and
-real folder/evidence flow. Shared patches are separate commits. No implementation
-or validation of B's generation/model work is claimed by A.
+real folder/evidence flow. Shared patches are separate commits. B's implementation
+and model measurements retain their authorship; A validates shared integration.
+See [Wiki contract](wiki-core.md) for B's feature behavior and recorded evidence.
+
+## Implemented integration and operating limits
+
+`/folders` exposes administrative trees and controls; `SourceCatalog` and
+`EvidenceReader` are internal services consumed by B's `/wiki` feature router.
+`/knowledge-jobs` exposes durable work state. There is no arbitrary-file reader API.
+Folder registration has no HTTP POST path API. Native commands return only IDs;
+selected paths arrive over the private parent/sidecar stdin protocol. A model
+receives IDs, relative locators and validated excerpts, never a server path.
+
+Migrations 6 and 7, Wiki router/handler/event observer, folder watcher and shared
+workspace shutdown/backup hooks are integrated in `feat/folder-foundation`.
+B's feature commits retain separate ownership and authorship. Existing ingestion
+`jobs` still run extraction/embedding/indexing; the added worker actually executes
+Wiki jobs, reports checkpoints and records artifacts independently of ingestion.
+
+The watcher polls while the app runs (one-second poll, two-second stable-write
+window); startup repeats reconciliation. Equal hashes alone never establish a
+rename: only an unambiguous same-device/inode/hash move preserves an ID. A copy
+receives a new ID. Empty supported files are registered and fail extraction
+honestly. Inaccessible scans retain records; deletion requires a complete
+accessible scan and stable absence. All symlinks are excluded, including internal
+ones. External originals are not a portable-backup promise; users must back those
+up separately. See [folder acceptance](folder-foundation.md) for observed checks
+and remaining native/model limits.
