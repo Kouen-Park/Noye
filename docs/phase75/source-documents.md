@@ -52,6 +52,9 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
+Prompt `source-document-v3` prefers one to four topical sections for small source
+sets and avoids assuming textbook topics. Retained original paragraphs are
+deduplicated within each section, with only their matching evidence labels.
 The entailment pass is a model check, not independent proof; source review remains
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
 English/Korean counts such as “twice” or “두 번” rendered as 2. Other unstated
@@ -125,3 +128,7 @@ document pipeline/API → migration 9/registration/backup allowlist → chat/edi
 A's combined knowledge branch preserves its maintenance and query wiring. The
 document-only branch keeps the existing Wiki registration and adapts its backup
 test to document data; both consume the same source/version and durable-job contracts.
+
+A has integrated these contracts and feature commits in draft PR #60. This branch
+is a focused document review surface; integrate through that combined branch and
+avoid applying its shared migration/router/job/backup commits a second time.

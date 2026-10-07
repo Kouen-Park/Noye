@@ -3168,23 +3168,23 @@ implementation details, not a migration already performed:
 
 ### 7.5-5. Prompt-driven document creation with automatic source discovery
 
-- [ ] Add an explicit document-generation intent to chat and a source-driven
+- [x] Add an explicit document-generation intent to chat and a source-driven
   generation service/API that does not require a previous assistant message ID.
   Show an artifact card with progress, Open document and export actions; preserve
   the existing answer-to-document option.
-- [ ] Interpret the user's goal, topic, output type and language, then discover
+- [x] Interpret the user's goal, topic, output type and language, then discover
   candidate files through the catalog, source summaries, search and related links
   within enabled roots and the conversation's allowed scope. Read relevant original
   sections when summaries are insufficient. Course labels and named collections are
   optional filters, not mandatory input; discovery is application-controlled rather
   than arbitrary model filesystem commands.
-- [ ] Show the selected sources and actual coverage; clarify only unresolved task
+- [x] Show the selected sources and actual coverage; clarify only unresolved task
   or scope ambiguity. A request for “all COMPSCI 210 lecture notes so far” must
   enumerate that collection; a general report must find material relevant to the
   prompt without claiming that every local file was read. Freeze source versions
   when consumed and record the final source manifest. An all-source request freezes
   its inventory at job start; later discoveries remain within that initial scope.
-- [ ] Plan an outline and aggregate material across that set with bounded local
+- [x] Plan an outline and aggregate material across that set with bounded local
   per-source/section processing and synthesis. A normal chat's top-five passages
   cannot establish collection-wide coverage. Long documents need staged generation and
   progress, not silent input truncation or a single over-budget prompt.
@@ -3194,13 +3194,20 @@ implementation details, not a migration already performed:
   label partial results, and explain insufficient evidence instead of inventing
   conclusions. Study notes may organize by lecture/topic, but that is one output
   form, not a restriction on document generation.
-- [ ] Attach validated source locators and saved excerpt/version snapshots from the
+- [x] Attach validated source locators and saved excerpt/version snapshots from the
   actual inputs. Save the artifact independently of the chat, preserve user edits,
   and expose cancellation/retry without duplicating or replacing saved notes.
 - [ ] Export the current chosen document revision to Markdown and PDF with optional
   provenance. Existing PDF output uses the print path; a new PDF renderer is not
   assumed. Validate actual native output, Unicode and long-document pagination.
   A chat request alone is not evidence that a PDF has been exported successfully.
+
+Implementation and scoped data/recovery checks are recorded in
+`docs/phase75/source-documents.md` and `docs/phase75/source-document-validation.md`.
+Actual local-model collection/report runs saved explicit partial artifacts;
+requested-language and report quality acceptance remains open. Actual native PDF,
+Unicode and long-pagination acceptance is also open. These checked implementation
+items do not establish completion of the entire native workflow or Phase 7.5.
 
 ### 7.5-6. Recovery, portability and acceptance evidence
 
