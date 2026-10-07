@@ -157,6 +157,12 @@ def _step_8_knowledge_integration(connection: sqlite3.Connection) -> None:
     install(connection)
 
 
+def _step_9_source_documents(connection: sqlite3.Connection) -> None:
+    from app.db.source_documents import install
+
+    install(connection)
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
@@ -168,6 +174,7 @@ MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_6_folder_foundation,
     _step_7_wiki_revisions,
     _step_8_knowledge_integration,
+    _step_9_source_documents,
 )
 
 #: Where a fully migrated database stands.
