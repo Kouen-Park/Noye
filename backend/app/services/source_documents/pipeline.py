@@ -532,6 +532,10 @@ def generate(context, *, settings=None, client=None):
                 "passages": [{"evidence_id": p.id, "text": p.text} for p in group],
                 "rules": "Extract only relevant supported claims, assign an outline section_id, "
                 "and attach exact verbatim quotes. Empty claims are allowed for irrelevant text. "
+                "This call contains one bounded batch from ONE source. Other selected sources "
+                "and remaining batches are read separately; do not claim they are absent or "
+                "lack evidence. Extract this source's facts, not cross-source conclusions. "
+                "Missing-context observations belong in gaps, not factual claims. "
                 "Do not write pages or citation labels. Preserve numbers and exceptions.",
             }
 
@@ -582,7 +586,18 @@ def generate(context, *, settings=None, client=None):
                     }
                 )
             verify(context, req, f"source:{source_id}:{batch_number}", claims, settings, client)
-            gaps.extend({"source_id": source_id, "text": gap} for gap in result.gaps)
+            # These are model observations about this batch, not verified findings
+            # about other sources or the complete collection. Retain for audit only.
+            gaps.extend(
+                {
+                    "source_id": source_id,
+                    "batch_number": batch_number,
+                    "evidence_ids": list(known),
+                    "verified": False,
+                    "text": gap,
+                }
+                for gap in result.gaps
+            )
             for claim in result.claims:
                 all_claims.append(
                     {**claim.model_dump(), "id": f"C{len(all_claims) + 1}", "source_id": source_id}
@@ -727,7 +742,7 @@ def generate(context, *, settings=None, client=None):
             + "\n\n"
             + (
                 "\n\n".join(dict.fromkeys(paragraphs))
-                or "Insufficient extracted evidence for this section."
+                or "No verified generated claims were supplied for this section."
             )
         )
     if not citations:
@@ -749,6 +764,7 @@ def generate(context, *, settings=None, client=None):
         "uncertainties": gaps,
         "model": settings.ollama_model,
         "prompt_version": local.PROMPT_VERSION,
+        "render_version": "source-document-markdown-v2",
         "parameters": {
             "context_tokens": settings.generation_context_tokens,
             "output_tokens": settings.generation_output_tokens,
@@ -760,10 +776,6 @@ def generate(context, *, settings=None, client=None):
     content = (
         "# " + outline.title + "\n\n" + "\n\n".join(rendered) + "\n\n" + coverage_markdown(report)
     )
-    if gaps:
-        content += "\n\n## Evidence gaps reported during processing\n\n" + "\n".join(
-            "- " + gap["text"] for gap in gaps
-        )
     legacy_citations = [
         MessageCitation(
             file_id=p["source"]["source_id"],
