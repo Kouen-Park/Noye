@@ -196,7 +196,9 @@ def generate(
         with inference(settings.ollama_model) if provider == "ollama" else nullcontext():
             if client is None:
                 with httpx.Client(
-                    timeout=DEFAULT_TIMEOUT_SECONDS, follow_redirects=False
+                    timeout=DEFAULT_TIMEOUT_SECONDS,
+                    follow_redirects=False,
+                    trust_env=provider != "ollama",
                 ) as owned_client:
                     if local_only:
                         require_installed_local_model(settings, owned_client)

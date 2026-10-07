@@ -64,7 +64,7 @@ def structured(prompt, schema, *, settings=None, client=None, constraints=None):
     if request_size(prompt, schema, constraints) > input_budget(settings):
         raise WikiError("Wiki batch exceeds the local input budget. No text was truncated.")
     if client is None:
-        with httpx.Client(timeout=300, follow_redirects=False) as owned:
+        with httpx.Client(timeout=300, follow_redirects=False, trust_env=False) as owned:
             return structured(
                 prompt, schema, settings=settings, client=owned, constraints=constraints
             )
