@@ -96,6 +96,8 @@ def model(
             }
             if invalid == "number":
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
+            if invalid == "label":
+                result["claims"][0]["text"] = "See [E37] for the storage details."
             if invalid == "synthesis_support":
                 result["claims"][0]["text"] = "An earlier overconfident paraphrase."
                 other = json.loads(json.dumps(result["claims"][0]))
@@ -326,7 +328,9 @@ def test_missing_and_indexing_failure_are_partial_coverage(workspace):
     assert "Partial result" in documents.get_document(db, identifier).content
 
 
-@pytest.mark.parametrize("invalid", ["id", "quote", "number", "synthesis", "unsupported", "json"])
+@pytest.mark.parametrize(
+    "invalid", ["id", "quote", "number", "label", "synthesis", "unsupported", "json"]
+)
 def test_invalid_model_output_never_saves_artifact(workspace, invalid):
     db, *_ = workspace
     discover(workspace)

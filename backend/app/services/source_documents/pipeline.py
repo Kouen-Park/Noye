@@ -297,7 +297,15 @@ def verify_numbers(text, support):
         raise local.DocumentError("A generated claim contains a number absent from its evidence.")
 
 
+def reject_model_citation_labels(text):
+    if re.search(r"\[\s*E\s*\d", text, re.IGNORECASE):
+        raise local.DocumentError(
+            "The model wrote a citation label. Only verified application citations are allowed."
+        )
+
+
 def check_numbers(context, req, text, originals):
+    reject_model_citation_labels(text)
     try:
         verify_numbers(text, " ".join(originals))
     except local.DocumentError:
@@ -461,6 +469,8 @@ def generate(context, *, settings=None, client=None):
     section_ids = [s.id for s in outline.sections]
     if len(set(section_ids)) != len(section_ids):
         raise local.DocumentError("The model returned duplicate outline section IDs.")
+    for title in [outline.title, *(section.title for section in outline.sections)]:
+        reject_model_citation_labels(title)
     coverage = {s["source_id"]: coverage_entry(s) for s in plan["selected_manifest"]}
     report = {
         "inventory_count": len(context.manifest),
@@ -771,7 +781,8 @@ def generate(context, *, settings=None, client=None):
             "thinking": settings.ollama_thinking,
         },
         "processing_seconds": round(time.monotonic() - started, 3),
-        "validation": "exact ID/quote/locator/number checks plus local-model entailment check",
+        "validation": "exact ID/quote/locator/number checks, model citation-label rejection "
+        "plus local-model entailment check",
     }
     content = (
         "# " + outline.title + "\n\n" + "\n\n".join(rendered) + "\n\n" + coverage_markdown(report)
