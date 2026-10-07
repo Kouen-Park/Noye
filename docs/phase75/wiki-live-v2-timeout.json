@@ -1,0 +1,42 @@
+{
+  "model": "qwen3.5:4b",
+  "prompt": "wiki-grounded-v2",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "context_tokens": 16384,
+  "output_tokens": 2048,
+  "thinking": false,
+  "corpus": {
+    "Learning/HELIOS-baseline.md": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available.\n",
+    "Learning/HELIOS-alternative.txt": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown.\n",
+    "Learning/HELIOS-한국어.md": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다.\n"
+  },
+  "indexing": [
+    {
+      "source_id": "0d1794ed-675b-4896-9d1f-8cb4c97f1a5f",
+      "indexing_seconds": 2.3925227919989993,
+      "indexing_status": "READY"
+    },
+    {
+      "source_id": "7ad735d6-eee1-4349-869c-b76f22e6026d",
+      "indexing_seconds": 0.048000417000366724,
+      "indexing_status": "READY"
+    },
+    {
+      "source_id": "94d99e0a-dc0a-4eb5-ad3b-c2a29ebfdcbb",
+      "indexing_seconds": 0.05373933400005626,
+      "indexing_status": "READY"
+    }
+  ],
+  "outputs": [],
+  "model_calls": [],
+  "status": "failed",
+  "error": "Local Ollama is unavailable or busy. Retry the Wiki job.",
+  "pages": [
+    {
+      "id": "8b5eb16b-020f-5257-8adc-26106c936b80",
+      "kind": "source",
+      "title": "HELIOS-한국어.md"
+    }
+  ]
+}
