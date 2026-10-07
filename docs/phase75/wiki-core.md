@@ -149,6 +149,9 @@ revisions/proposals, authored editing and saved analyses. Markdown uses the exis
 renderer with embedded images disabled. Original PDF links use actual known page numbers.
 Opening a historical revision binds that content to its read scope; changing the selection
 closes that historical view before it can expose material from the previous scope.
+Portable topic links are mapped to browser Wiki routes only for metadata-verified contributor
+IDs. Their explicit scope survives new-tab navigation; invalid URL scopes read no originals.
+Markdown bytes retain generated comment metadata, which the preview hides.
 
 Current page-list UI is limited to 200 pages; search, topic maintenance and relationship
 candidate inventory inspect up to 1000 pages. Larger workspaces need pagination before
@@ -180,3 +183,8 @@ produced no links/topic aggregation because tags were empty or project titles di
 it translated the Korean summary into English. This observed limitation motivated v2.
 No broad model-quality benchmark, real user PDF quality claim, or Wiki-first chat/document
 acceptance is implied by the smoke check. Exact quotes do not guarantee accurate paraphrases.
+
+Prompt v3 completed all three sources, produced three validated typed relations and a
+single project page with three contributors. Korean wording still translated to English.
+See the [acceptance record](wiki-validation.md) for measured times, exact test commands,
+actual browser observations, failed runs and unverified native/PDF/model behavior.
