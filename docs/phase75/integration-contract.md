@@ -90,6 +90,12 @@ cache, coverage and authored schema are described in [document contract](source-
 `app.services.local_ollama.require_installed_local_model(settings, client)` checks
 loopback and `/api/show` before source text is sent. It requires installed local
 model metadata and rejects cloud aliases. Call it while holding model usage.
+App-owned Wiki, original-grounded question, source-document, original-embedding and
+embedding-identity clients bypass environment proxies (`trust_env=False`) and do
+not follow redirects. A spoof proxy cannot supply local-model proof and then receive
+originals. These service seams accept trusted injected clients for tests/internal
+callers; they are not model or public API transport controls. Explicit legacy cloud
+provider requests retain their configured transport behavior.
 Wiki, expanded-original questions and source documents have no cloud fallback.
 Connected-folder questions with an explicitly selected cloud provider fail visibly
 without sending original text or changing the provider. Legacy upload-only cloud
