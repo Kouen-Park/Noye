@@ -96,6 +96,9 @@ def model(
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
             if invalid == "synthesis_support":
                 result["claims"][0]["text"] = "An earlier overconfident paraphrase."
+                other = json.loads(json.dumps(result["claims"][0]))
+                other["supports"][0]["quote"] = other["supports"][0]["quote"][1:]
+                result["claims"].append(other)
         elif task == "cross_source_synthesis":
             synthesized[0] = True
             result = {
@@ -480,6 +483,9 @@ def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(wor
     assert "unsupported universal guarantee" not in revision["content"]
     assert "earlier overconfident paraphrase" not in revision["content"]
     assert "37" in revision["content"]
+    original = revision["metadata"]["evidence"][0]["text"]
+    assert revision["content"].count("> " + original.splitlines()[0]) == 1
+    assert "[E1, E2]" in revision["content"]
     assert revision["metadata"]["coverage"]["partial"]
     assert revision["metadata"]["coverage"]["synthesis_limits"]
     assert "comparative conclusions" in revision["content"]

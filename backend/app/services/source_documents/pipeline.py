@@ -446,8 +446,13 @@ def generate(context, *, settings=None, client=None):
             "task": "outline",
             "intent": intent,
             "instruction": req["request"]["instruction"],
-            "rules": "Plan at most eight useful sections in the requested language. "
-            "Headings are a plan, not factual conclusions. Use unique section IDs.",
+            "selected_source_count": len(plan["selected_ids"]),
+            "rules": "Plan concise topical sections in the requested language. "
+            "Prefer one to four focused sections for two or fewer sources; at most eight "
+            "for larger collections. Organize supported source notes, requested comparisons "
+            "and uncertainties. Do not assume textbook definitions, statistics, debates or "
+            "external examples. Headings are topical labels, not factual conclusions or "
+            "numbers. Use unique section IDs.",
         },
         Outline,
         settings,
@@ -624,7 +629,7 @@ def generate(context, *, settings=None, client=None):
                 "conditions; no new conclusions or facts. Do not invent citation labels.",
             }
 
-        paragraphs = []
+        paragraphs, original_quotes = [], {}
         for group_number, group in enumerate(
             batches(
                 interleaved,
@@ -693,7 +698,6 @@ def generate(context, *, settings=None, client=None):
                     # An earlier model-approved paraphrase can still be overconfident.
                     for identifier in claim.claim_ids:
                         original = known[identifier]
-                        labels, quoted = [], []
                         for support in original["supports"]:
                             label = next(
                                 n
@@ -701,15 +705,8 @@ def generate(context, *, settings=None, client=None):
                                 if citation["id"] == support["evidence_id"]
                                 and citation["quote"] == support["quote"]
                             )
-                            labels.append(f"E{label}")
-                            quoted.append(evidence[support["evidence_id"]]["text"])
-                        for text in dict.fromkeys(quoted):
-                            paragraphs.append(
-                                "\n".join("> " + line for line in text.splitlines())
-                                + " ["
-                                + ", ".join(labels)
-                                + "]"
-                            )
+                            text = evidence[support["evidence_id"]]["text"]
+                            original_quotes.setdefault(text, []).append(f"E{label}")
                     synthesis_limits.append(
                         {
                             "section_id": heading.id,
@@ -717,6 +714,13 @@ def generate(context, *, settings=None, client=None):
                             "reason": "Unverified synthesis replaced with verbatim originals.",
                         }
                     )
+        paragraphs.extend(
+            "\n".join("> " + line for line in text.splitlines())
+            + " ["
+            + ", ".join(dict.fromkeys(labels))
+            + "]"
+            for text, labels in original_quotes.items()
+        )
         rendered.append(
             "## "
             + heading.title
