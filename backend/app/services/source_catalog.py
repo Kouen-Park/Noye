@@ -1,5 +1,6 @@
 """Scoped source inventory and versioned original extraction for Wiki consumers."""
 
+from contextlib import contextmanager
 from pathlib import Path
 
 from app.db import jobs
@@ -130,6 +131,18 @@ class EvidenceReader:
         offset=0,
         historical=False,
     ):
+        from app.services import ingestion
+        from app.services.folder_scanner import folder_lock
+
+        try:
+            with folder_lock, ingestion.read_access([source_id]):
+                return self._read(
+                    source_id, version, scope, manifest, chunk_indexes, limit, offset, historical
+                )
+        except ingestion.MaintenanceBusy as exc:
+            raise SourceError("busy", str(exc)) from None
+
+    def _read(self, source_id, version, scope, manifest, chunk_indexes, limit, offset, historical):
         descriptor = SourceCatalog(self.connection).assert_allowed(source_id, scope, manifest)
         if not version or not 1 <= limit <= 100 or offset < 0:
             raise SourceError(
@@ -234,3 +247,48 @@ def folder_source_enabled(connection, file_id):
         and row["root_availability"] == "available"
         and row["version"] == row["content_hash"]
     )
+
+
+class SourceSession:
+    """One frozen inventory shared by queries and source-driven document handlers."""
+
+    def __init__(self, connection, scope=None, manifest=None):
+        self.connection = connection
+        self.scope = validate_scope(scope)
+        self.manifest = (
+            SourceCatalog(connection).freeze(self.scope) if manifest is None else manifest
+        )
+        self.versions = {item["source_id"]: item["version"] for item in self.manifest}
+        self.consumed = set()
+
+    def read(self, source_id, *, limit=100, offset=0, chunk_indexes=None):
+        if source_id not in self.versions:
+            raise SourceError("out_of_scope", "This source is outside the frozen inventory.")
+        passages = EvidenceReader(self.connection).read(
+            source_id,
+            self.versions[source_id],
+            self.scope,
+            manifest=self.manifest,
+            limit=limit,
+            offset=offset,
+            chunk_indexes=chunk_indexes,
+        )
+        self.consumed.add(source_id)
+        return passages
+
+    def verify(self, source_ids=None):
+        for source_id in sorted(self.consumed if source_ids is None else set(source_ids)):
+            self.read(source_id, limit=1)
+
+    @contextmanager
+    def commit_guard(self, source_ids=None):
+        from app.services import ingestion
+        from app.services.folder_scanner import folder_lock
+
+        identifiers = set(self.consumed if source_ids is None else source_ids)
+        try:
+            with folder_lock, ingestion.read_access(identifiers):
+                self.verify(identifiers)
+                yield
+        except ingestion.MaintenanceBusy as exc:
+            raise SourceError("busy", str(exc)) from None

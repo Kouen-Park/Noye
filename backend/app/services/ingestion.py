@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 import threading
+from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
 
@@ -127,6 +128,7 @@ class MaintenanceBusy(AlreadyIngesting):
 _in_flight: dict[str, threading.Event | None] = {}
 _in_flight_lock = threading.Lock()
 _rebuilding = False
+_readers: dict[str, int] = {}
 _pipeline_slot = threading.Semaphore(1)
 
 
@@ -134,7 +136,7 @@ def begin_rebuild() -> None:
     """Block new writes before inspecting or changing the collection."""
     global _rebuilding
     with _in_flight_lock:
-        if _rebuilding:
+        if _rebuilding or _readers:
             raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
         _rebuilding = True
 
@@ -142,7 +144,7 @@ def begin_rebuild() -> None:
 def require_idle_library() -> None:
     """A destructive reset cannot overlap any existing ingestion or deletion."""
     with _in_flight_lock:
-        if _in_flight:
+        if _in_flight or _readers:
             raise MaintenanceBusy(
                 "Files are being processed or removed. Wait for them to finish "
                 "before rebuilding an index with a different vector size."
@@ -167,9 +169,30 @@ def _claim(
     with _in_flight_lock:
         if _rebuilding and not rebuilding:
             raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
-        if file_id in _in_flight:
+        if file_id in _in_flight or _readers.get(file_id):
             raise AlreadyIngesting(f"File {file_id} is already being ingested")
         _in_flight[file_id] = cancellation
+
+
+@contextmanager
+def read_access(file_ids):
+    """Short immutable-evidence read/commit reservation, shared with all file writes."""
+    identifiers = set(file_ids)
+    with _in_flight_lock:
+        if _rebuilding or any(identifier in _in_flight for identifier in identifiers):
+            raise MaintenanceBusy("Source maintenance is active. Retry the evidence read.")
+        for identifier in identifiers:
+            _readers[identifier] = _readers.get(identifier, 0) + 1
+    try:
+        yield
+    finally:
+        with _in_flight_lock:
+            for identifier in identifiers:
+                remaining = _readers[identifier] - 1
+                if remaining:
+                    _readers[identifier] = remaining
+                else:
+                    _readers.pop(identifier)
 
 
 def reserve_ingestion(file_id: str) -> None:
@@ -397,9 +420,9 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     # single placeholder page, and reporting "1 page" for them would be noise.
     if record.file_type.has_pages:
         file_store.set_counts(connection, record.id, page_count=len(pages))
-        file_store.set_pdf_coverage(connection, record.id, [
-            page.page_number for page in pages if not page.content.strip()
-        ])
+        file_store.set_pdf_coverage(
+            connection, record.id, [page.page_number for page in pages if not page.content.strip()]
+        )
     return pages
 
 
