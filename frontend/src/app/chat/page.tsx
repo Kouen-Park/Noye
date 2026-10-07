@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
+import { DocumentTasks } from "@/components/documents/document-tasks";
+import { documentScope, generateSourceDocument, isDocumentIntent } from "@/lib/source-documents";
 import { Composer } from "@/components/chat/composer";
 import { SourceSelector } from "@/components/chat/source-selector";
 import { ConversationList } from "@/components/chat/conversation-list";
@@ -117,6 +119,8 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [scope, setScope] = useState<string[] | null>(null);
+  const [documentMode, setDocumentMode] = useState(false);
+  const [collectionMode, setCollectionMode] = useState(false);
   const [scopeSaving, setScopeSaving] = useState(false);
   const [inspecting, setInspecting] = useState<ChatMessage | null>(null);
   const panelId = useId();
@@ -125,6 +129,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const sourceButton = useRef<HTMLButtonElement | null>(null);
   const live = useRef(false);
   const inFlight = useRef(false);
+  const documentDispatch = useRef<{ key: string; id: string } | null>(null);
 
   useEffect(() => {
     live.current = true;
@@ -159,6 +164,25 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
 
   const ask = (question: string) => {
     if (inFlight.current || busy || scopeSaving || !loaded) return;
+    if (documentMode || isDocumentIntent(question)) {
+      inFlight.current = true;
+      setPending(true); onBusyChange(true); setError(null);
+      const key = JSON.stringify([question, scope, conversationId, collectionMode]);
+      if (documentDispatch.current?.key !== key) documentDispatch.current = { key, id: crypto.randomUUID() };
+      generateSourceDocument(question, documentScope(scope), conversationId ?? undefined, collectionMode ? "collection" : "auto", documentDispatch.current.id).then(response => {
+        documentDispatch.current = null;
+        refreshList();
+        if (!live.current) return;
+        if (conversationId === null) router.replace(`/chat?c=${encodeURIComponent(response.request.request.conversation_id)}`);
+        else setAttempt(n => n + 1);
+      }, (cause: unknown) => {
+        refreshList();
+        if (!live.current) return;
+        setDraft(current => current.trim() === "" ? question : current);
+        setError(cause instanceof Error ? cause.message : "Could not start document generation.");
+      }).finally(() => { inFlight.current = false; onBusyChange(false); if (live.current) setPending(false); });
+      return;
+    }
     inFlight.current = true;
     setPending(true);
     onBusyChange(true);
@@ -249,11 +273,17 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
                   inspected={inspecting?.id === message.id} onInspect={(selected, button) => { sourceButton.current = button; setInspecting(selected); }} />)}
                 {pending && <li className="py-5" role="status"><p className="text-[12px] font-semibold text-brand">Noye</p><p className="mt-2 text-sm text-ink-soft">Waiting for {provider === "gemini" ? "Gemini" : "Ollama"}…</p><p className="mt-1 text-xs text-ink-soft">Your question is being processed. The answer will appear here.</p></li>}
               </ul>
+              <DocumentTasks conversationId={conversationId} />
             </div>
           </div>
           <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">
             <div className="mx-auto max-w-[720px]">
               {busy && !pending && <p role="status" className="mb-2 text-xs text-ink-soft">An answer is still being saved in another conversation.</p>}
+              <div className="mb-2 flex flex-wrap items-center gap-3 text-xs text-ink-soft">
+                <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setDocumentMode(event.target.checked)} />Create an editable document</label>
+                {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setCollectionMode(event.target.checked)} />Use every source in the selected scope</label>}
+              </div>
+              {documentMode && <p className="mb-2 text-xs text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
               <Composer onAsk={ask} pending={pending} disabled={!loaded || scopeSaving || (busy && !pending)} value={draft} onChange={setDraft} inputRef={inputRef} />
               <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Recent turns help resolve follow-up questions. Answers use retrieved excerpts as evidence.</p>
             </div>

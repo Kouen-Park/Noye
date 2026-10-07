@@ -25,6 +25,7 @@ import { useState } from "react";
 
 interface ExportControlsProps {
   documentId: string;
+  exportUrl?: string;
   /** Whether the rendered document is on screen; PDF needs it. */
   previewVisible: boolean;
   disabled?: boolean;
@@ -36,6 +37,7 @@ interface ExportControlsProps {
 
 export function ExportControls({
   documentId,
+  exportUrl,
   previewVisible,
   disabled = false,
   content,
@@ -50,7 +52,7 @@ export function ExportControls({
         <input type="checkbox" checked={includeProvenance} onChange={(event) => onProvenanceChange(event.target.checked)} />Include provenance
       </label>}
       <a
-        href={disabled ? undefined : documentExportUrl(documentId, includeProvenance)}
+        href={disabled ? undefined : (exportUrl ? `${exportUrl}&provenance=${includeProvenance}` : documentExportUrl(documentId, includeProvenance))}
         onClick={(event) => {
           if (disabled || content === undefined) return;
           event.preventDefault();

@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
+import { SourceDocumentDetails } from "@/components/documents/source-document-details";
+import { editSourceDocument, isSourceDocument, readSourceDocument, sourceDocumentExportUrl, type SourceDocument } from "@/lib/source-documents";
 import { DocumentEditor } from "@/components/documents/document-editor";
 import { DocumentList } from "@/components/documents/document-list";
 import { PassageList } from "@/components/chat/passages";
@@ -51,7 +53,7 @@ function DocumentsView() {
   const documentId = params.get("d");
 
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
-  const [open, setOpen] = useState<NoyeDocument | null>(null);
+  const [open, setOpen] = useState<NoyeDocument | SourceDocument | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
@@ -73,23 +75,23 @@ function DocumentsView() {
     refreshList();
   }, [refreshList]);
 
-  // The URL decides which document is open. Read at render time rather than
-  // synced in an effect, which React 19 rejects.
-  if (loadedFor !== documentId) {
-    setLoadedFor(documentId);
-    if (documentId === null) {
-      setOpen(null);
-      setError(null);
-    } else {
-      readDocument(documentId).then(
-        (document) => setOpen(document),
-        (cause: unknown) => {
-          setOpen(null);
-          fail(cause, "Could not open that document.");
-        },
-      );
-    }
-  }
+  useEffect(() => {
+    if (!documentId) return;
+    const controller = new AbortController();
+    readSourceDocument(documentId, undefined, controller.signal).catch(cause => {
+      if (cause instanceof ApiError && cause.status === 404) return readDocument(documentId, controller.signal);
+      throw cause;
+    }).then(document => {
+      if (!controller.signal.aborted) { setOpen(document); setLoadedFor(documentId); setError(null); }
+    }, cause => { if (!controller.signal.aborted) { setOpen(null); setLoadedFor(documentId); fail(cause, "Could not open that document."); } });
+    return () => controller.abort();
+  }, [documentId, fail]);
+  const shown = documentId && loadedFor === documentId ? open : null;
+  const sourceDocument = shown && isSourceDocument(shown) ? shown : null;
+  const chooseRevision = (id: string) => {
+    if (!documentId) return;
+    readSourceDocument(documentId, id).then(setOpen, cause => fail(cause, "Could not open that revision."));
+  };
 
   const openDocument = useCallback(
     (id: string) => router.push(`/documents?d=${encodeURIComponent(id)}`),
@@ -113,7 +115,9 @@ function DocumentsView() {
       setSaving(true);
       setError(null);
       try {
-        const saved = await updateDocument(open.id, patch);
+        const saved = isSourceDocument(open)
+          ? await editSourceDocument(open.id, open.revision.id, patch)
+          : await updateDocument(open.id, patch);
         setOpen(saved);
         refreshList();
       } catch (cause: unknown) {
@@ -162,7 +166,7 @@ function DocumentsView() {
           </div>
         )}
 
-        {open === null ? (
+        {shown === null ? (
           <div
             className="rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center"
           >
@@ -174,29 +178,32 @@ function DocumentsView() {
           </div>
         ) : (
           <>
-            {open.source_instruction !== null && (
+            {shown.source_instruction !== null && (
               <p className="mb-3 text-[12.5px] text-ink-soft">
                 Drafted from your instruction:{" "}
-                <span className="italic">“{open.source_instruction}”</span>
+                <span className="italic">“{shown.source_instruction}”</span>
               </p>
             )}
 
+            {sourceDocument && <SourceDocumentDetails document={sourceDocument} onRevision={chooseRevision} />}
             <DocumentEditor
-              key={open.id}
-              title={open.title}
-              content={open.content}
+              key={`${shown.id}:${sourceDocument?.revision.id ?? "legacy"}`}
+              title={shown.title}
+              content={shown.content}
               onSave={save}
               saving={saving}
-              documentId={open.id}
-              provenance={open.provenance_markdown}
+              documentId={shown.id}
+              provenance={shown.provenance_markdown}
+              readOnly={!!sourceDocument && sourceDocument.revision.id !== sourceDocument.revisions[0]?.id}
+              exportUrl={sourceDocument ? sourceDocumentExportUrl(shown.id, sourceDocument.revision.id) : undefined}
             />
 
-            {open.citations.length > 0 && (
+            {shown.citations.length > 0 && (
               <div className="mt-4 border-t border-edge pt-3">
                 <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
                   Evidence saved with the first draft
                 </h2>
-                <PassageList citations={open.citations} />
+                <PassageList citations={shown.citations} />
                 <p className="mt-1.5 text-[11.5px] text-ink-faint">
                   These describe the draft, not what you have written since.
                 </p>
