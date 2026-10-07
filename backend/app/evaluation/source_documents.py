@@ -30,7 +30,7 @@ from app.services.source_documents import jobs
 from app.services.wiki import service, sources
 
 
-def run(workspace, scenario):
+def run(workspace, scenario, retry_job=None):
     workspace.mkdir(parents=True, exist_ok=True)
     app_root, originals = workspace / "app", workspace / "knowledge"
     os.environ["NOYE_DATA_DIR"] = str(app_root)
@@ -151,13 +151,22 @@ def run(workspace, scenario):
     else:
         instruction = "Write an English report using the selected materials."
         scope, mode = WikiScope(mode="empty"), "relevant"
-    request_id = str(uuid.uuid4())
-    job = jobs.enqueue(
-        connection,
-        GenerateRequest(
-            request_id=request_id, instruction=instruction, scope=scope, inventory_mode=mode
-        ),
-    )
+    if retry_job:
+        previous = knowledge_jobs.get(connection, retry_job)
+        if previous["kind"] != "source_document":
+            raise ValueError("Only source-document evaluation jobs can be retried.")
+        job = knowledge_jobs.resume(connection, retry_job)
+        request_id = job["subject_id"]
+        if job["manifest"] != previous["manifest"] or job["scope"] != previous["scope"]:
+            raise ValueError("The retry changed its frozen source inventory or scope.")
+    else:
+        request_id = str(uuid.uuid4())
+        job = jobs.enqueue(
+            connection,
+            GenerateRequest(
+                request_id=request_id, instruction=instruction, scope=scope, inventory_mode=mode
+            ),
+        )
     jobs.register()
     started = time.monotonic()
     print(
@@ -166,6 +175,7 @@ def run(workspace, scenario):
                 "scenario": scenario,
                 "job_id": job["id"],
                 "request_id": request_id,
+                "retry_of": retry_job,
                 "model": settings.ollama_model,
                 "context_tokens": settings.generation_context_tokens,
                 "output_tokens": settings.generation_output_tokens,
@@ -177,6 +187,7 @@ def run(workspace, scenario):
     final = knowledge_jobs.get(connection, job["id"])
     report = {
         "scenario": scenario,
+        "retry_of": retry_job,
         "seconds": round(time.monotonic() - started, 3),
         "job": final,
         "request": jobs.public_request(connection, request_id),
@@ -193,7 +204,8 @@ def run(workspace, scenario):
     }
     if final["artifact_id"]:
         report["revision"] = store.current(connection, final["artifact_id"])
-    target = workspace / f"{scenario}-{request_id}.json"
+    attempt = f"-retry-{job['attempt']}" if retry_job else ""
+    target = workspace / f"{scenario}-{request_id}{attempt}.json"
     target.write_text(json.dumps(report, ensure_ascii=False, indent=2))
     print(
         json.dumps(
@@ -213,13 +225,16 @@ def run(workspace, scenario):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, required=True)
+    parser.add_argument("--retry-job", help="Explicitly retry an existing failed evaluation job.")
     parser.add_argument(
         "--scenario",
         choices=["wiki", "collection", "report", "comparison", "partial", "empty"],
         required=True,
     )
     args = parser.parse_args()
-    run(args.workspace.resolve(), args.scenario)
+    if args.retry_job and args.scenario == "wiki":
+        parser.error("--retry-job applies only to source-document scenarios")
+    run(args.workspace.resolve(), args.scenario, args.retry_job)
 
 
 if __name__ == "__main__":
