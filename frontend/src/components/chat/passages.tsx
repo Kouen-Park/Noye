@@ -75,7 +75,7 @@ export function PassageList({ citations }: PassagesProps) {
                 <span className="font-mono text-[11.5px] tabular-nums text-ink-soft">
                   {hasPage ? `page ${citation.page_number}` : "no pages"}
                 </span>
-                {citation.original_status !== "missing" && <a
+                {!["missing", "unavailable", "disconnected"].includes(citation.original_status ?? "unknown") && <a
                   href={sourceUrl(citation.file_id, citation.page_number)}
                   target="_blank"
                   rel="noopener noreferrer"

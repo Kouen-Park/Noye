@@ -77,6 +77,8 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
         <p className="text-sm font-semibold">Verified restored workspace</p>
         <p className="mt-2 break-all font-mono text-xs">{restored.destination}</p>
         <p className="mt-2 text-sm text-ink-soft">{restored.missing_sources.length ? restored.missing_sources.length + " originals were missing from the backup. Saved conversations and documents remain available." : "Stored source snapshots, saved conversations and documents are ready. Reconnect folders and rebuild the index before searching."}</p>
+        {restored.external_roots && restored.external_roots.length > 0 && <p className="mt-2 text-sm text-ink-soft">Reconnect external folders: {restored.external_roots.map(root => root.name).join(", ")}. External originals were excluded; internal version snapshots are retained.</p>}
+        {!!restored.missing_knowledge_roots?.length && <p className="mt-2 text-sm text-ink-soft">Authored files from {restored.missing_knowledge_roots.length} inaccessible roots could not be copied. Saved SQLite revisions remain available.</p>}
         <p className="mt-2 text-sm text-ink-soft">Your current workspace stays open.</p>
         <button className={button + " mt-3"} disabled={busy !== null || switching}
           onClick={() => { setSelected(restored.destination); setConfirmed(false); }}>

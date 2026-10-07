@@ -29,8 +29,10 @@ def capture_citations(
                 captured_at=captured_at,
                 excerpts=tuple(
                     EvidenceExcerpt(
-                        content=result.content, chunk_index=result.chunk_index,
-                        retrieval_rank=rank, score=result.score,
+                        content=result.content,
+                        chunk_index=result.chunk_index,
+                        retrieval_rank=rank,
+                        score=result.score,
                         source_hash=result.source_hash,
                         index_fingerprint=result.index_fingerprint,
                         index_metadata=result.index_metadata,
@@ -55,11 +57,16 @@ def original_status(db: sqlite3.Connection, citation: MessageCitation) -> str:
         from app.services.folders import SourceError, read_original, root_record
 
         try:
-            _, digest, _ = read_original(
-                root_record(db, source["root_id"]), source["relative_path"]
-            )
+            root = root_record(db, source["root_id"])
+            if not root["connected"]:
+                return "disconnected"
+            if source["availability"] == "missing":
+                return "missing"
+            if root["availability"] != "available" or source["availability"] == "unavailable":
+                return "unavailable"
+            _, digest, _ = read_original(root, source["relative_path"])
         except SourceError:
-            return "missing"
+            return "unavailable"
     else:
         digest = hash_file(record.path)
     if digest is None:
@@ -76,9 +83,12 @@ def original_status(db: sqlite3.Connection, citation: MessageCitation) -> str:
 def provenance_markdown(citations: list[MessageCitation]) -> str:
     if not citations:
         return ""
-    parts = ["## Provenance", "Evidence saved with the first draft, from passages "
-             "consulted for its source answer. "
-             "These do not validate later edits or every generated claim."]
+    parts = [
+        "## Provenance",
+        "Evidence saved with the first draft, from passages "
+        "consulted for its source answer. "
+        "These do not validate later edits or every generated claim.",
+    ]
     for citation in citations:
         # Escape source labels and render excerpts literally, including Markdown/HTML.
         label = re.sub(r"([\\`*_{}\[\]()<>#!|])", r"\\\1", " ".join(citation.label.split()))
@@ -86,9 +96,11 @@ def provenance_markdown(citations: list[MessageCitation]) -> str:
         if citation.evidence and citation.evidence.excerpts:
             parts.append(f"> Evidence captured: {citation.evidence.captured_at}")
             for excerpt in citation.evidence.excerpts:
-                parts.append(f"> Chunk: {excerpt.chunk_index}"
-                             f"\n> Source SHA-256: {excerpt.source_hash or 'unknown'}"
-                             f"\n> Index fingerprint: {excerpt.index_fingerprint or 'unknown'}")
+                parts.append(
+                    f"> Chunk: {excerpt.chunk_index}"
+                    f"\n> Source SHA-256: {excerpt.source_hash or 'unknown'}"
+                    f"\n> Index fingerprint: {excerpt.index_fingerprint or 'unknown'}"
+                )
                 runs = re.findall(r"`+", excerpt.content)
                 fence = "`" * max(3, 1 + max(map(len, runs), default=0))
                 parts.append(f"{fence}text\n{excerpt.content}\n{fence}")

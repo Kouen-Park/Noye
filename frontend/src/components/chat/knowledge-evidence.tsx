@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Passages } from "@/components/chat/passages";
 import { MarkdownContent } from "@/components/documents/document-preview";
-import { wikiHref, type WikiScope } from "@/lib/wiki";
+import { wikiHref, wikiPreviewContent, type WikiScope } from "@/lib/wiki";
 import type { ChatCitation } from "@/lib/api";
 
 export interface KnowledgeSnapshot {
@@ -11,7 +11,7 @@ export interface KnowledgeSnapshot {
   warnings: string[];
   insufficient_evidence: boolean;
   wiki_pages: { wiki_id: string; revision_id: string; title: string; kind: string;
-    origin: string; interpretation: string; source_ids: string[]; revision_status: string }[];
+    origin: string; contributors?: { wiki_id: string }[]; interpretation: string; source_ids: string[]; revision_status: string }[];
 }
 
 /** Wiki interpretations and original evidence stay visibly separate, including old answers. */
@@ -35,7 +35,7 @@ export function KnowledgeEvidence({ snapshot, citations }: {
         <p className="break-all text-xs text-ink-faint">Wiki revision {page.revision_id} · saved interpretation
           {page.revision_status !== "unchanged" && ` · ${page.revision_status}`}</p>
         <details className="mt-1"><summary className="cursor-pointer py-2">Interpretation consulted at the time</summary>
-          <div className="mt-2"><MarkdownContent content={page.interpretation} allowImages={false} /></div>
+          <div className="mt-2"><MarkdownContent content={wikiPreviewContent(page.interpretation, page.contributors, scope)} allowImages={false} /></div>
         </details>
       </li>)}
     </ul>}

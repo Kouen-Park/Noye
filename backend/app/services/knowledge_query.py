@@ -132,6 +132,7 @@ def discover(
                         "interpretation": revision["content"],
                         "source_ids": sorted(contributor_ids),
                         "revision_status": "unchanged",
+                        "contributors": revision["metadata"].get("contributors", []),
                     }
                 )
         snapshot["wiki_state"] = "matched" if seen else "no_matches"

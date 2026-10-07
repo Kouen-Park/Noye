@@ -11,6 +11,9 @@ export interface RestoredWorkspace {
   missing_sources: string[];
   rebuild_required: boolean;
   workspace_id: string;
+  external_roots?: { id: string; name: string; availability: string }[];
+  external_originals?: string;
+  missing_knowledge_roots?: string[];
 }
 
 async function workspaceRequest(settings: AiSettings, path: string, options: RequestInit = {}) {

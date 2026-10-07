@@ -294,7 +294,7 @@ export interface ChatCitation {
   /** "Algorithms.pdf — page 34", or just the file name. */
   label: string;
   evidence?: EvidenceSnapshot | null;
-  original_status?: "unchanged" | "changed" | "missing" | "unknown";
+  original_status?: "unchanged" | "changed" | "missing" | "unknown" | "unavailable" | "disconnected";
 }
 
 /** One turn. `error` is set when answering failed; the question is still stored. */
