@@ -247,7 +247,8 @@ returned the model/build slot before B's actual v3 runs.
 
 ## Reproduce without private data
 
-Activate the backend environment and use a new isolated directory:
+Run from the repository's `backend/` directory, activate its Python environment,
+and use a new isolated evaluation directory:
 
 ```sh
 GENERATION_CONTEXT_TOKENS=8192 GENERATION_OUTPUT_TOKENS=2048 OLLAMA_THINKING=false \
