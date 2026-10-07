@@ -24,7 +24,7 @@ from app.models.source_documents import GenerateRequest
 from app.models.wiki import WikiScope
 from app.services import ingestion, knowledge_jobs
 from app.services.folder_scanner import FolderScanner
-from app.services.folders import register_root
+from app.services.folders import register_root, update_root
 from app.services.source_catalog import SourceCatalog
 from app.services.source_documents import jobs
 from app.services.wiki import service, sources
@@ -77,6 +77,7 @@ def run(workspace, scenario):
     ).fetchone():
         raise ValueError("Evaluation database contains uploaded files outside the invented corpus.")
     root = register_root(connection, originals, "connected")
+    update_root(connection, root, processing=True)
     clock = [0.0]
     scanner = FolderScanner(clock=lambda: clock[0])
     scanner.scan_root(connection, root)
