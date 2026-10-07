@@ -192,3 +192,47 @@ def test_chat_persists_wiki_snapshot_with_original_citations_and_labels_old_revi
     with pytest.raises(sqlite3.IntegrityError):
         client.post("/chat", json={"question": "Reservoir capacity?", "file_ids": [record.id]})
     assert db.execute("SELECT COUNT(*) FROM messages WHERE role='assistant'").fetchone()[0] == count
+
+
+def test_question_root_scope_is_fixed_before_wiki_or_original_discovery(workspace, monkeypatch):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from app.api.chat import router
+    from app.api.deps import get_db
+    from app.services.folders import register_root
+
+    db, root, root_id, *_ = workspace
+    record = discover(workspace)
+    unrelated = root.parent / "another-root"
+    unrelated.mkdir()
+    another_id = register_root(db, unrelated, "connected")
+    monkeypatch.setattr(
+        knowledge_query.retrieval, "search", lambda q, **kw: vector_for(db, kw["file_ids"])
+    )
+    monkeypatch.setattr(generation, "generate", lambda *args, **kwargs: "37.")
+    api = FastAPI()
+    api.include_router(router)
+    api.dependency_overrides[get_db] = lambda: db
+    client = TestClient(api)
+    response = client.post(
+        "/chat", json={"question": "Limit?", "scope": {"mode": "chosen", "root_ids": [root_id]}}
+    )
+    assert response.status_code == 201
+    assert response.json()["answer"]["citations"][0]["file_id"] == record.id
+    conversation_id = response.json()["conversation_id"]
+    assert client.get("/chat/conversations/" + conversation_id).json()["source_scope"] == [
+        record.id
+    ]
+    empty = client.post("/chat", json={"question": "Limit?", "scope": {"mode": "empty"}}).json()
+    assert empty["searched_files"] == 0 and empty["answer"]["citations"] == []
+    assert empty["answer"]["knowledge"]["scope"]["mode"] == "empty"
+    excluded = client.post(
+        "/chat", json={"question": "Limit?", "scope": {"mode": "chosen", "root_ids": [another_id]}}
+    ).json()
+    assert excluded["searched_files"] == 0
+    assert excluded["answer"]["knowledge"]["scope"]["mode"] == "chosen"
+    ambiguous = client.post(
+        "/chat", json={"question": "Limit?", "file_ids": [], "scope": {"mode": "all"}}
+    )
+    assert ambiguous.status_code == 400

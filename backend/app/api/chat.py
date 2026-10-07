@@ -32,6 +32,7 @@ from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
 from app.models.evidence import EvidenceSnapshot
 from app.models.files import FileStatus
+from app.models.wiki import WikiScope
 from app.services import knowledge_query
 from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import EmbeddingError
@@ -40,7 +41,7 @@ from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_q
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT
-from app.services.source_catalog import SourceError
+from app.services.source_catalog import SourceCatalog, SourceError
 from app.services.wiki.local import WikiError
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -174,6 +175,7 @@ class AskRequest(BaseModel):
     limit: int = Field(DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)
     provider: GenerationProvider = "ollama"
     file_ids: list[str] | None = Field(default=None, max_length=200)
+    scope: WikiScope | None = None
 
 
 class AskResponse(BaseModel):
@@ -235,6 +237,9 @@ def ask(
     if not question:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ask something first.")
 
+    if request.scope is not None and "file_ids" in request.model_fields_set:
+        raise HTTPException(400, "Choose either a material scope or file IDs, not both.")
+
     if request.conversation_id is None:
         conversation = conversation_store.create_conversation(db, first_question=question)
     else:
@@ -245,6 +250,17 @@ def ask(
 
     if "file_ids" in request.model_fields_set:
         conversation = conversation_store.set_source_scope(db, conversation.id, request.file_ids)
+    if request.scope is not None:
+        # Folder membership is fixed for this turn and persisted as the chosen
+        # inventory for later questions/documents. Links cannot add new members.
+        selected = (
+            None
+            if request.scope.mode == "all"
+            else [
+                item["source_id"] for item in SourceCatalog(db).freeze(request.scope.model_dump())
+            ]
+        )
+        conversation = conversation_store.set_source_scope(db, conversation.id, selected)
     scope = conversation.source_scope
     previous = conversation_store.recent_messages(db, conversation.id)
 
@@ -256,12 +272,30 @@ def ask(
 
     ready = {}
     context = None
+    material_scope = (
+        request.scope.model_dump()
+        if request.scope is not None
+        else {"mode": "all"}
+        if scope is None
+        else {"mode": "empty"}
+        if scope == []
+        else {"mode": "chosen", "source_ids": scope}
+    )
+    use_knowledge = (
+        request.provider == "ollama"
+        and db.execute(
+            "SELECT 1 FROM source_roots UNION SELECT 1 FROM wiki_pages LIMIT 1"
+        ).fetchone()
+        is not None
+    )
     try:
         ready = _ready_file_names(db) if scope != [] else {}
         if scope is not None:
             ready = {file_id: name for file_id, name in ready.items() if file_id in scope}
 
         if not ready:
+            if use_knowledge:
+                context = knowledge_query.discover(db, question, material_scope, file_ids=[])
             answer = conversation_store.add_message(
                 db,
                 conversation.id,
@@ -278,6 +312,7 @@ def ask(
                     else "There is nothing in your library to answer from yet. Add a file, or "
                     "wait for one that is still processing."
                 ),
+                knowledge=context.snapshot if context is not None else None,
             )
             return AskResponse(
                 conversation_id=conversation.id,
@@ -289,15 +324,7 @@ def ask(
 
         # Expanded Wiki/original context stays local. Explicit cloud requests keep
         # the existing retrieval payload and provider; no automatic switching occurs.
-        if (
-            request.provider == "ollama"
-            and db.execute(
-                "SELECT 1 FROM sources UNION SELECT 1 FROM wiki_pages LIMIT 1"
-            ).fetchone()
-        ):
-            material_scope = (
-                {"mode": "all"} if scope is None else {"mode": "chosen", "source_ids": scope}
-            )
+        if use_knowledge:
             context = knowledge_query.discover(
                 db,
                 retrieval_question(question, previous),
