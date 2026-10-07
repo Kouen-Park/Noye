@@ -13,6 +13,9 @@ folder, private document or cloud model was used for these checks.
 - Frontend: `npm test -- --maxWorkers=1`: **242 passed, 36 files, 30.61 seconds**.
 - After final preview/navigation fixes: **12 Wiki frontend tests passed**, 3 files,
   2.36 seconds, followed by lint/type checking and a successful desktop static export.
+- After A's integration review extended scope to every Wiki link: **13 focused tests
+  passed**, 3 files, 2.14 seconds, plus lint/type checking/static export. A also reported
+  a full frontend run of **244 tests**, 20.52 seconds, before that final added test.
 - A's later collision-retry integration: **5 filing tests passed**, 0.56 seconds,
   followed by `ruff check app desktop.py`. The full backend count above precedes that fix.
 - `npm run lint`, `next typegen`, `tsc --noEmit`: passed after the revision/scope fixes.
@@ -51,6 +54,9 @@ root resume duplication, old events for removed sources, revision-stale relation
   historical content surviving a material-scope change and portable Markdown navigation
   losing its browser target/scope. Focused regression tests verify
 each behavior. This was a self-review, not an independent review or security audit.
+A's subsequent integration code review found typed/sidebar/artifact/contributor links
+also needed scope-bearing URLs for new tabs/reloads. One shared feature helper now covers
+all those links; the rendered-anchor regression and browser checks confirmed the change.
 
 ## Local model measurements
 
@@ -149,12 +155,16 @@ Direct Chrome observations on 2026-10-07:
   contributor IDs. Clicking one opened the actual source page in a new tab with the same
   explicit chosen scope; no file-like `/sources/...md` route or scope expansion occurred.
   Generated comment metadata is hidden in preview and retained in authored Markdown.
+  Final reload inspected 11 list/artifact/relation Wiki links; all retained chosen scope.
 - At 390 × 844 light mode and 1280 × 900 dark mode, document scroll width equaled viewport
   width. The observed narrow mobile error text was corrected: status width became 316px
   and action buttons moved to the following line. The rebuilt export was reloaded and
   visually inspected.
 - No JavaScript console errors after the final reload. Three font-preload warnings remained.
   Empty-scope reads intentionally returned a visible HTTP 409 and did not expose content.
+  One new tab initially suffered a chunk connection reset/timeout while the served export
+  was being rebuilt; reloading the completed export loaded its authored body and the same
+  chosen scope. Live replacement of served build assets was not treated as acceptance.
 
 Browser acceptance did not exercise a native Wiki window or native Wiki PDF printing.
 The real native PDF check reported by A is ingestion, not Wiki generation/print quality.
