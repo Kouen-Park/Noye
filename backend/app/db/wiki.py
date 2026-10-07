@@ -258,7 +258,8 @@ def relations(connection, identifier):
     return [
         dict(row)
         for row in connection.execute(
-            "SELECT r.*,p.title AS target_title,o.title AS origin_title FROM wiki_relations r "
+            "SELECT r.*,p.title AS target_title,o.title AS origin_title,"
+            "p.current_revision AS target_current_revision FROM wiki_relations r "
             "JOIN wiki_pages o ON o.id=r.origin_id JOIN wiki_pages p ON p.id=r.target_id "
             "WHERE r.revision_id=o.current_revision AND (origin_id=? OR target_id=?) LIMIT 60",
             (identifier, identifier),

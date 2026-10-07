@@ -156,6 +156,29 @@ def test_manual_category_change_invalidates_prior_classification(workspace):
     assert not result["reused"] and result["classification"] == "Personal"
 
 
+def test_changed_target_revision_is_visible_and_does_not_drive_discovery(workspace):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    a, b = generate(db, first.id), generate(db, second.id)
+    service.edit(
+        db,
+        a["wiki_id"],
+        EditWiki(
+            expected_revision=a["revision_id"],
+            title="Authored interpretation",
+            content="User edit.",
+        ),
+    )
+    link = store.relations(db, b["wiki_id"])[0]
+    assert link["target_revision"] == a["revision_id"]
+    assert link["target_current_revision"] != link["target_revision"]
+    scope = WikiScope()
+    assert relations.traverse(db, b["wiki_id"], scope, sources.freeze(db, scope), 2) == [
+        b["wiki_id"]
+    ]
+
+
 def test_user_disk_edits_conflict_refresh_and_provenance(workspace):
     db, root, _, scan, _ = workspace
     record = discover(workspace)
