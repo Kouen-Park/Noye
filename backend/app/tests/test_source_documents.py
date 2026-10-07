@@ -90,7 +90,7 @@ def model(
                     }
                     for p in payload["passages"]
                 ],
-                "gaps": [],
+                "gaps": ["The other project does not exist."] if invalid == "gap" else [],
             }
             if invalid == "number":
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
@@ -208,6 +208,19 @@ def test_relevant_discovery_uses_scoped_wiki_relations_not_wiki_as_evidence(work
     assert {s["source_id"] for s in metadata["selected_manifest"]} == {first.id}
     assert all(second.id not in json.dumps(c) for c in calls)
     assert metadata["coverage"]["inventory_mode"] == "relevant"
+
+
+def test_unverified_per_source_gap_is_not_a_published_collection_conclusion(workspace):
+    db, *_ = workspace
+    original = discover(workspace)
+    identifier = run(db, enqueue(db), model(invalid="gap")[0])
+    revision = store.current(db, identifier)
+    assert "The other project does not exist" not in revision["content"]
+    observation = revision["metadata"]["uncertainties"][0]
+    assert observation["verified"] is False
+    assert observation["source_id"] == original.id
+    assert observation["batch_number"] == 0
+    assert set(observation["evidence_ids"]) <= {p["id"] for p in revision["metadata"]["evidence"]}
 
 
 def test_empty_scope_requires_sources_without_model_call(workspace):
