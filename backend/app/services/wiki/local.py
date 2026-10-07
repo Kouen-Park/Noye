@@ -7,6 +7,7 @@ import httpx
 from pydantic import ValidationError
 
 from app.config import get_settings
+from app.services.local_ollama import LocalModelError, require_installed_local_model
 from app.services.model_usage import ModelBusyError, inference
 
 PROMPT_VERSION = "wiki-grounded-v3"
@@ -69,6 +70,7 @@ def structured(prompt, schema, *, settings=None, client=None, constraints=None):
             )
     try:
         with inference(settings.ollama_model):
+            require_installed_local_model(settings, client)
             response = client.post(
                 settings.ollama_base_url.rstrip("/") + "/api/generate",
                 json={
@@ -85,6 +87,8 @@ def structured(prompt, schema, *, settings=None, client=None, constraints=None):
                     },
                 },
             )
+    except LocalModelError as error:
+        raise WikiError(str(error)) from None
     except (httpx.RequestError, ModelBusyError):
         raise WikiError("Local Ollama is unavailable or busy. Retry the Wiki job.") from None
     if response.status_code == 404:

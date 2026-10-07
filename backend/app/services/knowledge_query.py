@@ -202,6 +202,7 @@ def answer(context, question, *, history="", client=None):
         generation.build_prompt(question, context.sources, history=history),
         client=client,
         provider="ollama",
+        local_only=True,
     )
     context.session.verify()
     return generation.Answer(text, context.sources)
