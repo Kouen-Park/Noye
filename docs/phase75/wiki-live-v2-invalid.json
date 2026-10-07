@@ -1,0 +1,54 @@
+{
+  "model": "qwen3.5:4b",
+  "prompt": "wiki-grounded-v2",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "corpus": {
+    "Learning/HELIOS-baseline.md": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available.\n",
+    "Learning/HELIOS-alternative.txt": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown.\n",
+    "Learning/HELIOS-한국어.md": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다.\n"
+  },
+  "indexing": [
+    {
+      "source_id": "888d8ae9-144d-4da4-874f-bbdfc48c1b7c",
+      "indexing_seconds": 1.4171343329999218,
+      "indexing_status": "READY"
+    },
+    {
+      "source_id": "3dd88479-c6c5-4d56-ad30-6c1bf354ab4c",
+      "indexing_seconds": 0.04446254199865507,
+      "indexing_status": "READY"
+    },
+    {
+      "source_id": "d6e6d4d9-e3e8-494d-a071-b0dcc0e5aae4",
+      "indexing_seconds": 0.04322254099861311,
+      "indexing_status": "READY"
+    }
+  ],
+  "outputs": [],
+  "model_calls": [
+    {
+      "task": "summarize_section",
+      "done_reason": "stop",
+      "total_duration": 52189993917,
+      "load_duration": 9508561958,
+      "prompt_eval_count": 371,
+      "prompt_eval_duration": 2487744000,
+      "eval_count": 654,
+      "eval_duration": 40072265000
+    }
+  ],
+  "status": "failed",
+  "error": "The model returned an unknown passage or non-verbatim quote.",
+  "failed_elapsed_seconds": 53.19055666599888,
+  "pages": [
+    {
+      "id": "b296366b-e410-588d-a2ce-c7d564164277",
+      "kind": "source",
+      "title": "HELIOS-한국어.md"
+    }
+  ]
+}
