@@ -41,9 +41,12 @@ def model(
     collection_query="",
 ):
     calls = []
+    synthesized = [False]
 
     def response(request):
         body = json.loads(request.content)
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "qwen3"}})
         payload = json.loads(body["prompt"])
         calls.append(payload)
         if callback:
@@ -91,14 +94,25 @@ def model(
             }
             if invalid == "number":
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
+            if invalid == "synthesis_support":
+                result["claims"][0]["text"] = "An earlier overconfident paraphrase."
         elif task == "cross_source_synthesis":
+            synthesized[0] = True
             result = {
                 "claims": [{"text": c["text"], "claim_ids": [c["id"]]} for c in payload["claims"]]
             }
             if invalid == "synthesis":
                 result["claims"][0]["claim_ids"] = ["invented"]
+            if invalid == "synthesis_support":
+                result["claims"][0]["text"] = "An unsupported universal guarantee."
         elif task == "verify_support":
-            result = {"supported": [invalid != "unsupported"] * len(payload["claims"])}
+            result = {
+                "supported": [
+                    invalid != "unsupported"
+                    and not (invalid == "synthesis_support" and synthesized[0])
+                ]
+                * len(payload["claims"])
+            }
         else:
             raise AssertionError(task)
         if invalid == "json":
@@ -384,16 +398,17 @@ def test_model_failure_job_can_retry_without_reusing_invalid_evidence_cache(work
     discover(workspace)
     job = enqueue(db)
     original = pipeline.generate
+    worker = knowledge_jobs.KnowledgeWorker()
     jobs.register()
     monkeypatch.setattr(
         pipeline, "generate", lambda context: original(context, client=model(invalid="quote")[0])
     )
-    knowledge_jobs.worker.run_one(db, job["id"])
+    worker.run_one(db, job["id"])
     assert knowledge_jobs.get(db, job["id"])["state"] == "failed"
     assert store.request(db, job["subject_id"])["cache"] == {}
     retry = knowledge_jobs.resume(db, job["id"])
     monkeypatch.setattr(pipeline, "generate", lambda context: original(context, client=model()[0]))
-    knowledge_jobs.worker.run_one(db, retry["id"])
+    worker.run_one(db, retry["id"])
     assert knowledge_jobs.get(db, retry["id"])["state"] == "complete"
     assert documents.count_documents(db) == 1
 
@@ -406,3 +421,45 @@ def test_local_only_and_array_schema_constraints():
     with pytest.raises(Exception, match="local loopback"):
         local.structured({"task": "interpret_intent"}, Selection, settings=settings, client=client)
     assert calls == []
+
+
+def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
+    pipeline.verify_numbers("백업은 하루 2번 실행됩니다.", "Backups run twice a day.")
+    pipeline.verify_numbers("Backups run 1 time daily.", "백업은 하루에 한 번 실행됩니다.")
+    with pytest.raises(local.DocumentError, match="number absent"):
+        pipeline.verify_numbers("Backups run 9 times daily.", "Backups run twice a day.")
+
+
+def test_loopback_cloud_alias_is_rejected_before_source_context_is_sent():
+    seen = []
+
+    def response(request):
+        seen.append(request.url.path)
+        return httpx.Response(
+            200,
+            json={
+                "model_info": {"architecture": "remote"},
+                "remote_host": "https://ollama.com",
+                "remote_model": "cloud",
+            },
+        )
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        with pytest.raises(local.DocumentError, match="installed local model"):
+            local.structured(
+                {"task": "test", "original": "Private excerpt"}, Selection, client=client
+            )
+    assert seen == ["/api/show"]
+
+
+def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    artifact = run(db, enqueue(db), model(invalid="synthesis_support")[0])
+    revision = store.current(db, artifact)
+    assert "unsupported universal guarantee" not in revision["content"]
+    assert "earlier overconfident paraphrase" not in revision["content"]
+    assert "37" in revision["content"]
+    assert revision["metadata"]["coverage"]["partial"]
+    assert revision["metadata"]["coverage"]["synthesis_limits"]
+    assert "comparative conclusions" in revision["content"]
