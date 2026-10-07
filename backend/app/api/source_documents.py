@@ -51,10 +51,14 @@ def generate(request: GenerateRequest, db: sqlite3.Connection = Depends(get_db))
 @router.get("/requests")
 def requests(conversation_id: str | None = None, db: sqlite3.Connection = Depends(get_db)):
     result = []
-    for row in db.execute("SELECT id FROM source_document_requests ORDER BY rowid DESC LIMIT 100"):
+    rows = db.execute(
+        "SELECT id FROM source_document_requests "
+        "WHERE (? IS NULL OR json_extract(request_json,'$.conversation_id')=?) "
+        "ORDER BY rowid DESC LIMIT 100",
+        (conversation_id, conversation_id),
+    )
+    for row in rows:
         request = jobs.public_request(db, row[0])
-        if conversation_id and request["request"]["conversation_id"] != conversation_id:
-            continue
         job = db.execute(
             "SELECT id FROM knowledge_jobs WHERE kind='source_document' AND subject_id=? "
             "ORDER BY rowid DESC LIMIT 1",
