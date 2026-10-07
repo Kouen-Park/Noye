@@ -46,13 +46,15 @@ export function ExportControls({
   onProvenanceChange,
 }: ExportControlsProps) {
   const [printError, setPrintError] = useState(false);
+  const markdownUrl = new URL(exportUrl ?? documentExportUrl(documentId, includeProvenance), "http://localhost");
+  markdownUrl.searchParams.set("provenance", String(includeProvenance));
   return (
     <div className="flex flex-wrap items-center gap-2">
       {onProvenanceChange && <label className="flex min-h-11 items-center gap-2 text-xs text-ink-soft">
         <input type="checkbox" checked={includeProvenance} onChange={(event) => onProvenanceChange(event.target.checked)} />Include provenance
       </label>}
       <a
-        href={disabled ? undefined : (exportUrl ? `${exportUrl}&provenance=${includeProvenance}` : documentExportUrl(documentId, includeProvenance))}
+        href={disabled ? undefined : markdownUrl.toString()}
         onClick={(event) => {
           if (disabled || content === undefined) return;
           event.preventDefault();
