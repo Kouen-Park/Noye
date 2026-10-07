@@ -54,6 +54,15 @@ def test_resume_queues_ready_sources_skipped_while_paused(workspace):
     assert db.execute("SELECT status FROM files WHERE id=?", (record.id,)).fetchone()[0] == "READY"
 
 
+def test_deleted_source_does_not_block_later_ready_events(workspace):
+    db, *_ = workspace
+    with db:
+        emit(db, "ready", source={"file_id": "previously-removed-upload"})
+    retained = discover(workspace, "retained.txt")
+    observer.reconcile(db)
+    assert [r[0] for r in db.execute("SELECT subject_id FROM knowledge_jobs")] == [retained.id]
+
+
 def test_same_version_cancellation_leaves_ready_event_pending(workspace):
     db, *_ = workspace
     record = discover(workspace)

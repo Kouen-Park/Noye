@@ -13,7 +13,10 @@ def ready(connection, event):
     from app.services.folders import root_record
     from app.services.source_catalog import SourceError
 
-    record = sources.catalog(connection).get(event["source_id"])
+    try:
+        record = sources.catalog(connection).get(event["source_id"])
+    except SourceError:
+        return True  # A deleted source cannot block later committed folder events.
     if (
         not record["root_id"]
         or record["availability"] != "available"
