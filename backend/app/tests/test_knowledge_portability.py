@@ -22,6 +22,7 @@ def test_document_edits_versions_and_stage_history_survive_new_workspace_restore
     artifact = run(db, job)
     documents.update_document(db, artifact, content="# 사용자 편집\nKeep exactly 37 and my notes.")
     expected = document_store.current(db, artifact)
+    assert expected["metadata"]["selected_manifest"][0]["version"] == original.content_hash
     archive = data_directory().parent / "integrated.zip"
     manifest = create_backup(data_directory(), data_directory() / "app.db", archive)
     assert manifest["external_originals"].startswith("not included")

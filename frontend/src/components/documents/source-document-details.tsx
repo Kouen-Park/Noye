@@ -20,7 +20,9 @@ export function SourceDocumentDetails({ document, onRevision }: {
         {!!source.no_text_pages.length && ` No text on pages ${source.no_text_pages.join(", ")}.`}</li>)}</ul>
       <ul className="mt-3 space-y-2">{document.revision.metadata.citations.map((citation, n) => <li key={`${citation.id}-${n}`}>
         E{n + 1}: {citation.source.name} · {citation.current_status} · passage {citation.passage_index}
-        <a href={wikiOriginalUrl(citation)} target="_blank" rel="noreferrer" className="ml-2 inline-flex min-h-11 items-center text-brand underline">Open original</a>
+        {citation.current_status === "available" && <a href={wikiOriginalUrl(citation)} target="_blank" rel="noreferrer" className="ml-2 inline-flex min-h-11 items-center text-brand underline">Open original</a>}
+        <p className="mt-1 break-all text-xs text-ink-soft">Version: {citation.source.source_version} · characters {citation.quote_start}–{citation.quote_end}</p>
+        <blockquote className="mt-1 whitespace-pre-wrap border-l border-edge pl-3 text-xs">{citation.quote}</blockquote>
       </li>)}</ul>
       <p className="mt-2 text-xs text-ink-soft">{document.revision.metadata.model} · {document.revision.metadata.prompt_version} · {document.revision.metadata.processing_seconds}s. Saved evidence describes the first draft; user edits are not re-verified.</p>
     </details>

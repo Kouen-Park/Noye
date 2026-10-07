@@ -31,7 +31,15 @@ def workspace(folder):
     return folder
 
 
-def model(*, callback=None, invalid=None, selected=None, language="English"):
+def model(
+    *,
+    callback=None,
+    invalid=None,
+    selected=None,
+    language="English",
+    intent_mode="relevant",
+    collection_query="",
+):
     calls = []
 
     def response(request):
@@ -47,8 +55,8 @@ def model(*, callback=None, invalid=None, selected=None, language="English"):
                 "topic": "Reservoir",
                 "document_type": "report",
                 "language": language,
-                "inventory_mode": "relevant",
-                "collection_query": "",
+                "inventory_mode": intent_mode,
+                "collection_query": collection_query,
                 "clarification": None,
             }
         elif task == "discover_sources":
@@ -353,6 +361,40 @@ def test_repeated_generation_request_returns_one_job_and_one_user_message(worksp
     assert db.execute("SELECT count(*) FROM messages").fetchone()[0] == 1
     run(db, a)
     assert enqueue(db)["id"] == a["id"]
+    assert documents.count_documents(db) == 1
+
+
+def test_named_collection_enumerates_every_member_and_freezes_later_discoveries(workspace):
+    db, *_ = workspace
+    a = discover(workspace, "Course/one.txt", "Reservoir capacity is 37 litres.")
+    b = discover(workspace, "Course/two.txt", "Reservoir capacity is 92 litres.")
+    discover(workspace, "Elsewhere/other.txt", "A different collection.")
+    job = enqueue(db, mode="auto")
+    later = discover(workspace, "Course/later.txt", "Discovered after the request started.")
+    client, calls = model(intent_mode="collection", collection_query="Course")
+    artifact = run(db, job, client)
+    manifest = store.current(db, artifact)["metadata"]["selected_manifest"]
+    assert {s["source_id"] for s in manifest} == {a.id, b.id}
+    assert all(later.id not in json.dumps(c) for c in calls)
+    assert not any(c["task"] == "discover_sources" for c in calls)
+
+
+def test_model_failure_job_can_retry_without_reusing_invalid_evidence_cache(workspace, monkeypatch):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    original = pipeline.generate
+    jobs.register()
+    monkeypatch.setattr(
+        pipeline, "generate", lambda context: original(context, client=model(invalid="quote")[0])
+    )
+    knowledge_jobs.worker.run_one(db, job["id"])
+    assert knowledge_jobs.get(db, job["id"])["state"] == "failed"
+    assert store.request(db, job["subject_id"])["cache"] == {}
+    retry = knowledge_jobs.resume(db, job["id"])
+    monkeypatch.setattr(pipeline, "generate", lambda context: original(context, client=model()[0]))
+    knowledge_jobs.worker.run_one(db, retry["id"])
+    assert knowledge_jobs.get(db, retry["id"])["state"] == "complete"
     assert documents.count_documents(db) == 1
 
 
