@@ -1,6 +1,8 @@
 """Real folder/catalog/Wiki/version services; deterministic local model responses."""
 
 import json
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from threading import Thread
 
 import httpx
 import pytest
@@ -231,6 +233,69 @@ def test_empty_scope_requires_sources_without_model_call(workspace):
     with pytest.raises(pipeline.ClarificationRequired, match="No sources"):
         run(db, job, client)
     assert calls == [] and documents.count_documents(db) == 0
+
+
+def test_owned_local_client_bypasses_environment_proxy_for_original_context(monkeypatch):
+    received = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            received.append((self.server.server_port, self.path, body))
+            data = (
+                {"model_info": {"general.architecture": "mock-local"}}
+                if self.path.endswith("/api/show")
+                else {"done": True, "response": json.dumps({"source_ids": ["local-only"]})}
+            )
+            encoded = json.dumps(data).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(encoded)))
+            self.end_headers()
+            self.wfile.write(encoded)
+
+        def log_message(self, *args):
+            pass
+
+    with (
+        ThreadingHTTPServer(("127.0.0.1", 0), Handler) as original_server,
+        ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+    ):
+        threads = [
+            Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
+            for server in (original_server, proxy)
+        ]
+        for thread in threads:
+            thread.start()
+        try:
+            for name in (
+                "HTTP_PROXY",
+                "HTTPS_PROXY",
+                "ALL_PROXY",
+                "http_proxy",
+                "https_proxy",
+                "all_proxy",
+            ):
+                monkeypatch.setenv(name, f"http://127.0.0.1:{proxy.server_port}")
+            monkeypatch.setenv("NO_PROXY", "")
+            monkeypatch.setenv("no_proxy", "")
+            result = local.structured(
+                {"task": "discover_sources", "original_context": "Synthetic private evidence 37"},
+                Selection,
+                settings=Settings(
+                    ollama_base_url=f"http://127.0.0.1:{original_server.server_port}",
+                    ollama_model="mock-local",
+                ),
+            )
+            assert result.source_ids == ["local-only"]
+            assert [path for _, path, _ in received] == ["/api/show", "/api/generate"]
+            assert all(port == original_server.server_port for port, _, _ in received)
+            assert "Synthetic private evidence 37" in received[-1][2]["prompt"]
+        finally:
+            original_server.shutdown()
+            proxy.shutdown()
+            for thread in threads:
+                thread.join(timeout=1)
 
 
 def test_missing_and_indexing_failure_are_partial_coverage(workspace):

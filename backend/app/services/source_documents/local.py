@@ -64,7 +64,7 @@ def structured(payload, schema, *, settings=None, client=None, constraints=None)
     if size(payload, schema, constraints) > budget(settings):
         raise DocumentError("Document stage exceeds the local context budget. No input was cut.")
     if client is None:
-        with httpx.Client(timeout=300, follow_redirects=False) as owned:
+        with httpx.Client(timeout=300, follow_redirects=False, trust_env=False) as owned:
             return structured(
                 payload, schema, settings=settings, client=owned, constraints=constraints
             )
