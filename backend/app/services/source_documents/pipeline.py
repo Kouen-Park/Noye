@@ -60,17 +60,41 @@ def _checkpoint(context, stage, completed=0, total=0):
 def _call(context, req, key, payload, schema, settings, client, constraints=None):
     """Cache successful model stages across explicit retries; no hidden replay on startup."""
     _checkpoint(context, payload["task"])
-    cache_key = hashlib.sha256(
-        (
-            key
-            + store.encode(payload)
-            + settings.ollama_model
-            + local.PROMPT_VERSION
-            + str(settings.generation_context_tokens)
-            + str(settings.generation_output_tokens)
-            + str(settings.ollama_thinking)
-        ).encode()
-    ).hexdigest()
+    rejected = req["report"].get("rejected_support_check", {})
+    if rejected.get("stage") == key and payload["task"] in (
+        "process_original_sections",
+        "cross_source_synthesis",
+    ):
+        payload = {
+            **payload,
+            "validation_feedback": {
+                "previous_claims": [
+                    {"text": claim["text"], "supported": supported}
+                    for claim, supported in zip(
+                        rejected["claims"], rejected["supported"], strict=False
+                    )
+                ],
+                "rules": "Correct the rejected factual wording before producing a new draft. "
+                "Observed stored volume does not imply maximum capacity; avoid adding total, "
+                "maximum, guarantees or stronger conditions absent from the originals. "
+                "Preserve source attribution and exact quoted wording. Do not omit valid sources.",
+            },
+        }
+    cache_key = (
+        key
+        + ":"
+        + hashlib.sha256(
+            (
+                key
+                + store.encode(payload)
+                + settings.ollama_model
+                + local.PROMPT_VERSION
+                + str(settings.generation_context_tokens)
+                + str(settings.generation_output_tokens)
+                + str(settings.ollama_thinking)
+            ).encode()
+        ).hexdigest()
+    )
     if cache_key in req["cache"]:
         return schema.model_validate(req["cache"][cache_key])
     result = local.structured(
@@ -180,6 +204,26 @@ def discover(context, req, settings, client):
     elif intent.inventory_mode == "collection":
         selected = [s["source_id"] for s in manifest]
     else:
+        expanded = []
+        for item in candidates:
+            expanded.append(item)
+            page = wiki_store.find(db, "source:" + item["source_id"])
+            if not page or not page["current_revision"]:
+                continue
+            revision = wiki_store.revision(db, page["current_revision"])
+            if not sources.eligible_page(db, revision, scope, manifest):
+                continue
+            # Every source-summary claim is discoverable in bounded entries. No
+            # truncated Wiki body or original fact is used for document drafting.
+            for section in revision["metadata"].get("sections", []):
+                for claim in [section["summary"], *section["key_points"]]:
+                    expanded.append(
+                        {
+                            **item,
+                            "wiki_discovery_interpretation": claim["text"],
+                            "wiki_revision": revision["id"],
+                        }
+                    )
 
         def payload(group):
             return {
@@ -196,7 +240,7 @@ def discover(context, req, settings, client):
         selected = []
         for position, group in enumerate(
             batches(
-                candidates,
+                expanded,
                 payload,
                 Selection,
                 settings,
@@ -238,24 +282,45 @@ def discover(context, req, settings, client):
 def verify_numbers(text, support):
     # A second local entailment pass follows this mechanical guard.
     def numbers(value):
-        return set(re.findall(r"\d+(?:[.,]\d+)*", value))
+        found = set(re.findall(r"\d+(?:[.,]\d+)*", value))
+        # Faithful bilingual rendering can turn an explicit word count into a digit.
+        for pattern, number in (
+            (r"\b(?:once|one)\b|한\s*번|하나", "1"),
+            (r"\b(?:twice|two)\b|두\s*번|둘", "2"),
+            (r"\bthree\b|세\s*번|셋", "3"),
+        ):
+            if re.search(pattern, value, re.IGNORECASE):
+                found.add(number)
+        return found
 
     if not numbers(text) <= numbers(support):
         raise local.DocumentError("A generated claim contains a number absent from its evidence.")
 
 
-def verify(context, req, key, claims, settings, client):
+def check_numbers(context, req, text, originals):
+    try:
+        verify_numbers(text, " ".join(originals))
+    except local.DocumentError:
+        report = store.request(context.connection, req["id"])["report"]
+        report["rejected_numeric_claim"] = {"text": text, "originals": originals}
+        store.save_request(context.connection, req["id"], report=report)
+        raise
+
+
+def verify(context, req, key, claims, settings, client, *, strict=True):
     payload = {
         "task": "verify_support",
         "claims": claims,
-        "rules": "For EACH claim return whether the supplied quotes alone support every "
-        "fact, comparison, number, condition and exception in the text. No outside knowledge. "
+        "rules": "For EACH claim return whether the supplied original passages and exact quotes "
+        "support every fact, comparison, number, condition and exception in the text. "
+        "Use adjoining original sentences to resolve the subject of a quote. No outside knowledge. "
         "False for unsupported conclusions or contradictory evidence. "
         "Return one boolean per claim.",
     }
     groups = list(
         batches(claims, lambda group: {**payload, "claims": group}, Verification, settings)
     )
+    verdicts = []
     for position, group in enumerate(groups):
         result = _call(
             context,
@@ -266,11 +331,24 @@ def verify(context, req, key, claims, settings, client):
             settings,
             client,
         )
-        if len(result.supported) != len(group) or not all(result.supported):
-            raise local.DocumentError(
-                "The local evidence check rejected an unsupported conclusion. "
-                "No artifact was saved."
-            )
+        if len(result.supported) != len(group):
+            raise local.DocumentError("The local evidence check returned an invalid verdict count.")
+        verdicts.extend(result.supported)
+        if not all(result.supported):
+            report = store.request(context.connection, req["id"])["report"]
+            report["rejected_support_check"] = {
+                "stage": key,
+                "claims": group,
+                "supported": result.supported,
+            }
+            store.save_request(context.connection, req["id"], report=report)
+            context.report(key, "failed", detail=report["rejected_support_check"])
+            if strict:
+                raise local.DocumentError(
+                    "The local evidence check rejected an unsupported conclusion. "
+                    "No artifact was saved."
+                )
+    return verdicts
 
 
 def coverage_entry(item):
@@ -315,6 +393,13 @@ def coverage_markdown(report):
         "Coverage describes extracted text supplied to the model, not comprehension or "
         "proof that every fact was included. Scanned images and extraction omissions may remain."
     )
+    if report.get("synthesis_limits"):
+        parts.append(
+            "Some cross-source wording did not pass evidence verification. "
+            "Verbatim original passages were retained in their original language; "
+            "comparative conclusions "
+            "for those items remain unresolved."
+        )
     return "\n\n".join(parts)
 
 
@@ -333,6 +418,9 @@ def provenance_markdown(metadata):
             f"SHA-256/version `{source['source_version']}`; passage {item['passage_index']}, "
             f"characters {item['quote_start']}–{item['quote_end']}.\n\n"
             + "\n".join("> " + line for line in item["quote"].splitlines())
+            + "\n\nSaved original passage context (characters "
+            + f"{item['start']}–{item['end']}):\n\n"
+            + "\n".join("> " + line for line in item["text"].splitlines())
         )
     return "\n\n".join(parts) + "\n"
 
@@ -375,7 +463,7 @@ def generate(context, *, settings=None, client=None):
         "sources": list(coverage.values()),
         "partial": False,
     }
-    all_claims, evidence = [], {}
+    all_claims, evidence, gaps = [], {}, []
     session = SourceSession(db, context.scope, context.manifest)
     consumed = []
     for position, source_id in enumerate(plan["selected_ids"]):
@@ -478,9 +566,18 @@ def generate(context, *, settings=None, client=None):
                         or support.quote not in known[support.evidence_id].text
                     ):
                         raise local.DocumentError("The model invented an excerpt or evidence ID.")
-                verify_numbers(claim.text, " ".join(s.quote for s in claim.supports))
-                claims.append({"text": claim.text, "quotes": [s.quote for s in claim.supports]})
+                check_numbers(
+                    context, req, claim.text, [known[s.evidence_id].text for s in claim.supports]
+                )
+                claims.append(
+                    {
+                        "text": claim.text,
+                        "quotes": [s.quote for s in claim.supports],
+                        "original_passages": [known[s.evidence_id].text for s in claim.supports],
+                    }
+                )
             verify(context, req, f"source:{source_id}:{batch_number}", claims, settings, client)
+            gaps.extend({"source_id": source_id, "text": gap} for gap in result.gaps)
             for claim in result.claims:
                 all_claims.append(
                     {**claim.model_dump(), "id": f"C{len(all_claims) + 1}", "source_id": source_id}
@@ -501,7 +598,7 @@ def generate(context, *, settings=None, client=None):
     report["partial"] = any(
         s["state"] != "processed" or s["no_text_pages"] for s in report["sources"]
     )
-    rendered, citations = [], []
+    rendered, citations, synthesis_limits = [], [], []
     for heading in outline.sections:
         relevant = [c for c in all_claims if c["section_id"] == heading.id]
         # Interleave sources so each bounded synthesis can compare across originals.
@@ -555,8 +652,16 @@ def generate(context, *, settings=None, client=None):
                 supports = [
                     s for identifier in claim.claim_ids for s in known[identifier]["supports"]
                 ]
-                verify_numbers(claim.text, " ".join(s["quote"] for s in supports))
-                checks.append({"text": claim.text, "quotes": [s["quote"] for s in supports]})
+                check_numbers(
+                    context, req, claim.text, [evidence[s["evidence_id"]]["text"] for s in supports]
+                )
+                checks.append(
+                    {
+                        "text": claim.text,
+                        "quotes": [s["quote"] for s in supports],
+                        "original_passages": [evidence[s["evidence_id"]]["text"] for s in supports],
+                    }
+                )
                 labels = []
                 for support in supports:
                     passage = evidence[support["evidence_id"]]
@@ -571,16 +676,61 @@ def generate(context, *, settings=None, client=None):
                         citations.append(citation)
                     labels.append(f"E{citations.index(citation) + 1}")
                 outputs.append(claim.text + " [" + ", ".join(dict.fromkeys(labels)) + "]")
-            verify(context, req, f"synthesis:{heading.id}:{group_number}", checks, settings, client)
-            paragraphs.extend(outputs)
+            verdicts = verify(
+                context,
+                req,
+                f"synthesis:{heading.id}:{group_number}",
+                checks,
+                settings,
+                client,
+                strict=False,
+            )
+            for claim, output, supported in zip(result.claims, outputs, verdicts, strict=True):
+                if supported:
+                    paragraphs.append(output)
+                else:
+                    # Use original bytes if final synthesis cannot be verified.
+                    # An earlier model-approved paraphrase can still be overconfident.
+                    for identifier in claim.claim_ids:
+                        original = known[identifier]
+                        labels, quoted = [], []
+                        for support in original["supports"]:
+                            label = next(
+                                n
+                                for n, citation in enumerate(citations, 1)
+                                if citation["id"] == support["evidence_id"]
+                                and citation["quote"] == support["quote"]
+                            )
+                            labels.append(f"E{label}")
+                            quoted.append(evidence[support["evidence_id"]]["text"])
+                        for text in dict.fromkeys(quoted):
+                            paragraphs.append(
+                                "\n".join("> " + line for line in text.splitlines())
+                                + " ["
+                                + ", ".join(labels)
+                                + "]"
+                            )
+                    synthesis_limits.append(
+                        {
+                            "section_id": heading.id,
+                            "claim_ids": claim.claim_ids,
+                            "reason": "Unverified synthesis replaced with verbatim originals.",
+                        }
+                    )
         rendered.append(
             "## "
             + heading.title
             + "\n\n"
-            + ("\n\n".join(paragraphs) or "Insufficient extracted evidence for this section.")
+            + (
+                "\n\n".join(dict.fromkeys(paragraphs))
+                or "Insufficient extracted evidence for this section."
+            )
         )
     if not citations:
         raise local.DocumentError("The model produced no supported document content.")
+    if synthesis_limits:
+        report["partial"] = True
+        report["synthesis_limits"] = synthesis_limits
     metadata = {
         "schema_version": 1,
         "request_id": req["id"],
@@ -592,6 +742,7 @@ def generate(context, *, settings=None, client=None):
         "coverage": report,
         "evidence": list(evidence.values()),
         "citations": citations,
+        "uncertainties": gaps,
         "model": settings.ollama_model,
         "prompt_version": local.PROMPT_VERSION,
         "parameters": {
@@ -605,6 +756,10 @@ def generate(context, *, settings=None, client=None):
     content = (
         "# " + outline.title + "\n\n" + "\n\n".join(rendered) + "\n\n" + coverage_markdown(report)
     )
+    if gaps:
+        content += "\n\n## Evidence gaps reported during processing\n\n" + "\n".join(
+            "- " + gap["text"] for gap in gaps
+        )
     legacy_citations = [
         MessageCitation(
             file_id=p["source"]["source_id"],

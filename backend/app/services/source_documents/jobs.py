@@ -22,9 +22,19 @@ def handler(context, payload):
     except pipeline.ClarificationRequired as exc:
         store.save_request(context.connection, context.job["subject_id"], clarification=str(exc))
         raise
-    except pipeline.local.DocumentError:
+    except pipeline.local.DocumentError as exc:
         # Valid JSON with invalid evidence must not become a permanently failing retry cache.
-        store.save_request(context.connection, context.job["subject_id"], cache={})
+        req = store.request(context.connection, context.job["subject_id"])
+        stage = req["report"].get("rejected_support_check", {}).get("stage")
+        if stage and "local evidence check" in str(exc):
+            cache = {
+                key: value
+                for key, value in req["cache"].items()
+                if not key.startswith(stage + ":") and not key.startswith("verify:" + stage + ":")
+            }
+        else:
+            cache = {}
+        store.save_request(context.connection, context.job["subject_id"], cache=cache)
         raise
 
 
