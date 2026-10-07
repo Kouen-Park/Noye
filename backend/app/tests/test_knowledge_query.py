@@ -137,3 +137,58 @@ def test_wiki_error_falls_back_to_original_and_change_during_answer_refuses_publ
     monkeypatch.setattr(generation, "generate", changed)
     with pytest.raises(SourceError):
         knowledge_query.answer(context, "What is the limit?")
+
+
+def test_chat_persists_wiki_snapshot_with_original_citations_and_labels_old_revision(
+    workspace, monkeypatch
+):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from app.api.chat import router
+    from app.api.deps import get_db
+    from app.db import conversations, knowledge
+
+    db, *_ = workspace
+    record = discover(workspace, content="Reservoir capacity is exactly 37 litres.")
+    generated = generate(db, record.id)
+    monkeypatch.setattr(
+        knowledge_query.retrieval, "search", lambda q, **kw: vector_for(db, kw["file_ids"])
+    )
+    monkeypatch.setattr(
+        generation, "generate", lambda *args, **kwargs: "The capacity is 37 litres."
+    )
+    api = FastAPI()
+    api.include_router(router)
+    api.dependency_overrides[get_db] = lambda: db
+    client = TestClient(api)
+    reply = client.post("/chat", json={"question": "Reservoir capacity?", "file_ids": [record.id]})
+    assert reply.status_code == 201
+    answer = reply.json()["answer"]
+    assert answer["knowledge"]["wiki_state"] == "matched"
+    assert answer["citations"][0]["evidence"]["excerpts"][0]["source_hash"] == record.content_hash
+    service.edit(
+        db,
+        generated["wiki_id"],
+        EditWiki(
+            expected_revision=generated["revision_id"], title="Edited", content="My user revision."
+        ),
+    )
+    reread = client.get("/chat/conversations/" + reply.json()["conversation_id"]).json()[
+        "messages"
+    ][-1]
+    assert reread["knowledge"]["wiki_pages"][0]["revision_status"] == "superseded"
+    assert reread["knowledge"]["wiki_pages"][0]["revision_id"] == generated["revision_id"]
+
+    # Artifact/evidence/snapshot are one write: a rejected snapshot leaves no half-answer.
+    with db:
+        db.execute(
+            "CREATE TRIGGER reject_query_snapshot BEFORE INSERT ON message_knowledge "
+            "BEGIN SELECT RAISE(ABORT, 'synthetic snapshot failure'); END"
+        )
+    count = db.execute("SELECT COUNT(*) FROM messages WHERE role='assistant'").fetchone()[0]
+    import sqlite3
+
+    with pytest.raises(sqlite3.IntegrityError):
+        client.post("/chat", json={"question": "Reservoir capacity?", "file_ids": [record.id]})
+    assert db.execute("SELECT COUNT(*) FROM messages WHERE role='assistant'").fetchone()[0] == count

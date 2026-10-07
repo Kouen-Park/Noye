@@ -359,9 +359,8 @@ def ask(
             role=Role.ASSISTANT,
             content=generated.text,
             citations=citations,
+            knowledge=context.snapshot if context is not None else None,
         )
-        if context is not None:
-            knowledge_store.save(db, stored.id, context.snapshot)
         return stored
 
     if context is not None:

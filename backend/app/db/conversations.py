@@ -142,9 +142,7 @@ def list_conversations(connection: sqlite3.Connection) -> list[Conversation]:
     By ``updated_at`` rather than ``created_at``: the sidebar should surface what
     the user was last talking about, not what they started longest ago.
     """
-    rows = connection.execute(
-        "SELECT * FROM conversations ORDER BY updated_at DESC, id"
-    ).fetchall()
+    rows = connection.execute("SELECT * FROM conversations ORDER BY updated_at DESC, id").fetchall()
     return [_to_conversation(row) for row in rows]
 
 
@@ -187,9 +185,7 @@ def delete_conversation(connection: sqlite3.Connection, conversation_id: str) ->
         ConversationNotFound: no such id.
     """
     with connection:
-        cursor = connection.execute(
-            "DELETE FROM conversations WHERE id = ?", (conversation_id,)
-        )
+        cursor = connection.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
     if cursor.rowcount == 0:
         raise ConversationNotFound(f"No conversation with id {conversation_id}")
 
@@ -206,6 +202,7 @@ def add_message(
     error: str | None = None,
     citations: Sequence[MessageCitation] = (),
     message_id: str | None = None,
+    knowledge: dict | None = None,
 ) -> Message:
     """Append a message, with its citations, and mark the conversation active.
 
@@ -265,6 +262,12 @@ def add_message(
                 for position, citation in enumerate(record.citations)
             ],
         )
+
+        if knowledge is not None:
+            connection.execute(
+                "INSERT INTO message_knowledge VALUES (?,?)",
+                (record.id, json.dumps(knowledge, ensure_ascii=False)),
+            )
 
     touch_conversation(connection, conversation_id)
     return record
@@ -332,19 +335,22 @@ def count_messages(connection: sqlite3.Connection, conversation_id: str | None =
     return row["n"]
 
 
-def set_source_scope(connection: sqlite3.Connection, conversation_id: str,
-                     file_ids: list[str] | None) -> Conversation:
+def set_source_scope(
+    connection: sqlite3.Connection, conversation_id: str, file_ids: list[str] | None
+) -> Conversation:
     get_conversation(connection, conversation_id)
     with connection:
-        connection.execute("UPDATE conversations SET source_scope = ?, updated_at = ? WHERE id = ?",
-                           (json.dumps(file_ids) if file_ids is not None else None,
-                            _now_iso(), conversation_id))
+        connection.execute(
+            "UPDATE conversations SET source_scope = ?, updated_at = ? WHERE id = ?",
+            (json.dumps(file_ids) if file_ids is not None else None, _now_iso(), conversation_id),
+        )
     return get_conversation(connection, conversation_id)
 
 
 def recent_messages(connection: sqlite3.Connection, conversation_id: str) -> list[Message]:
     rows = connection.execute(
         "SELECT * FROM messages WHERE conversation_id = ? AND error IS NULL "
-        "ORDER BY created_at DESC, id DESC LIMIT 4", (conversation_id,),
+        "ORDER BY created_at DESC, id DESC LIMIT 4",
+        (conversation_id,),
     ).fetchall()
     return [_to_message(row) for row in reversed(rows)]

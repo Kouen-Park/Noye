@@ -57,9 +57,23 @@ def organize(context, source_id, wiki_id):
 def handler(context, payload):
     source_id = payload["source_id"]
     context.checkpoint("classification_summary")
-    wiki_id = jobs.handler(
-        context, payload
-    )  # B owns generation, validation and authored revisions.
+    try:
+        wiki_id = jobs.handler(context, payload)  # B owns generation and authored revisions.
+    except Exception as exc:
+        context.report("classification_summary", "failed", {"error": str(exc)})
+        raise
+    page = store.page(context.connection, wiki_id)
+    if page["current_revision"]:
+        revision = store.revision(context.connection, page["current_revision"])
+        with context.connection:
+            store.reindex(
+                context.connection,
+                wiki_id,
+                revision["id"],
+                revision["title"],
+                revision["content"],
+                revision["metadata"],
+            )
     context.report("classification_summary", "complete", {"wiki_id": wiki_id})
     context.checkpoint("filing")
     result = organize(context, source_id, wiki_id)
