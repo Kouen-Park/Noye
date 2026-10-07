@@ -41,7 +41,7 @@ from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_q
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT
-from app.services.source_catalog import SourceCatalog, SourceError, SourceSession
+from app.services.source_catalog import SourceCatalog, SourceError
 from app.services.wiki.local import WikiError
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -272,7 +272,6 @@ def ask(
 
     ready = {}
     context = None
-    cloud_sources = None
     material_scope = (
         request.scope.model_dump()
         if request.scope is not None
@@ -295,15 +294,12 @@ def ask(
             ready = {file_id: name for file_id, name in ready.items() if file_id in scope}
 
         if request.provider != "ollama":
-            connected_ids = {row[0] for row in db.execute("SELECT file_id FROM sources")}
-            folder_ids = sorted(connected_ids & set(ready))
-            if folder_ids:
-                cloud_sources = SourceSession(db, {"mode": "chosen", "source_ids": folder_ids})
-                for source_id in folder_ids:
-                    try:
-                        cloud_sources.read(source_id, limit=1)
-                    except SourceError:
-                        ready.pop(source_id)
+            folder_ids = {row[0] for row in db.execute("SELECT file_id FROM sources")}
+            if folder_ids & set(ready):
+                raise GenerationError(
+                    "Connected-folder questions require local Ollama. "
+                    "Select Ollama or use an upload-only material scope."
+                )
 
         if not ready:
             if use_knowledge:
@@ -387,36 +383,6 @@ def ask(
             searched_files=len(ready),
         )
 
-    if cloud_sources is not None:
-        try:
-            consumed = {
-                result.file_id
-                for result in generated.sources
-                if result.file_id in cloud_sources.versions
-            }
-            for result in generated.sources:
-                if result.file_id not in ready or (
-                    result.file_id in consumed
-                    and result.source_hash != cloud_sources.versions[result.file_id]
-                ):
-                    raise SourceError(
-                        "stale_version",
-                        "Retrieved evidence does not match the allowed current version.",
-                    )
-            cloud_sources.consumed = consumed
-            cloud_sources.verify()
-        except SourceError as exc:
-            failed = conversation_store.add_message(
-                db, conversation.id, role=Role.ASSISTANT, content="", error=str(exc)
-            )
-            return AskResponse(
-                conversation_id=conversation.id,
-                conversation_title=conversation.title,
-                question=MessageOut.of(stored_question),
-                answer=MessageOut.of(failed),
-                searched_files=len(ready),
-            )
-
     # Citations come from the retrieval metadata, never from the model. The file
     # name is copied in here so the citation survives that file being deleted.
     citations = capture_citations(generated.sources, ready)
@@ -432,10 +398,9 @@ def ask(
         )
         return stored
 
-    commit_session = context.session if context is not None else cloud_sources
-    if commit_session is not None:
+    if context is not None:
         try:
-            with commit_session.commit_guard():
+            with context.session.commit_guard():
                 answer = save_answer()
         except SourceError as exc:
             answer = conversation_store.add_message(

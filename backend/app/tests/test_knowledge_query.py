@@ -238,23 +238,21 @@ def test_question_root_scope_is_fixed_before_wiki_or_original_discovery(workspac
     assert ambiguous.status_code == 400
 
 
-@pytest.mark.parametrize("change", ["before", "during", "unchanged"])
-def test_explicit_cloud_route_checks_current_folder_version(workspace, monkeypatch, change):
+@pytest.mark.parametrize("provider", ["gemini", "openai", "anthropic"])
+def test_connected_originals_are_never_sent_to_cloud(workspace, monkeypatch, provider):
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
     from app.api import chat
     from app.api.deps import get_db
 
-    db, root, *_ = workspace
+    db, *_ = workspace
     record = discover(workspace)
     calls = []
     chunk = db.execute("SELECT * FROM chunks WHERE file_id=?", (record.id,)).fetchone()
 
     def answer(question, **kwargs):
         calls.append(kwargs)
-        if change == "during":
-            (root / "note.txt").write_text("Changed capacity: 92.")
         return generation.Answer(
             "The limit is 37.",
             [
@@ -270,23 +268,14 @@ def test_explicit_cloud_route_checks_current_folder_version(workspace, monkeypat
         )
 
     monkeypatch.setattr(chat, "answer_question", answer)
-    if change == "before":
-        (root / "note.txt").write_text("Changed capacity: 92.")
     api = FastAPI()
     api.include_router(chat.router)
     api.dependency_overrides[get_db] = lambda: db
     response = (
         TestClient(api)
-        .post("/chat", json={"question": "Limit?", "file_ids": [record.id], "provider": "gemini"})
+        .post("/chat", json={"question": "Limit?", "file_ids": [record.id], "provider": provider})
         .json()
     )
-    if change == "before":
-        assert not calls and response["searched_files"] == 0
-        assert response["answer"]["citations"] == []
-    elif change == "during":
-        assert len(calls) == 1 and response["answer"]["error"]
-        assert response["answer"]["citations"] == [] and response["answer"]["content"] == ""
-    else:
-        assert calls[0]["provider"] == "gemini"
-        assert response["answer"]["citations"][0]["file_id"] == record.id
-        assert response["answer"]["knowledge"] is None
+    assert not calls
+    assert "require local Ollama" in response["answer"]["error"]
+    assert response["answer"]["citations"] == [] and response["answer"]["content"] == ""
