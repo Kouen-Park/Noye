@@ -33,7 +33,7 @@ from app.db.database import connect, init_schema
 from app.db.jobs import recover_interrupted
 from app.logging_config import configure_logging, get_logger
 from app.services.ingestion import cancel_all_ingestion
-from app.services.wiki.jobs import register as register_wiki_jobs
+from app.services.knowledge_maintenance import register as register_wiki_jobs
 
 # Before the routers, so anything they log during import is already captured.
 # configure_logging is idempotent, which matters here: uvicorn's reloader and the
