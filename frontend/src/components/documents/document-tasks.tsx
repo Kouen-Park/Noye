@@ -41,7 +41,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
       <p role="status" className="mt-2 text-sm text-ink-soft">{job?.state ?? "Not queued"} · {job?.stage}
         {job && job.total > 0 ? ` · ${job.completed}/${job.total}` : ""}</p>
       <p className="mt-1 text-xs text-ink-soft">Inventory fixed at start: {request.manifest.length} sources.
-        {request.plan ? ` Selected: ${request.plan.selected_ids.length}.` : " Discovering relevant sources…"}</p>
+        {request.plan ? ` Selected: ${request.plan.selected_ids.length}.` : job && active.has(job.state) ? " Discovering relevant sources…" : " Selection not completed."}</p>
       <details className="mt-2 text-xs text-ink-soft"><summary className="min-h-11 cursor-pointer">Sources and coverage</summary>
         <ul className="space-y-2">{((request.report.sources ?? request.manifest) as Partial<CoverageSource>[]).map(source => <li key={source.source_id}>
           {source.relative_path} · {source.state ? `${source.state} · ${source.characters_processed}/${source.characters_read} characters` : "pending"}
@@ -55,7 +55,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
         {request.artifact_id && <><Link className="inline-flex min-h-11 items-center font-semibold text-brand underline" href={`/documents?d=${encodeURIComponent(request.artifact_id)}`}>Open document</Link>
           <Link className="inline-flex min-h-11 items-center text-brand underline" href={`/documents?d=${encodeURIComponent(request.artifact_id)}&export=1`}>Edit and export</Link></>}
         {job && active.has(job.state) && <button className="min-h-11 underline" type="button" disabled={job.state === "cancelling"} onClick={() => void action(job.id, "cancel")}>Cancel document job</button>}
-        {job && ["failed", "interrupted", "cancelled"].includes(job.state) && <button className="min-h-11 underline" type="button" onClick={() => void action(job.id, "resume")}>Retry frozen request</button>}
+        {job && !request.clarification && ["failed", "interrupted", "cancelled"].includes(job.state) && <button className="min-h-11 underline" type="button" onClick={() => void action(job.id, "resume")}>Retry frozen request</button>}
       </div>
       {job && active.has(job.state) && <p className="mt-2 text-xs text-ink-soft">Cancellation is checked between model calls. The current local call may finish first.</p>}
       {request.artifact_id && <p className="mt-1 text-xs text-ink-soft">Saved independently of this chat. PDF export completes separately in the print dialog.</p>}
