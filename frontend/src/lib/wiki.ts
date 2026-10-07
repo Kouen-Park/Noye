@@ -3,6 +3,22 @@ import { apiBaseUrl } from "@/lib/runtime";
 
 export interface WikiScope { mode: "all" | "empty" | "chosen"; source_ids: string[]; root_ids: string[] }
 export const ALL_WIKI_SOURCES: WikiScope = { mode: "all", source_ids: [], root_ids: [] };
+export function wikiScopeFromUrl(value: string | null): WikiScope {
+  if (!value) return ALL_WIKI_SOURCES;
+  try {
+    const scope = JSON.parse(value);
+    if (["all", "empty", "chosen"].includes(scope.mode) && [scope.source_ids, scope.root_ids].every(ids => Array.isArray(ids) && ids.every(id => typeof id === "string"))) return scope;
+  } catch { /* Invalid explicit scope must not broaden to all sources. */ }
+  return { mode: "empty", source_ids: [], root_ids: [] };
+}
+export function wikiPreviewContent(content: string, contributors: { wiki_id: string }[] | undefined, scope: WikiScope): string {
+  let preview = content.replace(/^<!-- Wiki ID: [0-9a-f-]+; model: [^\n]* -->\r?\n\r?\n/, "");
+  for (const { wiki_id } of contributors ?? []) {
+    const target = `/wiki/?w=${encodeURIComponent(wiki_id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+    preview = preview.replaceAll(`](../sources/${wiki_id}.md)`, `](${target})`);
+  }
+  return preview;
+}
 export interface WikiSource {
   source_id: string; root_id: string | null; relative_path: string; name: string;
   version: string; availability: string; processing_state: string; error: string | null;

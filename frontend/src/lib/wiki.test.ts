@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { editWiki, generateWiki, listWiki, readWiki } from "@/lib/wiki";
+import { editWiki, generateWiki, listWiki, readWiki, wikiPreviewContent, wikiScopeFromUrl } from "@/lib/wiki";
 
 afterEach(() => vi.unstubAllGlobals());
 it("preserves empty scope and source/revision identity in actual requests", async () => {
@@ -18,4 +18,19 @@ it("preserves empty scope and source/revision identity in actual requests", asyn
 it("retains understandable conflict errors", async () => {
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 409, json: () => Promise.resolve({ detail: "This page changed" }) }));
   await expect(editWiki("wiki", "old", "Title", "content")).rejects.toThrow("This page changed");
+});
+it("preserves chosen scope when opening verified portable Wiki links", () => {
+  const scope = { mode: "chosen" as const, source_ids: ["source-one"], root_ids: [] };
+  const markdown = "[Source Wiki](../sources/known.md)\n[Unknown](../sources/invented.md)";
+  const preview = wikiPreviewContent(markdown, [{ wiki_id: "known" }], scope);
+  const target = new URL(preview.match(/\[Source Wiki\]\(([^)]+)\)/)![1], "http://localhost");
+  expect(target.pathname).toBe("/wiki/");
+  expect(target.searchParams.get("w")).toBe("known");
+  expect(wikiScopeFromUrl(target.searchParams.get("scope"))).toEqual(scope);
+  expect(preview).toContain("[Unknown](../sources/invented.md)");
+  expect(markdown).toContain("../sources/known.md");
+});
+it("rejects invalid explicit URL scope without broadening it", () => {
+  expect(wikiScopeFromUrl("broken").mode).toBe("empty");
+  expect(wikiScopeFromUrl(JSON.stringify({ mode: "chosen", source_ids: "all", root_ids: [] })).mode).toBe("empty");
 });
