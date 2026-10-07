@@ -8,6 +8,8 @@ import { BookIcon, ChatIcon, DocumentIcon, SearchIcon, ShelfIcon } from "@/compo
 const NAV = [
   { label: "Chat", Icon: ChatIcon, href: "/chat" },
   { label: "Library", Icon: ShelfIcon, href: "/library" },
+  { label: "Folders", Icon: ShelfIcon, href: "/folders" },
+  { label: "Wiki", Icon: BookIcon, href: "/wiki" },
   { label: "Search", Icon: SearchIcon, href: "/search" },
   { label: "Documents", Icon: DocumentIcon, href: "/documents" },
 ] as const;

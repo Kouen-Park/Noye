@@ -36,7 +36,10 @@ def _portable(name: str) -> PurePosixPath:
         or path.as_posix() != name
         or (
             name not in {"app.db", "manifest.json"}
-            and (len(path.parts) < 2 or path.parts[0] not in {"sources", "documents"})
+            and (
+                len(path.parts) < 2
+                or path.parts[0] not in {"sources", "documents", "wiki", "knowledge"}
+            )
         )
     ):
         raise ValueError("The backup contains an invalid workspace path.")
@@ -78,7 +81,7 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
     archive.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="noye-snapshot-") as temporary:
         staged = Path(temporary)
-        for folder in ("sources", "documents"):
+        for folder in ("sources", "documents", "wiki"):
             source = root / folder
             if source.is_symlink() or (source.exists() and not source.is_dir()):
                 raise ValueError("Workspace folders must be regular directories.")
@@ -116,6 +119,20 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
                         copied.execute("UPDATE files SET path=? WHERE id=?", (portable, file_id))
                         if not (staged / portable).is_file():
                             missing.append(file_id)
+                init_schema(copied)
+                from app.services.folder_backup import stage_assets
+
+                missing_knowledge_roots, captured_assets = stage_assets(copied, staged)
+                with copied:
+                    for file_id, version_hash, saved in copied.execute(
+                        "SELECT file_id,version,snapshot_path FROM source_versions"
+                    ).fetchall():
+                        relative = Path(saved).resolve().relative_to(root / "sources")
+                        copied.execute(
+                            "UPDATE source_versions SET snapshot_path=? "
+                            "WHERE file_id=? AND version=?",
+                            (f"sources/{relative.as_posix()}", file_id, version_hash),
+                        )
                 version = current_version(copied)
         inventory = {}
         for path in staged.rglob("*"):
@@ -127,10 +144,15 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
         if len(inventory) > MAX_ENTRIES or sum(v["size"] for v in inventory.values()) > MAX_BYTES:
             raise ValueError("The workspace exceeds the backup limit (20 GiB/100000 files).")
         for name, saved in inventory.items():
-            if name != "app.db" and (
-                not (root / name).is_file() or _digest(root / name) != saved["sha256"]
+            if (
+                name != "app.db"
+                and not name.startswith("knowledge/")
+                and (not (root / name).is_file() or _digest(root / name) != saved["sha256"])
             ):
                 raise ValueError("An original changed during backup. Retry when it is idle.")
+        from app.services.folder_backup import verify_assets
+
+        verify_assets(captured_assets)
         manifest = {
             "format": "noye-workspace",
             "version": FORMAT_VERSION,
@@ -138,6 +160,9 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
             "created_at": datetime.now(UTC).isoformat(),
             "files": inventory,
             "missing_sources": missing,
+            "external_originals": "not included; internal version byte snapshots are included",
+            "missing_knowledge_roots": missing_knowledge_roots,
+            "reconnect_required": True,
         }
         created = False
         try:
@@ -238,6 +263,28 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                                 file_id,
                             ),
                         )
+                    for file_id, version_hash, saved in copied.execute(
+                        "SELECT file_id,version,snapshot_path FROM source_versions"
+                    ).fetchall():
+                        relative = _portable(saved)
+                        if relative.parts[0] != "sources":
+                            raise ValueError("A source version has an invalid snapshot path.")
+                        copied.execute(
+                            "UPDATE source_versions SET snapshot_path=? "
+                            "WHERE file_id=? AND version=?",
+                            (str(destination / relative), file_id, version_hash),
+                        )
+                    copied.execute(
+                        "UPDATE source_roots SET connected=0,processing=0,"
+                        "availability='disconnected',"
+                        "error='Restored. Reconnect natively.'"
+                    )
+                    copied.execute("UPDATE sources SET availability='disconnected'")
+                    copied.execute(
+                        "UPDATE knowledge_jobs SET state='interrupted',"
+                        "error='Restored from backup. Retry explicitly.' "
+                        "WHERE state IN ('queued','running','cancelling')"
+                    )
                     copied.execute("DELETE FROM chunks")
                     # Future job tables must not replay work when a backup is opened.
                     if copied.execute("SELECT 1 FROM sqlite_master WHERE name='jobs'").fetchone():
@@ -249,7 +296,7 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                     raise ValueError("The backup's missing-source report is inconsistent.")
         except sqlite3.DatabaseError as exc:
             raise ValueError("The backup database could not be restored.") from exc
-        for name in ("sources", "documents"):
+        for name in ("sources", "documents", "wiki"):
             (staged / name).mkdir(exist_ok=True)
         receipt = {
             "format": "noye-restored-workspace",

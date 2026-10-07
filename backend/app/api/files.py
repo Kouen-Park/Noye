@@ -16,9 +16,10 @@ import hashlib
 import sqlite3
 from pathlib import Path
 from typing import Literal
+from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 
 from app.api.deps import get_db
@@ -27,6 +28,7 @@ from app.db import files as file_store
 from app.db import jobs as job_store
 from app.logging_config import get_logger
 from app.models.files import File, FileStatus, FileType
+from app.services.folders import SourceError, read_original, root_record, validate_folder_retry
 from app.services.indexing import IndexingError, delete_file_chunks
 from app.services.ingestion import (
     AlreadyIngesting,
@@ -358,6 +360,10 @@ def reingest_file(
             record = file_store.get_file(db, file_id)
         except file_store.FileRecordNotFound as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+        try:
+            validate_folder_retry(db, file_id)
+        except SourceError as exc:
+            raise HTTPException(409, str(exc)) from exc
         if not Path(record.path).exists():
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -418,7 +424,7 @@ SOURCE_MEDIA_TYPES: dict[FileType, str] = {
 
 
 @router.get("/{file_id}/source")
-def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileResponse:
+def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> Response:
     """Serve a file's saved original, for opening a search hit at its source.
 
     The path comes from the database row, never from the request: the only thing
@@ -435,6 +441,17 @@ def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileR
     except file_store.FileRecordNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
+    folder_source = db.execute("SELECT * FROM sources WHERE file_id=?", (file_id,)).fetchone()
+    if folder_source:
+        try:
+            root = root_record(db, folder_source["root_id"])
+            data, _, _ = read_original(root, folder_source["relative_path"])
+        except SourceError as exc:
+            raise HTTPException(404, str(exc)) from exc
+        return Response(
+            data, media_type=SOURCE_MEDIA_TYPES[record.file_type],
+            headers={"Content-Disposition": "inline; filename*=UTF-8''" + quote(record.name)},
+        )
     path = Path(record.path)
 
     # Defence in depth. The row is written by this application, so a path outside
@@ -481,6 +498,14 @@ def source_status(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> Sou
         record = file_store.get_file(db, file_id)
     except file_store.FileRecordNotFound:
         return SourceStatus(status="missing")
+    folder_source = db.execute("SELECT * FROM sources WHERE file_id=?", (file_id,)).fetchone()
+    if folder_source:
+        try:
+            _, digest, _ = read_original(root_record(db, folder_source["root_id"]),
+                                         folder_source["relative_path"])
+            return SourceStatus(status="available", current_hash=digest)
+        except SourceError:
+            return SourceStatus(status="unavailable")
     try:
         path = Path(record.path).resolve()
         path.relative_to(sources_dir().resolve())
@@ -503,6 +528,11 @@ def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     questions about a document the user believes is gone, which is worse than a
     failed delete they can retry.
     """
+    if db.execute("SELECT 1 FROM sources WHERE file_id=?", (file_id,)).fetchone():
+        raise HTTPException(
+            409, "This is a connected original. Disconnect its folder to stop using it. "
+            "Delete originals explicitly in Finder; Noye preserves their version history.",
+        )
     try:
         reserve_delete(file_id)
     except MaintenanceBusy as exc:

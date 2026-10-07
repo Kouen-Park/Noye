@@ -203,6 +203,15 @@ def set_status(
             (status.value, stored_error, _now_iso(), file_id),
         )
         file_stage(connection, file_id, status.value, stored_error)
+        if status in (FileStatus.READY, FileStatus.FAILED):
+            source = connection.execute(
+                "SELECT * FROM sources WHERE file_id=?", (file_id,)
+            ).fetchone()
+            if source:
+                from app.services.folders import emit
+
+                emit(connection, "ready" if status is FileStatus.READY else "failed",
+                     source=dict(source), error=stored_error)
     if cursor.rowcount == 0:
         raise FileRecordNotFound(f"No file with id {file_id}")
     return get_file(connection, file_id)

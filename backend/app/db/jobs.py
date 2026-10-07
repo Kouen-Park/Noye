@@ -2,6 +2,7 @@
 
 import sqlite3
 import uuid
+from contextlib import nullcontext
 from datetime import UTC, datetime
 
 JOB_SCHEMA = """
@@ -38,7 +39,7 @@ def latest(connection: sqlite3.Connection, file_id: str) -> dict | None:
     return dict(row) if row else None
 
 
-def queue(connection: sqlite3.Connection, file_id: str) -> dict:
+def queue(connection: sqlite3.Connection, file_id: str, *, transaction=True) -> dict:
     record = connection.execute("SELECT name FROM files WHERE id=?", (file_id,)).fetchone()
     if record is None:
         raise ValueError("The source for this job no longer exists.")
@@ -46,7 +47,7 @@ def queue(connection: sqlite3.Connection, file_id: str) -> dict:
     if previous and previous["state"] in OPEN_STATES:
         raise ValueError("This file already has a queued or running job.")
     identifier, timestamp = str(uuid.uuid4()), now()
-    with connection:
+    with connection if transaction else nullcontext():
         connection.execute(
             "INSERT INTO jobs (id,file_id,file_name,state,stage,attempt,created_at,updated_at) "
             "VALUES (?,?,?,'queued','queued',?,?,?)",

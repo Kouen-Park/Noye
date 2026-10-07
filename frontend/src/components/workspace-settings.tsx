@@ -64,19 +64,19 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
     {error && <p role="alert" className="text-sm text-fail">{error}</p>}
     {notice && <p role="status" className="text-sm text-ink-soft">{notice}</p>}
     <div className="border-t border-edge-strong pt-5"><h3 className="text-lg text-ink-display">Back up saved work</h3>
-      <p className="mt-2 text-sm text-ink-soft">Includes originals, conversations, edited documents and saved excerpts. API keys, models and the rebuildable vector index are excluded.</p>
+      <p className="mt-2 text-sm text-ink-soft">Includes uploaded originals, internal folder-version byte snapshots, conversations, edited documents and saved excerpts. Authored Wiki/output files from accessible connected roots are included. External folder originals are excluded; unavailable roots are recorded in the manifest. API keys, models and the rebuildable vector index are excluded.</p>
       <p className="mt-2 text-sm text-ink-soft">Finish processing and save your document edits first. Unsaved text is not included.</p>
       <button className={button + " mt-3"} disabled={busy !== null || !workspace} onClick={() => void act("backup")}>{busy === "backup" ? "Preparing backup…" : "Download workspace backup"}</button>
     </div>
     <div className="border-t border-edge-strong pt-5"><h3 className="text-lg text-ink-display">Restore a backup</h3>
-      <p className="mt-2 text-sm text-ink-soft">Restores into a new folder after checking every file and the database. Existing folders are never overwritten. Search needs an explicit index rebuild.</p>
+      <p className="mt-2 text-sm text-ink-soft">Restores into a new folder after checking every file and the database. Existing folders are never overwritten. Search needs an explicit index rebuild. Connected roots require native reconnection; recovered Wiki/output files stay in the restored workspace until reconnected.</p>
       <label htmlFor={id + "-backup"} className="mt-3 block text-sm font-semibold">Workspace backup file</label>
       <input id={id + "-backup"} type="file" accept=".zip" disabled={busy !== null} className="mt-2 block max-w-full text-sm" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setRestored(null); }} />
       <button className={button + " mt-3"} disabled={busy !== null || !file} onClick={() => void act("restore")}>{busy === "restore" ? "Verifying and restoring…" : "Restore into a new folder"}</button>
       {restored && <div className="mt-4 rounded-md border border-edge-strong bg-card p-4">
         <p className="text-sm font-semibold">Verified restored workspace</p>
         <p className="mt-2 break-all font-mono text-xs">{restored.destination}</p>
-        <p className="mt-2 text-sm text-ink-soft">{restored.missing_sources.length ? restored.missing_sources.length + " originals were missing from the backup. Saved conversations and documents remain available." : "Originals, saved conversations and documents are ready. Rebuild the index before searching."}</p>
+        <p className="mt-2 text-sm text-ink-soft">{restored.missing_sources.length ? restored.missing_sources.length + " originals were missing from the backup. Saved conversations and documents remain available." : "Stored source snapshots, saved conversations and documents are ready. Reconnect folders and rebuild the index before searching."}</p>
         <p className="mt-2 text-sm text-ink-soft">Your current workspace stays open.</p>
         <button className={button + " mt-3"} disabled={busy !== null || switching}
           onClick={() => { setSelected(restored.destination); setConfirmed(false); }}>
