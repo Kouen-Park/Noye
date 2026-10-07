@@ -112,7 +112,7 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
           <option value="">Choose a subfolder</option>
           {entries.filter(entry => entry.kind === "directory" && !entry.excluded && !entry.remembered).map(entry =>
             <option key={entry.relative_path} value={entry.relative_path}>{entry.relative_path}</option>)}
-          {root.organization_prefix && !entries.some(entry => entry.relative_path === root.organization_prefix) &&
+          {root.organization_prefix && !entries.some(entry => entry.relative_path === root.organization_prefix && !entry.remembered && !entry.excluded) &&
             <option value={root.organization_prefix}>{root.organization_prefix}</option>}
         </select>
       </label>
