@@ -190,15 +190,17 @@ placeholder marked missing; six valid citations and no published unverified abse
 memo. A v4 collection failed closed in **63.834 seconds**; explicit attempt 2 saved
 an explicit partial artifact in **104.630 seconds**, processing both originals with
 five valid citations and one retained Beta original paragraph. Requested-language,
-comparison and heading quality acceptance remains open. B's final measured record is integrated as `83f2453`: 29 saved v2/v3/v4
+comparison and heading quality acceptance remains open.
+
+B's final measured record is integrated as `83f2453`: 29 saved v2/v3/v4
 citations matched actual original hashes and quote spans. A real v4 user edit and
 same-generation-request replay retained the current user revision and document
 count. Selected Markdown files were 1,478 / 5,589 / 1,343 bytes. The final 66,923-byte
 archive restored all six artifacts, current bodies/revisions, user edits and evidence
 exactly into a new destination, with external roots disconnected. These are B's
-actual service/artifact checks, distinct from native UI and model-quality acceptance. [B's validation record](source-document-validation.md) includes
-actual browser user edits, selected-revision Markdown files and the real three-
-artifact backup/restore. It distinguishes those observations from native/PDF work.
+actual service/artifact checks, distinct from native UI and model-quality acceptance.
+[B's validation record](source-document-validation.md) includes the initial browser
+observations and final six-artifact recovery. It distinguishes those observations from native/PDF work.
 Do not infer successful quality from an artifact pointer, model entailment or a
 processed-character count.
 
@@ -219,8 +221,8 @@ transport and reserved citation-label fixes:
 
 The actual native QA window, Chat and Settings were observed in the archive-fix
 build. The final package was rebuilt after the later transport/citation guards;
-those build/control checks do not establish additional native UI acceptance. An earlier session
-showed running local services and installed models. During the final chooser check,
+those build/control checks do not establish additional native UI acceptance.
+An earlier session showed running local services and installed models. During the final chooser check,
 Ollama/Qdrant were stopped and the UI correctly reported that state; no inference
 is attributed to that session.
 
@@ -239,7 +241,7 @@ sidecars were stopped; the model/build slot was returned to B.
 **Not validated in stage 2:** native restore/reconnect → folder query with Wiki links
 → document creation → edit/save → actual Markdown/PDF files; Unicode/long PDF
 pagination; physical external-drive removal; broad real-data faithfulness/latency.
-Actual service/SQLite restore preserved three document artifacts and user edits;
+Actual service/SQLite restore preserved six document artifacts and user edits;
 that is distinct from the blocked native chooser workflow. Stage-1 native
 TXT/Markdown/two-page PDF ingestion, moves, interruption and folder controls remain
 recorded in [folder acceptance](folder-foundation.md); they were not rerun here.
