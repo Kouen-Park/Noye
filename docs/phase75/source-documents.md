@@ -10,7 +10,9 @@ bounded relations. Course notes are one output form; a course label is optional.
 `scope` (`all`, `empty`, `chosen`), optional `conversation_id` and `inventory_mode`
 (`auto`, `collection`, `relevant`). It returns HTTP 202 with a durable job and
 request record, without a saved assistant-message ID. Repeating the same request
-ID returns the original job. A different instruction/scope using that ID conflicts.
+ID returns its latest associated job. Explicit retry creates a new attempt job,
+preserving the same request, frozen inventory and artifact identity. A different
+instruction/scope using that request ID conflicts.
 
 The request stores its initial allowed inventory before any model call. Existing
 conversation scope further restricts the request. Actual prior user turns help
@@ -46,15 +48,24 @@ All expanded context uses configured loopback Ollama and an installed model whos
 are rejected. Requests use the configured model,
 context/output budgets and thinking setting. There is no cloud provider argument,
 redirect following or automatic fallback. Responses must satisfy strict schemas.
+Owned document clients ignore proxy environment variables, keeping preflight and
+source context on direct loopback transport. Model-written inline citation labels
+are rejected in headings and claims; only verified application labels are attached.
 Unknown source, evidence, section or synthesis IDs, non-verbatim quotes, invented
 numerals, unfinished model output and failed original-processing entailment checks
 block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v3` prefers one to four topical sections for small source
+Prompt `source-document-v4` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
+Each original-processing call sees only one source batch; it must not draw
+collection-wide conclusions about other sources being absent. Unverified model
+observations are retained only in audit metadata with source/batch/evidence IDs.
+They are excluded from published document prose. `render_version`
+`source-document-markdown-v2` distinguishes this rendering from older artifacts;
+completed artifacts and user revisions are never rewritten.
 The entailment pass is a model check, not independent proof; source review remains
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
 English/Korean counts such as “twice” or “두 번” rendered as 2. Other unstated
