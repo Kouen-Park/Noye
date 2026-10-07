@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { KnowledgeJobStages } from "@/components/knowledge-job-stages";
 import { wikiJobAction, wikiHref } from "@/lib/wiki";
+import { reingestFile } from "@/lib/api";
 import { actOnJob, jobIsActive } from "@/lib/jobs";
 import { isDesktopRuntime } from "@/lib/runtime";
 import { chooseSourceFolder, folderRequest, revealFolder, revealSource,
@@ -49,7 +50,7 @@ export function FolderWorkspace() {
     <p className="max-w-[70ch] text-sm text-ink-soft">
       Connect an existing folder to keep its structure, or choose a managed knowledge folder.
       Noye detects PDF, Markdown and TXT changes while open and catches up on the next launch.
-      Disconnecting preserves originals, saved evidence and writing.
+      Disconnecting preserves originals, saved evidence and writing. Pause a folder to remove derived indexes. Physical original deletion is a separate action in Finder.
     </p>
     <div className="mt-4 flex flex-wrap gap-2">
       <button className={actionClass} disabled={busy} onClick={() => void choose("connected")}>Connect existing folder</button>
@@ -159,6 +160,8 @@ function SourceRow({ entry, root, busy, act }: {
         {source.job && (jobIsActive(source.job)
           ? <button className={actionClass} disabled={busy || source.job.state === "cancelling"} onClick={() => void act(() => actOnJob(source.job!.id, "cancel"))}>Cancel processing</button>
           : source.job.state !== "complete" && <button className={actionClass} disabled={busy || !root.processing || source.availability !== "available"} onClick={() => void act(() => actOnJob(source.job!.id, "resume"))}>Retry from original</button>)}
+        {source.processing_state === "FAILED" && source.job?.state === "complete" && <button className={actionClass} disabled={busy || !root.connected || !root.processing || source.availability !== "available"} onClick={() => void act(() => reingestFile(source.source_id))}>Rebuild from original</button>}
+        {!root.processing && <button className={actionClass} disabled={busy} onClick={() => void act(() => folderRequest(`/${root.id}/sources/${source.source_id}/remove-derived`, "POST"))}>Remove derived indexes</button>}
         {root.organization_prefix && <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => setFiling(!filing)}>File manually</button>}
       </>}
     </div>
