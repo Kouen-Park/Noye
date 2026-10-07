@@ -27,6 +27,16 @@ def get(connection, job_id):
     result = dict(row)
     for field in ("payload", "scope", "manifest"):
         result[field] = json.loads(result.pop(field + "_json"))
+    result["events"] = [
+        {**dict(event), "detail": json.loads(event["detail_json"])}
+        for event in connection.execute(
+            "SELECT * FROM (SELECT * FROM knowledge_job_events WHERE job_id=? "
+            "ORDER BY sequence DESC LIMIT 100) ORDER BY sequence",
+            (job_id,),
+        )
+    ]
+    for event in result["events"]:
+        event.pop("detail_json")
     return result
 
 
@@ -113,11 +123,29 @@ class WorkContext:
             self.stop_event and self.stop_event.is_set()
         ):
             raise WorkCancelled("Knowledge processing was cancelled.")
+        self.report(stage, "running", completed=completed, total=total)
+
+    def report(self, stage, state, detail=None, completed=0, total=0):
+        """Persist feature stage results. Detail is application data, never model commands."""
+        if state not in {"running", "complete", "failed", "skipped", "cancelled", "interrupted"}:
+            raise ValueError("Unknown knowledge stage state.")
         with self.connection:
             self.connection.execute(
                 "UPDATE knowledge_jobs SET stage=?,completed=?,total=?,updated_at=? WHERE id=?",
                 (stage, completed, total, now(), self.job["id"]),
             )
+            previous = self.connection.execute(
+                "SELECT stage,state,completed,total,detail_json FROM knowledge_job_events "
+                "WHERE job_id=? ORDER BY sequence DESC LIMIT 1",
+                (self.job["id"],),
+            ).fetchone()
+            values = (stage, state, completed, total, json.dumps(detail or {}, ensure_ascii=False))
+            if previous is None or tuple(previous) != values:
+                self.connection.execute(
+                    "INSERT INTO knowledge_job_events(job_id,stage,state,completed,total,"
+                    "detail_json,created_at) VALUES (?,?,?,?,?,?,?)",
+                    (self.job["id"], *values, now()),
+                )
 
 
 class KnowledgeWorker:
@@ -158,6 +186,7 @@ class KnowledgeWorker:
                 raise ValueError("This knowledge task handler is not installed.")
             artifact_id = handler(context, job["payload"])
             context.checkpoint("saving")
+            context.report("saving", "complete")
             with connection:
                 connection.execute(
                     "UPDATE knowledge_jobs SET state=CASE WHEN cancel_requested=1 THEN 'cancelled' "
@@ -168,12 +197,14 @@ class KnowledgeWorker:
                     (artifact_id, now(), job_id),
                 )
         except WorkCancelled as exc:
+            context.report(get(connection, job_id)["stage"], "cancelled", {"error": str(exc)})
             with connection:
                 connection.execute(
                     "UPDATE knowledge_jobs SET state='cancelled',error=?,updated_at=? WHERE id=?",
                     (str(exc), now(), job_id),
                 )
         except Exception as exc:  # noqa: BLE001 — persist failures instead of losing worker tasks
+            context.report(get(connection, job_id)["stage"], "failed", {"error": str(exc)})
             with connection:
                 connection.execute(
                     "UPDATE knowledge_jobs SET state='failed',error=?,updated_at=? WHERE id=?",

@@ -209,7 +209,7 @@ class TestInitSchemaOrdering:
         connection.close()
 
 
-@pytest.mark.parametrize("prior_version", [5, 6])
+@pytest.mark.parametrize("prior_version", [5, 6, 7])
 def test_phase75_additive_upgrade_preserves_phase7_writing_and_registry(tmp_path, prior_version):
     from app.db.database import SCHEMA
 
@@ -247,7 +247,7 @@ def test_phase75_additive_upgrade_preserves_phase7_writing_and_registry(tmp_path
             db.execute("SELECT path FROM source_roots WHERE id='root'").fetchone()[0]
             == "/synthetic"
         )
-    assert current_version(db) == LATEST_VERSION == 7
+    assert current_version(db) == LATEST_VERSION
     assert apply_migrations(db) == 0
     assert db.execute("PRAGMA foreign_key_check").fetchall() == []
     db.close()
