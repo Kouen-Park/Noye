@@ -71,7 +71,9 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
     <div className="border-t border-edge-strong pt-5"><h3 className="text-lg text-ink-display">Restore a backup</h3>
       <p className="mt-2 text-sm text-ink-soft">Restores into a new folder after checking every file and the database. Existing folders are never overwritten. Search needs an explicit index rebuild. Connected roots require native reconnection; recovered Wiki/output files stay in the restored workspace until reconnected.</p>
       <label htmlFor={id + "-backup"} className="mt-3 block text-sm font-semibold">Workspace backup file</label>
-      <input id={id + "-backup"} type="file" accept=".zip" disabled={busy !== null} className="mt-2 block max-w-full text-sm" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setRestored(null); }} />
+      {/* Native ZIP filtering can disable valid archives; the restore service validates bytes. */}
+      <p id={id + "-backup-help"} className="mt-1 text-xs text-ink-soft">Choose a Noye workspace ZIP archive. It is verified before restoring.</p>
+      <input id={id + "-backup"} type="file" aria-describedby={id + "-backup-help"} disabled={busy !== null} className="mt-2 block max-w-full text-sm" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setRestored(null); }} />
       <button className={button + " mt-3"} disabled={busy !== null || !file} onClick={() => void act("restore")}>{busy === "restore" ? "Verifying and restoring…" : "Restore into a new folder"}</button>
       {restored && <div className="mt-4 rounded-md border border-edge-strong bg-card p-4">
         <p className="text-sm font-semibold">Verified restored workspace</p>

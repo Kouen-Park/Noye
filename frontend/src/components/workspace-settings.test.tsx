@@ -103,3 +103,18 @@ it("offers the previous restore after returning to the original workspace", asyn
   await userEvent.click(screen.getByRole("button", { name: "Confirm switch and restart" }));
   await waitFor(() => expect(openWorkspace).toHaveBeenCalledWith("/synthetic/restored"));
 });
+
+it("reports an invalid selected archive without claiming restore or switching workspaces", async () => {
+  vi.mocked(restoreWorkspace).mockRejectedValue(new Error("This is not a valid Noye workspace backup."));
+  render(<WorkspaceSettings settings={settings} />);
+  await screen.findByText("/synthetic/active");
+  const file = new File(["not an archive"], "notes.txt", { type: "text/plain" });
+  await userEvent.upload(screen.getByLabelText("Workspace backup file"), file);
+  await userEvent.click(screen.getByRole("button", { name: "Restore into a new folder" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("not a valid Noye workspace backup");
+  expect(restoreWorkspace).toHaveBeenCalledWith(settings, file);
+  expect(screen.queryByText("Verified restored workspace")).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Open restored workspace" })).not.toBeInTheDocument();
+  expect(openWorkspace).not.toHaveBeenCalled();
+  expect(screen.getByRole("button", { name: "Restore into a new folder" })).toBeEnabled();
+});
