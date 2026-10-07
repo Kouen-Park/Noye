@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MarkdownContent } from "@/components/documents/document-preview";
-import { editWiki, saveWikiAnalysis, type WikiPage, type WikiScope } from "@/lib/wiki";
+import { editWiki, saveWikiAnalysis, wikiPreviewContent, type WikiPage, type WikiScope } from "@/lib/wiki";
 
 export function WikiEditor({ page, scope, onSaved }: {
   page: WikiPage; scope: WikiScope; onSaved: (page: WikiPage) => void;
@@ -67,6 +67,6 @@ export function WikiEditor({ page, scope, onSaved }: {
     {writing ? <div className="space-y-3">
       <label className="block text-sm">Title<input disabled={saving} value={draft.title} onChange={e => change({ ...draft, title: e.target.value })} className="mt-1 block min-h-11 w-full rounded border border-edge-strong bg-canvas px-3" /></label>
       <label className="block text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="mt-1 block min-h-[55vh] w-full rounded border border-edge-strong bg-canvas p-3 font-mono text-sm" /></label>
-    </div> : <MarkdownContent content={draft.content} allowImages={false} />}
+    </div> : <MarkdownContent content={wikiPreviewContent(draft.content, revision.metadata.contributors, scope)} allowImages={false} />}
   </section>;
 }
