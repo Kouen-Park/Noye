@@ -12,7 +12,9 @@ vi.mock("@/lib/folders", () => ({ chooseSourceFolder: vi.fn(), folderRequest: vi
 
 let root: { id: string; name: string; kind: string; connected: number; processing: number;
   organization_prefix: string | null; availability: string; error: null };
+let remembered = false;
 beforeEach(() => {
+  remembered = false;
   vi.resetAllMocks();
   root = { id: "root-1", name: "Synthetic knowledge", kind: "connected", connected: 1,
     processing: 1, organization_prefix: null, availability: "available", error: null };
@@ -23,11 +25,11 @@ beforeEach(() => {
       return root; }
     if (path.endsWith("/filing")) return [];
     if (path.endsWith("/tree")) return { root: { ...root }, entries: [
-      { relative_path: "sources", kind: "directory" },
+      { relative_path: "sources", kind: "directory", remembered },
       { relative_path: "sources/inbox", kind: "directory" },
       { relative_path: "sources/inbox/note.txt", kind: "file", source: {
         source_id: "source-1", root_id: root.id, relative_path: "sources/inbox/note.txt", name: "note.txt",
-        version: "version-1", availability: "available", processing_state: "FAILED", error: "Interrupted",
+        version: "version-1", availability: root.availability, processing_state: "FAILED", error: "Interrupted",
         manual_category: null, job: { id: "job-1", state: "interrupted", total: 40, completed: 16, stage: "embedding", attempt: 1 },
       } },
     ] };
@@ -76,4 +78,17 @@ it("keeps a manual destination draft when collision-safe filing is rejected", as
   expect(folderRequest).toHaveBeenCalledWith("/root-1/file", "POST", {
     source_id: "source-1", destination: "sources/Topic/collision.txt", expected_version: "version-1", manual: true,
   });
+});
+
+
+it("retains the authorized filing area while an unavailable folder shows remembered locations", async () => {
+  root.organization_prefix = "sources";
+  root.availability = "unavailable";
+  remembered = true;
+  render(<FolderWorkspace />);
+  await screen.findByRole("button", { name: "Re-select folder" });
+  expect(screen.getByLabelText("Organization area")).toHaveValue("sources");
+  expect(screen.getByRole("button", { name: "Open in Finder" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "File manually" })).toBeDisabled();
+  expect(screen.getByText(/Registered location/)).toBeInTheDocument();
 });
