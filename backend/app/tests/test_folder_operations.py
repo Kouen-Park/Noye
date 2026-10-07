@@ -33,6 +33,17 @@ def test_filing_optin_collision_manual_lock_bytes_and_identity(folder):
         )
     assert (root / "sources/topic/collision.txt").read_text() == "KEEP"
     assert (root / "sources/topic/note.txt").read_bytes() == original_bytes
+    assert db.execute(
+        "SELECT state FROM filing_journal WHERE new_path='sources/topic/collision.txt'"
+    ).fetchone()[0] == "failed"
+    retry = filing.file_source(
+        db, first.id, "sources/topic/another-name.txt", first.content_hash, manual=True
+    )
+    assert retry["state"] == "complete"
+    assert (root / "sources/topic/another-name.txt").read_bytes() == original_bytes
+    assert (root / "sources/topic/collision.txt").read_text() == "KEEP"
+    assert SourceCatalog(db).get(first.id)["relative_path"] == "sources/topic/another-name.txt"
+    assert jobs.latest(db, first.id)["attempt"] == 1
 
 
 def test_filing_recovers_crash_after_move_before_registry_update(folder, monkeypatch):

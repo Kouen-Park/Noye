@@ -179,12 +179,19 @@ def file_source(connection, source_id, destination, expected_version, manual=Fal
                 ).fetchone()
             )
         except (SourceError, OSError) as exc:
-            # A move may already have happened. Preserve its pending journal for recovery.
+            # Exclusive rename reports EEXIST without moving anything. Close that
+            # attempt so choosing a new destination does not require deleting the
+            # colliding file. Other failures may follow a move: keep them recoverable.
+            collision = isinstance(exc, FileExistsError)
             with connection:
                 connection.execute(
-                    "UPDATE filing_journal SET error=?,updated_at=? WHERE id=?",
+                    "UPDATE filing_journal SET state=CASE WHEN ? THEN 'failed' ELSE state END,"
+                    "error=?,updated_at=? WHERE id=?",
                     (
-                        "Filing needs recovery. Check the original and destination.",
+                        collision,
+                        "Destination exists. Choose another name; original preserved."
+                        if collision
+                        else "Filing needs recovery. Check the original and destination.",
                         now(),
                         identifier,
                     ),
