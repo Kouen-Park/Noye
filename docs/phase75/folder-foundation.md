@@ -97,8 +97,8 @@ upgrades, backup assets/conflicts, local-only inference and late cancellation.
   `python -m pytest -q`: **887 passed, 19 skipped**, 17.70 s, 9 warnings (final integration).
 - After integrating B's resume/relation corrections, the six Wiki test modules:
   **45 passed**, 5.47 s; `ruff check app desktop.py`: passed.
-- Frontend `npm test -- --maxWorkers=1`: **242 passed / 36 files**, 21.26 s
-  after the final historical-scope/disconnected-state corrections. Frontend lint,
+- Frontend `npm test -- --maxWorkers=1`: **245 passed / 36 files**, 20.62 s
+  after all final scope/navigation/disconnected-state corrections. Frontend lint,
   `next typegen` and `tsc --noEmit` also passed.
 - Rust `cargo test`: **6 passed**; `cargo clippy --all-targets -- -D warnings`: passed.
 - Final `npm run desktop:prepare`: PyInstaller sidecar and desktop static export
@@ -153,7 +153,10 @@ PDF print/export, Unicode output and long-document pagination are unverified.
 The complete folder → Wiki links → prompt-driven document → save/export workflow
 is not complete. Existing uploads/answer-based documents retain regression tests;
 a fresh packaged full end-to-end run of those legacy flows was not performed here.
-B records actual generation/faithfulness/link measurements separately.
+B records actual generation/faithfulness/link measurements in
+[Wiki validation](wiki-validation.md), with checked-in synthetic success/failure
+reports. The live Korean input retained exact Korean quotes but received an
+English summary; this remains a model-quality limit.
 
 Frozen startup also timed out intermittently at existing 20/30-second readiness
 limits when builds/model/native processes competed for RAM. These failures were

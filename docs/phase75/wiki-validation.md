@@ -39,8 +39,9 @@ raise SystemExit(pytest.main(["-q", "app/tests"], plugins=[SeparateLiveChecks()]
 ```
 
 Run that snippet from `backend` using the project's Python environment. It changes no
-production settings or checked-in tests. The skipped checks include native frozen-binary
-acceptance requiring an explicit binary path. A records that check separately.
+production settings or checked-in tests. The default suite runs desktop lifecycle tests through Python; it does not select
+the frozen binary automatically. A separately ran that acceptance with an explicit
+`NOYE_TEST_SIDECAR` path: 11 passed in 36.43 seconds.
 
 The six Wiki test modules exercise the real folder registry, scanner, extraction,
 SourceCatalog/EvidenceReader, immutable SQLite revisions, Markdown publication and durable
@@ -168,3 +169,13 @@ Direct Chrome observations on 2026-10-07:
 
 Browser acceptance did not exercise a native Wiki window or native Wiki PDF printing.
 The real native PDF check reported by A is ingestion, not Wiki generation/print quality.
+
+## Final combined integration checks
+
+A's `feat/folder-foundation` integrates these feature/evaluation commits and the
+common native/catalog/job/backup changes. Its normal-default offline backend suite
+(no collection plugin) passed **887 tests / 19 skipped**, 17.70 seconds. After all
+final navigation fixes, its frontend suite passed **245 tests / 36 files**, 20.62
+seconds, with full frontend/backend lint. See [folder acceptance](folder-foundation.md)
+for final frozen runtime, Rust and actual native evidence. This branch's combined
+PR already contains B's feature commits; avoid merging duplicated common patches.
