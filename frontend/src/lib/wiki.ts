@@ -11,10 +11,13 @@ export function wikiScopeFromUrl(value: string | null): WikiScope {
   } catch { /* Invalid explicit scope must not broaden to all sources. */ }
   return { mode: "empty", source_ids: [], root_ids: [] };
 }
+export function wikiHref(id: string, scope: WikiScope): string {
+  return `/wiki/?w=${encodeURIComponent(id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+}
 export function wikiPreviewContent(content: string, contributors: { wiki_id: string }[] | undefined, scope: WikiScope): string {
   let preview = content.replace(/^<!-- Wiki ID: [0-9a-f-]+; model: [^\n]* -->\r?\n\r?\n/, "");
   for (const { wiki_id } of contributors ?? []) {
-    const target = `/wiki/?w=${encodeURIComponent(wiki_id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+    const target = wikiHref(wiki_id, scope);
     preview = preview.replaceAll(`](../sources/${wiki_id}.md)`, `](${target})`);
   }
   return preview;
