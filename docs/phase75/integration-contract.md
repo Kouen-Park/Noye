@@ -150,6 +150,10 @@ revisions and document edits; physical deletion is a separate Finder action.
 
 Integration order: integrated stage 1 → SourceSession → migration 8/stage events →
 B document schema/pipeline → migration 9/router/worker/backup wiring → A question/
-maintenance/evidence UI plus B chat/editor → combined regression and native acceptance.
+maintenance/evidence UI plus B chat/editor → recorded combined regression →
+Phase 8 native/model/PDF acceptance (deferred by the owner on 2026-10-08).
+SourceSession, durable jobs, migration and backup contracts are unchanged by this
+acceptance handoff. Known document language/heading/comparison limits and native
+restore uncertainty remain open; they are not successful checks.
 The knowledge-integration branch already contains B's feature commits. Review the
 combined branch; do not separately merge duplicated B shared wiring into main.

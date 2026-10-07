@@ -3007,18 +3007,26 @@ commands are recorded in docs/phase7/knowledge-workflow.md.
 
 # 16A. Phase 7.5 --- Knowledge Wiki and Source-Driven Documents
 
-**Implementation update, 2026-10-07:** the isolated `feat/folder-foundation`
+**Implementation updates, 2026-10-07–08:** the isolated `feat/folder-foundation`
 branch implements native folder/source/filing/job/backup integration and B's Wiki
 core. See [folder acceptance](docs/phase75/folder-foundation.md),
 [source contract](docs/phase75/source-contract.md) and
 [Wiki contract](docs/phase75/wiki-core.md) for implemented behavior, measured
-checks and limits. Phase 7.5 remains incomplete; Wiki-first chat and prompt-driven
-source documents still have open milestones. The owner requested a
+checks and limits. Stage 2 adds Wiki-first chat and prompt-driven documents in
+the combined draft PR #60; that delivery is not yet merged into main. The owner requested a
 folder-based knowledge workspace that maintains summaries and links, and creates
 documents directly from relevant local files through a general chat prompt.
 Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
 broader stability/quality refinement and final desktop acceptance. Keep Phase 7's
 twelve IDs, completed work and recorded limits intact.
+
+**Acceptance scope update, 2026-10-08:** the owner explicitly moved remaining
+verification to Phase 8. Phase 7.5 checkboxes below track delivered implementation,
+supported by the already recorded regression checks; they do not certify native
+end-to-end behavior or live-model quality. Remaining native restore, evidence UI,
+document/edit/export, model/PDF and failure-path acceptance belongs to §17.10.
+Preserve observed quality failures and unconfirmed results. This change does not
+declare them passed, authorize a merge, or defer recovery/backup implementation.
 
 ## 16A.1 Intended experience
 
@@ -3162,9 +3170,10 @@ implementation details, not a migration already performed:
 - [x] Keep all/empty/chosen scopes distinct. Connected documents and wiki links
   cannot broaden a selected scope. Distinguish source facts from wiki interpretation,
   reject stale evidence for current claims and retain historical snapshots honestly.
-- [ ] Present wiki links and underlying original references together. Exact-detail
-  questions must be able to reach material omitted from a short summary. Do not turn
-  prior assistant answers into evidence or claim that the model has been trained.
+- [x] Implement a dedicated evidence component presenting wiki revision links beside
+  original references, lexical retrieval of details omitted from summaries, and
+  original-only factual inputs that exclude prior assistant answers. Component and
+  service regressions are recorded; actual native presentation is a Phase 8 check.
 
 ### 7.5-5. Prompt-driven document creation with automatic source discovery
 
@@ -3188,28 +3197,28 @@ implementation details, not a migration already performed:
   per-source/section processing and synthesis. A normal chat's top-five passages
   cannot establish collection-wide coverage. Long documents need staged generation and
   progress, not silent input truncation or a single over-budget prompt.
-- [ ] Generate an editable document shaped by the prompt: study notes, a project
-  analysis, a comparison or a report. Use supported definitions/examples and a
-  source/coverage report. List unprocessed, missing or no-text requested material,
-  label partial results, and explain insufficient evidence instead of inventing
-  conclusions. Study notes may organize by lecture/topic, but that is one output
-  form, not a restriction on document generation.
+- [x] Implement editable draft generation for study notes, project analyses,
+  comparisons and reports, with a source/coverage report, missing/no-text entries,
+  explicit partial results and insufficient-evidence handling. Unsupported final
+  synthesis falls back to labeled original quotations. Requested-language,
+  comparison, heading and semantic quality remain unaccepted Phase 8 work; this
+  checkbox records the integrated generation/editing path, not polished output.
 - [x] Attach validated source locators and saved excerpt/version snapshots from the
   actual inputs. Save the artifact independently of the chat, preserve user edits,
   and expose cancellation/retry without duplicating or replacing saved notes.
-- [ ] Export the current chosen document revision to Markdown and PDF with optional
-  provenance. Existing PDF output uses the print path; a new PDF renderer is not
-  assumed. Validate actual native output, Unicode and long-document pagination.
-  A chat request alone is not evidence that a PDF has been exported successfully.
+- [x] Implement chosen-revision Markdown export and the existing PDF print path
+  with optional provenance, preserving edit/history selection. Actual native files,
+  Unicode and long-document pagination are Phase 8 acceptance checks. A chat request
+  or successful print request does not establish an exported PDF file.
 
 Implementation and scoped data/recovery checks are recorded in
 `docs/phase75/source-documents.md` and `docs/phase75/source-document-validation.md`.
 Actual local-model collection/report runs saved explicit partial artifacts;
-requested-language and report quality acceptance remains open. Actual native PDF,
-Unicode and long-pagination acceptance is also open. These checked implementation
-items do not establish completion of the entire native workflow or Phase 7.5.
+requested-language and report quality acceptance remains open in Phase 8. Actual
+native PDF, Unicode and long-pagination acceptance is also deferred to Phase 8.
+These checked implementation items do not establish native workflow acceptance.
 
-### 7.5-6. Recovery, portability and acceptance evidence
+### 7.5-6. Recovery, portability and evaluation support
 
 - [x] Extend backup/restore for wiki files, user edits, link/version metadata and
   document jobs. Make external-original inclusion explicit; never describe an
@@ -3218,15 +3227,11 @@ items do not establish completion of the entire native workflow or Phase 7.5.
 - [x] Coordinate scans, filing, wiki refresh, deletion and rebuilds with ongoing
   reads/jobs. Separate disconnecting, removing derived records and deleting a
   physical original. Capture source versions consistently during synthesis.
-- [ ] Validate each milestone using synthetic material, then record a real native
-  folder → detected files → summaries/links → prompt-driven document → edit/save →
-  Markdown/PDF workflow. Verify restart catch-up, cancellation, moves, changed or
-  missing sources, unchanged user edits and portable backup/restore.
-- [ ] Extend the existing evaluation with whole-collection coverage, summary
-  faithfulness, link usefulness, cross-source reasoning, exact details, partial
-  extraction, Korean/English output and ingestion/generation latency. Record actual
-  model/hardware and limits; do not assume local-model parity with the current
-  SecondBrain agent or claim independent review without it.
+- [x] Provide file-backed lifecycle/scope/version/recovery regressions and committed
+  knowledge/source-document evaluators with frozen inventories, explicit retry and
+  attempt-specific reports. Preserve recorded actual-model measurements, failures
+  and hardware limits. The combined native workflow and broader quality/latency
+  evaluation are explicitly pending under §17.10, not passed by this checkbox.
 
 **Stage 2 acceptance, 2026-10-08:** [knowledge integration](docs/phase75/knowledge-integration.md)
 records implemented scoped questions, shared maintenance/coordination and portable
@@ -3234,8 +3239,9 @@ restore, final regression checks and an actual five-question local-model baselin
 comparison. B's real document pipeline/chat/editor is integrated, with its
 [contract](docs/phase75/source-documents.md). The combined native restore/question/
 document/edit/Markdown/PDF workflow and broad document faithfulness are still
-unverified; the remaining UI/native and evaluation checkboxes stay open. Stage 1
-acceptance is retained. Phase 7.5 is not marked complete.
+unverified and, following the owner's later instruction, are tracked as open
+Phase 8 acceptance checks. Stage 1 acceptance is retained. Phase 7.5 implementation
+is delivered on the combined draft branch; final acceptance is not claimed.
 
 ## 16A.4 Delivery order and handoff
 
@@ -3247,11 +3253,14 @@ schema migrations and version new wiki indexes separately from original passages
 Recovery and backup changes accompany the features that need them rather than
 waiting until milestone 7.5-6 to protect data.
 
-Phase 7.5 is complete only when the intended source-driven workflow exists and
-its relevant checks pass. Keep every checklist open until implementation and
-validation are recorded. Phase 8 then broadens real-data quality/latency evaluation
-and performs the final packaged-app acceptance for both the new folder/wiki workflow
-and compatible upload/answer-based document flows.
+At the owner's 2026-10-08 instruction, distinguish Phase 7.5 implementation
+delivery from Phase 8 acceptance. Implement and integrate each feature with its
+data-preservation/recovery behavior and document its recorded regression evidence;
+do not hold implementation delivery for the deferred native/model/PDF checks.
+Keep all corresponding Phase 8 acceptance checkboxes open until actually verified,
+including observed quality failures. Phase 8 performs the final packaged-app
+acceptance for the folder/wiki workflow and compatible upload/answer-based flows.
+The combined draft branch still requires review and separate merge authorization.
 
 ------------------------------------------------------------------------
 
@@ -3551,7 +3560,9 @@ PDF checks are deferred to Phase 8 at the user's request.
 ## 17.10 Stability/quality refinement and final acceptance
 
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
-milestones are completed with their relevant validation. Reassess remaining defects
+implementation milestones are delivered. The owner's 2026-10-08 instruction moves
+remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite
+for that implementation handoff. Reassess remaining defects
 rather than repeating the completed reliability branches or Phase 7 implementations. Prioritize data
 preservation, index/rebuild correctness and source provenance, then measure
 retrieval, answer quality and inference latency.
@@ -3569,12 +3580,29 @@ retrieval, answer quality and inference latency.
 -   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
     reload → document generation → edit/save → Markdown/PDF export → clean deletion
     in the packaged macOS app. Inspect actual exported files from the native webview.
--   [ ] Run the Phase 7.5 native folder/wiki workflow, including changes made while
-    closed, unavailable roots, automatic filing, preserved user edits, link updates,
-    disconnect versus deletion and backup/restore of authored knowledge.
+-   [ ] Complete the unconfirmed native ZIP chooser/restore flow: diagnose the
+    accessibility timeout separately from an application failure, restore into a
+    new destination, reconnect external roots and confirm actual workspace state.
+    Keep the recorded enabled Open button and service restore distinct from native
+    restore completion.
+-   [ ] Run folder selection → detected files → ingestion → classification/filing →
+    summaries/links → original-grounded question with Wiki links → prompt document →
+    edit/save → actual Markdown/PDF files in the packaged macOS app. Verify restart
+    catch-up, unstable writes, cancellation/retry, rename/move byte and ID retention,
+    unavailable/physically disconnected roots, user-edit preservation, link updates,
+    disconnect versus derived removal versus original deletion and portable restore.
+-   [ ] Recheck all/empty/chosen scopes, outside-scope links, changed/missing/stale
+    sources, historical versions, exact numbers/terms/exceptions omitted from Wiki,
+    insufficient evidence and exclusion of previous assistant answers as evidence.
 -   [ ] Verify general chat prompts discover relevant files and create independently
     saved documents without a previous assistant answer. Measure requested-source
     coverage and faithfulness; inspect long Korean/English Markdown/PDF outputs.
+    Resolve and remeasure the recorded requested-language failures, unsuitable
+    comparison headings and unresolved translated/literal partial outputs. Include
+    whole collections, long/image-only PDFs, no-text/missing inputs and source edits
+    or cancel/restart during actual inference; citation hashes alone do not certify
+    every generated claim. Record model/hardware limits and run memory-intensive
+    local-model evaluations sequentially on the measured 8 GiB machine.
 -   [ ] Compare original retrieval and wiki-assisted discovery on exact details and
     cross-source questions. Record summary omissions, wrong links and stale claims.
 -   [ ] Measure local and cloud latency separately. Mocked responses do not establish
@@ -3590,7 +3618,9 @@ retrieval, answer quality and inference latency.
 
 The earlier post-MVP folder-watch proposal is now approved Phase 7.5 work (§16A).
 Native folder selection, change detection, startup reconciliation and folder-based
-knowledge maintenance precede Phase 8. They remain planned, not implemented.
+knowledge maintenance are implemented on the Phase 7.5 branches described in §16A.
+Remaining native/model/PDF acceptance belongs to Phase 8; main integration still
+requires the combined PR review and separately authorized merge.
 Do not schedule or build a second folder-watch pipeline after MVP acceptance.
 
 ------------------------------------------------------------------------

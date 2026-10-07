@@ -7,6 +7,12 @@ creation, revision/editor and chat intent services are integrated, not fixture
 adapters. The [shared contract](integration-contract.md) and
 [document contract](source-documents.md) identify the boundaries.
 
+**Owner scope update, 2026-10-08:** remaining verification is deferred to Phase 8
+(development plan §17.10). The feature implementations and already measured checks
+below remain delivered; native restore/full-workflow, PDF and broader model-quality
+acceptance remain unverified. Known language/heading/comparison limits are retained
+as Phase 8 quality work. No failed or unconfirmed result is converted into a pass.
+
 ## Implemented behavior
 
 - Real scanner/ingestion events enter the existing Wiki observer and durable worker.
@@ -260,7 +266,8 @@ local document proxy bypass and model-written inline citation labels. No indepen
 
 The branch already includes B's feature commits and A's final shared wiring. Review
 and merge the combined knowledge PR first when separately authorized; avoid duplicate
-B migration/registration patches. Remaining acceptance is the actual native full
-workflow and fresh/broader model/PDF quality, with B's document validation record.
-Phase 7.5 stays incomplete until those checks are recorded. No main merge or history
-rewrite is performed by this work.
+B migration/registration patches. Phase 7.5 implementation is delivered on this
+combined draft branch. At the owner's instruction, actual native full-workflow
+verification and fresh/broader model/PDF quality are open Phase 8 acceptance work,
+with B's document validation record preserving observed failures. No main merge,
+history rewrite or successful final acceptance is claimed by this work.

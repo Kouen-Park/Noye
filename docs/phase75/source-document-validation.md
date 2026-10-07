@@ -5,6 +5,12 @@ Measurements below are from the implementation workspace on Apple M2, macOS,
 8 GiB RAM, Python 3.14.7, Node 26.8.1 and Next 16.3.8. They are not claims of
 independent review or parity with the SecondBrain agent.
 
+**Owner scope update, 2026-10-08:** remaining native/model/PDF verification and
+quality acceptance are assigned to Phase 8 (§17.10 of the development plan).
+The implementation and historical results below are retained. Requested-language,
+comparison/heading quality, actual inference lifecycle and native exports remain
+open; this handoff does not claim they passed or rewrite existing artifacts.
+
 ## Automated validation
 
 - Backend feature/portable recovery: `pytest -q app/tests/test_source_documents.py
