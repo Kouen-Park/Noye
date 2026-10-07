@@ -29,7 +29,8 @@ export interface WikiPage extends WikiSummary {
   revision: WikiRevision | null;
   revisions: Pick<WikiRevision, "id" | "origin" | "title" | "created_at">[];
   relations: { id: string; origin_id: string; target_id: string; origin_title: string;
-    target_title: string; kind: string; reason: string; target_revision: string }[];
+    target_title: string; kind: string; reason: string; target_revision: string;
+    target_current_revision?: string }[];
 }
 export interface WikiJob {
   id: string; kind: string; subject_id: string; state: string; stage: string;
