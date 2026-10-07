@@ -388,12 +388,13 @@ def test_model_failure_job_can_retry_without_reusing_invalid_evidence_cache(work
     monkeypatch.setattr(
         pipeline, "generate", lambda context: original(context, client=model(invalid="quote")[0])
     )
-    knowledge_jobs.worker.run_one(db, job["id"])
+    worker = knowledge_jobs.KnowledgeWorker()
+    worker.run_one(db, job["id"])
     assert knowledge_jobs.get(db, job["id"])["state"] == "failed"
     assert store.request(db, job["subject_id"])["cache"] == {}
     retry = knowledge_jobs.resume(db, job["id"])
     monkeypatch.setattr(pipeline, "generate", lambda context: original(context, client=model()[0]))
-    knowledge_jobs.worker.run_one(db, retry["id"])
+    worker.run_one(db, retry["id"])
     assert knowledge_jobs.get(db, retry["id"])["state"] == "complete"
     assert documents.count_documents(db) == 1
 
