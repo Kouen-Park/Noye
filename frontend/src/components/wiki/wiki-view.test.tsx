@@ -84,3 +84,21 @@ it("resolves a changed URL scope once without repeated refreshes", async () => {
   rerender(<WikiView />);
   await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith({ mode: "empty", source_ids: [], root_ids: [] }, expect.any(AbortSignal)));
 });
+
+it("opens an allowed saved revision when the current Wiki has expanded outside scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&revision=saved&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  vi.mocked(api.readWiki).mockRejectedValue(new Error("Current Wiki is outside the selected material scope."));
+  const evidence: api.WikiEvidence = { id: "e1", source: { source_id: "one", root_id: "root", name: "one.txt",
+    source_hash: "saved-hash", source_version: "saved-hash", relative_path: "one.txt" },
+    page_number: null, passage_index: 0, start: 0, end: 13, text: "Saved original", current_status: "stale" };
+  vi.mocked(api.readWikiRevision).mockResolvedValue({ id: "saved", wiki_id: "wiki", parent_id: null,
+    origin: "generated", title: "Saved notes", content: "Saved scoped interpretation", created_at: "2026-10-07",
+    evidence: [evidence], metadata: {} });
+  render(<WikiView />);
+  expect(await screen.findByText("Saved scoped interpretation")).toBeInTheDocument();
+  expect(screen.getByText(/Historical Wiki snapshot/)).toBeInTheDocument();
+  expect(screen.getByText("Saved original")).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Return to current" })).not.toBeInTheDocument();
+  expect(screen.queryByText("Opening Wiki…")).not.toBeInTheDocument();
+});

@@ -7,6 +7,7 @@ import type { ChatCitation } from "@/lib/api";
 export interface KnowledgeSnapshot {
   version: number;
   scope: { mode: WikiScope["mode"]; source_ids?: string[]; root_ids?: string[] };
+  manifest?: { source_id: string }[];
   wiki_state: string;
   warnings: string[];
   insufficient_evidence: boolean;
@@ -18,8 +19,13 @@ export interface KnowledgeSnapshot {
 export function KnowledgeEvidence({ snapshot, citations }: {
   snapshot: KnowledgeSnapshot; citations: ChatCitation[];
 }) {
-  const scope: WikiScope = { mode: snapshot.scope.mode,
-    source_ids: snapshot.scope.source_ids ?? [], root_ids: snapshot.scope.root_ids ?? [] };
+  // Navigation must retain the answer's inventory, including an all/root request.
+  // Older snapshots without an inventory can expose only their captured source IDs.
+  const sourceIds = snapshot.manifest?.map(source => source.source_id)
+    ?? [...new Set(snapshot.wiki_pages.flatMap(page => page.source_ids))];
+  const scope: WikiScope = snapshot.scope.mode === "empty"
+    ? { mode: "empty", source_ids: [], root_ids: [] }
+    : { mode: "chosen", source_ids: sourceIds, root_ids: [] };
   return <section aria-label="Knowledge evidence" className="mt-4 rounded-lg border border-edge bg-card p-4 text-sm">
     <h3 className="font-semibold">Wiki & original evidence</h3>
     <p className="mt-1 text-xs text-ink-soft">Wiki is interpretation. Check exact facts, numbers and exceptions in the original passages saved with this answer.</p>
