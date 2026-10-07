@@ -17,13 +17,16 @@ it("keeps a historical selected revision read only and exports its body", async 
   const onSave = vi.fn();
   localStorage.setItem("noye-document-draft:history-doc", JSON.stringify({ title: "Draft", content: "Unsaved current edit" }));
   render(<DocumentEditor title="Historical" content="# Historical 한국어" saving={false} onSave={onSave}
-    readOnly documentId="history-doc" exportUrl="http://localhost:8000/source-documents/history-doc/export.md?revision=rev-old" />);
+    readOnly documentId="history-doc" exportUrl="http://localhost:8000/source-documents/history-doc/export.md?revision=rev-old&provenance=false" />);
   expect(screen.getByLabelText(/document content/i)).toHaveValue("# Historical 한국어");
   expect(screen.getByLabelText(/document content/i)).toHaveAttribute("readonly");
   expect(screen.getByRole("button", { name: "Saved" })).toBeDisabled();
   await userEvent.click(screen.getByRole("tab", { name: "Preview" }));
   expect(screen.getByRole("heading", { name: "Historical 한국어" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Export .md" })).toHaveAttribute("href", expect.stringContaining("revision=rev-old"));
+  await userEvent.click(screen.getByRole("checkbox", { name: "Include provenance" }));
+  const exportUrl = new URL(screen.getByRole("link", { name: "Export .md" }).getAttribute("href")!);
+  expect(exportUrl.searchParams.getAll("provenance")).toEqual(["true"]);
   expect(onSave).not.toHaveBeenCalled();
   expect(localStorage.getItem("noye-document-draft:history-doc")).toContain("Unsaved current edit");
 });
