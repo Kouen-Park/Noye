@@ -30,6 +30,22 @@ it("closes historical content when the material scope changes", async () => {
   expect(screen.queryByRole("button", { name: "Return to current" })).not.toBeInTheDocument();
 });
 
+it("carries scope in page, artifact, contributor and relation links for new tabs", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated", title: "Notes", content: "Current summary", created_at: "2026-10-07", evidence: [], metadata: { contributors: [{ wiki_id: "basis", revision_id: "basis-revision" }] } };
+  const page: api.WikiPage = { id: "wiki", title: "Notes", kind: "source", current_revision: "current", publication_error: null, updated_at: "2026-10-07", proposal_count: 0, revision, revisions: [], relations: [{ id: "edge", origin_id: "wiki", target_id: "target", origin_title: "Notes", target_title: "Related", kind: "shared_subject", reason: "Same evidence", target_revision: "target-revision" }] };
+  vi.mocked(api.listWiki).mockResolvedValue([page]);
+  vi.mocked(api.readWiki).mockResolvedValue(page);
+  vi.mocked(api.listWikiJobs).mockResolvedValue([{ id: "job", kind: "wiki", subject_id: "one", state: "complete", stage: "complete", completed: 1, total: 1, error: null, artifact_id: "wiki" }]);
+  render(<WikiView />);
+  await screen.findByRole("link", { name: "Related" });
+  for (const name of [/Notes\s*source/, "Open Wiki", "Related", "Source summary · basis"]) {
+    const href = (await screen.findByRole("link", { name })).getAttribute("href")!;
+    expect(JSON.parse(new URL(href, "http://localhost").searchParams.get("scope")!)).toEqual(scope);
+  }
+});
+
 it("deselecting one source from all preserves the remaining chosen scope", async () => {
   render(<WikiView />);
   await screen.findByText("one.txt");
