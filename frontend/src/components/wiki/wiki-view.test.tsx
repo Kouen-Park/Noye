@@ -67,3 +67,20 @@ it("shows source indexing failures separately from Wiki errors and offers explic
   expect(api.wikiJobAction).toHaveBeenCalledWith("job", "resume");
   expect(screen.getByRole("button", { name: "Summarize locally" })).toBeDisabled();
 });
+
+
+it("resolves a changed URL scope once without repeated refreshes", async () => {
+  const { rerender } = render(<WikiView />);
+  await screen.findByText("one.txt");
+  const chosen = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `scope=${encodeURIComponent(JSON.stringify(chosen))}`;
+  rerender(<WikiView />);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith(chosen, expect.any(AbortSignal)));
+  const count = vi.mocked(api.listWiki).mock.calls.length;
+  rerender(<WikiView />);
+  await waitFor(() => expect(screen.getAllByRole("checkbox")[1]).not.toBeChecked());
+  expect(api.listWiki).toHaveBeenCalledTimes(count);
+  query.value = "scope=" + encodeURIComponent(JSON.stringify({ mode: "empty", source_ids: [], root_ids: [] }));
+  rerender(<WikiView />);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith({ mode: "empty", source_ids: [], root_ids: [] }, expect.any(AbortSignal)));
+});

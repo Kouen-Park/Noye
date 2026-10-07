@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MarkdownContent } from "@/components/documents/document-preview";
 import { KnowledgeJobStages } from "@/components/knowledge-job-stages";
 import { WikiEditor } from "@/components/wiki/wiki-editor";
@@ -18,7 +18,8 @@ export function WikiView() {
   const identifier = search.get("w");
   const urlScope = search.get("scope");
   const [selection, setSelection] = useState(() => ({ url: urlScope, scope: wikiScopeFromUrl(urlScope) }));
-  const scope = selection.url === urlScope ? selection.scope : wikiScopeFromUrl(urlScope);
+  const parsedUrlScope = useMemo(() => wikiScopeFromUrl(urlScope), [urlScope]);
+  const scope = selection.url === urlScope ? selection.scope : parsedUrlScope;
   const setScope = (scope: WikiScope) => setSelection({ url: urlScope, scope });
   const [pages, setPages] = useState<WikiSummary[]>([]);
   const [sources, setSources] = useState<WikiSource[]>([]);
