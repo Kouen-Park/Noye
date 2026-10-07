@@ -12,7 +12,7 @@ export interface Coverage { inventory_count: number; inventory_mode: string; par
 export interface DocumentRevision {
   id: string; origin: "generated" | "user"; title: string; content: string; created_at: string;
   metadata: { coverage: Coverage; model: string; prompt_version: string; processing_seconds: number;
-    citations: WikiEvidence[]; request_id: string; scope: WikiScope };
+    citations: (WikiEvidence & { quote: string; quote_start: number; quote_end: number })[]; request_id: string; scope: WikiScope };
 }
 export interface SourceDocument extends NoyeDocument {
   revision: DocumentRevision;

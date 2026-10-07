@@ -54,7 +54,7 @@ class Document:
     @property
     def is_generated(self) -> bool:
         """Whether this document began as a generated draft rather than blank."""
-        return self.source_message_id is not None
+        return self.source_message_id is not None or self.source_instruction is not None
 
     @property
     def is_empty(self) -> bool:
