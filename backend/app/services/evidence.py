@@ -50,7 +50,18 @@ def original_status(db: sqlite3.Connection, citation: MessageCitation) -> str:
         record = file_store.get_file(db, citation.file_id)
     except file_store.FileRecordNotFound:
         return "missing"
-    digest = hash_file(record.path)
+    source = db.execute("SELECT * FROM sources WHERE file_id=?", (citation.file_id,)).fetchone()
+    if source:
+        from app.services.folders import SourceError, read_original, root_record
+
+        try:
+            _, digest, _ = read_original(
+                root_record(db, source["root_id"]), source["relative_path"]
+            )
+        except SourceError:
+            return "missing"
+    else:
+        digest = hash_file(record.path)
     if digest is None:
         return "missing"
     excerpts = citation.evidence.excerpts if citation.evidence else ()

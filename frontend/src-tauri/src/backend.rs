@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::collections::HashMap;
 use std::sync::{Arc, Condvar, Mutex};
 use std::time::Duration;
 use tauri::Manager;
@@ -20,6 +21,7 @@ struct Process {
     status: BackendStatus,
     configured: u64,
     next_config: u64,
+    folder_replies: HashMap<u64, serde_json::Value>,
 }
 
 pub struct Backend {
@@ -40,6 +42,7 @@ impl Default for Backend {
                 },
                 configured: 0,
                 next_config: 2,
+                folder_replies: HashMap::new(),
             }),
             exit: Condvar::new(),
         }
@@ -72,20 +75,26 @@ impl Backend {
         match spawned {
             Ok((mut events, child)) => {
                 self.process.lock().unwrap().child = Some(child);
-                let store = app.state::<Arc<crate::preferences::PreferenceStore>>();
-                let config = store.configuration().unwrap_or_else(|_| {
+                let store = app
+                    .state::<Arc<crate::preferences::PreferenceStore>>()
+                    .inner()
+                    .clone();
+                let configuring = self.clone();
+                tauri::async_runtime::spawn_blocking(move || {
+                    let config = store.configuration().unwrap_or_else(|_| {
                     eprintln!("Keychain unavailable; cloud generation is disabled until AI settings are saved.");
                     store.local_configuration().unwrap()
                 });
-                let frame = serde_json::json!({"event":"configure", "id":1, "values":config});
-                let _ = self
-                    .process
-                    .lock()
-                    .unwrap()
-                    .child
-                    .as_mut()
-                    .unwrap()
-                    .write(format!("{frame}\n").as_bytes());
+                    let frame = serde_json::json!({"event":"configure", "id":1, "values":config});
+                    let _ = configuring
+                        .process
+                        .lock()
+                        .unwrap()
+                        .child
+                        .as_mut()
+                        .unwrap()
+                        .write(format!("{frame}\n").as_bytes());
+                });
                 let backend = self.clone();
                 tauri::async_runtime::spawn(async move {
                     while let Some(event) = events.recv().await {
@@ -94,6 +103,17 @@ impl Backend {
                                 if let Ok(value) =
                                     serde_json::from_slice::<serde_json::Value>(&line)
                                 {
+                                    if value["event"] == "native_folder_result" {
+                                        if let Some(id) = value["id"].as_u64() {
+                                            backend
+                                                .process
+                                                .lock()
+                                                .unwrap()
+                                                .folder_replies
+                                                .insert(id, value.clone());
+                                            backend.exit.notify_all();
+                                        }
+                                    }
                                     if value["event"] == "configured" {
                                         backend.process.lock().unwrap().configured =
                                             value["id"].as_u64().unwrap_or(0);
@@ -170,6 +190,41 @@ impl Backend {
         } else {
             Err("Backend did not confirm settings".into())
         }
+    }
+
+    pub fn folder_request(
+        &self,
+        action: &str,
+        values: serde_json::Value,
+    ) -> Result<String, String> {
+        let mut process = self.process.lock().unwrap();
+        let id = process.next_config;
+        process.next_config += 1;
+        let frame = serde_json::json!({"event":"native_folder", "id":id,
+                                     "action":action, "values":values});
+        process
+            .child
+            .as_mut()
+            .ok_or("Backend unavailable")?
+            .write(format!("{frame}\n").as_bytes())
+            .map_err(|_| "Backend unavailable")?;
+        let (mut process, _) = self
+            .exit
+            .wait_timeout_while(process, Duration::from_secs(10), |state| {
+                !state.exited && !state.folder_replies.contains_key(&id)
+            })
+            .unwrap();
+        let reply = process
+            .folder_replies
+            .remove(&id)
+            .ok_or("Folder action did not complete")?;
+        if let Some(error) = reply["error"].as_str() {
+            return Err(error.into());
+        }
+        reply["result"]
+            .as_str()
+            .map(str::to_owned)
+            .ok_or("Invalid folder response".into())
     }
 
     pub fn shutdown(&self) {

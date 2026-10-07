@@ -64,6 +64,24 @@ async def serve() -> None:
                         break
                     try:
                         frame = json.loads(line)
+                        if frame.get("event") == "native_folder":
+                            from app.services.native_folders import dispatch
+
+                            try:
+                                result = dispatch(frame["action"], frame["values"])
+                                reply = {
+                                    "event": "native_folder_result",
+                                    "id": frame["id"],
+                                    "result": result,
+                                }
+                            except (ValueError, OSError, RuntimeError):
+                                reply = {
+                                    "event": "native_folder_result",
+                                    "id": frame["id"],
+                                    "error": "Folder action failed. Check permissions.",
+                                }
+                            print(json.dumps(reply), flush=True)
+                            continue
                         if frame.get("event") != "configure":
                             continue
                         apply_desktop_configuration(frame["values"])
@@ -92,8 +110,11 @@ def main() -> None:
         type=Path,
         help="Copy a closed web workspace to a NEW data dir, then exit",
     )
-    parser.add_argument("--restore-backup", type=Path,
-                        help="Validate a workspace backup into a NEW data dir, then exit")
+    parser.add_argument(
+        "--restore-backup",
+        type=Path,
+        help="Validate a workspace backup into a NEW data dir, then exit",
+    )
     args = parser.parse_args()
     if args.restore_backup is not None:
         from app.services.workspace_backup import restore_backup

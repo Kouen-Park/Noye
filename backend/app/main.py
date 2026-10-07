@@ -18,11 +18,14 @@ from app.api import (
     desktop_services,
     documents,
     files,
+    folders,
     index,
     jobs,
+    knowledge_jobs,
     models,
     runtime,
     search,
+    wiki,
     workspace,
 )
 from app.config import get_settings
@@ -30,6 +33,7 @@ from app.db.database import connect, init_schema
 from app.db.jobs import recover_interrupted
 from app.logging_config import configure_logging, get_logger
 from app.services.ingestion import cancel_all_ingestion
+from app.services.wiki.jobs import register as register_wiki_jobs
 
 # Before the routers, so anything they log during import is already captured.
 # configure_logging is idempotent, which matters here: uvicorn's reloader and the
@@ -37,6 +41,8 @@ from app.services.ingestion import cancel_all_ingestion
 # otherwise add another handler and duplicate every line.
 configure_logging()
 logger = get_logger("main")
+
+register_wiki_jobs()
 
 
 @asynccontextmanager
@@ -47,12 +53,31 @@ async def lifespan(app: FastAPI):
     try:
         init_schema(connection)
         recover_interrupted(connection)
+        from app.services.wiki.publication import recover_publications
+
+        recover_publications(connection)
     finally:
         connection.close()
+    from app.services.folder_scanner import watcher
+    from app.services.knowledge_jobs import recover_interrupted as recover_knowledge
+    from app.services.knowledge_jobs import worker
+    from app.services.wiki.observer import observer
+
+    connection = connect()
+    try:
+        recover_knowledge(connection)
+    finally:
+        connection.close()
+    watcher.start()
+    worker.start()
+    observer.start()
     desktop_services.manager.closing = False
     try:
         yield
     finally:
+        watcher.stop()
+        observer.stop()
+        worker.stop()
         cancel_all_ingestion()
         await models.manager.cancel()
         await desktop_services.manager.shutdown()
@@ -106,6 +131,9 @@ app.include_router(models.router)
 app.include_router(desktop_services.router)
 app.include_router(workspace.router)
 app.include_router(jobs.router)
+app.include_router(folders.router)
+app.include_router(knowledge_jobs.router)
+app.include_router(wiki.router)
 
 
 @app.get("/health")

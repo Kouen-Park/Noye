@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backend;
+mod folders;
 mod preferences;
 mod workspaces;
 
@@ -29,7 +30,9 @@ fn main() {
             preferences::ai_settings,
             preferences::save_ai_settings,
             workspaces::workspace_locations,
-            workspaces::select_workspace
+            workspaces::select_workspace,
+            folders::choose_source_folder,
+            folders::reveal_source_folder
         ])
         .build(tauri::generate_context!())
         .expect("could not build Noye desktop")

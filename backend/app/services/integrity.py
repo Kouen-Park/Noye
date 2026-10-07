@@ -267,6 +267,10 @@ def searchable_file_ids(connection: sqlite3.Connection) -> dict[str, str]:
         if identity is None or record.index_fingerprint != identity.fingerprint:
             excluded.append(record.id)
             continue
+        from app.services.source_catalog import folder_source_enabled
+
+        if not folder_source_enabled(connection, record.id):
+            continue
         searchable[record.id] = record.name
 
     if excluded:

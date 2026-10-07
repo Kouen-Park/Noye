@@ -3007,7 +3007,13 @@ commands are recorded in docs/phase7/knowledge-workflow.md.
 
 # 16A. Phase 7.5 --- Knowledge Wiki and Source-Driven Documents
 
-**Approved planning scope, 2026-10-05; not implemented.** The owner requested a
+**Implementation update, 2026-10-07:** the isolated `feat/folder-foundation`
+branch implements native folder/source/filing/job/backup integration and B's Wiki
+core. See [folder acceptance](docs/phase75/folder-foundation.md),
+[source contract](docs/phase75/source-contract.md) and
+[Wiki contract](docs/phase75/wiki-core.md) for implemented behavior, measured
+checks and limits. Phase 7.5 remains incomplete; Wiki-first chat and prompt-driven
+source documents still have open milestones. The owner requested a
 folder-based knowledge workspace that maintains summaries and links, and creates
 documents directly from relevant local files through a general chat prompt.
 Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
@@ -3107,44 +3113,44 @@ implementation details, not a migration already performed:
 
 ### 7.5-1. User-selected folders and reliable change detection
 
-- [ ] Add native folder selection and persistent registration for a managed root
+- [x] Add native folder selection and persistent registration for a managed root
   and connected source folders. Keep this separate from Phase 7's backup
   workspace switching. Limit file access to registered roots using canonical path
   checks and native authorization; prevent traversal or links escaping those roots.
-- [ ] Scan existing supported files, observe stable additions/edits/moves and run a
+- [x] Scan existing supported files, observe stable additions/edits/moves and run a
   startup reconciliation scan for changes while the app was closed. Coalesce events
   and avoid reading a half-written file or queuing the same work repeatedly.
-- [ ] Exclude generated wiki/output, temporary and application data from source
+- [x] Exclude generated wiki/output, temporary and application data from source
   intake. Handle permissions, disconnected drives and missing folders as visible
   unavailable states; do not infer deletion from an inaccessible root.
-- [ ] Show the real folder tree, connection and processing states, per-folder
+- [x] Show the real folder tree, connection and processing states, per-folder
   processing controls and Open in Finder. Reuse durable jobs for cancellation,
   explicit retry and interrupted work; no closed-app background daemon is assumed.
 
 ### 7.5-2. Automatic filing and source-summary pages
 
-- [ ] Generate structured classification and a faithful summary with local Ollama.
+- [x] Generate structured classification and a faithful summary with local Ollama.
   Prefer existing categories, allow new categories when justified, use one primary
   folder plus multiple tags, and keep uncertain classifications in Unclassified.
-- [ ] Create `wiki/sources` pages with stable IDs, source/version references,
+- [x] Create `wiki/sources` pages with stable IDs, source/version references,
   original page or passage locators, summary, key points and uncertainties. Record
   model/prompt version and processing time; never invent a page or citation.
-- [ ] Validate AI-proposed destinations in application code before creating folders
+- [x] Validate AI-proposed destinations in application code before creating folders
   or moving a file. Preserve bytes, prevent name collisions and journal path/registry
   changes for recovery. Respect manually fixed categories and user folder names.
-- [ ] Make a path-only organization change independent of re-embedding unchanged
+- [x] Make a path-only organization change independent of re-embedding unchanged
   content. Extend exclusion/loop detection so the app's own moves do not reprocess
   indefinitely. Keep source indexing and summary-generation failures distinguishable.
 
 ### 7.5-3. Related sources and maintained topic knowledge
 
-- [ ] Find candidate related sources and wiki pages; store validated target IDs,
+- [x] Find candidate related sources and wiki pages; store validated target IDs,
   backlinks, relation type and an explanation. Distinguish shared subject,
   supporting evidence, alternative approaches and contradictions.
-- [ ] Maintain concept/project pages across sources, record tensions and update
+- [x] Maintain concept/project pages across sources, record tensions and update
   history, and offer to file reusable analyses. Bound link traversal and avoid
   duplicate concepts or a growing set of links based only on shared vocabulary.
-- [ ] Refresh affected generated content when source versions change. Preserve
+- [x] Refresh affected generated content when source versions change. Preserve
   user-authored edits with revision/conflict handling; do not overwrite edited pages
   during regeneration. Missing or superseded sources leave explicit provenance.
 
