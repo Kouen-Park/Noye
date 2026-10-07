@@ -25,6 +25,7 @@ from app.api import (
     models,
     runtime,
     search,
+    source_documents,
     wiki,
     workspace,
 )
@@ -34,6 +35,7 @@ from app.db.jobs import recover_interrupted
 from app.logging_config import configure_logging, get_logger
 from app.services.ingestion import cancel_all_ingestion
 from app.services.wiki.jobs import register as register_wiki_jobs
+from app.services.source_documents.jobs import register as register_source_document_jobs
 
 # Before the routers, so anything they log during import is already captured.
 # configure_logging is idempotent, which matters here: uvicorn's reloader and the
@@ -43,6 +45,8 @@ configure_logging()
 logger = get_logger("main")
 
 register_wiki_jobs()
+
+register_source_document_jobs()
 
 
 @asynccontextmanager
@@ -134,6 +138,7 @@ app.include_router(jobs.router)
 app.include_router(folders.router)
 app.include_router(knowledge_jobs.router)
 app.include_router(wiki.router)
+app.include_router(source_documents.router)
 
 
 @app.get("/health")
