@@ -40,11 +40,12 @@ adapters. The [shared contract](integration-contract.md) and
 
 ## Automated checks, 2026-10-08
 
-The last full backend regression before B's final request-list presentation fix:
-**943 passed, 19 skipped, 10 warnings, 18.68 seconds**. Normal application settings
-and production timeouts were retained. A one-off pytest collection plugin explicitly
-skipped availability-marked Ollama/Qdrant checks while actual inference was measured
-separately. This is not a claim that those skipped service tests passed.
+Final combined source, including B's v3 fallback/outline and terminal-card fixes
+and A's archive-selection fix: **944 passed, 19 skipped, 10 warnings, 17.89 seconds**.
+Normal application settings and production timeouts were retained. A one-off pytest
+collection plugin explicitly skipped availability-marked Ollama/Qdrant checks while
+actual inference was measured separately. This does not claim those skipped service
+tests passed.
 
 ```python
 import pytest
@@ -65,23 +66,19 @@ raise SystemExit(pytest.main(["-q", "app/tests"], plugins=[SeparateLiveChecks()]
 
 Run from `backend` with the repository Python environment. An earlier overlapping
 run had two desktop lifecycle timeouts while B's tests/startup watcher also loaded
-Ollama; the uncontended run above passed without extending the three-second test
-startup deadline. One earlier retry test also depended on a globally stopped worker;
-its fixture now creates a fresh worker. Neither failed run is counted as acceptance.
+Ollama; the uncontended final run passed without extending the three-second test
+startup deadline. An earlier retry test depended on a globally stopped worker;
+its fixture now creates a fresh worker. Failed runs are not counted as acceptance.
 
-After B's final history/partial-result fix (`e9a06a9` on A):
-
-- `ruff check app desktop.py`: passed.
-- `pytest` for `test_source_documents`, `test_source_session`,
-  `test_knowledge_maintenance`, `test_knowledge_portability`, `test_knowledge_query`,
-  `test_wiki_jobs_api`, `test_workspace_backup`, `test_local_ollama`:
-  **75 passed, 7 warnings, 2.55 seconds**.
-- `npm test -- --maxWorkers=1`: **252 passed, 39 files, 22.91 seconds**.
-- `npm run lint`, `next typegen`, `tsc --noEmit`: passed after that integration.
-- The last historical-navigation fix then passed **11 focused frontend tests**,
-  two files, 28.74 seconds, plus lint and TypeScript. All/root navigation now uses
-  frozen source IDs; a scoped historical revision opens even if the current page
-  gained outside contributors. Current relations are excluded from historical view.
+- `ruff check app desktop.py`: passed on the final combined source.
+- `npm test -- --maxWorkers=1`: **259 passed, 40 files, 22.71 seconds**.
+- `npm run lint`, `next typegen`, `tsc --noEmit`: passed on that source.
+- Historical-navigation and archive-selection regressions also passed in the
+  focused UI run: **20 tests, four files, 3.01 seconds**, plus lint/types.
+  All/root historical navigation uses frozen source IDs; a saved revision opens
+  even if the current page gained outside contributors. Current relations are
+  excluded from historical view. Invalid selected archives display the restore
+  service error without claiming success or switching workspaces.
 
 The targeted checks use real synthetic filesystem/SQLite/extraction and controlled
 model/search responses. They verify scope escape attempts, empty scope, stale/missing
@@ -141,46 +138,73 @@ interpretation and exact assertions require original review.
 
 B's real synthetic Alpha/Beta generation reached a saved partial v6 artifact after
 rejected attempts. Manual review found “total capacity 92 litres” stronger than the
-original “stores 92 litres.” Treat that historical v6 result as a **quality failure**,
-not accepted source fidelity. The final integrated `source-document-v2` pipeline
-retains actual verbatim originals when cross-source entailment fails and explicitly
-marks unresolved synthesis/translation. Controlled tests verify that behavior;
-a fresh real-model acceptance is recorded separately by B. Do not infer successful
-quality from an artifact pointer, a model entailment check or processed-character count.
+original “stores 92 litres.” That historical v6 result is a **quality failure**.
+
+Corrected real `source-document-v2` collection/report runs saved explicit partial
+artifacts in **366.581** and **481.641 seconds**. Collection processed both selected
+originals; report selected two of three initial sources, excluding the unrelated
+orchard. All 11 saved citations matched actual original byte hashes and quote spans.
+Verbatim fallback avoided the stronger capacity wording, but duplicate paragraphs,
+empty headings and requested-language failures prevent document-quality acceptance.
+Eight and 14 structured model stages also demonstrate a material latency limit
+on this host; coverage is not evidence of comprehension or polished output.
+
+The final integrated `source-document-v3` pipeline deduplicates retained original
+paragraphs and asks for a compact topical outline. Controlled regressions pass;
+actual v3 collection/comparison/missing-source runs are pending B's coordinated
+model execution. [B's validation record](source-document-validation.md) includes
+actual browser user edits, selected-revision Markdown files and the real three-
+artifact backup/restore. It distinguishes those observations from native/PDF work.
+Do not infer successful quality from an artifact pointer, model entailment or a
+processed-character count.
 
 ## Desktop build and native observation
 
-Before the final `e9a06a9` request-list/UI wording fix:
+Final combined source, including the archive-selection fix:
 
 - `npm run desktop:prepare`: passed. PyInstaller 6.22.3/Python 3.14.7 frozen arm64
-  sidecar build: 31.129 seconds. Next 16.3.8 Webpack static export: 10 routes,
-  4.3-second compilation and 2.2-second type check.
-- Tauri debug application build: passed, 10.76-second incremental Rust build;
-  separate `Noye Knowledge QA.app` bundle, 92.79 MiB. QA identifier
-  `com.noye.knowledgeqa20261008` isolates data and Keychain namespace.
+  sidecar build: **31.169 seconds**. Next 16.3.8 Webpack static export: **10 routes**,
+  **1.509-second compilation** and **2.0-second type check**.
+- Tauri debug application build: passed, **4.72-second** incremental Rust build;
+  separate `Noye Knowledge QA.app` bundle, **92.79 MiB**. QA identifier
+  `com.noye.knowledgeqa20261008` isolates application data and Keychain namespace.
 - `NOYE_TEST_SIDECAR=<built arm64 sidecar> .venv/bin/python -m pytest
-  app/tests/test_desktop.py -q`: **10 passed, 7 warnings, 21.47 seconds**.
+  app/tests/test_desktop.py -q`: **10 passed, 7 warnings, 19.98 seconds**.
   Actual frozen private-control/configuration/start-stop protocol was exercised.
 
-The real native QA window and Settings were observed. Local Ollama/Qdrant service
-availability and installed generation/embedding models were visible. The workspace
-backup chooser opened, but selection/restore was not confirmed. Subsequent UI calls
-failed with “Sky Computer Use service startup request failed” and kernel timeout.
-The dedicated QA app/sidecars were then stopped; B's Ollama daemon was retained.
+The actual native QA window, Chat and Settings were observed. An earlier session
+showed running local services and installed models. During the final chooser check,
+Ollama/Qdrant were stopped and the UI correctly reported that state; no inference
+is attributed to that session.
+
+The original file input's `.zip` accept filter selected a valid backup and displayed
+its ZIP preview but left **Open disabled**. A removed this advisory filter; strict
+server archive/manifest/hash/path verification remains unchanged. The rebuilt native
+chooser selected B's actual **49,415-byte** backup with **Open enabled**, twice.
+Both an accessibility Open click and a keyboard Return dismissed the panel, after
+which Sky observations/rebinding failed with `timeoutReached` or
+`noWindowsAvailable`. Restarting only the isolated QA application restored UI access.
+A one-second sample of that application's main thread showed the normal idle AppKit
+run loop, which does not establish an application hang or successful file selection.
+The native restore result therefore remains **unconfirmed**. The QA app and its own
+sidecars were stopped; the model/build slot was returned to B.
 
 **Not validated in stage 2:** native restore/reconnect → folder query with Wiki links
 → document creation → edit/save → actual Markdown/PDF files; Unicode/long PDF
 pagination; physical external-drive removal; broad real-data faithfulness/latency.
-Stage-1 native TXT/Markdown/two-page PDF ingestion, moves, interruption and folder
-controls remain recorded in [folder acceptance](folder-foundation.md); they were not
-rerun here. A file chooser, build or successful print request is not exported-file proof.
+Actual service/SQLite restore preserved three document artifacts and user edits;
+that is distinct from the blocked native chooser workflow. Stage-1 native
+TXT/Markdown/two-page PDF ingestion, moves, interruption and folder controls remain
+recorded in [folder acceptance](folder-foundation.md); they were not rerun here.
+An enabled chooser, build or successful print request is not exported-file proof.
 
 ## Review and remaining acceptance
 
 The integration self-review corrected publication transaction boundaries, unstable
 Wiki URL scope identity, historical link inventory/current-page dependence, paused filing inside the move lock, pending-journal cleanup,
 cloud-model alias checks, cloud requests with connected originals, terminal stage
-loss, worker-test isolation and restored approved-trigger handling. Their focused
+loss, worker-test isolation, restored approved-trigger handling and native ZIP
+selection filtering. Their focused
 regressions passed. B's own review corrected document entailment fallback, provenance
 revision export and conversation history filtering. No independent review is claimed.
 
