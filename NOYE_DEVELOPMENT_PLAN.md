@@ -3156,10 +3156,10 @@ implementation details, not a migration already performed:
 
 ### 7.5-4. Wiki-first questions with original evidence
 
-- [ ] Resolve the selected folder/course/source scope, find relevant summaries and
+- [x] Resolve the selected folder/course/source scope, find relevant summaries and
   topics, follow useful links within that scope, and consult original passages for
   supporting detail. Compare this route with the existing retrieval baseline.
-- [ ] Keep all/empty/chosen scopes distinct. Connected documents and wiki links
+- [x] Keep all/empty/chosen scopes distinct. Connected documents and wiki links
   cannot broaden a selected scope. Distinguish source facts from wiki interpretation,
   reject stale evidence for current claims and retain historical snapshots honestly.
 - [ ] Present wiki links and underlying original references together. Exact-detail
@@ -3204,11 +3204,11 @@ implementation details, not a migration already performed:
 
 ### 7.5-6. Recovery, portability and acceptance evidence
 
-- [ ] Extend backup/restore for wiki files, user edits, link/version metadata and
+- [x] Extend backup/restore for wiki files, user edits, link/version metadata and
   document jobs. Make external-original inclusion explicit; never describe an
   index-only/connection-only backup as containing those original files. Restore into
   a new destination, report unavailable roots and require explicit reconnection.
-- [ ] Coordinate scans, filing, wiki refresh, deletion and rebuilds with ongoing
+- [x] Coordinate scans, filing, wiki refresh, deletion and rebuilds with ongoing
   reads/jobs. Separate disconnecting, removing derived records and deleting a
   physical original. Capture source versions consistently during synthesis.
 - [ ] Validate each milestone using synthetic material, then record a real native
@@ -3220,6 +3220,15 @@ implementation details, not a migration already performed:
   extraction, Korean/English output and ingestion/generation latency. Record actual
   model/hardware and limits; do not assume local-model parity with the current
   SecondBrain agent or claim independent review without it.
+
+**Stage 2 acceptance, 2026-10-08:** [knowledge integration](docs/phase75/knowledge-integration.md)
+records implemented scoped questions, shared maintenance/coordination and portable
+restore, final regression checks and an actual five-question local-model baseline
+comparison. B's real document pipeline/chat/editor is integrated, with its
+[contract](docs/phase75/source-documents.md). The combined native restore/question/
+document/edit/Markdown/PDF workflow and broad document faithfulness are still
+unverified; the remaining UI/native and evaluation checkboxes stay open. Stage 1
+acceptance is retained. Phase 7.5 is not marked complete.
 
 ## 16A.4 Delivery order and handoff
 
