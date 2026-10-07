@@ -85,7 +85,7 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h2 className="text-lg font-semibold">{root.name}</h2>
         <p className="text-sm text-ink-soft">{root.kind === "managed" ? "Managed knowledge folder" : "Connected existing folder"}
-          {" · "}{root.availability}{" · "}{root.processing ? "Processing enabled" : "Processing paused"}</p>
+          {" · "}{root.availability}{" · "}{!root.connected ? "Processing inactive" : root.processing ? "Processing enabled" : "Processing paused"}</p>
       </div>
       <div className="flex flex-wrap gap-2">
         <button className={actionClass} disabled={busy || !root.connected || root.availability !== "available"} onClick={() => void act(() => revealFolder(root.id))}>Open in Finder</button>
