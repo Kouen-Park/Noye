@@ -378,6 +378,26 @@ def test_repeated_generation_request_returns_one_job_and_one_user_message(worksp
     assert documents.count_documents(db) == 1
 
 
+def test_chat_task_history_filters_conversation_before_applying_display_limit(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    older = enqueue(db, identifier="older-conversation-request")
+    conversation_id = store.request(db, older["subject_id"])["request"]["conversation_id"]
+    for position in range(101):
+        enqueue(db, identifier=f"unrelated-{position}")
+    app = FastAPI()
+    app.include_router(api.router)
+    app.dependency_overrides[get_db] = lambda: db
+    with TestClient(app) as client:
+        tasks = client.get(
+            "/source-documents/requests",
+            params={
+                "conversation_id": conversation_id,
+            },
+        ).json()
+    assert [task["request"]["id"] for task in tasks] == [older["subject_id"]]
+
+
 def test_named_collection_enumerates_every_member_and_freezes_later_discoveries(workspace):
     db, *_ = workspace
     a = discover(workspace, "Course/one.txt", "Reservoir capacity is 37 litres.")

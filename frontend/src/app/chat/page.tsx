@@ -273,7 +273,7 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
                   inspected={inspecting?.id === message.id} onInspect={(selected, button) => { sourceButton.current = button; setInspecting(selected); }} />)}
                 {pending && <li className="py-5" role="status"><p className="text-[12px] font-semibold text-brand">Noye</p><p className="mt-2 text-sm text-ink-soft">Waiting for {provider === "gemini" ? "Gemini" : "Ollama"}…</p><p className="mt-1 text-xs text-ink-soft">Your question is being processed. The answer will appear here.</p></li>}
               </ul>
-              <DocumentTasks conversationId={conversationId} />
+              <DocumentTasks key={conversationId ?? "new"} conversationId={conversationId} />
             </div>
           </div>
           <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">

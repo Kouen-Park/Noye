@@ -3,12 +3,13 @@ import { apiBaseUrl } from "@/lib/runtime";
 import { type WikiScope, type WikiJob, type WikiEvidence } from "@/lib/wiki";
 
 export interface CoverageSource {
-  source_id: string; root_id: string | null; relative_path: string; version: string;
+  source_id: string; root_id: string | null; relative_path: string; version: string | null;
   availability: string; processing_state: string; state: string; reason: string | null;
   passages_read: number; characters_read: number; characters_processed: number;
   fragments_processed: number; no_text_pages: number[];
 }
-export interface Coverage { inventory_count: number; inventory_mode: string; partial: boolean; sources: CoverageSource[] }
+export interface Coverage { inventory_count: number; inventory_mode: string; partial: boolean; sources: CoverageSource[];
+  synthesis_limits?: { section_id: string; reason: string }[] }
 export interface DocumentRevision {
   id: string; origin: "generated" | "user"; title: string; content: string; created_at: string;
   metadata: { coverage: Coverage; model: string; prompt_version: string; processing_seconds: number;
@@ -22,7 +23,7 @@ export interface DocumentTask {
   job: WikiJob | null;
   request: { id: string; artifact_id: string | null; clarification: string | null;
     request: { instruction: string; conversation_id: string; scope: WikiScope };
-    manifest: { source_id: string; relative_path: string; version: string }[];
+    manifest: { source_id: string; relative_path: string; version: string | null }[];
     plan: { selected_ids: string[] } | null;
     report: Partial<Coverage> };
 }
