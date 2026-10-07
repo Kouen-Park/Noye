@@ -10,7 +10,7 @@ export function SourceDocumentDetails({ document, onRevision }: {
   return <section aria-label="Document source coverage" className="mb-4 rounded-lg border border-edge bg-card p-4 text-sm">
     <p className="font-semibold">{coverage.partial ? "Partial document" : "Selected source text processed"}</p>
     <p className="mt-1 text-xs text-ink-soft">{coverage.inventory_mode === "collection" ? "Collection inventory fixed at job start." : "Relevant sources discovered; the whole library was not reviewed."} {coverage.sources.filter(s => s.state === "processed").length}/{coverage.sources.length} selected sources processed.</p>
-    {!!coverage.synthesis_limits?.length && <p className="mt-2 text-xs text-ink-soft">Some conclusions failed evidence verification. Verbatim originals were retained; comparison or translation for those items remains unresolved.</p>}
+    {!!coverage.synthesis_limits?.length && <p className="mt-2 text-xs text-ink-soft">Some conclusions failed evidence verification. Review the saved originals; comparison or translation for those items remains unresolved.</p>}
     <label className="mt-3 flex flex-wrap items-center gap-2">Revision
       <select className="min-h-11 max-w-full rounded-md border border-edge-strong bg-card px-2" value={document.revision.id} onChange={event => onRevision(event.target.value)}>
         {document.revisions.map(revision => <option key={revision.id} value={revision.id}>{revision.origin} · {new Date(revision.created_at).toLocaleString()}</option>)}
