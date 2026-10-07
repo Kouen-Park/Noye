@@ -76,10 +76,16 @@ def cancel(connection, job_id):
     if job["state"] not in OPEN_STATES:
         raise ValueError("This task is no longer active.")
     with connection:
-        connection.execute(
-            "UPDATE knowledge_jobs SET cancel_requested=1,state=?,updated_at=? WHERE id=?",
-            ("cancelled" if job["state"] == "queued" else "cancelling", now(), job_id),
-        )
+        changed = connection.execute(
+            "UPDATE knowledge_jobs SET cancel_requested=1,"
+            "state=CASE WHEN state='queued' THEN 'cancelled' ELSE 'cancelling' END,"
+            "updated_at=? WHERE id=? AND state IN ('queued','running','cancelling')",
+            (now(), job_id),
+        ).rowcount
+        if not changed:
+            raise ValueError("This task is no longer active.")
+        if get(connection, job_id)["state"] == "cancelled":
+            WorkContext(connection, job).report(job["stage"], "cancelled")
     return get(connection, job_id)
 
 
@@ -101,6 +107,13 @@ def resume(connection, job_id):
 
 def recover_interrupted(connection):
     with connection:
+        connection.execute(
+            "INSERT INTO knowledge_job_events(job_id,stage,state,completed,total,"
+            "detail_json,created_at) "
+            "SELECT id,stage,'interrupted',completed,total,?,? FROM knowledge_jobs "
+            "WHERE state IN ('queued','running','cancelling')",
+            (json.dumps({"reason": "Noye stopped; explicit retry required."}), now()),
+        )
         connection.execute(
             "UPDATE knowledge_jobs SET state='interrupted',error=?,updated_at=? "
             "WHERE state IN ('queued','running','cancelling')",
@@ -170,9 +183,13 @@ class KnowledgeWorker:
         if job["state"] != "queued":
             return
         with connection:
-            connection.execute(
-                "UPDATE knowledge_jobs SET state='running',updated_at=? WHERE id=?", (now(), job_id)
-            )
+            claimed = connection.execute(
+                "UPDATE knowledge_jobs SET state='running',updated_at=? "
+                "WHERE id=? AND state='queued' AND cancel_requested=0",
+                (now(), job_id),
+            ).rowcount
+        if not claimed:
+            return
         context = WorkContext(connection, job, stop_event or self.stop_event)
         try:
             context.checkpoint("starting")

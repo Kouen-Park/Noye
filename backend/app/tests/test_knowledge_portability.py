@@ -44,12 +44,13 @@ def test_query_document_edits_versions_and_stage_history_survive_new_workspace_r
     ]
     with closing(connect(target / "app.db")) as restored:
         init_schema(restored)
+        assert knowledge_jobs.get(restored, job["id"])["events"][-1]["state"] == "interrupted"
         head = document_store.current(restored, artifact)
         assert head == expected
         assert len(document_store.revisions(restored, artifact)) == 2
         assert knowledge_jobs.get(restored, job["id"])["state"] == "interrupted"
         assert (
-            knowledge_jobs.get(restored, job["id"])["events"]
+            knowledge_jobs.get(restored, job["id"])["events"][:-1]
             == knowledge_jobs.get(db, job["id"])["events"]
         )
         assert (

@@ -298,6 +298,15 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                     )
                     copied.execute("UPDATE sources SET availability='disconnected'")
                     copied.execute(
+                        "INSERT INTO knowledge_job_events(job_id,stage,state,completed,total,"
+                        "detail_json,created_at) SELECT id,stage,'interrupted',completed,total,?,? "
+                        "FROM knowledge_jobs WHERE state IN ('queued','running','cancelling')",
+                        (
+                            json.dumps({"reason": "Restored; explicit retry required."}),
+                            datetime.now(UTC).isoformat(),
+                        ),
+                    )
+                    copied.execute(
                         "UPDATE knowledge_jobs SET state='interrupted',"
                         "error='Restored from backup. Retry explicitly.' "
                         "WHERE state IN ('queued','running','cancelling')"
