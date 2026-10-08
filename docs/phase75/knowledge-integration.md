@@ -44,6 +44,37 @@ as Phase 8 quality work. No failed or unconfirmed result is converted into a pas
   authored work. Evidence UI shows scoped Wiki revisions beside original passages;
   current unavailability does not relabel a historical snapshot as current proof.
 
+## Implementation follow-up, 2026-10-08
+
+At the owner's request A/B divided remaining implementation while keeping actual
+native/model/PDF acceptance in Phase 8. A completed three concrete navigation gaps:
+
+- Wiki body links previously could omit/replace the selected scope. The shared
+  renderer now accepts an optional rewrite policy; Wiki/editor/answer previews
+  apply it after Markdown parsing, covering inline, reference and automatic URL
+  links. Other local paths and unknown portable references render as plain text.
+- Captured contributor, relation and backlink references now open the saved
+  revision rather than silently displaying a later one. Historical answer links
+  retain their frozen source IDs. Bodies, quotes, drafts and saved history are not
+  rewritten, and the existing document renderer keeps its default behavior.
+- Root-only and root/source-union selections now display correctly in the Wiki
+  source controls. Deselecting one source retains the other selected members;
+  explicitly empty scope cannot activate leftover root/source IDs.
+
+Focused deterministic checks, from `frontend`:
+`npm test -- --maxWorkers=1 src/lib/wiki.test.ts
+src/components/wiki/wiki-editor.test.tsx src/components/wiki/wiki-view.test.tsx
+src/components/chat/knowledge-evidence.test.tsx
+src/components/documents/document-preview.test.tsx`: **32 passed in five files,
+3.55 seconds** for the body-link change. Relation follow-up: **14 passed in two
+files, 1.83 seconds**. Root-selection follow-up: **10 passed in one file,
+1.37 seconds**. These overlap and are not added together. ESLint and TypeScript
+passed after each code change. An initial TypeScript invocation from the repository
+root printed usage because it had no tsconfig; the corrected frontend invocation
+passed. The body-link commit's Next 16.3.8 static export built all 10 routes
+(1,735 ms compilation, 2.2 s types). These checks do not establish new native,
+actual-model or PDF acceptance. No model service or native QA app was started.
+
 ## Automated checks, 2026-10-08
 
 Final combined code through `ada721a`, including scoped per-source observations,

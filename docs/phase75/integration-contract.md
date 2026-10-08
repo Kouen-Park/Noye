@@ -126,6 +126,18 @@ A's `KnowledgeEvidence` component in `components/chat/knowledge-evidence.tsx`
 presents scoped Wiki revision links/interpretations beside original citations.
 B's chat intent/cards consume the same job events and own document/editor/export.
 
+Wiki Markdown uses `wikiLinkHref` at render time for inline, reference-style and
+implicit URL links. Local Wiki URLs are rebuilt with the current explicit scope;
+a link cannot replace it with all sources. Saved answer navigation uses the frozen
+inventory as before. Captured contributor `revision_id`, relation `target_revision`
+and backlink `revision_id` open their actual saved revisions. Unknown portable
+Markdown targets and other local paths render as text; originals are opened through
+the verified evidence controls. External references remain explicit user links.
+The stored Markdown, source versions, old artifacts and user drafts are unchanged.
+The shared `MarkdownContent.rewriteLink` prop is optional, preserving the existing
+chat/document renderer when no Wiki policy is supplied. A chosen root/source union
+is reflected in source checkboxes; narrowing it freezes its known members to IDs.
+
 ## Migrations, backup and integration order
 
 Migration **8** installs query snapshots and durable stage events. Migration **9**

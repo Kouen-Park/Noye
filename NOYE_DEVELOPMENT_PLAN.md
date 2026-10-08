@@ -3174,6 +3174,8 @@ implementation details, not a migration already performed:
   original references, lexical retrieval of details omitted from summaries, and
   original-only factual inputs that exclude prior assistant answers. Component and
   service regressions are recorded; actual native presentation is a Phase 8 check.
+  Markdown links retain the selected scope and captured contributor/relation
+  revisions; root/source union controls preserve remaining members when narrowed.
 
 ### 7.5-5. Prompt-driven document creation with automatic source discovery
 
