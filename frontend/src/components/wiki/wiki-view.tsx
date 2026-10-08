@@ -43,8 +43,15 @@ export function WikiView() {
     setError(null);
     try { await action(); await refresh(); } catch (cause) { fail(cause); }
   }
+  function sourceSelected(source: WikiSource) {
+    return scope.mode === "all" || (scope.mode === "chosen" && (
+      scope.source_ids.includes(source.source_id)
+      || (source.root_id !== null && scope.root_ids.includes(source.root_id))));
+  }
   function selectSource(source: WikiSource, selected: boolean) {
-    const current = scope.mode === "all" ? sources.map(source => source.source_id) : scope.source_ids;
+    const current = scope.mode === "all" ? sources.map(source => source.source_id)
+      : scope.mode === "chosen" ? [...new Set([...scope.source_ids,
+        ...sources.filter(sourceSelected).map(source => source.source_id)])] : [];
     const ids = selected ? [...new Set([...current, source.source_id])] : current.filter(id => id !== source.source_id);
     setScope({ mode: ids.length ? "chosen" : "empty", source_ids: ids, root_ids: [] });
   }
@@ -57,8 +64,8 @@ export function WikiView() {
       {sources.length === 0 && <p className="mt-3 text-sm">Connect a folder or upload PDF, Markdown or TXT.</p>}
       <ul className="mt-3 divide-y divide-edge">
         {sources.map(source => <li key={source.source_id} className="flex flex-wrap items-center gap-3 py-3">
-          <label className="flex min-h-11 min-w-0 flex-1 items-center gap-3"><input type="checkbox" checked={scope.mode === "all" || scope.source_ids.includes(source.source_id)} onChange={e => selectSource(source, e.target.checked)} /><span className="break-all text-sm">{source.relative_path}<span className="block text-xs text-ink-soft">Source index: {source.processing_state} · {source.availability}</span>{source.error && <span className="block text-xs text-fail">{source.error}</span>}</span></label>
-          <button className={button} disabled={scope.mode === "empty" || source.processing_state !== "READY" || source.availability !== "available" || (scope.mode === "chosen" && !scope.source_ids.includes(source.source_id))} onClick={() => void run(() => generateWiki(source.source_id, scope))}>Summarize locally</button>
+          <label className="flex min-h-11 min-w-0 flex-1 items-center gap-3"><input type="checkbox" checked={sourceSelected(source)} onChange={e => selectSource(source, e.target.checked)} /><span className="break-all text-sm">{source.relative_path}<span className="block text-xs text-ink-soft">Source index: {source.processing_state} · {source.availability}</span>{source.error && <span className="block text-xs text-fail">{source.error}</span>}</span></label>
+          <button className={button} disabled={!sourceSelected(source) || source.processing_state !== "READY" || source.availability !== "available"} onClick={() => void run(() => generateWiki(source.source_id, scope))}>Summarize locally</button>
         </li>)}
       </ul>
     </details>

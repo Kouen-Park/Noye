@@ -141,3 +141,31 @@ it("opens relation and backlink references at the revisions that established the
     expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
   }
 });
+
+it("preserves the union of chosen roots and explicit sources when narrowing a folder scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["three"], root_ids: ["root"] };
+  query.value = `scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  vi.mocked(api.listWikiSources).mockResolvedValue([...sources,
+    { ...sources[0], source_id: "three", root_id: "another", relative_path: "three.txt" },
+    { ...sources[0], source_id: "four", root_id: "outside", relative_path: "four.txt" }]);
+  render(<WikiView />);
+  await screen.findByText("four.txt");
+  const boxes = screen.getAllByRole("checkbox");
+  expect(boxes[0]).toBeChecked(); expect(boxes[1]).toBeChecked(); expect(boxes[2]).toBeChecked();
+  expect(boxes[3]).not.toBeChecked();
+  expect(screen.getAllByRole("button", { name: "Summarize locally" })[0]).toBeEnabled();
+  await userEvent.click(boxes[0]);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith({
+    mode: "chosen", source_ids: ["three", "two"], root_ids: [],
+  }, expect.any(AbortSignal)));
+  expect(screen.getAllByRole("checkbox")[1]).toBeChecked();
+  expect(screen.getAllByRole("checkbox")[3]).not.toBeChecked();
+});
+
+it("does not select or summarize leftover IDs in an explicitly empty scope", async () => {
+  query.value = `scope=${encodeURIComponent(JSON.stringify({ mode: "empty", source_ids: ["one"], root_ids: ["root"] }))}`;
+  render(<WikiView />);
+  await screen.findByText("one.txt");
+  expect(screen.getAllByRole("checkbox").every(box => !(box as HTMLInputElement).checked)).toBe(true);
+  expect(screen.getAllByRole("button", { name: "Summarize locally" }).every(button => button.hasAttribute("disabled"))).toBe(true);
+});
