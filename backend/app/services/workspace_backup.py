@@ -62,9 +62,22 @@ def _validate_database(connection: sqlite3.Connection) -> None:
         "document_citations",
     }.issubset(tables):
         raise ValueError("The backup does not contain a complete Noye workspace.")
-    custom = connection.execute("SELECT 1 FROM sqlite_master WHERE type IN ('trigger','view')")
-    if custom.fetchone():
-        raise ValueError("Workspace databases with custom triggers or views are not supported.")
+    from app.db.source_documents import APPROVED_TRIGGERS
+
+    def canonical(sql):
+        # SQLite omits IF NOT EXISTS in stored trigger SQL. Accept only the exact
+        # application-owned definition, never a trigger merely sharing its name.
+        return " ".join(sql.split()).replace("CREATE TRIGGER IF NOT EXISTS", "CREATE TRIGGER")
+
+    for kind, name, sql in connection.execute(
+        "SELECT type,name,sql FROM sqlite_master WHERE type IN ('trigger','view')"
+    ):
+        if (
+            kind != "trigger"
+            or name not in APPROVED_TRIGGERS
+            or (canonical(sql) != canonical(APPROVED_TRIGGERS[name]))
+        ):
+            raise ValueError("Workspace databases with custom triggers or views are not supported.")
     if current_version(connection) > LATEST_VERSION:
         raise ValueError("This backup requires a newer Noye version.")
     if connection.execute("PRAGMA foreign_key_check").fetchone():
@@ -236,6 +249,10 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                 if current_version(copied) != manifest["schema_version"]:
                     raise ValueError("The backup schema version does not match its manifest.")
                 init_schema(copied)
+                external_roots = [
+                    {"id": row[0], "name": row[1], "availability": "disconnected"}
+                    for row in copied.execute("SELECT id,name FROM source_roots ORDER BY id")
+                ]
                 actual_missing = []
                 with copied:
                     for file_id, saved in copied.execute("SELECT id,path FROM files").fetchall():
@@ -281,6 +298,15 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                     )
                     copied.execute("UPDATE sources SET availability='disconnected'")
                     copied.execute(
+                        "INSERT INTO knowledge_job_events(job_id,stage,state,completed,total,"
+                        "detail_json,created_at) SELECT id,stage,'interrupted',completed,total,?,? "
+                        "FROM knowledge_jobs WHERE state IN ('queued','running','cancelling')",
+                        (
+                            json.dumps({"reason": "Restored; explicit retry required."}),
+                            datetime.now(UTC).isoformat(),
+                        ),
+                    )
+                    copied.execute(
                         "UPDATE knowledge_jobs SET state='interrupted',"
                         "error='Restored from backup. Retry explicitly.' "
                         "WHERE state IN ('queued','running','cancelling')"
@@ -324,4 +350,9 @@ def restore_backup(archive: Path, destination: Path) -> dict:
             "missing_sources": actual_missing,
             "rebuild_required": True,
             "workspace_id": receipt["id"],
+            "external_roots": external_roots,
+            "external_originals": manifest.get(
+                "external_originals", "External originals excluded."
+            ),
+            "missing_knowledge_roots": manifest.get("missing_knowledge_roots", []),
         }

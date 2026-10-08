@@ -26,6 +26,8 @@ def workspace(folder):
 
 def model(kind="shared_subject", bad_target=False, callback=None):
     def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
         prompt = json.loads(json.loads(request.content)["prompt"])
         if callback:
             callback(prompt)

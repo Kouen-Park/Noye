@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { editWiki, generateWiki, listWiki, readWiki, wikiPreviewContent, wikiScopeFromUrl } from "@/lib/wiki";
+import { editWiki, generateWiki, listWiki, readWiki, wikiLinkHref, wikiPreviewContent, wikiScopeFromUrl } from "@/lib/wiki";
 
 afterEach(() => vi.unstubAllGlobals());
 it("preserves empty scope and source/revision identity in actual requests", async () => {
@@ -33,4 +33,28 @@ it("preserves chosen scope when opening verified portable Wiki links", () => {
 it("rejects invalid explicit URL scope without broadening it", () => {
   expect(wikiScopeFromUrl("broken").mode).toBe("empty");
   expect(wikiScopeFromUrl(JSON.stringify({ mode: "chosen", source_ids: "all", root_ids: [] })).mode).toBe("empty");
+});
+
+it("keeps explicit app links inside the current scope and pins captured contributor revisions", () => {
+  const scope = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  const contributors = [{ wiki_id: "basis", revision_id: "saved-revision" }];
+  for (const href of ["../sources/basis.md", "/wiki/?w=basis&scope=all&revision=newer",
+    "?w=basis", "http://localhost:3000/wiki/?w=basis", "https://tauri.localhost/wiki/?w=basis"]) {
+    const target = new URL(wikiLinkHref(href, scope, contributors)!, "http://localhost");
+    expect(wikiScopeFromUrl(target.searchParams.get("scope"))).toEqual(scope);
+    expect(target.searchParams.get("w")).toBe("basis");
+    expect(target.searchParams.get("revision")).toBe("saved-revision");
+  }
+  const preview = wikiPreviewContent("[Basis](../sources/basis.md)", contributors, scope);
+  expect(preview).toContain("revision=saved-revision");
+});
+
+it("blocks empty-scope and unverified local paths while retaining explicit external references", () => {
+  const chosen = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  for (const href of ["../sources/unverified.md", "../../private.txt", "/files/outside/source", "/chat/"]) {
+    expect(wikiLinkHref(href, chosen)).toBeUndefined();
+  }
+  expect(wikiLinkHref("/wiki/?w=outside", { mode: "empty", source_ids: [], root_ids: [] })).toBeUndefined();
+  expect(wikiLinkHref("https://example.com/reference", chosen)).toBe("https://example.com/reference");
+  expect(wikiLinkHref("#saved-section", chosen)).toBe("#saved-section");
 });

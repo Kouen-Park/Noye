@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { KnowledgeJobStages } from "@/components/knowledge-job-stages";
+import { wikiJobAction, wikiHref } from "@/lib/wiki";
+import { reingestFile } from "@/lib/api";
 import { actOnJob, jobIsActive } from "@/lib/jobs";
 import { isDesktopRuntime } from "@/lib/runtime";
 import { chooseSourceFolder, folderRequest, revealFolder, revealSource,
@@ -46,7 +50,7 @@ export function FolderWorkspace() {
     <p className="max-w-[70ch] text-sm text-ink-soft">
       Connect an existing folder to keep its structure, or choose a managed knowledge folder.
       Noye detects PDF, Markdown and TXT changes while open and catches up on the next launch.
-      Disconnecting preserves originals, saved evidence and writing.
+      Disconnecting preserves originals, saved evidence and writing. Pause a folder to remove derived indexes. Physical original deletion is a separate action in Finder.
     </p>
     <div className="mt-4 flex flex-wrap gap-2">
       <button className={actionClass} disabled={busy} onClick={() => void choose("connected")}>Connect existing folder</button>
@@ -156,10 +160,23 @@ function SourceRow({ entry, root, busy, act }: {
         {source.job && (jobIsActive(source.job)
           ? <button className={actionClass} disabled={busy || source.job.state === "cancelling"} onClick={() => void act(() => actOnJob(source.job!.id, "cancel"))}>Cancel processing</button>
           : source.job.state !== "complete" && <button className={actionClass} disabled={busy || !root.processing || source.availability !== "available"} onClick={() => void act(() => actOnJob(source.job!.id, "resume"))}>Retry from original</button>)}
+        {source.processing_state === "FAILED" && source.job?.state === "complete" && <button className={actionClass} disabled={busy || !root.connected || !root.processing || source.availability !== "available"} onClick={() => void act(() => reingestFile(source.source_id))}>Rebuild from original</button>}
+        {!root.processing && <button className={actionClass} disabled={busy} onClick={() => void act(() => folderRequest(`/${root.id}/sources/${source.source_id}/remove-derived`, "POST"))}>Remove derived indexes</button>}
         {root.organization_prefix && <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => setFiling(!filing)}>File manually</button>}
       </>}
     </div>
     {source?.job && source.job.total > 0 && <p className="mt-1 text-xs text-ink-soft">{source.job.stage} · {source.job.completed} / {source.job.total} · attempt {source.job.attempt}</p>}
+    {source?.knowledge_job && <div className="mt-2 rounded border border-edge p-3" aria-label="Source knowledge processing">
+      <p>Local knowledge · {source.knowledge_job.state} · {source.knowledge_job.stage}</p>
+      <KnowledgeJobStages events={source.knowledge_job.events} />
+      {source.knowledge_job.error && <p className="mt-1 text-fail">{source.knowledge_job.error}</p>}
+      <div className="mt-2 flex flex-wrap gap-2">
+        {source.knowledge_job.artifact_id && <Link className={actionClass} href={wikiHref(source.knowledge_job.artifact_id, { mode: "chosen", root_ids: [root.id], source_ids: [] })}>Open Wiki</Link>}
+        {["queued", "running", "cancelling"].includes(source.knowledge_job.state)
+          ? <button className={actionClass} disabled={busy || source.knowledge_job.state === "cancelling"} onClick={() => void act(() => wikiJobAction(source.knowledge_job!.id, "cancel"))}>Cancel knowledge job</button>
+          : ["failed", "interrupted", "cancelled"].includes(source.knowledge_job.state) && <button className={actionClass} disabled={busy || !root.connected || !root.processing} onClick={() => void act(() => wikiJobAction(source.knowledge_job!.id, "resume"))}>Retry knowledge stages</button>}
+      </div>
+    </div>}
     {source?.manual_category && <p className="mt-1 text-xs text-ink-soft">Manually fixed: {source.manual_category}</p>}
     {source?.error && <p className="mt-1 text-fail">{source.error}</p>}
     {filing && source && <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => {

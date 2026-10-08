@@ -58,7 +58,7 @@ def normalize_model_tag(name: str) -> str:
 def resolve_model_digest(*, client: httpx.Client | None = None) -> str:
     settings = get_settings()
     owned = client is None
-    transport = client or httpx.Client(timeout=5.0)
+    transport = client or httpx.Client(timeout=5.0, follow_redirects=False, trust_env=False)
     try:
         try:
             response = transport.get(f"{settings.ollama_base_url}/api/tags", timeout=5.0)

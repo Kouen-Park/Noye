@@ -131,10 +131,14 @@ def build_prompt(question: str, results: Sequence[SearchResult], *, history: str
     joined = "\n\n".join(excerpts)
     context = (
         "Conversation context (only to resolve references; not source evidence):\n"
-        f"{history[:2400]}\n\n" if history else ""
+        f"{history[:2400]}\n\n"
+        if history
+        else ""
     )
-    return (f"{context}{joined}\n\nQuestion: {question.strip()}\n\n"
-            "Answer using only the excerpts above.")
+    return (
+        f"{context}{joined}\n\nQuestion: {question.strip()}\n\n"
+        "Answer using only the excerpts above."
+    )
 
 
 def generate(
@@ -143,6 +147,7 @@ def generate(
     client: httpx.Client | None = None,
     system: str | None = None,
     provider: GenerationProvider = "ollama",
+    local_only: bool = False,
 ) -> str:
     """Send one prompt to the selected provider and return generated text.
 
@@ -160,6 +165,8 @@ def generate(
         raise ValueError("Cannot generate from an empty prompt")
 
     settings = get_settings()
+    if local_only and provider != "ollama":
+        raise GenerationError("This original-evidence request requires local Ollama.")
     system_prompt = system or SYSTEM_PROMPT
     if provider == "ollama":
         # Conservative byte bound, not an exact tokenizer measurement. Never
@@ -182,15 +189,24 @@ def generate(
     request_generation = _request_gemini if provider == "gemini" else _request_generation
     from contextlib import nullcontext
 
+    from app.services.local_ollama import LocalModelError, require_installed_local_model
     from app.services.model_usage import ModelBusyError, inference
 
     try:
         with inference(settings.ollama_model) if provider == "ollama" else nullcontext():
             if client is None:
-                with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
+                with httpx.Client(
+                    timeout=DEFAULT_TIMEOUT_SECONDS,
+                    follow_redirects=False,
+                    trust_env=provider != "ollama",
+                ) as owned_client:
+                    if local_only:
+                        require_installed_local_model(settings, owned_client)
                     return request_generation(owned_client, prompt, settings, system_prompt)
+            if local_only:
+                require_installed_local_model(settings, client)
             return request_generation(client, prompt, settings, system_prompt)
-    except ModelBusyError as error:
+    except (ModelBusyError, LocalModelError) as error:
         raise GenerationError(str(error)) from None
 
 

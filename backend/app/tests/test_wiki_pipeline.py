@@ -46,7 +46,12 @@ def mock_client(value, done=True, done_reason="stop"):
     return httpx.Client(
         transport=httpx.MockTransport(
             lambda request: httpx.Response(
-                200, json={"response": json.dumps(value), "done": done, "done_reason": done_reason}
+                200,
+                json=(
+                    {"model_info": {"general.architecture": "synthetic"}}
+                    if request.url.path == "/api/show"
+                    else {"response": json.dumps(value), "done": done, "done_reason": done_reason}
+                ),
             )
         )
     )
@@ -112,6 +117,8 @@ def test_long_input_is_fully_processed_in_bounded_batches(text):
     calls = []
 
     def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
         payload = json.loads(request.content)
         calls.append(payload)
         p = json.loads(payload["prompt"])["passages"][0]
@@ -155,6 +162,8 @@ def test_cancel_between_batches_does_not_finish_generation():
             raise RuntimeError("Cancelled")
 
     def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
         item = json.loads(json.loads(request.content)["prompt"])["passages"][0]
         return httpx.Response(
             200,

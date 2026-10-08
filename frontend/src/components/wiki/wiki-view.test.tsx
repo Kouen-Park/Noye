@@ -67,3 +67,105 @@ it("shows source indexing failures separately from Wiki errors and offers explic
   expect(api.wikiJobAction).toHaveBeenCalledWith("job", "resume");
   expect(screen.getByRole("button", { name: "Summarize locally" })).toBeDisabled();
 });
+
+
+it("resolves a changed URL scope once without repeated refreshes", async () => {
+  const { rerender } = render(<WikiView />);
+  await screen.findByText("one.txt");
+  const chosen = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `scope=${encodeURIComponent(JSON.stringify(chosen))}`;
+  rerender(<WikiView />);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith(chosen, expect.any(AbortSignal)));
+  const count = vi.mocked(api.listWiki).mock.calls.length;
+  rerender(<WikiView />);
+  await waitFor(() => expect(screen.getAllByRole("checkbox")[1]).not.toBeChecked());
+  expect(api.listWiki).toHaveBeenCalledTimes(count);
+  query.value = "scope=" + encodeURIComponent(JSON.stringify({ mode: "empty", source_ids: [], root_ids: [] }));
+  rerender(<WikiView />);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith({ mode: "empty", source_ids: [], root_ids: [] }, expect.any(AbortSignal)));
+});
+
+it("opens an allowed saved revision when the current Wiki has expanded outside scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&revision=saved&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  vi.mocked(api.readWiki).mockRejectedValue(new Error("Current Wiki is outside the selected material scope."));
+  const evidence: api.WikiEvidence = { id: "e1", source: { source_id: "one", root_id: "root", name: "one.txt",
+    source_hash: "saved-hash", source_version: "saved-hash", relative_path: "one.txt" },
+    page_number: null, passage_index: 0, start: 0, end: 13, text: "Saved original", current_status: "stale" };
+  vi.mocked(api.readWikiRevision).mockResolvedValue({ id: "saved", wiki_id: "wiki", parent_id: null,
+    origin: "generated", title: "Saved notes", content: "Saved scoped interpretation", created_at: "2026-10-07",
+    evidence: [evidence], metadata: {} });
+  render(<WikiView />);
+  expect(await screen.findByText("Saved scoped interpretation")).toBeInTheDocument();
+  expect(screen.getByText(/Historical Wiki snapshot/)).toBeInTheDocument();
+  expect(screen.getByText("Saved original")).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Return to current" })).not.toBeInTheDocument();
+  expect(screen.queryByText("Opening Wiki…")).not.toBeInTheDocument();
+});
+
+it("opens historical contributor references at their saved revision and selected scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&revision=saved&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated",
+    title: "Notes", content: "Current summary", created_at: "2026-10-08", evidence: [], metadata: {} };
+  vi.mocked(api.readWiki).mockResolvedValue({ id: "wiki", title: "Notes", kind: "project", current_revision: "current",
+    publication_error: null, updated_at: "2026-10-08", proposal_count: 0, revision, revisions: [], relations: [] });
+  vi.mocked(api.readWikiRevision).mockResolvedValue({ ...revision, id: "saved",
+    content: "[Historical basis](../sources/basis.md)",
+    metadata: { contributors: [{ wiki_id: "basis", revision_id: "basis-saved" }] } });
+  render(<WikiView />);
+  for (const name of ["Historical basis", "Source summary · basis"]) {
+    const link = await screen.findByRole("link", { name });
+    const target = new URL(link.getAttribute("href")!, "http://localhost");
+    expect(target.searchParams.get("revision")).toBe("basis-saved");
+    expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  }
+});
+
+it("opens relation and backlink references at the revisions that established them", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated",
+    title: "Notes", content: "Current summary", created_at: "2026-10-08", evidence: [], metadata: {} };
+  vi.mocked(api.readWiki).mockResolvedValue({ id: "wiki", title: "Notes", kind: "source", current_revision: "current",
+    publication_error: null, updated_at: "2026-10-08", proposal_count: 0, revision, revisions: [], relations: [
+      { id: "forward", origin_id: "wiki", target_id: "other", origin_title: "Notes", target_title: "Related earlier",
+        kind: "shared_subject", reason: "Saved comparison", target_revision: "other-saved", target_current_revision: "other-new", revision_id: "current" },
+      { id: "back", origin_id: "origin", target_id: "wiki", origin_title: "Origin", target_title: "Notes",
+        kind: "shared_subject", reason: "Saved backlink", target_revision: "current", revision_id: "origin-saved" },
+    ] });
+  render(<WikiView />);
+  for (const [name, expected] of [["Related earlier", "other-saved"], ["Origin", "origin-saved"]]) {
+    const target = new URL((await screen.findByRole("link", { name })).getAttribute("href")!, "http://localhost");
+    expect(target.searchParams.get("revision")).toBe(expected);
+    expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  }
+});
+
+it("preserves the union of chosen roots and explicit sources when narrowing a folder scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["three"], root_ids: ["root"] };
+  query.value = `scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  vi.mocked(api.listWikiSources).mockResolvedValue([...sources,
+    { ...sources[0], source_id: "three", root_id: "another", relative_path: "three.txt" },
+    { ...sources[0], source_id: "four", root_id: "outside", relative_path: "four.txt" }]);
+  render(<WikiView />);
+  await screen.findByText("four.txt");
+  const boxes = screen.getAllByRole("checkbox");
+  expect(boxes[0]).toBeChecked(); expect(boxes[1]).toBeChecked(); expect(boxes[2]).toBeChecked();
+  expect(boxes[3]).not.toBeChecked();
+  expect(screen.getAllByRole("button", { name: "Summarize locally" })[0]).toBeEnabled();
+  await userEvent.click(boxes[0]);
+  await waitFor(() => expect(api.listWiki).toHaveBeenLastCalledWith({
+    mode: "chosen", source_ids: ["three", "two"], root_ids: [],
+  }, expect.any(AbortSignal)));
+  expect(screen.getAllByRole("checkbox")[1]).toBeChecked();
+  expect(screen.getAllByRole("checkbox")[3]).not.toBeChecked();
+});
+
+it("does not select or summarize leftover IDs in an explicitly empty scope", async () => {
+  query.value = `scope=${encodeURIComponent(JSON.stringify({ mode: "empty", source_ids: ["one"], root_ids: ["root"] }))}`;
+  render(<WikiView />);
+  await screen.findByText("one.txt");
+  expect(screen.getAllByRole("checkbox").every(box => !(box as HTMLInputElement).checked)).toBe(true);
+  expect(screen.getAllByRole("button", { name: "Summarize locally" }).every(button => button.hasAttribute("disabled"))).toBe(true);
+});

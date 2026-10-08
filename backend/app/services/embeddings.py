@@ -120,7 +120,9 @@ def embed_texts(
     vectors: list[list[float]] = []
 
     if client is None:
-        with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
+        with httpx.Client(
+            timeout=DEFAULT_TIMEOUT_SECONDS, follow_redirects=False, trust_env=False
+        ) as owned_client:
             for batch in _batched(texts, batch_size):
                 vectors.extend(_request_embeddings(owned_client, batch, settings))
     else:

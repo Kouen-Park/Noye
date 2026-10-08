@@ -81,6 +81,13 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
     except (SourceError, OSError):
         entries = []
     by_path = {source["relative_path"]: source for source in sources}
+    for source in sources:
+        latest = db.execute(
+            "SELECT id FROM knowledge_jobs WHERE kind='wiki' AND subject_id=? "
+            "ORDER BY rowid DESC LIMIT 1",
+            (source["source_id"],),
+        ).fetchone()
+        source["knowledge_job"] = knowledge_jobs.get(db, latest["id"]) if latest else None
     for entry in entries:
         entry["source"] = by_path.pop(entry["relative_path"], None)
     entries.extend(
@@ -140,3 +147,21 @@ def filing(root_id: str, db: sqlite3.Connection = Depends(get_db)):
             "SELECT * FROM filing_journal WHERE root_id=? ORDER BY created_at DESC", (root_id,)
         )
     ]
+
+
+@router.post("/{root_id}/sources/{source_id}/remove-derived")
+def remove_derived(root_id: str, source_id: str, db: sqlite3.Connection = Depends(get_db)):
+    from app.services.derived_data import remove_source_index
+    from app.services.indexing import IndexingError
+
+    source = db.execute("SELECT root_id FROM sources WHERE file_id=?", (source_id,)).fetchone()
+    if source is None or source["root_id"] != root_id:
+        raise HTTPException(400, "This source does not belong to this folder.")
+    try:
+        return remove_source_index(db, source_id)
+    except (SourceError, ingestion.AlreadyIngesting, ingestion.MaintenanceBusy) as exc:
+        fail(exc)
+    except IndexingError as exc:
+        raise HTTPException(
+            503, "Derived index removal failed. Original and history preserved."
+        ) from exc

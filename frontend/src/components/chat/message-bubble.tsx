@@ -1,3 +1,4 @@
+import { KnowledgeEvidence } from "@/components/chat/knowledge-evidence";
 import { Passages } from "@/components/chat/passages";
 import { CreateDocumentAction } from "@/components/documents/create-document-action";
 import { MarkdownContent } from "@/components/documents/document-preview";
@@ -46,6 +47,7 @@ export function MessageBubble({ message, onInspect, inspected = false, panelId }
       <div>
         <p className="mb-2 text-[12px] font-semibold tracking-wide text-brand">Noye</p>
         <div className="text-[15px] leading-7"><MarkdownContent content={message.content} allowImages={false} /></div>
+        {message.knowledge && <KnowledgeEvidence snapshot={message.knowledge} citations={message.citations} />}
         {onInspect ? message.citations.length > 0 && (
           <button type="button" onClick={(event) => onInspect(message, event.currentTarget)}
             aria-expanded={inspected} aria-controls={inspected ? panelId : undefined}
@@ -53,7 +55,7 @@ export function MessageBubble({ message, onInspect, inspected = false, panelId }
             <span aria-hidden="true" className="grid h-5 min-w-5 place-items-center rounded-sm bg-brand px-1 font-mono text-[10px] text-ink-inverse">{message.citations.length}</span>
             {message.citations.length === 1 ? "Passage consulted" : "Passages consulted"}
           </button>
-        ) : <Passages citations={message.citations} />}
+         ) : !message.knowledge && <Passages citations={message.citations} />}
         {/* Offered only on an answer with something in it — there is nothing to
             make a document from otherwise, and the API refuses it anyway. */}
         {message.content.trim() !== "" && <CreateDocumentAction messageId={message.id} />}

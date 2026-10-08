@@ -11,6 +11,7 @@
  * changes with it.
  */
 
+import type { KnowledgeSnapshot } from "@/components/chat/knowledge-evidence";
 import { apiBaseUrl } from "@/lib/runtime";
 
 /** Where a file is in the ingestion pipeline. Mirrors `FileStatus`. */
@@ -293,11 +294,12 @@ export interface ChatCitation {
   /** "Algorithms.pdf — page 34", or just the file name. */
   label: string;
   evidence?: EvidenceSnapshot | null;
-  original_status?: "unchanged" | "changed" | "missing" | "unknown";
+  original_status?: "unchanged" | "changed" | "missing" | "unknown" | "unavailable" | "disconnected";
 }
 
 /** One turn. `error` is set when answering failed; the question is still stored. */
 export interface ChatMessage {
+  knowledge?: KnowledgeSnapshot | null;
   id: string;
   role: Role;
   content: string;

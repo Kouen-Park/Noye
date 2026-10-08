@@ -112,7 +112,14 @@ def plan_rebuild(
         if reset:
             require_idle_library()
 
+        from app.services.source_catalog import folder_source_enabled
+
         for record in file_store.list_files(connection):
+            if not folder_source_enabled(connection, record.id):
+                skipped.append(
+                    Skipped(record.id, record.name, "Folder processing is disabled or unavailable.")
+                )
+                continue
             if not Path(record.path).exists():
                 skipped.append(
                     Skipped(record.id, record.name, "The original file is missing from disk.")
@@ -130,7 +137,8 @@ def plan_rebuild(
         if reset and queued:
             logger.warning(
                 "Recreating collection: configured dimension %d, collection has %s",
-                settings.qdrant_vector_size, live,
+                settings.qdrant_vector_size,
+                live,
             )
             recreate_collection(client)
             recreated = True

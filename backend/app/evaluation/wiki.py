@@ -56,6 +56,8 @@ class MeasuredClient:
 
     def post(self, url, *, json):
         response = self.client.post(url, json=json)
+        if url.endswith("/api/show"):
+            return response
         body = response.json()
         self.calls.append(
             {
