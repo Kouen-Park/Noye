@@ -41,6 +41,7 @@ def model(
     language="English",
     intent_mode="relevant",
     collection_query="",
+    transform=None,
 ):
     calls = []
     synthesized = [False]
@@ -74,7 +75,7 @@ def model(
             }
         elif task == "outline":
             result = {
-                "title": "Reservoir 설계 비교",
+                "title": "Reservoir design report",
                 "sections": [{"id": "design", "title": "Designs"}],
             }
         elif task == "process_original_sections":
@@ -112,6 +113,8 @@ def model(
                 result["claims"][0]["claim_ids"] = ["invented"]
             if invalid == "synthesis_support":
                 result["claims"][0]["text"] = "An unsupported universal guarantee."
+        elif task == "verify_heading":
+            result = {"supported": [True] * len(payload["passages"])}
         elif task == "verify_support":
             result = {
                 "supported": [
@@ -122,6 +125,8 @@ def model(
             }
         else:
             raise AssertionError(task)
+        if transform:
+            transform(payload, result)
         if invalid == "json":
             result = {"unexpected": True}
         return httpx.Response(
@@ -137,12 +142,19 @@ def model(
     return client, calls
 
 
-def enqueue(db, scope=None, identifier="request", mode="collection", conversation_id=None):
+def enqueue(
+    db,
+    scope=None,
+    identifier="request",
+    mode="collection",
+    conversation_id=None,
+    instruction="Write a design report.",
+):
     return jobs.enqueue(
         db,
         GenerateRequest(
             request_id=identifier,
-            instruction="Write a design report.",
+            instruction=instruction,
             scope=scope or WikiScope(),
             inventory_mode=mode,
             conversation_id=conversation_id,
@@ -165,7 +177,14 @@ def test_real_originals_full_collection_bilingual_evidence_and_legacy_editor(wor
     )
     before = {p.name: p.read_bytes() for p in (root / "Course").iterdir()}
     job = enqueue(db)
-    identifier = run(db, job)
+
+    def translate(payload, result):
+        if payload["task"] == "process_original_sections":
+            for claim in result["claims"]:
+                if "저수지" in claim["text"]:
+                    claim["text"] = "Reservoir Beta stores 92 litres and operates on Sundays."
+
+    identifier = run(db, job, model(transform=translate)[0])
     head = store.current(db, identifier)
     assert head["metadata"]["coverage"]["inventory_mode"] == "collection"
     assert {s["source_id"] for s in head["metadata"]["coverage"]["sources"]} == {
