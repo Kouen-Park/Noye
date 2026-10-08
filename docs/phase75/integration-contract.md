@@ -87,6 +87,17 @@ Collision/journal recovery preserve bytes and ID; a path-only move does not re-e
 B registers `source_document` using this worker and SourceSession. Its payload,
 cache, coverage and authored schema are described in [document contract](source-documents.md).
 
+The presentation follow-up adds optional `coverage.presentation_limits[]` entries
+`{code, section_id?, reason}` and `metadata.output_contract` with requested language,
+script-check scope and comparison-check limits. Prompt `source-document-v5` and
+render `source-document-markdown-v3` apply to new drafts. `verify_heading` uses
+existing bounded local calls, cached stages and cancellation checkpoints. Invalid
+language/shape fails without publishing; explicit retry keeps the frozen inventory.
+Neutral/omitted unsupported headings and unresolved comparisons remain partial.
+Existing completed artifacts/user revisions short-circuit generation and are not
+rewritten. These additive JSON fields use existing SQLite backups; no migration,
+new job kind or changed SourceSession/version contract is required.
+
 `app.services.local_ollama.require_installed_local_model(settings, client)` checks
 loopback and `/api/show` before source text is sent. It requires installed local
 model metadata and rejects cloud aliases. Call it while holding model usage.

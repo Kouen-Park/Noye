@@ -61,6 +61,26 @@ native/model/PDF acceptance in Phase 8. A completed three concrete navigation ga
   source controls. Deselecting one source retains the other selected members;
   explicitly empty scope cannot activate leftover root/source IDs.
 
+B's feature commits are integrated as `255d459`, `58feaef`, `9367d66` and
+`596562d`. New drafts apply conservative English/Korean script and Markdown-shape
+checks to generated prose. A mismatch fails without a new artifact; explicit retry
+clears unsafe cached stages. Source quotes and literal fallback retain their own
+language. Bounded/cached heading checks plus application numeral/absence guards
+replace unsupported titles with neutral labels and partial reasons, omit empty
+sections, and mark comparisons without supported multi-source synthesis unresolved.
+The document and chat card display these additive `coverage.presentation_limits`;
+`metadata.output_contract` records what was checked. Prompt `source-document-v5`
+and render `source-document-markdown-v3` apply to new drafts only. Existing saved
+artifacts, revisions and user edits retain their prior bodies and metadata.
+
+A's integration review found a source/output-language parsing error: “Write the
+report in Korean from notes written in English” could choose the trailing original
+language. B restricted overrides to output directives and added the reported
+English/Korean regressions before final integration. Script checks are conservative,
+can reject foreign names/technical headings, and cannot prove semantic language,
+heading correctness or comparison quality. Actual quality and added inference
+latency remain Phase 8 acceptance; no live-model claim is made for this follow-up.
+
 Focused deterministic checks, from `frontend`:
 `npm test -- --maxWorkers=1 src/lib/wiki.test.ts
 src/components/wiki/wiki-editor.test.tsx src/components/wiki/wiki-view.test.tsx
@@ -74,6 +94,27 @@ root printed usage because it had no tsconfig; the corrected frontend invocation
 passed. The body-link commit's Next 16.3.8 static export built all 10 routes
 (1,735 ms compilation, 2.2 s types). These checks do not establish new native,
 actual-model or PDF acceptance. No model service or native QA app was started.
+
+Final combined follow-up checks through `596562d`:
+
+- From `backend`, `python -m pytest -q app/tests/test_source_documents.py
+  app/tests/test_source_document_presentation.py app/tests/test_source_session.py
+  app/tests/test_knowledge_portability.py app/tests/test_knowledge_query.py
+  app/tests/test_knowledge_maintenance.py`: **68 passed, 8 warnings, 2.30 s**.
+  Actual temporary files/catalog/evidence, jobs, SQLite and portability are exercised
+  with controlled model responses. `ruff check app desktop.py` passed.
+- From `frontend`, `npm test -- --maxWorkers=1 src/lib/wiki.test.ts
+  src/components/wiki src/components/chat/knowledge-evidence.test.tsx
+  src/components/documents src/lib/source-documents.test.ts src/app/chat/page.test.tsx`:
+  **72 passed, 12 files, 8.31 s**; ESLint and `tsc --noEmit` passed.
+- `npm run desktop:ui`: **10 static routes**, 1,593 ms compilation, 2.1 s types,
+  234 ms page generation. B's last commit changes backend/docs only; the final
+  frontend build includes both A's navigation and B's presentation-limit UI.
+
+No fresh full suite, frozen backend/native bundle, actual inference or PDF acceptance
+was run. Earlier full-suite and native records below remain historical measurements
+of their stated commits. Shared server contracts/migrations are unchanged; new
+presentation metadata uses the existing authored JSON/SQLite backup path.
 
 ## Automated checks, 2026-10-08
 

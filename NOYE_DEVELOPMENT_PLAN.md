@@ -3205,6 +3205,10 @@ implementation details, not a migration already performed:
   synthesis falls back to labeled original quotations. Requested-language,
   comparison, heading and semantic quality remain unaccepted Phase 8 work; this
   checkbox records the integrated generation/editing path, not polished output.
+  New drafts now include conservative script/shape checks, bounded heading support,
+  neutral/omitted unsupported headings and explicit comparison/partial limits in the
+  document/card. Source-language descriptions cannot override clear output-language
+  directives. These controls do not prove live-model quality or replace Phase 8.
 - [x] Attach validated source locators and saved excerpt/version snapshots from the
   actual inputs. Save the artifact independently of the chat, preserve user edits,
   and expose cancellation/retry without duplicating or replacing saved notes.
@@ -3605,6 +3609,8 @@ retrieval, answer quality and inference latency.
     or cancel/restart during actual inference; citation hashes alone do not certify
     every generated claim. Record model/hardware limits and run memory-intensive
     local-model evaluations sequentially on the measured 8 GiB machine.
+    Measure v5 heading-verifier latency and conservative script-guard false rejections;
+    verifier approval or multiple source references do not prove reasoning quality.
 -   [ ] Compare original retrieval and wiki-assisted discovery on exact details and
     cross-source questions. Record summary omissions, wrong links and stale claims.
 -   [ ] Measure local and cloud latency separately. Mocked responses do not establish
