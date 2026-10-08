@@ -57,19 +57,55 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v4` prefers one to four topical sections for small source
+Prompt `source-document-v5` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
 Each original-processing call sees only one source batch; it must not draw
 collection-wide conclusions about other sources being absent. Unverified model
 observations are retained only in audit metadata with source/batch/evidence IDs.
 They are excluded from published document prose. `render_version`
-`source-document-markdown-v2` distinguishes this rendering from older artifacts;
+`source-document-markdown-v3` distinguishes this rendering from older artifacts;
 completed artifacts and user revisions are never rewritten.
 The entailment pass is a model check, not independent proof; source review remains
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
 English/Korean counts such as “twice” or “두 번” rendered as 2. Other unstated
 numerals remain rejected; arithmetic-derived quantities are not automatically proven.
+
+### Output language and document structure
+
+Explicit `in English`/`in Korean`, `language: ...`, and Korean `한국어로`/`영어로`
+directives override the model's inferred language; otherwise its intent language is
+used. English/Korean aliases normalize to a stable name. New title, heading and
+generated claim text pass conservative script checks before publication: English
+rejects Hangul/CJK/Japanese text; Korean requires Hangul and at least one quarter
+of alphabetic characters to be Hangul. Mismatches fail the job without an artifact;
+the existing worker discards unsafe caches so explicit retry can obtain a new draft.
+These checks can reject legitimate foreign names or Latin-only technical labels.
+They do not prove fluency or detect other Latin-script languages. Unsupported output
+languages are explicitly marked unchecked/partial instead of being certified.
+Exact original quotes, saved passage context and literal fallback keep their source
+language and are exempt. Completed artifacts and user revisions bypass new drafting
+checks and are never rewritten.
+
+The application omits empty planned sections and rejects unplanned ATX/Setext
+headings inside generated claims. Document/section labels pass number checks and
+bounded, cached local `verify_heading` stages over only their supplied original
+evidence. Incorrect verdict cardinality fails safely. Titles claiming missing
+information cannot establish collection absence and are rejected independently of
+the model verdict; actual missing-material findings belong to the coverage report.
+Unsupported labels become neutral source-document/source-notes labels and mark the
+result partial. The semantic heading check is fallible and its real latency/quality
+remains Phase 8 acceptance, rather than a guarantee of factual accuracy.
+
+For a comparison request, separate source notes are not a completed comparison.
+Without an accepted synthesized paragraph whose validated references span multiple
+sources, the result is explicitly partial. This is a structural minimum, not proof
+of sound comparative reasoning. These limits persist in
+`coverage.presentation_limits[]` (`code`, optional `section_id`, `reason`), appear
+in the chat artifact card, document details and Markdown coverage/provenance report.
+`metadata.output_contract` records the resolved requested language and the limited
+checks performed. These are additive JSON fields, with no migration/job/backup
+contract changes; old revisions remain readable without claiming the new checks ran.
 
 SourceSession validates frozen versions and actual original bytes on each read.
 Its short `commit_guard(consumed_ids)` reserves sources against application
@@ -140,6 +176,6 @@ A's combined knowledge branch preserves its maintenance and query wiring. The
 document-only branch keeps the existing Wiki registration and adapts its backup
 test to document data; both consume the same source/version and durable-job contracts.
 
-A has integrated these contracts and feature commits in draft PR #60. This branch
+A has integrated these contracts and feature commits in PR #60. This branch
 is a focused document review surface; integrate through that combined branch and
 avoid applying its shared migration/router/job/backup commits a second time.
