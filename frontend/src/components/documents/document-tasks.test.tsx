@@ -24,11 +24,12 @@ it("links an independent saved partial artifact and keeps PDF success separate",
   vi.mocked(listDocumentTasks).mockResolvedValue([{ ...task,
     job: { ...task.job!, state: "complete", stage: "complete", error: null, artifact_id: "doc" },
     request: { ...task.request, artifact_id: "doc", clarification: null,
-      plan: { selected_ids: ["source"] }, report: { partial: true } },
+      plan: { selected_ids: ["source"] }, report: { partial: true, presentation_limits: [{ code: "comparison_unresolved", reason: "Separate source notes are not a completed comparison." }] } },
   }]);
   render(<DocumentTasks conversationId="chat" />);
   expect(await screen.findByRole("link", { name: "Open document" })).toHaveAttribute("href", "/documents?d=doc");
   expect(screen.getByRole("link", { name: "Edit and export" })).toHaveAttribute("href", "/documents?d=doc&export=1");
   expect(screen.getByText(/some material or conclusions remain unresolved/)).toBeInTheDocument();
   expect(screen.getByText(/PDF export completes separately/)).toBeInTheDocument();
+  expect(screen.getByRole("list", { name: "Document structure and language limits" })).toHaveTextContent("Separate source notes are not a completed comparison.");
 });

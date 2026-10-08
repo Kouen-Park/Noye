@@ -49,6 +49,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
         </li>)}</ul>
       </details>
       {request.report.partial && <p className="text-sm text-ink-soft">Partial result: some material or conclusions remain unresolved. See the document and coverage.</p>}
+      {!!request.report.presentation_limits?.length && <ul aria-label="Document structure and language limits" className="mt-1 list-disc pl-5 text-xs text-ink-soft">{request.report.presentation_limits.map((limit, n) => <li key={`${limit.code}-${n}`}>{limit.reason}</li>)}</ul>}
       {(request.clarification || job?.error) && <p role="alert" className="mt-2 text-sm text-fail">{request.clarification ?? job?.error}</p>}
       {request.clarification && <p className="mt-1 text-xs text-ink-soft">Clarify the request or choose sources, then submit a new document request.</p>}
       <div className="mt-2 flex flex-wrap gap-3 text-sm">
