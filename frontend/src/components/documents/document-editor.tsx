@@ -31,6 +31,8 @@ interface DocumentEditorProps {
   onViewChange?: (view: Tab) => void;
   documentId?: string;
   provenance?: string;
+  readOnly?: boolean;
+  exportUrl?: string;
 }
 
 export function DocumentEditor({
@@ -41,6 +43,8 @@ export function DocumentEditor({
   onViewChange,
   documentId,
   provenance = "",
+  readOnly = false,
+  exportUrl,
 }: DocumentEditorProps) {
   const bodyId = useId();
   const titleId = useId();
@@ -48,10 +52,38 @@ export function DocumentEditor({
   const [draftTitle, setDraftTitle] = useState(title);
   const [draftContent, setDraftContent] = useState(content);
   const [includeProvenance, setIncludeProvenance] = useState(false);
+  const [draftReady, setDraftReady] = useState(!documentId || readOnly);
+  const [restored, setRestored] = useState(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
 
   const dirty = draftTitle !== title || draftContent !== content;
   const exportContent = draftContent + (includeProvenance && provenance ? `\n\n${provenance}` : "");
+
+  useEffect(() => {
+    if (!documentId || readOnly) return;
+    let live = true;
+    queueMicrotask(() => {
+      if (!live) return;
+      try {
+        const raw = localStorage.getItem(`noye-document-draft:${documentId}`);
+        const draft = raw ? JSON.parse(raw) : null;
+        if (draft && typeof draft.title === "string" && typeof draft.content === "string"
+          && (draft.title !== title || draft.content !== content)) {
+          setDraftTitle(draft.title); setDraftContent(draft.content); setRestored(true);
+        }
+      } catch { /* Storage may be unavailable; saved revisions remain on the server. */ }
+      setDraftReady(true);
+    });
+    return () => { live = false; };
+  }, [documentId, readOnly, title, content]);
+  useEffect(() => {
+    if (!documentId || readOnly || !draftReady) return;
+    try {
+      const key = `noye-document-draft:${documentId}`;
+      if (dirty) localStorage.setItem(key, JSON.stringify({ title: draftTitle, content: draftContent }));
+      else localStorage.removeItem(key);
+    } catch { /* Export and manual save remain available if local storage is full. */ }
+  }, [documentId, readOnly, draftReady, dirty, draftTitle, draftContent]);
 
   // Warn before losing unsaved work. The browser's own dialog, because a custom
   // one cannot block navigation.
@@ -63,12 +95,13 @@ export function DocumentEditor({
   }, [dirty]);
 
   const save = () => {
-    if (!dirty || saving) return;
+    if (!dirty || saving || readOnly) return;
     void onSave({ title: draftTitle.trim() || title, content: draftContent });
   };
 
   return (
     <div>
+      {restored && dirty && <p role="status" className="mb-3 text-xs text-ink-soft">Restored your local unsaved draft. Save to include it in workspace backups.</p>}
       <div className="flex flex-wrap items-end gap-2">
         <div className="min-w-0 flex-1">
           <label htmlFor={titleId} className="block text-[12px] font-semibold text-ink-soft">
@@ -76,6 +109,7 @@ export function DocumentEditor({
           </label>
           <input
             id={titleId}
+            readOnly={readOnly}
             value={draftTitle}
             onChange={(event) => setDraftTitle(event.target.value)}
             className="mt-1 min-h-11 w-full rounded-md border border-edge-strong bg-card px-2.5 text-[14.5px]"
@@ -84,7 +118,7 @@ export function DocumentEditor({
         <button
           type="button"
           onClick={save}
-          disabled={!dirty || saving}
+          disabled={!dirty || saving || readOnly}
           className="min-h-11 rounded-md bg-brand px-4 text-[13.5px] font-semibold text-ink-inverse disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? "Saving…" : dirty ? "Save" : "Saved"}
@@ -131,6 +165,7 @@ export function DocumentEditor({
             <textarea
               id={bodyId}
               ref={textarea}
+              readOnly={readOnly}
               value={draftContent}
               onChange={(event) => setDraftContent(event.target.value)}
               onKeyDown={(event) => {
@@ -153,7 +188,8 @@ export function DocumentEditor({
         )}
       </div>
       {documentId && <div className="mt-5 border-t border-edge pt-3">
-        <ExportControls documentId={documentId} previewVisible={tab === "preview"}
+        {readOnly && <p className="mb-2 text-xs text-ink-soft">Viewing a saved historical revision. Select the latest revision to edit.</p>}
+        <ExportControls exportUrl={exportUrl} documentId={documentId} previewVisible={tab === "preview"}
           content={exportContent} title={draftTitle} includeProvenance={includeProvenance}
           onProvenanceChange={setIncludeProvenance} />
       </div>}

@@ -25,6 +25,7 @@ import { useState } from "react";
 
 interface ExportControlsProps {
   documentId: string;
+  exportUrl?: string;
   /** Whether the rendered document is on screen; PDF needs it. */
   previewVisible: boolean;
   disabled?: boolean;
@@ -36,6 +37,7 @@ interface ExportControlsProps {
 
 export function ExportControls({
   documentId,
+  exportUrl,
   previewVisible,
   disabled = false,
   content,
@@ -44,13 +46,15 @@ export function ExportControls({
   onProvenanceChange,
 }: ExportControlsProps) {
   const [printError, setPrintError] = useState(false);
+  const markdownUrl = new URL(exportUrl ?? documentExportUrl(documentId, includeProvenance), "http://localhost");
+  markdownUrl.searchParams.set("provenance", String(includeProvenance));
   return (
     <div className="flex flex-wrap items-center gap-2">
       {onProvenanceChange && <label className="flex min-h-11 items-center gap-2 text-xs text-ink-soft">
         <input type="checkbox" checked={includeProvenance} onChange={(event) => onProvenanceChange(event.target.checked)} />Include provenance
       </label>}
       <a
-        href={disabled ? undefined : documentExportUrl(documentId, includeProvenance)}
+        href={disabled ? undefined : markdownUrl.toString()}
         onClick={(event) => {
           if (disabled || content === undefined) return;
           event.preventDefault();

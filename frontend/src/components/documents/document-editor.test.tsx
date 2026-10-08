@@ -123,7 +123,11 @@ describe("DocumentEditor", () => {
 
 it("exports the current unsaved body and the selected provenance in both formats", async () => {
   const createUrl = vi.fn<(blob: Blob) => string>(() => "blob:test");
-  vi.stubGlobal("URL", { createObjectURL: createUrl, revokeObjectURL: vi.fn() });
+  class ExportURL extends URL {
+    static createObjectURL = createUrl;
+    static revokeObjectURL = vi.fn();
+  }
+  vi.stubGlobal("URL", ExportURL);
   const print = vi.spyOn(window, "print").mockImplementation(() => {});
   render(<DocumentEditor title="Notes" content="# Original" saving={false} onSave={vi.fn()}
     documentId="doc" provenance={"## Provenance\n\nSaved exact excerpt"} />);

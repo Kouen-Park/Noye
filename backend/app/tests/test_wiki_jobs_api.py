@@ -49,7 +49,9 @@ def test_real_job_failure_is_separate_from_indexing_and_restart_retry(
     assert response.status_code == 202
     job = response.json()
     knowledge_jobs.recover_interrupted(db)
-    assert knowledge_jobs.get(db, job["id"])["state"] == "interrupted"
+    interrupted = knowledge_jobs.get(db, job["id"])
+    assert interrupted["state"] == "interrupted"
+    assert interrupted["events"][-1]["state"] == "interrupted"
     retry = knowledge_jobs.resume(db, job["id"])
 
     def fail(*args, **kwargs):
@@ -76,7 +78,9 @@ def test_cancellation_and_deduplication(workspace, client):
     record = discover(workspace)
     job = client.post("/wiki/generate", json={"source_id": record.id}).json()
     assert client.post("/wiki/generate", json={"source_id": record.id}).status_code == 409
-    assert knowledge_jobs.cancel(db, job["id"])["state"] == "cancelled"
+    cancelled = knowledge_jobs.cancel(db, job["id"])
+    assert cancelled["state"] == "cancelled"
+    assert cancelled["events"][-1]["state"] == "cancelled"
     knowledge_jobs.KnowledgeWorker().run_one(db, job["id"])
     assert knowledge_jobs.get(db, job["id"])["artifact_id"] is None
 
