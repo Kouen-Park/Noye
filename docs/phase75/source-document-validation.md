@@ -1,5 +1,33 @@
 # Source-document validation
 
+## Presentation-contract follow-up (2026-10-08)
+
+The requested Phase 7.5 implementation follow-up adds application language/structure
+guards, not another actual-model quality measurement. Prompt v5/render v3 apply only
+to new drafts; the v2/v3/v4 model artifacts and user edits documented below remain
+unchanged. A owns the shared roadmap and Phase 8 acceptance list.
+
+Focused deterministic checks use real file/catalog/evidence/SQLite/job services and
+model test doubles. They cover wrong-language title/extraction/synthesis failure,
+explicit language override, Korean prose with unchanged English quotes, foreign
+literal fallback, unsupported/absence/numeric headings, empty-section omission,
+unplanned Markdown headings, incomplete versus multi-source comparison, explicit
+failed-job retry, and preserved completed artifacts/user revisions.
+
+The full targeted document/portable set passed **42 tests / 8 warnings / 1.80 s**
+before adding the Setext-heading case; the final presentation subset then passed
+**15 tests / 7 warnings / 1.03 s**. Ruff and format checks passed. The frontend
+document/chat subset passed **44 tests in 8 files / 4.53 s**, including partial
+presentation reasons in the artifact card and backward-compatible revision details.
+ESLint and TypeScript passed after correcting the new typed test fixture; the
+two changed UI suites then passed **4 tests / 695 ms**. An initial type check
+rejected an incomplete test fixture; no application type assertion was weakened.
+
+No actual Ollama/native/PDF workflow, broad test suite or new benchmark was run for
+this follow-up. Script checks are deliberately conservative and semantic heading
+checks remain model-based; fluent output, real latency, requested-language quality,
+comparison usefulness and native/PDF acceptance remain Phase 8 work.
+
 Branch `feat/prompt-documents` begins at integrated main `dc80189` (PR #59).
 Measurements below are from the implementation workspace on Apple M2, macOS,
 8 GiB RAM, Python 3.14.7, Node 26.8.1 and Next 16.3.8. They are not claims of
