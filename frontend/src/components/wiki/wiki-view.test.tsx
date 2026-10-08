@@ -121,3 +121,23 @@ it("opens historical contributor references at their saved revision and selected
     expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
   }
 });
+
+it("opens relation and backlink references at the revisions that established them", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated",
+    title: "Notes", content: "Current summary", created_at: "2026-10-08", evidence: [], metadata: {} };
+  vi.mocked(api.readWiki).mockResolvedValue({ id: "wiki", title: "Notes", kind: "source", current_revision: "current",
+    publication_error: null, updated_at: "2026-10-08", proposal_count: 0, revision, revisions: [], relations: [
+      { id: "forward", origin_id: "wiki", target_id: "other", origin_title: "Notes", target_title: "Related earlier",
+        kind: "shared_subject", reason: "Saved comparison", target_revision: "other-saved", target_current_revision: "other-new", revision_id: "current" },
+      { id: "back", origin_id: "origin", target_id: "wiki", origin_title: "Origin", target_title: "Notes",
+        kind: "shared_subject", reason: "Saved backlink", target_revision: "current", revision_id: "origin-saved" },
+    ] });
+  render(<WikiView />);
+  for (const [name, expected] of [["Related earlier", "other-saved"], ["Origin", "origin-saved"]]) {
+    const target = new URL((await screen.findByRole("link", { name })).getAttribute("href")!, "http://localhost");
+    expect(target.searchParams.get("revision")).toBe(expected);
+    expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  }
+});
