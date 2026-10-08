@@ -41,6 +41,34 @@ def test_explicit_language_directive_overrides_wrong_model_intent(workspace):
     )
 
 
+@pytest.mark.parametrize(
+    "instruction",
+    [
+        "Write the report in Korean from notes written in English.",
+        "Please explain in Korean the documents written in English.",
+        "한국어로 요약해줘. 영어로 작성된 원문을 사용해.",
+    ],
+)
+def test_original_language_description_does_not_override_output_directive(instruction):
+    assert presentation.requested_language(instruction, "English") == "Korean"
+
+
+@pytest.mark.parametrize(
+    "instruction",
+    [
+        "Write a report from notes in English.",
+        "Generate a report using documents written in English.",
+        "영문으로 된 자료를 요약해줘.",
+    ],
+)
+def test_ambiguous_source_language_keeps_inferred_output_intent(instruction):
+    assert presentation.requested_language(instruction, "Korean") == "Korean"
+
+
+def test_korean_output_directive_handles_the_euro_particle():
+    assert presentation.requested_language("영문으로 보고서 작성", "Korean") == "English"
+
+
 def test_korean_generated_prose_keeps_english_original_quotes(workspace):
     db, *_ = workspace
     source = discover(workspace, "Reservoir.txt", "Reservoir stores 37 litres.")

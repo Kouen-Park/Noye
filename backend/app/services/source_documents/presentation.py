@@ -24,11 +24,19 @@ def language_name(value):
 
 
 def requested_language(instruction, inferred):
-    # Match output directives, not references to English/Korean source material.
+    # Require an output action. A trailing "notes written in English" describes
+    # originals and must not override "write/explain in Korean". If the grammar
+    # is ambiguous (e.g. "from notes in English"), keep the inferred intent.
     directives = list(
         re.finditer(
-            r"\bin\s+(English|Korean)\b|\b(?:output\s+)?language\s*:\s*(English|Korean)\b"
-            r"|(한국어|영어|국문|영문)로",
+            r"\b(?:write|draft|create|generate|produce|compose|prepare|explain|summari[sz]e|"
+            r"respond|reply|answer|output|render)\b"
+            r"(?:(?![.!?;\n]|\b(?:from|using|written|extracted|based\s+on)\b).){0,120}?"
+            r"\bin\s+(English|Korean)\b"
+            r"|^\s*(?:please\s+)?in\s+(English|Korean)\b"
+            r"|\b(?:output\s+)?language\s*:\s*(English|Korean)\b"
+            r"|(한국어|영어|국문|영문)(?:으)?로"
+            r"(?!\s*(?:작성된|작성한|작성되어|쓰인|적힌|되어|된))",
             instruction,
             re.IGNORECASE,
         )

@@ -15,13 +15,22 @@ unplanned Markdown headings, incomplete versus multi-source comparison, explicit
 failed-job retry, and preserved completed artifacts/user revisions.
 
 The full targeted document/portable set passed **42 tests / 8 warnings / 1.80 s**
-before adding the Setext-heading case; the final presentation subset then passed
+before adding the Setext-heading case; the presentation subset then passed
 **15 tests / 7 warnings / 1.03 s**. Ruff and format checks passed. The frontend
 document/chat subset passed **44 tests in 8 files / 4.53 s**, including partial
 presentation reasons in the artifact card and backward-compatible revision details.
 ESLint and TypeScript passed after correcting the new typed test fixture; the
 two changed UI suites then passed **4 tests / 695 ms**. An initial type check
 rejected an incomplete test fixture; no application type assertion was weakened.
+
+A's separate integration code review identified trailing “notes/documents written
+in English” being mistaken for output language after “write/explain in Korean”.
+The override now requires an output action and preserves inferred intent for
+ambiguous source clauses. Both reported sentences, Korean source-description
+counterparts and the `영문으로` particle case have deterministic regressions.
+The final presentation subset passed **22 tests / 7 warnings / 1.10 s**; Ruff and
+format checks passed. This is a code-review correction, not independent actual-model
+quality acceptance; the frontend was unchanged after its recorded checks.
 
 No actual Ollama/native/PDF workflow, broad test suite or new benchmark was run for
 this follow-up. Script checks are deliberately conservative and semantic heading

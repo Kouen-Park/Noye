@@ -75,7 +75,12 @@ numerals remain rejected; arithmetic-derived quantities are not automatically pr
 
 Explicit `in English`/`in Korean`, `language: ...`, and Korean `한국어로`/`영어로`
 directives override the model's inferred language; otherwise its intent language is
-used. English/Korean aliases normalize to a stable name. New title, heading and
+used. English overrides require a recognizable output action (or an explicit
+language field/leading directive); trailing source descriptions such as “notes
+written in English” are excluded. Ambiguous source-language clauses preserve model
+intent rather than forcing an output language. Korean source descriptions such as
+`영어로 작성된` are also excluded. English/Korean aliases normalize to a stable name.
+New title, heading and
 generated claim text pass conservative script checks before publication: English
 rejects Hangul/CJK/Japanese text; Korean requires Hangul and at least one quarter
 of alphabetic characters to be Hangul. Mismatches fail the job without an artifact;
