@@ -9,7 +9,8 @@ export interface CoverageSource {
   fragments_processed: number; no_text_pages: number[];
 }
 export interface Coverage { inventory_count: number; inventory_mode: string; partial: boolean; sources: CoverageSource[];
-  synthesis_limits?: { section_id: string; reason: string }[] }
+  synthesis_limits?: { section_id: string; reason: string }[];
+  presentation_limits?: { code: string; section_id?: string; reason: string }[] }
 export interface DocumentRevision {
   id: string; origin: "generated" | "user"; title: string; content: string; created_at: string;
   metadata: { coverage: Coverage; model: string; prompt_version: string; processing_seconds: number;
