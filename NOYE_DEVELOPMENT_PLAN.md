@@ -3013,7 +3013,7 @@ core. See [folder acceptance](docs/phase75/folder-foundation.md),
 [source contract](docs/phase75/source-contract.md) and
 [Wiki contract](docs/phase75/wiki-core.md) for implemented behavior, measured
 checks and limits. Stage 2 adds Wiki-first chat and prompt-driven documents in
-the combined PR #60; that delivery is not yet merged into main. The owner requested a
+the combined PR #60. The owner requested a
 folder-based knowledge workspace that maintains summaries and links, and creates
 documents directly from relevant local files through a general chat prompt.
 Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
@@ -3266,7 +3266,8 @@ do not hold implementation delivery for the deferred native/model/PDF checks.
 Keep all corresponding Phase 8 acceptance checkboxes open until actually verified,
 including observed quality failures. Phase 8 performs the final packaged-app
 acceptance for the folder/wiki workflow and compatible upload/answer-based flows.
-The combined branch still requires review and separate merge authorization.
+Integrate through the combined PR #60 under explicit owner merge authorization;
+retain the open Phase 8 acceptance checks after integration.
 
 ------------------------------------------------------------------------
 
@@ -3627,8 +3628,8 @@ retrieval, answer quality and inference latency.
 The earlier post-MVP folder-watch proposal is now approved Phase 7.5 work (§16A).
 Native folder selection, change detection, startup reconciliation and folder-based
 knowledge maintenance are implemented on the Phase 7.5 branches described in §16A.
-Remaining native/model/PDF acceptance belongs to Phase 8; main integration still
-requires the combined PR review and separately authorized merge.
+Remaining native/model/PDF acceptance belongs to Phase 8. The combined PR #60
+is the main integration surface; do not reapply the document-only shared patches.
 Do not schedule or build a second folder-watch pipeline after MVP acceptance.
 
 ------------------------------------------------------------------------
