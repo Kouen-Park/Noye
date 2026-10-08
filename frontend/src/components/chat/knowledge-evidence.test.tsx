@@ -50,3 +50,18 @@ it("keeps an older all-scope snapshot limited to its captured Wiki sources", () 
     mode: "chosen", source_ids: ["s1"], root_ids: [],
   });
 });
+
+it("rewrites inline, reference and autolink Wiki navigation without changing the saved interpretation", () => {
+  const interpretation = "[Inline](/wiki/?w=basis&scope=all&revision=newer)\n\n[Reference][ref]\n\n[ref]: /wiki/?w=basis\n\n<http://localhost:3000/wiki/?w=basis>\n\n[Unknown](../sources/unknown.md)";
+  const saved = { ...snapshot, manifest: [{ source_id: "s1" }], wiki_pages: [{ ...snapshot.wiki_pages[0],
+    contributors: [{ wiki_id: "basis", revision_id: "original-revision" }], interpretation }] };
+  render(<KnowledgeEvidence snapshot={saved} citations={[]} />);
+  for (const name of ["Inline", "Reference", "http://localhost:3000/wiki/?w=basis"]) {
+    const target = new URL(screen.getByRole("link", { name }).getAttribute("href")!, "http://localhost");
+    expect(JSON.parse(target.searchParams.get("scope")!)).toEqual({ mode: "chosen", source_ids: ["s1"], root_ids: [] });
+    expect(target.searchParams.get("revision")).toBe("original-revision");
+  }
+  expect(screen.queryByRole("link", { name: "Unknown" })).not.toBeInTheDocument();
+  expect(screen.getByText("Unknown")).toBeInTheDocument();
+  expect(saved.wiki_pages[0].interpretation).toBe(interpretation);
+});

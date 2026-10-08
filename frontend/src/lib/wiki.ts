@@ -12,13 +12,42 @@ export function wikiScopeFromUrl(value: string | null): WikiScope {
   } catch { /* Invalid explicit scope must not broaden to all sources. */ }
   return { mode: "empty", source_ids: [], root_ids: [] };
 }
-export function wikiHref(id: string, scope: WikiScope): string {
-  return `/wiki/?w=${encodeURIComponent(id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+export interface WikiContributor { wiki_id: string; revision_id?: string }
+export function wikiHref(id: string, scope: WikiScope, revision?: string): string {
+  return `/wiki/?w=${encodeURIComponent(id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`
+    + (revision ? `&revision=${encodeURIComponent(revision)}` : "");
 }
-export function wikiPreviewContent(content: string, contributors: { wiki_id: string }[] | undefined, scope: WikiScope): string {
+
+/** Markdown cannot grant a new material scope or arbitrary local-file navigation. */
+export function wikiLinkHref(href: string, scope: WikiScope, contributors: WikiContributor[] = []): string | undefined {
+  if (!href) return undefined;
+  if (href.startsWith("#")) return href;
+  let target: URL;
+  try { target = new URL(href, "https://noye.invalid/wiki/"); }
+  catch { return undefined; }
+  const local = target.origin === "https://noye.invalid"
+    || (["http:", "https:"].includes(target.protocol)
+      && ["localhost", "127.0.0.1", "[::1]", "tauri.localhost"].includes(target.hostname));
+  if (!local) return href;
+  if (scope.mode === "empty") return undefined;
+  let identifier: string | null = null;
+  let revision: string | undefined;
+  if (["/wiki", "/wiki/"].includes(target.pathname)) {
+    identifier = target.searchParams.get("w");
+    revision = target.searchParams.get("revision") ?? undefined;
+  } else {
+    const portable = target.pathname.match(/^\/(?:sources|concepts|projects|analyses)\/([^/]+)\.md$/);
+    const contributor = contributors.find(item => item.wiki_id === portable?.[1]);
+    identifier = contributor?.wiki_id ?? null;
+  }
+  if (!identifier) return undefined;
+  const captured = contributors.find(item => item.wiki_id === identifier);
+  return wikiHref(identifier, scope, captured?.revision_id ?? revision) + target.hash;
+}
+export function wikiPreviewContent(content: string, contributors: WikiContributor[] | undefined, scope: WikiScope): string {
   let preview = content.replace(/^<!-- Wiki ID: [0-9a-f-]+; model: [^\n]* -->\r?\n\r?\n/, "");
-  for (const { wiki_id } of contributors ?? []) {
-    const target = wikiHref(wiki_id, scope);
+  for (const { wiki_id, revision_id } of contributors ?? []) {
+    const target = wikiHref(wiki_id, scope, revision_id);
     preview = preview.replaceAll(`](../sources/${wiki_id}.md)`, `](${target})`);
   }
   return preview;

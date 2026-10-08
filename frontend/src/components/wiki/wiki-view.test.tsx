@@ -102,3 +102,22 @@ it("opens an allowed saved revision when the current Wiki has expanded outside s
   expect(screen.queryByRole("button", { name: "Return to current" })).not.toBeInTheDocument();
   expect(screen.queryByText("Opening Wiki…")).not.toBeInTheDocument();
 });
+
+it("opens historical contributor references at their saved revision and selected scope", async () => {
+  const scope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&revision=saved&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  const revision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated",
+    title: "Notes", content: "Current summary", created_at: "2026-10-08", evidence: [], metadata: {} };
+  vi.mocked(api.readWiki).mockResolvedValue({ id: "wiki", title: "Notes", kind: "project", current_revision: "current",
+    publication_error: null, updated_at: "2026-10-08", proposal_count: 0, revision, revisions: [], relations: [] });
+  vi.mocked(api.readWikiRevision).mockResolvedValue({ ...revision, id: "saved",
+    content: "[Historical basis](../sources/basis.md)",
+    metadata: { contributors: [{ wiki_id: "basis", revision_id: "basis-saved" }] } });
+  render(<WikiView />);
+  for (const name of ["Historical basis", "Source summary · basis"]) {
+    const link = await screen.findByRole("link", { name });
+    const target = new URL(link.getAttribute("href")!, "http://localhost");
+    expect(target.searchParams.get("revision")).toBe("basis-saved");
+    expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  }
+});

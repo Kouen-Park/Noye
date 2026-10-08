@@ -41,7 +41,9 @@ export function DocumentPreview({ content, provenance = "" }: { content: string;
 }
 
 /** Safe shared prose renderer. Chat never opts into document-only printing. */
-export function MarkdownContent({ content, allowImages = true }: { content: string; allowImages?: boolean }) {
+export function MarkdownContent({ content, allowImages = true, rewriteLink }: {
+  content: string; allowImages?: boolean; rewriteLink?: (href: string) => string | undefined;
+}) {
   return (
     <div className="[overflow-wrap:anywhere]">
       <Markdown
@@ -80,14 +82,12 @@ export function MarkdownContent({ content, allowImages = true }: { content: stri
               {...props}
             />
           ),
-          a: (props) => (
-            <a
-              className="text-accent-ink underline"
-              target="_blank"
-              rel="noopener noreferrer"
-              {...props}
-            />
-          ),
+          a: ({ href, children, ...props }) => {
+            const destination = href && rewriteLink ? rewriteLink(href) : href;
+            if (!destination) return <span>{children}</span>;
+            return <a className="text-accent-ink underline" target="_blank"
+              rel="noopener noreferrer" {...props} href={destination}>{children}</a>;
+          },
           hr: () => <hr className="my-5 border-edge" />,
           table: (props) => (
             <div className="mb-3 overflow-x-auto">

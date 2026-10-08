@@ -58,3 +58,14 @@ it("restores an unsaved draft after navigation or restart without losing its ver
   await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
   expect(editWiki).toHaveBeenCalledWith("wiki", "r1", "Notes", "# Original recover me", ALL_WIKI_SOURCES);
 });
+
+it("keeps authored Markdown links scoped and leaves the stored editable body intact", async () => {
+  const content = "[Related](/wiki/?w=other&scope=all)\n\n[Unverified](../sources/unknown.md)";
+  const scope = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  render(<WikiEditor page={{ ...page, revision: { ...page.revision!, content } }} scope={scope} onSaved={vi.fn()} />);
+  const target = new URL(screen.getByRole("link", { name: "Related" }).getAttribute("href")!, "http://localhost");
+  expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  expect(screen.queryByRole("link", { name: "Unverified" })).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  expect(screen.getByLabelText("Markdown")).toHaveValue(content);
+});
