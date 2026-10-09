@@ -269,18 +269,26 @@ def upload_file(
     # A pre-Phase-6 file has content_hash NULL and so is never matched. That is
     # unavoidable — its bytes were never hashed — and the failure is the safe
     # direction: a missed duplicate, not a wrongly refused upload.
-    existing = file_store.find_by_content_hash(db, content_hash)
+    # Disconnected history still owns its citations and versions, but must not
+    # prevent an independent upload. The upload owns a separate copy and ID.
+    existing = file_store.find_by_content_hash(db, content_hash, exclude_disconnected=True)
     if existing is not None:
         target.unlink(missing_ok=True)
         logger.info(
             "Upload refused, duplicate of file=%s", existing.id
         )
+        folder_source = db.execute(
+            "SELECT 1 FROM sources WHERE file_id=?", (existing.id,)
+        ).fetchone()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=(
                 f"You already have this file, as \u201c{existing.name}\u201d. "
-                "Delete that one first if you want to replace it, or re-index it "
-                "from the library if it needs another attempt."
+                + ("Manage this source in Folders. Disconnect matching folders before "
+                   "importing a copy; existing uploads also prevent duplicates."
+                   if folder_source else
+                   "Delete that one first if you want to replace it, or re-index it "
+                   "from the library if it needs another attempt.")
             ),
         )
 

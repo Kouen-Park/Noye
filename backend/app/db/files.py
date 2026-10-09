@@ -73,13 +73,16 @@ def _to_chunk(row: sqlite3.Row) -> Chunk:
 
 
 def find_by_content_hash(
-    connection: sqlite3.Connection, content_hash: str
+    connection: sqlite3.Connection, content_hash: str, *, exclude_disconnected: bool = False
 ) -> File | None:
     """The oldest file with these exact bytes, or None.
 
     Oldest rather than newest: if several copies somehow exist, the one the user
     has had longest is the one they will recognise, and it is the one whose
     conversations and documents cite it.
+
+    Uploads may exclude disconnected folder history. Those rows remain valid
+    evidence records, but no longer prevent a separately owned upload.
 
     A ``content_hash`` of None is never matched — the caller must not pass one.
     NULL means "indexed before Noye recorded this", so treating two unknowns as
@@ -94,11 +97,14 @@ def find_by_content_hash(
     row = connection.execute(
         """
         SELECT * FROM files
-        WHERE content_hash = ?
+        WHERE content_hash = ? AND (? = 0 OR NOT EXISTS (
+            SELECT 1 FROM sources s JOIN source_roots r ON r.id = s.root_id
+            WHERE s.file_id = files.id AND r.connected = 0
+        ))
         ORDER BY created_at ASC
         LIMIT 1
         """,
-        (content_hash,),
+        (content_hash, int(exclude_disconnected)),
     ).fetchone()
     return _to_file(row) if row else None
 
