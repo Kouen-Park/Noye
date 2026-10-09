@@ -2,9 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, it, vi } from "vitest";
 import { WikiEditor } from "@/components/wiki/wiki-editor";
-import { ALL_WIKI_SOURCES, editWiki, saveWikiAnalysis, type WikiPage } from "@/lib/wiki";
+import { ALL_WIKI_SOURCES, editWiki, readWiki, saveWikiAnalysis, type WikiPage } from "@/lib/wiki";
 
-vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), editWiki: vi.fn(), saveWikiAnalysis: vi.fn() }));
+vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), editWiki: vi.fn(), readWiki: vi.fn(), saveWikiAnalysis: vi.fn() }));
 export const page: WikiPage = { id: "wiki", title: "Notes", kind: "source", current_revision: "r1", publication_error: null, updated_at: "2026-10-06", proposal_count: 0, revisions: [], relations: [], revision: { id: "r1", wiki_id: "wiki", parent_id: null, origin: "generated", title: "Notes", content: "# Original", created_at: "2026-10-06", evidence: [], metadata: {} } };
 beforeEach(() => { vi.clearAllMocks(); window.localStorage.clear(); });
 
@@ -68,4 +68,46 @@ it("keeps authored Markdown links scoped and leaves the stored editable body int
   expect(screen.queryByRole("link", { name: "Unverified" })).not.toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
   expect(screen.getByLabelText("Markdown")).toHaveValue(content);
+});
+
+it("requires review before rebasing a restored draft and keeps revision conflicts enforced", async () => {
+  window.localStorage.setItem("noye:wiki-draft:wiki", JSON.stringify({
+    draft: { title: "My notes", content: "My retained draft", expected: "r0" },
+    baseline: { title: "Old title", content: "Old body" },
+  }));
+  const latest = { ...page, current_revision: "r2", revision: { ...page.revision!, id: "r2", content: "New saved work" } };
+  vi.mocked(readWiki).mockResolvedValue(latest);
+  vi.mocked(editWiki).mockRejectedValue(new Error("Revision changed again"));
+  const onSaved = vi.fn();
+  render(<WikiEditor page={page} scope={ALL_WIKI_SOURCES} onSaved={onSaved} />);
+  await screen.findByText(/local draft retained/);
+  await userEvent.click(screen.getByRole("button", { name: "Compare with latest revision" }));
+  expect(await screen.findByLabelText("Latest saved Markdown")).toHaveValue("New saved work");
+  expect(editWiki).not.toHaveBeenCalled();
+  await userEvent.click(screen.getByRole("button", { name: "Reapply my draft to this revision" }));
+  expect(onSaved).toHaveBeenCalledWith(latest);
+  expect(JSON.parse(window.localStorage.getItem("noye:wiki-draft:wiki")!).draft.expected).toBe("r2");
+  await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  expect(editWiki).toHaveBeenCalledWith("wiki", "r2", "My notes", "My retained draft", ALL_WIKI_SOURCES);
+  expect(await screen.findByRole("alert")).toHaveTextContent("Revision changed again");
+});
+
+
+it("can discard a conflicting draft after reviewing the latest saved content", async () => {
+  localStorage.setItem("noye:wiki-draft:wiki", JSON.stringify({
+    draft: { title: "Draft", content: "Retained", expected: "r0" },
+    baseline: { title: "Old", content: "Old" },
+  }));
+  const latest = { ...page, current_revision: "r2", revision: { ...page.revision!, id: "r2", content: "Saved content" } };
+  vi.mocked(readWiki).mockResolvedValue(latest);
+  const onSaved = (saved: WikiPage) => view.rerender(<WikiEditor page={saved} scope={ALL_WIKI_SOURCES} onSaved={onSaved} />);
+  const view = render(<WikiEditor page={page} scope={ALL_WIKI_SOURCES} onSaved={onSaved} />);
+  await screen.findByText(/local draft retained/);
+  await userEvent.click(screen.getByRole("button", { name: "Compare with latest revision" }));
+  await screen.findByLabelText("Latest saved Markdown");
+  await userEvent.click(screen.getByRole("button", { name: "Discard my draft and use latest" }));
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  expect(screen.getByLabelText("Markdown")).toHaveValue("Saved content");
+  expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBeNull();
 });

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MarkdownContent } from "@/components/documents/document-preview";
-import { editWiki, saveWikiAnalysis, wikiLinkHref, wikiPreviewContent, type WikiPage, type WikiScope } from "@/lib/wiki";
+import { editWiki, readWiki, saveWikiAnalysis, wikiLinkHref, wikiPreviewContent, type WikiPage, type WikiScope } from "@/lib/wiki";
 
 export function WikiEditor({ page, scope, onSaved }: {
   page: WikiPage; scope: WikiScope; onSaved: (page: WikiPage) => void;
@@ -13,6 +13,7 @@ export function WikiEditor({ page, scope, onSaved }: {
   const [writing, setWriting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [comparison, setComparison] = useState<WikiPage | null>(null);
   const draftKey = `noye:wiki-draft:${page.id}`;
   const dirty = draft.title !== baseline.title || draft.content !== baseline.content;
   if (!dirty && draft.expected !== revision.id) {
@@ -55,6 +56,24 @@ export function WikiEditor({ page, scope, onSaved }: {
     catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save this analysis."); }
     finally { setSaving(false); }
   }
+  async function compareLatest() {
+    setSaving(true); setError(null);
+    try { setComparison(await readWiki(page.id, scope)); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not load the latest revision."); }
+    finally { setSaving(false); }
+  }
+  function resolveConflict(keepDraft: boolean) {
+    if (!comparison?.revision) return;
+    const latest = comparison.revision;
+    const nextBaseline = { title: latest.title, content: latest.content };
+    const next = { ...(keepDraft ? draft : nextBaseline), expected: latest.id };
+    setDraft(next); setBaseline(nextBaseline); setComparison(null); setError(null);
+    onSaved(comparison);
+    try {
+      if (keepDraft) window.localStorage.setItem(draftKey, JSON.stringify({ draft: next, baseline: nextBaseline }));
+      else window.localStorage.removeItem(draftKey);
+    } catch { setError("Could not preserve this draft across navigation. Save changes before leaving."); }
+  }
   return <section aria-label="Wiki content" className="min-w-0 rounded-lg border border-edge bg-card p-5">
     <div className="mb-4 flex flex-wrap items-center gap-3">
       <button type="button" onClick={() => setWriting(!writing)} className="min-h-11 rounded border border-edge-strong px-3">{writing ? "Preview" : "Edit Markdown"}</button>
@@ -64,6 +83,18 @@ export function WikiEditor({ page, scope, onSaved }: {
     </div>
     {error && <p role="alert" className="mb-3 text-fail">{error} Your draft is still here.</p>}
     {draft.expected !== revision.id && dirty && <p role="status" className="mb-3 text-ink-soft">A newer revision is available. Your draft is preserved; saving requires the current revision.</p>}
+    {dirty && (error || draft.expected !== revision.id) && <button type="button" disabled={saving} onClick={compareLatest}
+      className="mb-3 min-h-11 rounded border border-edge-strong px-3">Compare with latest revision</button>}
+    {comparison?.revision && <section aria-label="Resolve Wiki conflict" className="mb-4 space-y-3 rounded border border-edge-strong bg-canvas p-4">
+      <p className="font-semibold">Review the latest saved revision before choosing.</p>
+      <p className="text-sm text-ink-soft">Your draft is still editable below. Reapplying it makes your next save replace the revision shown here; it does not merge automatically.</p>
+      <label className="block text-sm">Latest saved title<input readOnly value={comparison.revision.title} className="mt-1 block w-full rounded border border-edge bg-card p-2" /></label>
+      <label className="block text-sm">Latest saved Markdown<textarea readOnly value={comparison.revision.content} className="mt-1 block min-h-40 w-full rounded border border-edge bg-card p-2 font-mono text-sm" /></label>
+      <div className="flex flex-wrap gap-3">
+        <button type="button" disabled={saving} onClick={() => resolveConflict(true)} className="min-h-11 rounded border border-edge-strong px-3">Reapply my draft to this revision</button>
+        <button type="button" disabled={saving} onClick={() => resolveConflict(false)} className="min-h-11 rounded border border-edge-strong px-3">Discard my draft and use latest</button>
+      </div>
+    </section>}
     {writing ? <div className="space-y-3">
       <label className="block text-sm">Title<input disabled={saving} value={draft.title} onChange={e => change({ ...draft, title: e.target.value })} className="mt-1 block min-h-11 w-full rounded border border-edge-strong bg-canvas px-3" /></label>
       <label className="block text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="mt-1 block min-h-[55vh] w-full rounded border border-edge-strong bg-canvas p-3 font-mono text-sm" /></label>
