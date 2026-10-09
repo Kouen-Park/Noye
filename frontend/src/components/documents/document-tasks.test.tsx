@@ -28,7 +28,8 @@ it("links an independent saved partial artifact and keeps PDF success separate",
   }]);
   render(<DocumentTasks conversationId="chat" />);
   expect(await screen.findByRole("link", { name: "Open document" })).toHaveAttribute("href", "/documents?d=doc");
-  expect(screen.getByRole("link", { name: "Edit and export" })).toHaveAttribute("href", "/documents?d=doc&export=1");
+  expect(screen.getAllByRole("link")).toHaveLength(1);
+  expect(screen.queryByRole("link", { name: "Edit and export" })).not.toBeInTheDocument();
   expect(screen.getByText(/some material or conclusions remain unresolved/)).toBeInTheDocument();
   expect(screen.getByText(/PDF export completes separately/)).toBeInTheDocument();
   expect(screen.getByRole("list", { name: "Document structure and language limits" })).toHaveTextContent("Separate source notes are not a completed comparison.");
