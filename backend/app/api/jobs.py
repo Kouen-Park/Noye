@@ -13,7 +13,10 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 @router.get("")
 def list_jobs(db: sqlite3.Connection = Depends(get_db)) -> list[dict]:
-    return store.list_latest(db)
+    roots = {
+        row["file_id"]: row["root_id"] for row in db.execute("SELECT file_id,root_id FROM sources")
+    }
+    return [{**job, "folder_root_id": roots.get(job["file_id"])} for job in store.list_latest(db)]
 
 
 def _latest(db, job_id):

@@ -28,3 +28,11 @@ it("offers cancellation and displays failures", async () => {
   await screen.findByRole("alert");
   expect(screen.getByText("This file is busy.")).toBeInTheDocument();
 });
+
+it("directs an interrupted folder job to Folders instead of an impossible retry", async () => {
+  vi.mocked(readJobs).mockResolvedValue([{ ...job, folder_root_id: "root-1" }]);
+  render(<JobsPanel revision="one" onChange={vi.fn()} />);
+  expect(await screen.findByRole("link", { name: "Manage in Folders" })).toHaveAttribute("href", "/folders");
+  expect(screen.queryByRole("button", { name: "Retry from original" })).not.toBeInTheDocument();
+  expect(actOnJob).not.toHaveBeenCalled();
+});

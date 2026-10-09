@@ -10,6 +10,7 @@ export interface IngestionJob {
   total: number;
   attempt: number;
   error: string | null;
+  folder_root_id?: string | null;
 }
 
 export function jobIsActive(job: IngestionJob) {

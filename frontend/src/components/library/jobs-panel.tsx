@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { actOnJob, jobIsActive, readJobs, type IngestionJob } from "@/lib/jobs";
 
 export function JobsPanel({ revision, onChange }: { revision: string; onChange: () => void }) {
@@ -63,6 +64,7 @@ export function JobsPanel({ revision, onChange }: { revision: string; onChange: 
                   onClick={() => void act(job, "cancel")}>
                   {job.state === "cancelling" ? "Stopping after the current batch…" : "Stop processing"}
                 </button>
+              : job.folder_root_id ? <Link href="/folders/" className="mt-1 inline-block underline">Manage in Folders</Link>
               : <button type="button" className="mt-1 underline" disabled={busy === job.id}
                   onClick={() => void act(job, "resume")}>Retry from original</button>}
           </li>
