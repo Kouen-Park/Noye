@@ -1,38 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MarkdownContent } from "@/components/documents/document-preview";
 import { KnowledgeJobStages } from "@/components/knowledge-job-stages";
 import { WikiEditor } from "@/components/wiki/wiki-editor";
 import { ALL_WIKI_SOURCES, adoptWiki, generateWiki, listWiki, listWikiJobs, listWikiSources,
-  readWiki, readWikiRevision, wikiJobAction, wikiOriginalUrl, wikiPreviewContent, wikiScopeFromUrl, wikiHref, wikiLinkHref,
+  readWiki, readWikiRevision, wikiJobAction, wikiOriginalUrl, wikiPreviewContent, wikiScopeFromUrl, wikiHref, wikiQueryHref, wikiLinkHref,
   type WikiJob, type WikiPage, type WikiRevision, type WikiScope, type WikiSource, type WikiSummary } from "@/lib/wiki";
 
 const openStates = ["queued", "running", "cancelling"];
 const button = "min-h-11 rounded-md border border-edge-strong px-3 text-sm hover:bg-sunken disabled:opacity-50";
 
 export function WikiView() {
+  const router = useRouter();
   const search = useSearchParams();
   const identifier = search.get("w");
   const urlScope = search.get("scope");
-  const [selection, setSelection] = useState(() => ({ url: urlScope, scope: wikiScopeFromUrl(urlScope) }));
-  const parsedUrlScope = useMemo(() => wikiScopeFromUrl(urlScope), [urlScope]);
-  const scope = selection.url === urlScope ? selection.scope : parsedUrlScope;
-  const setScope = (scope: WikiScope) => setSelection({ url: urlScope, scope });
+  const scope = useMemo(() => wikiScopeFromUrl(urlScope), [urlScope]);
+  const scopeKey = JSON.stringify(scope);
+  const activeScope = useRef<string | null>(null);
+  const setScope = (scope: WikiScope) => router.push(wikiQueryHref(search.toString(), { scope }), { scroll: false });
+  const chooseRevision = (revision: string | null) => router.push(wikiQueryHref(search.toString(), { revision }), { scroll: false });
   const [pages, setPages] = useState<WikiSummary[]>([]);
   const [sources, setSources] = useState<WikiSource[]>([]);
   const [jobs, setJobs] = useState<WikiJob[]>([]);
   const [error, setError] = useState<string | null>(null);
   const fail = useCallback((cause: unknown) => setError(cause instanceof Error ? cause.message : "Wiki request failed."), []);
   const refresh = useCallback(async (signal?: AbortSignal) => {
+    if (activeScope.current !== scopeKey) return;
     try {
       const [pages, sources, jobs] = await Promise.all([listWiki(scope, signal), listWikiSources(signal), listWikiJobs(signal)]);
-      setPages(pages); setSources(sources); setJobs(jobs);
-    } catch (cause) { if (!(cause instanceof DOMException && cause.name === "AbortError")) fail(cause); }
-  }, [scope, fail]);
-  useEffect(() => { const controller = new AbortController(); Promise.resolve().then(() => refresh(controller.signal)); return () => controller.abort(); }, [refresh]);
+      if (!signal?.aborted && activeScope.current === scopeKey) { setPages(pages); setSources(sources); setJobs(jobs); setError(null); }
+    } catch (cause) { if (!signal?.aborted && activeScope.current === scopeKey && !(cause instanceof DOMException && cause.name === "AbortError")) fail(cause); }
+  }, [scope, scopeKey, fail]);
+  useEffect(() => {
+    activeScope.current = scopeKey;
+    const controller = new AbortController();
+    Promise.resolve().then(() => refresh(controller.signal));
+    return () => { activeScope.current = null; controller.abort(); };
+  }, [refresh, scopeKey]);
   useEffect(() => {
     if (!jobs.some(job => openStates.includes(job.state))) return;
     const controller = new AbortController();
@@ -76,50 +84,59 @@ export function WikiView() {
         {pages.length === 0 && <p className="p-2 text-sm text-ink-soft">No Wiki pages in this scope yet.</p>}
         <ul>{pages.map(page => <li key={page.id}><Link href={wikiHref(page.id, scope)} aria-current={identifier === page.id ? "page" : undefined} className={`mt-1 block rounded p-2 text-sm ${identifier === page.id ? "bg-sunken" : "hover:bg-sunken"}`}><span className="break-words">{page.title}</span><span className="block text-xs text-ink-soft">{page.kind}{page.proposal_count > 0 && ` · ${page.proposal_count} proposals`}</span></Link></li>)}</ul>
       </aside>
-      {identifier ? <WikiDetail key={identifier} identifier={identifier} requestedRevision={search.get("revision")} scope={scope} jobStates={jobs.map(j => `${j.id}:${j.state}`).join()} onSaved={() => void refresh()} /> : <p className="p-5 text-ink-soft">Open a source summary, concept, project or saved analysis.</p>}
+      {identifier ? <WikiDetail key={identifier} identifier={identifier} requestedRevision={search.get("revision")} scope={scope} jobStates={jobs.map(j => `${j.id}:${j.state}`).join()} onRevision={chooseRevision} onSaved={() => void refresh()} /> : <p className="p-5 text-ink-soft">Open a source summary, concept, project or saved analysis.</p>}
     </div>
   </div>;
 }
 
-function WikiDetail({ identifier, requestedRevision, scope, jobStates, onSaved }: { identifier: string; requestedRevision: string | null; scope: WikiScope; jobStates: string; onSaved: () => void }) {
+function WikiDetail({ identifier, requestedRevision, scope, jobStates, onRevision, onSaved }: { identifier: string; requestedRevision: string | null; scope: WikiScope; jobStates: string; onRevision: (revision: string | null) => void; onSaved: () => void }) {
   const [page, setPage] = useState<WikiPage | null>(null);
-  const [historySelection, setHistorySelection] = useState<{ revision: WikiRevision; scope: string } | null>(null);
+  const [historySelection, setHistorySelection] = useState<{ requested: string; revision: WikiRevision | null; scope: string; error: string | null } | null>(null);
   const scopeKey = JSON.stringify(scope);
-  const historical = historySelection?.scope === scopeKey ? historySelection.revision : null;
+  const selectionKey = JSON.stringify([identifier, scopeKey, requestedRevision]);
+  const activeSelection = useRef<{ key: string } | null>(null);
+  useEffect(() => { activeSelection.current = { key: selectionKey }; return () => { activeSelection.current = null; }; }, [selectionKey]);
+  const selectedHistory = requestedRevision && historySelection?.scope === scopeKey && historySelection.requested === requestedRevision ? historySelection : null;
+  const historical = selectedHistory?.revision ?? null;
   const [error, setError] = useState<string | null>(null);
+  const visibleError = selectedHistory?.error ?? error;
   useEffect(() => {
     const controller = new AbortController();
-    readWiki(identifier, scope, controller.signal).then(result => { setPage(result); setError(null); }, cause => { if (!controller.signal.aborted) { setPage(null); setError(cause.message); } });
+    readWiki(identifier, scope, controller.signal).then(result => { if (!controller.signal.aborted) { setPage(result); setError(null); } }, cause => { if (!controller.signal.aborted) { setPage(null); setError(cause.message); } });
     return () => controller.abort();
   }, [identifier, jobStates, scope]);
   useEffect(() => {
     if (!requestedRevision) return;
     let cancelled = false;
     readWikiRevision(identifier, requestedRevision, scope).then(revision => {
-      if (!cancelled) setHistorySelection({ revision, scope: scopeKey });
-    }, cause => { if (!cancelled) setError(cause.message); });
+      if (!cancelled) setHistorySelection({ requested: requestedRevision, revision, scope: scopeKey, error: null });
+    }, cause => { if (!cancelled) setHistorySelection({ requested: requestedRevision, revision: null, scope: scopeKey, error: cause instanceof Error ? cause.message : "Could not open the revision." }); });
     return () => { cancelled = true; };
   }, [identifier, requestedRevision, scope, scopeKey]);
-  async function inspect(revision: string) { try { setHistorySelection({ revision: await readWikiRevision(identifier, revision, scope), scope: scopeKey }); } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not open the revision."); } }
   async function adopt() {
     if (!historical || !page?.current_revision) return;
-    try { setPage(await adoptWiki(identifier, historical.id, page.current_revision, scope)); setHistorySelection(null); onSaved(); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not adopt this proposal."); }
+    const selection = activeSelection.current;
+    try {
+      const adopted = await adoptWiki(identifier, historical.id, page.current_revision, scope);
+      if (activeSelection.current === selection) { setPage(adopted); onRevision(null); }
+      onSaved();
+    } catch (cause) { if (activeSelection.current === selection) setError(cause instanceof Error ? cause.message : "Could not adopt this proposal."); }
   }
-  const revision = historical ?? page?.revision;
+  const revision = requestedRevision ? historical : page?.revision;
   if (revision && (scope.mode === "empty" || (scope.mode === "chosen" && !revision.evidence.every(e => scope.source_ids.includes(e.source.source_id) || (e.source.root_id !== null && scope.root_ids.includes(e.source.root_id)))))) return <p role="status">This Wiki page is outside the selected material scope.</p>;
   const visibleRelations = historical ? [] : page?.relations ?? [];
   return <div className="min-w-0 space-y-4">
-    {error && <p role="alert" className="text-fail">{error}</p>}
+    {visibleError && <p role="alert" className="text-fail">{visibleError}</p>}
     {page?.publication_error && <p role="status" className="text-fail">{page.publication_error}</p>}
-    {!revision ? <p role="status">{error ? "No readable Wiki revision in this scope." : page ? "No published revision yet. Check the Wiki job." : "Opening Wiki…"}</p> : <>
+    {requestedRevision && page?.revision && <button className={button} onClick={() => onRevision(null)}>Return to current</button>}
+    {!revision ? <p role="status">{visibleError ? "No readable Wiki revision in this scope." : requestedRevision ? "Opening saved Wiki revision…" : page ? "No published revision yet. Check the Wiki job." : "Opening Wiki…"}</p> : <>
       <p className="text-sm text-ink-soft">{revision?.origin} revision · {revision?.metadata.model ?? "Maintained Wiki"}{revision?.metadata.processing_seconds !== undefined && ` · ${revision.metadata.processing_seconds.toFixed(1)}s`} · {revision?.metadata.prompt_version}<br />Wiki is interpretation. Verify exact facts, numbers and exceptions in originals.</p>
       {historical && <p role="status" className="text-sm text-ink-soft">Historical Wiki snapshot · {new Date(historical.created_at).toLocaleString()} · verify its saved source versions.</p>}
-      {historical ? <section className="rounded-lg border border-edge bg-card p-5"><div className="mb-4 flex gap-3">{page?.revision && <button className={button} onClick={() => setHistorySelection(null)}>Return to current</button>}{historical.origin === "proposal" && page?.current_revision && <button className={button} onClick={adopt}>Adopt proposal · keep history</button>}</div><MarkdownContent content={wikiPreviewContent(historical.content, historical.metadata.contributors, scope)} allowImages={false}
-        rewriteLink={href => wikiLinkHref(href, scope, historical.metadata.contributors)} /></section> : page ? <WikiEditor key={`${page.id}:${scopeKey}`} page={page} scope={scope} onSaved={saved => { if (saved.id === page.id) setPage(saved); onSaved(); }} /> : null}
+      {historical ? <section className="rounded-lg border border-edge bg-card p-5">{historical.origin === "proposal" && page?.current_revision && <button className={`${button} mb-4`} onClick={adopt}>Adopt proposal · keep history</button>}<MarkdownContent content={wikiPreviewContent(historical.content, historical.metadata.contributors, scope)} allowImages={false}
+        rewriteLink={href => wikiLinkHref(href, scope, historical.metadata.contributors)} /></section> : page ? <WikiEditor key={`${page.id}:${scopeKey}`} page={page} scope={scope} onSaved={saved => { if (activeSelection.current?.key === selectionKey && saved.id === page.id) setPage(saved); onSaved(); }} /> : null}
       <details className="rounded-lg border border-edge bg-card p-4"><summary className="cursor-pointer font-semibold">Original evidence · {revision?.evidence.length ?? 0} passages</summary><ul className="mt-3 space-y-4">{revision?.evidence.map(e => <li key={e.id} className="border-t border-edge pt-3 text-sm"><p>{e.source.name}{e.page_number !== null && ` · page ${e.page_number}`} · {e.current_status}</p><p className="break-all font-mono text-xs text-ink-soft">Source {e.source.source_id} · version {e.source.source_version}<br />Passage {e.passage_index}, characters {e.start}–{e.end}</p><blockquote className="mt-2 whitespace-pre-wrap border-l-2 border-edge-strong pl-3">{e.text}</blockquote>{e.current_status === "available" && <a href={wikiOriginalUrl(e)} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center text-accent-ink underline">Open original</a>}</li>)}</ul></details>
       <section className="rounded-lg border border-edge bg-card p-4"><h2 className="font-semibold">Relations & backlinks</h2>{visibleRelations.length === 0 && <p className="mt-2 text-sm text-ink-soft">No verified related pages.</p>}<ul className="mt-2 space-y-3">{visibleRelations.map(r => { const back = r.target_id === identifier; return <li key={r.id} className="text-sm"><Link href={wikiHref(back ? r.origin_id : r.target_id, scope, back ? r.revision_id : r.target_revision)} className="text-accent-ink underline">{back ? r.origin_title : r.target_title}</Link> · {r.kind.replaceAll("_", " ")}{back && " · backlink"}{r.target_current_revision && r.target_current_revision !== r.target_revision && " · earlier target revision"}<p className="text-ink-soft">{r.reason}</p></li>; })}</ul>{revision?.metadata.contributors?.map(c => <Link key={c.wiki_id} href={wikiHref(c.wiki_id, scope, c.revision_id)} className="mt-2 block text-sm text-accent-ink underline">Source summary · {c.wiki_id}</Link>)}</section>
-      {page && <details className="rounded-lg border border-edge bg-card p-4"><summary className="cursor-pointer font-semibold">Revision history · {page.revisions.length}</summary><ul className="mt-2">{page.revisions.map(r => <li key={r.id}><button className={`${button} my-1 text-left`} onClick={() => void inspect(r.id)}>{r.origin} · {new Date(r.created_at).toLocaleString()} · {r.title}</button></li>)}</ul></details>}
+      {page && <details className="rounded-lg border border-edge bg-card p-4"><summary className="cursor-pointer font-semibold">Revision history · {page.revisions.length}</summary><ul className="mt-2">{page.revisions.map(r => <li key={r.id}><button className={`${button} my-1 text-left`} onClick={() => onRevision(r.id)}>{r.origin} · {new Date(r.created_at).toLocaleString()} · {r.title}</button></li>)}</ul></details>}
     </>}
   </div>;
 }
