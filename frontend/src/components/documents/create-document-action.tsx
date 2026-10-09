@@ -85,7 +85,7 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
         disabled={pending}
         onChange={(event) => setInstruction(event.target.value)}
         onKeyDown={(event) => {
-          if (event.key === "Enter") {
+          if (event.key === "Enter" && !event.nativeEvent.isComposing && event.keyCode !== 229) {
             event.preventDefault();
             submit();
           }

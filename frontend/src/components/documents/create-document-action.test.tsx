@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, expect, it, vi } from "vitest";
 
@@ -6,6 +6,25 @@ import { CreateDocumentAction } from "@/components/documents/create-document-act
 import { mockRouter } from "@/tests/setup";
 
 afterEach(() => vi.unstubAllGlobals());
+
+it("ignores IME confirmation and submits only a later Enter", async () => {
+  const fetch = vi.fn().mockImplementation((url: string) => url.endsWith("/documents/generate")
+    ? new Promise(() => {})
+    : Promise.resolve(new Response(JSON.stringify([{ id: "ollama", model: "local", configured: true }]))));
+  vi.stubGlobal("fetch", fetch);
+  render(<CreateDocumentAction messageId="message" />);
+  await userEvent.click(screen.getByRole("button", { name: "Create document" }));
+  const input = screen.getByLabelText("What should this become?");
+  fireEvent.compositionStart(input);
+  fireEvent.change(input, { target: { value: "회의 정리" } });
+  fireEvent.keyDown(input, { key: "Enter", isComposing: true, keyCode: 229 });
+  fireEvent.keyDown(input, { key: "Enter", keyCode: 229 });
+  expect(fetch.mock.calls.filter(([url]) => url.endsWith("/documents/generate"))).toHaveLength(0);
+  expect(input).toBeEnabled();
+  fireEvent.compositionEnd(input);
+  fireEvent.keyDown(input, { key: "Enter", keyCode: 13 });
+  expect(fetch.mock.calls.filter(([url]) => url.endsWith("/documents/generate"))).toHaveLength(1);
+});
 
 it("routes the explicit cloud choice from the form to document generation", async () => {
   const fetch = vi.fn().mockImplementation((url: string) => Promise.resolve(new Response(
