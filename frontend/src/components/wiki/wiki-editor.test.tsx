@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, it, vi } from "vitest";
 import { WikiEditor } from "@/components/wiki/wiki-editor";
@@ -6,6 +6,7 @@ import { ALL_WIKI_SOURCES, editWiki, readWiki, saveWikiAnalysis, type WikiPage }
 
 vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), editWiki: vi.fn(), readWiki: vi.fn(), saveWikiAnalysis: vi.fn() }));
 export const page: WikiPage = { id: "wiki", title: "Notes", kind: "source", current_revision: "r1", publication_error: null, updated_at: "2026-10-06", proposal_count: 0, revisions: [], relations: [], revision: { id: "r1", wiki_id: "wiki", parent_id: null, origin: "generated", title: "Notes", content: "# Original", created_at: "2026-10-06", evidence: [], metadata: {} } };
+function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(r => { resolve = r; }); return { promise, resolve }; }
 beforeEach(() => { vi.clearAllMocks(); window.localStorage.clear(); });
 
 it("saves edited Markdown with its expected revision", async () => {
@@ -37,6 +38,12 @@ it("saves a reusable analysis with the explicit material scope", async () => {
   render(<WikiEditor page={page} scope={scope} onSaved={vi.fn()} />);
   await userEvent.click(screen.getByRole("button", { name: "Save as analysis" }));
   expect(saveWikiAnalysis).toHaveBeenCalledWith("Notes analysis", "# Original", ["wiki"], scope);
+  const saved = await screen.findByRole("link", { name: "Open saved analysis · Notes" });
+  const target = new URL(saved.getAttribute("href")!, "http://localhost");
+  expect(target.searchParams.get("w")).toBe("analysis");
+  expect(JSON.parse(target.searchParams.get("scope")!)).toEqual(scope);
+  expect(target.searchParams.has("revision")).toBe(false);
+  expect(screen.getByText("Analysis saved.")).toBeInTheDocument();
 });
 
 it("does not load automatic remote images or execute raw HTML", () => {
@@ -110,4 +117,82 @@ it("can discard a conflicting draft after reviewing the latest saved content", a
   expect(screen.getByLabelText("Markdown")).toHaveValue("Saved content");
   expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
   expect(localStorage.getItem("noye:wiki-draft:wiki")).toBeNull();
+});
+
+it("keeps the original draft and expected revision after saving an analysis", async () => {
+  const scope = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  vi.mocked(saveWikiAnalysis).mockResolvedValue({ ...page, id: "analysis", title: "Saved analysis" });
+  render(<WikiEditor page={page} scope={scope} onSaved={vi.fn()} />);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  await userEvent.type(screen.getByLabelText("Markdown"), " authored");
+  const retained = localStorage.getItem("noye:wiki-draft:wiki");
+  await userEvent.click(screen.getByRole("button", { name: "Save as analysis" }));
+  expect(await screen.findByRole("link", { name: "Open saved analysis · Saved analysis" })).toBeInTheDocument();
+  expect(screen.getByLabelText("Markdown")).toHaveValue("# Original authored");
+  expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBe(retained);
+  expect(JSON.parse(retained!).draft.expected).toBe("r1");
+});
+
+it("reports a failed analysis save without claiming success or losing the draft", async () => {
+  vi.mocked(saveWikiAnalysis).mockRejectedValue(new Error("Could not publish analysis"));
+  render(<WikiEditor page={page} scope={ALL_WIKI_SOURCES} onSaved={vi.fn()} />);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  await userEvent.type(screen.getByLabelText("Markdown"), " retained");
+  await userEvent.click(screen.getByRole("button", { name: "Save as analysis" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Could not publish analysis");
+  expect(screen.queryByRole("link", { name: /Open saved analysis/ })).not.toBeInTheDocument();
+  expect(screen.getByLabelText("Markdown")).toHaveValue("# Original retained");
+  expect(JSON.parse(localStorage.getItem("noye:wiki-draft:wiki")!).draft.expected).toBe("r1");
+});
+
+it("does not remove or acknowledge the replacement editor draft when an older save completes", async () => {
+  const pending = deferred<WikiPage>();
+  vi.mocked(editWiki).mockReturnValue(pending.promise);
+  const oldSaved = vi.fn();
+  const first = render(<WikiEditor page={page} scope={ALL_WIKI_SOURCES} onSaved={oldSaved} />);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  await userEvent.type(screen.getByLabelText("Markdown"), " first");
+  await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  const oldOwner = JSON.parse(localStorage.getItem("noye:wiki-draft:wiki")!).owner;
+  first.unmount();
+  const scope = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  const second = render(<WikiEditor page={page} scope={scope} onSaved={vi.fn()} />);
+  await screen.findByText(/local draft retained/);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  await userEvent.type(screen.getByLabelText("Markdown"), " later");
+  const retained = localStorage.getItem("noye:wiki-draft:wiki");
+  expect(JSON.parse(retained!).owner).not.toBe(oldOwner);
+  const saved = { ...page, current_revision: "r2", revision: { ...page.revision!, id: "r2", content: "# Original first" } };
+  await act(async () => pending.resolve(saved));
+  expect(oldSaved).not.toHaveBeenCalled();
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBe(retained);
+  second.unmount();
+  render(<WikiEditor page={saved} scope={scope} onSaved={vi.fn()} />);
+  await screen.findByText(/local draft retained/);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  expect(screen.getByLabelText("Markdown")).toHaveValue("# Original first later");
+  expect(JSON.parse(localStorage.getItem("noye:wiki-draft:wiki")!).draft.expected).toBe("r1");
+});
+
+it("preserves late input in the same editor and advances only its acknowledged base", async () => {
+  const pending = deferred<WikiPage>();
+  vi.mocked(editWiki).mockReturnValue(pending.promise);
+  const onSaved = (saved: WikiPage) => view.rerender(<WikiEditor page={saved} scope={ALL_WIKI_SOURCES} onSaved={onSaved} />);
+  const view = render(<WikiEditor page={page} scope={ALL_WIKI_SOURCES} onSaved={onSaved} />);
+  await userEvent.click(screen.getByRole("button", { name: "Edit Markdown" }));
+  await userEvent.type(screen.getByLabelText("Markdown"), " submitted");
+  await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  const owner = JSON.parse(localStorage.getItem("noye:wiki-draft:wiki")!).owner;
+  // A change already delivered to the editor must survive the pending save acknowledgement.
+  fireEvent.change(screen.getByLabelText("Markdown"), { target: { value: "# Original submitted later" } });
+  const saved = { ...page, current_revision: "r2", revision: { ...page.revision!, id: "r2", content: "# Original submitted" } };
+  await act(async () => pending.resolve(saved));
+  expect(screen.getByLabelText("Markdown")).toHaveValue("# Original submitted later");
+  expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
+  await waitFor(() => expect(JSON.parse(localStorage.getItem("noye:wiki-draft:wiki")!)).toMatchObject({
+    owner, draft: { content: "# Original submitted later", expected: "r2" }, baseline: { content: "# Original submitted" },
+  }));
+  await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  expect(editWiki).toHaveBeenLastCalledWith("wiki", "r2", "Notes", "# Original submitted later", ALL_WIKI_SOURCES);
 });
