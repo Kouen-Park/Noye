@@ -60,10 +60,35 @@ def stage_assets(connection, staged):
                 data, digest, _ = read_original(root, relative)
                 target = staged / "knowledge" / root["id"] / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
+                if target.exists():
+                    with target.open("rb") as previous:
+                        previous_digest = hashlib.file_digest(previous, "sha256").hexdigest()
+                    if previous_digest != digest:
+                        parts = Path(relative).parts
+                        retained = (
+                            staged
+                            / "knowledge"
+                            / root["id"]
+                            / parts[0]
+                            / "Recovered backups"
+                            / previous_digest
+                            / Path(*parts[1:])
+                        )
+                        retained.parent.mkdir(parents=True, exist_ok=True)
+                        if retained.exists():
+                            with retained.open("rb") as saved:
+                                if (
+                                    hashlib.file_digest(saved, "sha256").hexdigest()
+                                    != previous_digest
+                                ):
+                                    raise ValueError("A retained recovery copy is damaged.")
+                            target.unlink()
+                        else:
+                            target.rename(retained)
                 target.write_bytes(data)
                 captured.append((root, relative, digest))
         except (SourceError, OSError) as exc:
-            if isinstance(exc, SourceError) and exc.code == "invalid_path":
+            if isinstance(exc, SourceError) and exc.code in {"invalid_path", "too_large"}:
                 raise ValueError(str(exc)) from exc
             missing_roots.append(root["id"])
     # External writers do not share the application snapshot guard.
