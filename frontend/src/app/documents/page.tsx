@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { SourceDocumentDetails } from "@/components/documents/source-document-details";
 import { editSourceDocument, isSourceDocument, readSourceDocument, sourceDocumentExportUrl, type SourceDocument } from "@/lib/source-documents";
-import { DocumentEditor } from "@/components/documents/document-editor";
+import { DocumentEditor, type DocumentPatch } from "@/components/documents/document-editor";
+import { acknowledgeDocumentDraft } from "@/lib/document-draft";
 import { DocumentList } from "@/components/documents/document-list";
 import { PassageList } from "@/components/chat/passages";
 import {
@@ -59,6 +60,9 @@ function DocumentsView() {
   const [offline, setOffline] = useState(false);
   /** Which document the loaded body belongs to, so a stale load is ignored. */
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const activeDocument = useRef<string | null>(null);
+  const revisionRequest = useRef(0);
+  const saveRequest = useRef(0);
 
   const fail = useCallback((cause: unknown, fallback: string) => {
     setOffline(cause instanceof ApiError && cause.isOffline);
@@ -76,21 +80,27 @@ function DocumentsView() {
   }, [refreshList]);
 
   useEffect(() => {
+    activeDocument.current = documentId;
+    const request = ++revisionRequest.current;
     if (!documentId) return;
     const controller = new AbortController();
     readSourceDocument(documentId, undefined, controller.signal).catch(cause => {
       if (cause instanceof ApiError && cause.status === 404) return readDocument(documentId, controller.signal);
       throw cause;
     }).then(document => {
-      if (!controller.signal.aborted) { setOpen(document); setLoadedFor(documentId); setError(null); }
-    }, cause => { if (!controller.signal.aborted) { setOpen(null); setLoadedFor(documentId); fail(cause, "Could not open that document."); } });
-    return () => controller.abort();
+      if (!controller.signal.aborted && revisionRequest.current === request) { setOpen(document); setLoadedFor(documentId); setError(null); }
+    }, cause => { if (!controller.signal.aborted && revisionRequest.current === request) { setOpen(null); setLoadedFor(documentId); fail(cause, "Could not open that document."); } });
+    return () => { activeDocument.current = null; controller.abort(); };
   }, [documentId, fail]);
-  const shown = documentId && loadedFor === documentId ? open : null;
+  const shown = documentId && loadedFor === documentId && open?.id === documentId ? open : null;
   const sourceDocument = shown && isSourceDocument(shown) ? shown : null;
-  const chooseRevision = (id: string) => {
+  const chooseRevision = (id?: string) => {
     if (!documentId) return;
-    readSourceDocument(documentId, id).then(setOpen, cause => fail(cause, "Could not open that revision."));
+    const request = ++revisionRequest.current;
+    const current = () => activeDocument.current === documentId && revisionRequest.current === request;
+    readSourceDocument(documentId, id).then(document => {
+      if (current()) { setOpen(document); setError(null); }
+    }, cause => { if (current()) fail(cause, "Could not open that revision."); });
   };
 
   const openDocument = useCallback(
@@ -110,23 +120,29 @@ function DocumentsView() {
   }, [fail, refreshList, router]);
 
   const save = useCallback(
-    async (patch: { title: string; content: string }) => {
-      if (!open) return;
+    async ({ expectedRevision, draftOwner, ...patch }: DocumentPatch) => {
+      if (!shown) return;
+      const document = shown;
+      const revision = ++revisionRequest.current;
+      const request = ++saveRequest.current;
       setSaving(true);
       setError(null);
       try {
-        const saved = isSourceDocument(open)
-          ? await editSourceDocument(open.id, open.revision.id, patch)
-          : await updateDocument(open.id, patch);
-        setOpen(saved);
+        const saved = isSourceDocument(document)
+          ? await editSourceDocument(document.id, expectedRevision ?? document.revision.id, patch)
+          : await updateDocument(document.id, patch);
+        if (isSourceDocument(saved) && isSourceDocument(document)) {
+          acknowledgeDocumentDraft(document.id, expectedRevision ?? document.revision.id, saved.revision.id, draftOwner);
+        }
+        if (activeDocument.current === document.id && revisionRequest.current === revision) setOpen(saved);
         refreshList();
       } catch (cause: unknown) {
-        fail(cause, "Could not save your changes.");
+        if (activeDocument.current === document.id && revisionRequest.current === revision) fail(cause, "Could not save your changes.");
       } finally {
-        setSaving(false);
+        if (saveRequest.current === request) setSaving(false);
       }
     },
-    [fail, open, refreshList],
+    [fail, shown, refreshList],
   );
 
   const remove = useCallback(
@@ -193,6 +209,12 @@ function DocumentsView() {
               onSave={save}
               saving={saving}
               documentId={shown.id}
+              revisionId={sourceDocument?.revision.id}
+              onCompareLatest={sourceDocument ? async () => {
+                const latest = await readSourceDocument(shown.id);
+                return { title: latest.title, content: latest.content, revisionId: latest.revision.id };
+              } : undefined}
+              onReloadLatest={sourceDocument ? () => chooseRevision() : undefined}
               provenance={shown.provenance_markdown}
               readOnly={!!sourceDocument && sourceDocument.revision.id !== sourceDocument.revisions[0]?.id}
               exportUrl={sourceDocument ? sourceDocumentExportUrl(shown.id, sourceDocument.revision.id) : undefined}
