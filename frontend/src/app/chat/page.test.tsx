@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ChatPage from "@/app/chat/page";
 import * as api from "@/lib/api";
+import * as sourceDocs from "@/lib/source-documents";
+import { resetChatSessions } from "@/lib/chat-session";
 
 const navigation = vi.hoisted(() => ({ query: "", push: vi.fn(), replace: vi.fn() }));
 vi.mock("next/navigation", () => ({
@@ -16,6 +18,14 @@ vi.mock("@/lib/api", async (original) => ({
   renameConversation: vi.fn(), deleteConversation: vi.fn(), listAiProviders: vi.fn(),
   listFiles: vi.fn(), updateConversationScope: vi.fn(),
 }));
+
+vi.mock("@/lib/source-documents", async get => ({ ...await get<typeof sourceDocs>(), generateSourceDocument: vi.fn(), listDocumentTasks: vi.fn() }));
+
+function renderChat() {
+  const view = render(<ChatPage />);
+  fireEvent.click(screen.getByText(/AI & sources/));
+  return view;
+}
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -42,6 +52,8 @@ function send(question = "My question") {
 describe("chat workspace", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetChatSessions();
+    vi.mocked(sourceDocs.listDocumentTasks).mockResolvedValue([]);
     navigation.query = "";
     vi.mocked(api.listConversations).mockResolvedValue([
       { id: "c1", title: "Chat c1", message_count: 2, created_at: timestamp, updated_at: timestamp },
@@ -56,7 +68,7 @@ describe("chat workspace", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("keeps library, search and documents reachable and fills a prompt without sending", async () => {
-    render(<ChatPage />);
+    renderChat();
     await screen.findByRole("button", { name: "Open Chat c1" });
     expect(screen.getByRole("link", { name: "Library" })).toHaveAttribute("href", "/library");
     expect(screen.getByRole("link", { name: "Search" })).toHaveAttribute("href", "/search");
@@ -71,7 +83,7 @@ describe("chat workspace", () => {
     navigation.query = "c=c1";
     const read = deferred<api.ChatConversation>();
     vi.mocked(api.readConversation).mockReturnValue(read.promise);
-    render(<ChatPage />);
+    renderChat();
     expect(screen.getByLabelText("Ask about your documents")).toBeDisabled();
     await act(async () => read.resolve(conversation()));
     expect(screen.getByText("Saved answer")).toBeInTheDocument();
@@ -82,7 +94,7 @@ describe("chat workspace", () => {
     const old = deferred<api.ChatConversation>();
     navigation.query = "c=c1";
     vi.mocked(api.readConversation).mockReturnValueOnce(old.promise).mockResolvedValueOnce(conversation("c2", [message("m2", "Second answer")]));
-    const view = render(<ChatPage />);
+    const view = renderChat();
     const signal = vi.mocked(api.readConversation).mock.calls[0][1];
     navigation.query = "c=c2";
     view.rerender(<ChatPage />);
@@ -96,7 +108,7 @@ describe("chat workspace", () => {
   it("allows retrying an opening failure without submitting into an unloaded conversation", async () => {
     navigation.query = "c=c1";
     vi.mocked(api.readConversation).mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(conversation());
-    render(<ChatPage />);
+    renderChat();
     await screen.findByText("Could not open that conversation.");
     expect(screen.getByRole("button", { name: "Ask" })).toBeDisabled();
     await userEvent.click(screen.getByRole("button", { name: "Retry opening conversation" }));
@@ -107,7 +119,7 @@ describe("chat workspace", () => {
   it("locks conversation actions while waiting and sends the explicit selected provider", async () => {
     const asked = deferred<api.AskResponse>();
     vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
-    render(<ChatPage />);
+    renderChat();
     await screen.findByRole("option", { name: /cloud-model/ });
     await userEvent.selectOptions(screen.getByRole("combobox"), "gemini");
     send();
@@ -126,7 +138,7 @@ describe("chat workspace", () => {
   it("does not redirect or insert an answer into a route selected with Back during generation", async () => {
     const asked = deferred<api.AskResponse>();
     vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
-    const view = render(<ChatPage />);
+    const view = renderChat();
     await screen.findByRole("option", { name: /local-model/ });
     send();
     navigation.query = "c=c1";
@@ -141,7 +153,7 @@ describe("chat workspace", () => {
 
   it("restores a failed question for retry and unlocks navigation", async () => {
     vi.mocked(api.askQuestion).mockRejectedValue(new Error("offline"));
-    render(<ChatPage />);
+    renderChat();
     await screen.findByRole("option", { name: /local-model/ });
     send();
     await screen.findByText("Could not ask that question.");
@@ -154,7 +166,7 @@ describe("chat workspace", () => {
     navigation.query = "c=c1";
     const removed = deferred<void>();
     vi.mocked(api.deleteConversation).mockReturnValue(removed.promise);
-    const view = render(<ChatPage />);
+    const view = renderChat();
     await screen.findByText("Saved answer");
     await userEvent.click(screen.getByRole("button", { name: "Delete Chat c1" }));
     await userEvent.click(screen.getByRole("button", { name: "Delete" }));
@@ -169,7 +181,7 @@ describe("chat workspace", () => {
     const answer = message("m1", "Cited answer");
     answer.citations = [{ file_id: "f1", file_name: "notes.pdf", page_number: 3, chunk_indexes: [0], score: 0.7, label: "notes.pdf — page 3" }];
     vi.mocked(api.readConversation).mockResolvedValue(conversation("c1", [answer]));
-    render(<ChatPage />);
+    renderChat();
     const inspect = await screen.findByRole("button", { name: /passage consulted/i });
     await userEvent.click(inspect);
     expect(inspect).toHaveAttribute("aria-expanded", "true");
@@ -182,7 +194,7 @@ describe("chat workspace", () => {
   });
 
   it("exposes the mobile menu's expanded state", async () => {
-    render(<ChatPage />);
+    renderChat();
     await screen.findByRole("option", { name: /local-model/ });
     const menu = screen.getByRole("button", { name: "Menu & chats" });
     expect(menu).toHaveAttribute("aria-expanded", "false");
@@ -194,7 +206,7 @@ describe("chat workspace", () => {
   });
 
   it("starts fresh even when New chat is clicked from an unsent new conversation", async () => {
-    render(<ChatPage />);
+    renderChat();
     await screen.findByRole("option", { name: /local-model/ });
     fireEvent.change(screen.getByLabelText("Ask about your documents"), { target: { value: "Unsent draft" } });
     await userEvent.click(screen.getByRole("button", { name: "New chat" }));
@@ -209,7 +221,7 @@ describe("chat workspace", () => {
     vi.mocked(api.readConversation).mockResolvedValue(saved);
     vi.mocked(api.updateConversationScope).mockReturnValue(update.promise);
     vi.mocked(api.askQuestion).mockResolvedValue(response());
-    render(<ChatPage />);
+    renderChat();
     await screen.findByText("No files selected");
     await userEvent.click(screen.getByText("No files selected"));
     await userEvent.click(screen.getByRole("checkbox", { name: "All ready files" }));
@@ -227,8 +239,133 @@ describe("chat workspace", () => {
     const original = HTMLElement.prototype.scrollTo;
     HTMLElement.prototype.scrollTo = scroll;
     try {
-      render(<ChatPage />);
+      renderChat();
       await waitFor(() => expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ behavior: "auto" })));
     } finally { HTMLElement.prototype.scrollTo = original; }
   });
+
+  it.each([
+    "How do I write notes without missing important details?",
+    "Do not create a document; explain the process instead.",
+  ])("keeps %s as a normal question when document mode is off", async question => {
+    vi.mocked(api.askQuestion).mockReturnValue(new Promise(() => {}));
+    renderChat();
+    await screen.findByRole("option", { name: /cloud-model/ });
+    await userEvent.selectOptions(screen.getByRole("combobox"), "gemini");
+    send(question);
+    expect(api.askQuestion).toHaveBeenLastCalledWith(question, undefined, "gemini", null);
+    expect(sourceDocs.generateSourceDocument).not.toHaveBeenCalled();
+  });
+
+  it("keeps a follow-up draft when a new conversation receives its saved ID", async () => {
+    navigation.query = "";
+    const asked = deferred<api.AskResponse>();
+    vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
+    const view = renderChat();
+    await screen.findByRole("option", { name: /local-model/ });
+    send();
+    fireEvent.change(screen.getByLabelText("Ask about your documents"), { target: { value: "Follow-up draft" } });
+    await act(async () => asked.resolve(response()));
+    navigation.query = "c=saved";
+    vi.mocked(api.readConversation).mockResolvedValue(conversation("saved", [response().question, response().answer]));
+    view.rerender(<ChatPage />);
+    await screen.findByText("New answer");
+    expect(screen.getByLabelText("Ask about your documents")).toHaveValue("Follow-up draft");
+  });
+
+  it("reconnects to a pending answer after leaving and reopening its conversation", async () => {
+    navigation.query = "c=c1";
+    const asked = deferred<api.AskResponse>();
+    vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
+    const first = renderChat();
+    await screen.findByText("Saved answer"); send(); first.unmount();
+    const returned = renderChat();
+    await screen.findByText("Saved answer");
+    expect(screen.getByText("Waiting for Ollama…")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Thinking…" })).toBeDisabled();
+    await act(async () => asked.resolve({ ...response(), conversation_id: "c1" }));
+    await screen.findByText("New answer");
+    expect(screen.getByRole("button", { name: "Ask" })).toBeDisabled(); // empty draft, no replay
+    expect(api.askQuestion).toHaveBeenCalledTimes(1);
+    returned.unmount();
+  });
+
+  it("retains the new-chat draft's source and document options across route unmounts", async () => {
+    const first = renderChat();
+    await screen.findByRole("option", { name: /local-model/ });
+    fireEvent.click(screen.getByText("Search all ready files"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "All ready files" }));
+    fireEvent.click(screen.getByText("Chat options"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Create an editable document" }));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Use every source in the selected scope" }));
+    fireEvent.change(screen.getByLabelText("Ask about your documents"), { target: { value: "Scoped document draft" } });
+    first.unmount();
+    renderChat();
+    expect(screen.getByLabelText("Ask about your documents")).toHaveValue("Scoped document draft");
+    expect(screen.getByText("No files selected")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Document options · Local Ollama"));
+    expect(screen.getByRole("checkbox", { name: "Create an editable document" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Use every source in the selected scope" })).toBeChecked();
+  });
+
+  it("keeps cached completions in order when a reopened conversation has newer turns", async () => {
+    navigation.query = "c=c1";
+    vi.mocked(api.askQuestion).mockResolvedValue({ ...response(), conversation_id: "c1" });
+    const first = renderChat();
+    await screen.findByText("Saved answer"); send();
+    await screen.findByText("New answer"); first.unmount();
+    vi.mocked(api.readConversation).mockResolvedValue(conversation("c1", [
+      response().question, response().answer, message("later-q", "Later question", "user"), message("later-a", "Later answer"),
+    ]));
+    renderChat();
+    await screen.findByText("Later answer");
+    const items = screen.getByRole("list", { name: "Messages" }).querySelectorAll("li");
+    expect([...items].map(item => item.textContent)).toEqual([
+      expect.stringContaining("My question"), expect.stringContaining("New answer"),
+      expect.stringContaining("Later question"), expect.stringContaining("Later answer"),
+    ]);
+  });
+
+
+  it("uses local document jobs only after explicit selection and refreshes their cards", async () => {
+    navigation.query = "c=c1";
+    const job = deferred<sourceDocs.DocumentTask>();
+    vi.mocked(sourceDocs.generateSourceDocument).mockReturnValue(job.promise);
+    renderChat();
+    await screen.findByRole("option", { name: /cloud-model/ });
+    await screen.findByText("Saved answer");
+    await userEvent.selectOptions(screen.getByRole("combobox"), "gemini");
+    fireEvent.click(screen.getByText("Chat options"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Create an editable document" }));
+    expect(screen.getByLabelText("Ask about your documents")).toHaveAccessibleDescription(/Document jobs use local Ollama/);
+    const before = vi.mocked(sourceDocs.listDocumentTasks).mock.calls.length;
+    send("Write a report");
+    expect(api.askQuestion).not.toHaveBeenCalled();
+    expect(screen.getByText("Waiting for Ollama…")).toBeInTheDocument();
+    expect(sourceDocs.generateSourceDocument).toHaveBeenCalledWith("Write a report", { mode: "all", root_ids: [], source_ids: [] }, "c1", "auto", expect.any(String));
+    await act(async () => job.resolve({ job: null, request: {
+      id: "request", artifact_id: null, clarification: null, manifest: [], plan: null, report: {},
+      request: { instruction: "Write a report", conversation_id: "c1", scope: { mode: "all", root_ids: [], source_ids: [] } },
+    } }));
+    await waitFor(() => expect(sourceDocs.listDocumentTasks).toHaveBeenCalledTimes(before + 1));
+  });
+
+  it("merges an answer that completes before a stale reopening read", async () => {
+    navigation.query = "c=c1";
+    const asked = deferred<api.AskResponse>();
+    vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
+    const first = renderChat();
+    await screen.findByText("Saved answer"); send(); first.unmount();
+    const stale = deferred<api.ChatConversation>();
+    vi.mocked(api.readConversation).mockReturnValue(stale.promise);
+    renderChat();
+    const turn = { ...response(), conversation_id: "c1" };
+    await act(async () => asked.resolve(turn));
+    expect(screen.getByText("Opening conversation…")).toBeInTheDocument();
+    await act(async () => stale.resolve(conversation("c1", [message("m1", "Saved answer"), turn.question])));
+    expect(screen.getByText("New answer")).toBeInTheDocument();
+    expect(screen.getAllByText("My question")).toHaveLength(1);
+    expect(api.askQuestion).toHaveBeenCalledTimes(1);
+  });
+
 });

@@ -6,7 +6,7 @@ import { type CoverageSource, type DocumentTask, listDocumentTasks } from "@/lib
 import { wikiJobAction } from "@/lib/wiki";
 
 const active = new Set(["queued", "running", "cancelling"]);
-export function DocumentTasks({ conversationId }: { conversationId: string | null }) {
+export function DocumentTasks({ conversationId, refreshToken }: { conversationId: string | null; refreshToken?: unknown }) {
   const [tasks, setTasks] = useState<DocumentTask[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
@@ -28,7 +28,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
     };
     void load();
     return () => { controller.abort(); clearTimeout(timer); };
-  }, [conversationId, refresh]);
+  }, [conversationId, refresh, refreshToken]);
   const action = async (id: string, kind: "cancel" | "resume") => {
     try { await wikiJobAction(id, kind); setRefresh(n => n + 1); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Could not update document job."); }
