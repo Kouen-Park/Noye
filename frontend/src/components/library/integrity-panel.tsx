@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 
 import { CheckIcon, CrossIcon } from "@/components/icons";
 import type { IntegrityPhase } from "@/hooks/use-library";
@@ -145,6 +146,7 @@ export function IntegrityPanel({
         <ul className="mt-3 space-y-2">
           {status.problems.map((file) => {
             const canReingest =
+              !file.folder_root_id &&
               file.problems.includes("SOURCE_CHANGED") &&
               !file.problems.includes("MODEL_CHANGED") &&
               !file.problems.includes("POINTS_MISSING") &&
@@ -164,7 +166,9 @@ export function IntegrityPanel({
                     </p>
                     <ul className="mt-1.5 space-y-1 text-[12.5px] text-ink-soft">
                       {file.problems.map((problem) => (
-                        <li key={problem}>• {problemCopy(file, problem)}</li>
+                        <li key={problem}>• {file.folder_root_id && problem === "MISSING_SOURCE"
+                          ? "The saved snapshot is missing. Check this source and rebuild from its original in Folders."
+                          : problemCopy(file, problem)}</li>
                       ))}
                     </ul>
                   </div>
@@ -178,6 +182,7 @@ export function IntegrityPanel({
                       {busy ? "Re-indexing…" : "Re-index file"}
                     </button>
                   )}
+                  {file.folder_root_id && <Link href="/folders/" className="min-h-11 rounded-md border border-edge-strong px-3 py-2 text-[12.5px] font-semibold text-accent-ink">Manage in Folders</Link>}
                 </div>
               </li>
             );

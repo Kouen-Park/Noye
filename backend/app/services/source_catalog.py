@@ -30,6 +30,7 @@ class SourceCatalog:
             return []
         rows = self.connection.execute(
             "SELECT f.*,s.root_id,s.relative_path,s.version,s.availability,s.manual_category,"
+            "COALESCE(s.error,f.error) AS source_error,"
             "r.connected,r.processing,r.availability AS root_availability "
             "FROM files f LEFT JOIN sources s ON s.file_id=f.id "
             "LEFT JOIN source_roots r ON r.id=s.root_id ORDER BY f.created_at,f.id"
@@ -64,7 +65,7 @@ class SourceCatalog:
                     "version": row["version"] or row["content_hash"],
                     "availability": availability,
                     "processing_state": row["status"],
-                    "error": row["error"],
+                    "error": row["source_error"],
                     "manual_category": row["manual_category"],
                     "job": jobs.latest(self.connection, row["id"]),
                 }

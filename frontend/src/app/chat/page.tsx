@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { DocumentTasks } from "@/components/documents/document-tasks";
-import { documentScope, generateSourceDocument, isDocumentIntent } from "@/lib/source-documents";
+import { documentScope, generateSourceDocument } from "@/lib/source-documents";
+import { chatSessionKey, clearNewChat, readChatSession, setChatDraft, setChatOptions, submitChatRequest, useChatBusy, useChatSession } from "@/lib/chat-session";
+import { PROVIDER_NAMES } from "@/lib/ai-settings";
 import { Composer } from "@/components/chat/composer";
 import { SourceSelector } from "@/components/chat/source-selector";
 import { ConversationList } from "@/components/chat/conversation-list";
@@ -15,7 +17,7 @@ import { PassageList } from "@/components/chat/passages";
 import { BookIcon, CrossIcon } from "@/components/icons";
 import { ProviderSelector } from "@/components/provider-selector";
 import {
-  ApiError, type ChatMessage, type ConversationSummary, type GenerationProvider,
+  ApiError, type AskResponse, type ChatMessage, type ConversationSummary, type GenerationProvider,
   askQuestion, deleteConversation, listConversations, readConversation, renameConversation, updateConversationScope,
 } from "@/lib/api";
 
@@ -30,13 +32,16 @@ function ChatView() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [listLoaded, setListLoaded] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const busy = useChatBusy();
   const [newSession, setNewSession] = useState(0);
   const [provider, setProvider] = useState<GenerationProvider>("ollama");
   const live = useRef(false);
   const listRequest = useRef(0);
   const selectedId = useRef(conversationId);
-  useEffect(() => { selectedId.current = conversationId; }, [conversationId]);
+  useEffect(() => {
+    selectedId.current = conversationId;
+    if (conversationId && readChatSession("new").completion?.conversationId === conversationId) clearNewChat();
+  }, [conversationId]);
 
   const refreshList = useCallback(() => {
     const request = ++listRequest.current;
@@ -84,7 +89,7 @@ function ChatView() {
         <ConversationList conversations={conversations} currentId={conversationId}
           loading={!listLoaded} disabled={busy} onRename={rename} onDelete={remove}
           onOpen={(id) => { if (!busy) router.push(`/chat?c=${encodeURIComponent(id)}`); }}
-          onNew={() => { if (!busy) { if (conversationId === null) setNewSession((current) => current + 1); else router.push("/chat"); } }} />
+          onNew={() => { if (!busy) { clearNewChat(); if (conversationId === null) setNewSession((current) => current + 1); else router.push("/chat"); } }} />
         {listError && <div role="alert" className="mt-3 rounded-md border border-fail bg-fail-wash p-3 text-xs text-fail">
           <p>{listError}</p><button type="button" onClick={refreshList} className="mt-1 min-h-11 underline">Retry conversations</button>
         </div>}
@@ -94,19 +99,33 @@ function ChatView() {
           populate the next conversation or redirect it back to the old one. */}
       <ConversationWorkspace key={conversationId ?? `new-${newSession}`} conversationId={conversationId}
         title={conversations.find((conversation) => conversation.id === conversationId)?.title}
-        provider={provider} onProviderChange={setProvider} busy={busy} onBusyChange={setBusy}
+        provider={provider} onProviderChange={setProvider} busy={busy}
         refreshList={refreshList} />
     </AppShell>
   );
 }
 
-function ConversationWorkspace({ conversationId, title, provider, onProviderChange, busy, onBusyChange, refreshList }: {
+function mergeTurn(messages: ChatMessage[], turn: AskResponse) {
+  const merged = messages.filter(message => !message.id.startsWith("pending-"));
+  let question = merged.findIndex(message => message.id === turn.question.id);
+  if (question === -1) { question = merged.length; merged.push(turn.question); }
+  if (!merged.some(message => message.id === turn.answer.id)) merged.splice(question + 1, 0, turn.answer);
+  return merged;
+}
+
+function closeSettingsOnEscape(event: KeyboardEvent<HTMLDetailsElement>) {
+  if (event.key !== "Escape") return;
+  event.preventDefault();
+  event.currentTarget.open = false;
+  event.currentTarget.querySelector("summary")?.focus();
+}
+
+function ConversationWorkspace({ conversationId, title, provider, onProviderChange, busy, refreshList }: {
   conversationId: string | null;
   title?: string;
   provider: GenerationProvider;
   onProviderChange: (provider: GenerationProvider) => void;
   busy: boolean;
-  onBusyChange: (busy: boolean) => void;
   refreshList: () => void;
 }) {
   const router = useRouter();
@@ -115,12 +134,16 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const [loaded, setLoaded] = useState(conversationId === null);
   const [loading, setLoading] = useState(conversationId !== null);
   const [attempt, setAttempt] = useState(0);
-  const [pending, setPending] = useState(false);
+  const sessionKey = chatSessionKey(conversationId);
+  const session = useChatSession(sessionKey);
+  const pending = session.pending !== null;
   const [error, setError] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
-  const [scope, setScope] = useState<string[] | null>(null);
-  const [documentMode, setDocumentMode] = useState(false);
-  const [collectionMode, setCollectionMode] = useState(false);
+  const draft = session.draft;
+  const setDraft = (value: string) => setChatDraft(sessionKey, value);
+  const scope = session.scope;
+  const setScope = (value: string[] | null) => setChatOptions(sessionKey, { scope: value });
+  const documentMode = session.documentMode;
+  const collectionMode = session.collectionMode;
   const [scopeSaving, setScopeSaving] = useState(false);
   const [inspecting, setInspecting] = useState<ChatMessage | null>(null);
   const panelId = useId();
@@ -128,7 +151,6 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const scrollRef = useRef<HTMLDivElement>(null);
   const sourceButton = useRef<HTMLButtonElement | null>(null);
   const live = useRef(false);
-  const inFlight = useRef(false);
   const documentDispatch = useRef<{ key: string; id: string } | null>(null);
 
   useEffect(() => {
@@ -142,8 +164,9 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
     readConversation(conversationId, controller.signal).then(
       (conversation) => {
         if (controller.signal.aborted) return;
-        setMessages(conversation.messages);
-        setScope(conversation.source_scope ?? null);
+        const turn = readChatSession(sessionKey).completion?.turn;
+        setMessages(turn ? mergeTurn(conversation.messages, turn) : conversation.messages);
+        setChatOptions(sessionKey, { scope: conversation.source_scope ?? null });
         setSavedTitle(conversation.title);
         setLoaded(true);
         setLoading(false);
@@ -155,64 +178,52 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
       },
     );
     return () => controller.abort();
-  }, [conversationId, attempt]);
+  }, [conversationId, attempt, sessionKey]);
 
   useEffect(() => {
     const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     scrollRef.current?.scrollTo?.({ top: scrollRef.current.scrollHeight, behavior: reduced ? "auto" : "smooth" });
   }, [messages.length, pending]);
 
+  useEffect(() => {
+    const completion = session.completion;
+    if (!loaded || (!completion && !session.error)) return;
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      if (!completion) { setMessages(current => current.filter(m => !m.id.startsWith("pending-"))); return; }
+      const turn = completion.turn;
+      if (turn) setMessages(current => mergeTurn(current, turn));
+      else if (conversationId) setAttempt(n => n + 1);
+      if (conversationId === null) router.replace(`/chat?c=${encodeURIComponent(completion.conversationId)}`);
+    });
+    return () => { cancelled = true; };
+  }, [session.completion, session.error, conversationId, router, loaded]);
+
   const ask = (question: string) => {
-    if (inFlight.current || busy || scopeSaving || !loaded) return;
-    if (documentMode || isDocumentIntent(question)) {
-      inFlight.current = true;
-      setPending(true); onBusyChange(true); setError(null);
+    if (busy || scopeSaving || !loaded) return;
+    setError(null);
+    if (documentMode) {
       const key = JSON.stringify([question, scope, conversationId, collectionMode]);
       if (documentDispatch.current?.key !== key) documentDispatch.current = { key, id: crypto.randomUUID() };
-      generateSourceDocument(question, documentScope(scope), conversationId ?? undefined, collectionMode ? "collection" : "auto", documentDispatch.current.id).then(response => {
+      const requestId = documentDispatch.current.id;
+      void submitChatRequest(sessionKey, "document", "ollama", question, async () => {
+        const response = await generateSourceDocument(question, documentScope(scope), conversationId ?? undefined,
+          collectionMode ? "collection" : "auto", requestId);
         documentDispatch.current = null;
-        refreshList();
-        if (!live.current) return;
-        if (conversationId === null) router.replace(`/chat?c=${encodeURIComponent(response.request.request.conversation_id)}`);
-        else setAttempt(n => n + 1);
-      }, (cause: unknown) => {
-        refreshList();
-        if (!live.current) return;
-        setDraft(current => current.trim() === "" ? question : current);
-        setError(cause instanceof Error ? cause.message : "Could not start document generation.");
-      }).finally(() => { inFlight.current = false; onBusyChange(false); if (live.current) setPending(false); });
+        return { conversationId: response.request.request.conversation_id };
+      }).then(refreshList);
       return;
     }
-    inFlight.current = true;
-    setPending(true);
-    onBusyChange(true);
-    setError(null);
     const provisional: ChatMessage = {
       id: `pending-${Date.now()}`, role: "user", content: question, error: null,
       citations: [], created_at: new Date().toISOString(),
     };
-    setMessages((current) => [...current, provisional]);
-    // Do not abort generation: the backend saves the turn even if the user
-    // leaves. Only mounted workspace state/navigation may consume its result.
-    askQuestion(question, conversationId ?? undefined, provider, scope).then(
-      (response) => {
-        refreshList();
-        if (!live.current) return;
-        setMessages((current) => [...current.filter((message) => message.id !== provisional.id), response.question, response.answer]);
-        if (conversationId === null) router.replace(`/chat?c=${encodeURIComponent(response.conversation_id)}`);
-      },
-      (cause: unknown) => {
-        refreshList();
-        if (!live.current) return;
-        setMessages((current) => current.filter((message) => message.id !== provisional.id));
-        setDraft((current) => current.trim() === "" ? question : current);
-        setError(cause instanceof ApiError ? cause.message : "Could not ask that question.");
-      },
-    ).finally(() => {
-      inFlight.current = false;
-      onBusyChange(false);
-      if (live.current) setPending(false);
-    });
+    setMessages(current => [...current, provisional]);
+    void submitChatRequest(sessionKey, "answer", provider, question, async () => {
+      const turn = await askQuestion(question, conversationId ?? undefined, provider, scope);
+      return { conversationId: turn.conversation_id, turn };
+    }).then(refreshList);
   };
 
   const changeScope = (ids: string[] | null) => {
@@ -237,13 +248,16 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
       <header className="shrink-0 border-b border-edge px-5 py-3 md:px-7">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
           <div className="min-w-0 pt-1">
-            <p className="mb-1 text-[11px] font-semibold tracking-[0.1em] text-ink-soft uppercase">Research chat</p>
-            <h1 className="line-clamp-2 text-xl md:text-[23px]" title={heading}>{heading}</h1>
+            <p className="chat-eyebrow mb-1 text-[11px] font-semibold tracking-[0.1em] text-ink-soft uppercase">Research chat</p>
+            <h1 className="line-clamp-1 text-xl md:text-[23px]" title={heading}>{heading}</h1>
           </div>
-          <div className="min-w-0 lg:w-[350px] lg:shrink-0">
-            <ProviderSelector value={provider} onChange={onProviderChange} disabled={busy} compact />
+          <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-controls min-w-0 lg:w-[350px] lg:shrink-0">
+            <summary className="min-h-11 cursor-pointer py-3 text-xs font-semibold text-ink-soft">AI &amp; sources · {PROVIDER_NAMES[session.pending?.provider ?? provider]}</summary>
+            <div className="chat-controls-content rounded-lg border border-edge-strong bg-card p-3 shadow-lg">
+            <ProviderSelector value={session.pending?.provider ?? provider} onChange={onProviderChange} disabled={busy} compact />
             <SourceSelector scope={scope} onChange={changeScope} disabled={busy || scopeSaving || !loaded} />
-          </div>
+            </div>
+          </details>
         </div>
       </header>
 
@@ -251,8 +265,8 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
         <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Conversation">
           <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 md:px-8">
             <div className="mx-auto max-w-[720px] py-5">
-              {error && <div role="alert" className="mb-4 rounded-lg border border-fail bg-fail-wash p-4 text-sm text-fail">
-                <p>{error}</p>
+              {(error || session.error) && <div role="alert" className="mb-4 rounded-lg border border-fail bg-fail-wash p-4 text-sm text-fail">
+                <p>{error || session.error}</p>
                 {!loaded && !loading && <button type="button" onClick={() => { setError(null); setLoading(true); setAttempt((current) => current + 1); }} className="mt-2 min-h-11 underline">Retry opening conversation</button>}
               </div>}
               {loading ? <p role="status" className="py-8 text-sm text-ink-soft">Opening conversation…</p> :
@@ -271,21 +285,26 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
               <ul aria-label="Messages">
                 {messages.map((message) => <MessageBubble key={message.id} message={message} panelId={panelId}
                   inspected={inspecting?.id === message.id} onInspect={(selected, button) => { sourceButton.current = button; setInspecting(selected); }} />)}
-                {pending && <li className="py-5" role="status"><p className="text-[12px] font-semibold text-brand">Noye</p><p className="mt-2 text-sm text-ink-soft">Waiting for {provider === "gemini" ? "Gemini" : "Ollama"}…</p><p className="mt-1 text-xs text-ink-soft">Your question is being processed. The answer will appear here.</p></li>}
+                {pending && <li className="py-5" role="status"><p className="text-[12px] font-semibold text-brand">Noye</p><p className="mt-2 text-sm text-ink-soft">Waiting for {session.pending?.provider === "ollama" ? "Ollama" : PROVIDER_NAMES[session.pending?.provider ?? provider]}…</p><p className="mt-1 text-xs text-ink-soft">{session.pending?.kind === "document" ? "Starting a local document job. Progress will appear here." : "Your question is being processed. The answer will appear here."}</p></li>}
               </ul>
-              <DocumentTasks key={conversationId ?? "new"} conversationId={conversationId} />
+              <DocumentTasks key={conversationId ?? "new"} conversationId={conversationId} refreshToken={session.completion} />
             </div>
           </div>
           <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">
             <div className="mx-auto max-w-[720px]">
               {busy && !pending && <p role="status" className="mb-2 text-xs text-ink-soft">An answer is still being saved in another conversation.</p>}
-              <div className="mb-2 flex flex-wrap items-center gap-3 text-xs text-ink-soft">
-                <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setDocumentMode(event.target.checked)} />Create an editable document</label>
-                {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setCollectionMode(event.target.checked)} />Use every source in the selected scope</label>}
-              </div>
-              {documentMode && <p className="mb-2 text-xs text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
-              <Composer onAsk={ask} pending={pending} disabled={!loaded || scopeSaving || (busy && !pending)} value={draft} onChange={setDraft} inputRef={inputRef} />
-              <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Recent turns help resolve follow-up questions. Answers use retrieved excerpts as evidence.</p>
+              <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-options mb-2 text-xs text-ink-soft">
+                <summary className="min-h-11 cursor-pointer py-3">{documentMode ? "Document options · Local Ollama" : "Chat options"}</summary>
+                <div className="chat-options-content rounded-lg border border-edge-strong bg-card p-3 shadow-lg">
+                <div className="flex flex-wrap items-center gap-3">
+                <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setChatOptions(sessionKey, { documentMode: event.target.checked })} />Create an editable document</label>
+                {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setChatOptions(sessionKey, { collectionMode: event.target.checked })} />Use every source in the selected scope</label>}
+                </div>
+                {documentMode && <p className="mb-2 text-xs text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
+                </div>
+              </details>
+              <Composer onAsk={ask} pending={pending} documentMode={documentMode} disabled={!loaded || scopeSaving || (busy && !pending) || (conversationId === null && !!session.completion)} value={draft} onChange={setDraft} inputRef={inputRef} />
+              <p className="chat-context-help mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Recent turns help resolve follow-up questions. Answers use retrieved excerpts as evidence.</p>
             </div>
           </footer>
         </section>
@@ -297,18 +316,26 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
 
 function PassagePanel({ id, message, onClose }: { id: string; message: ChatMessage; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => { closeRef.current?.focus(); }, []);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const close = () => { dialog.current?.close(); onClose(); };
+  useEffect(() => {
+    const element = dialog.current;
+    element?.showModal(); closeRef.current?.focus();
+    return () => { element?.close(); };
+  }, []);
   return (
-    <aside id={id} aria-label="Passages consulted" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); onClose(); } }}
-      className="order-first max-h-[45%] shrink-0 overflow-y-auto border-b border-edge-strong bg-canvas p-4 xl:order-last xl:max-h-none xl:w-[300px] xl:border-b-0 xl:border-l xl:p-5">
+    <dialog ref={dialog} aria-label="Inspect consulted passages" onCancel={event => { event.preventDefault(); close(); }} className="passage-dialog rounded-lg border border-edge-strong bg-canvas text-ink">
+    <aside id={id} aria-label="Passages consulted" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); close(); } }}
+      className="h-full overflow-y-auto overscroll-contain p-4 md:p-5">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg">Passages consulted</h2>
-        <button ref={closeRef} type="button" onClick={onClose} aria-label="Close passages"
+        <button ref={closeRef} type="button" onClick={close} aria-label="Close passages"
           className="grid h-11 w-11 shrink-0 place-items-center rounded-md border border-edge-strong text-ink-soft hover:bg-card"><CrossIcon className="h-4 w-4" /></button>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-ink-soft">Retrieved context for this answer, not verified support. Open the originals to check the details.</p>
       <PassageList citations={message.citations} />
       <p className="mt-4 text-xs leading-relaxed text-ink-soft">Saved references remain here if a file is deleted; its original will no longer open.</p>
     </aside>
+    </dialog>
   );
 }

@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { editWiki, generateWiki, listWiki, readWiki, wikiLinkHref, wikiPreviewContent, wikiScopeFromUrl } from "@/lib/wiki";
+import { editWiki, generateWiki, listWiki, readWiki, wikiLinkHref, wikiPreviewContent, wikiQueryHref, wikiScopeFromUrl } from "@/lib/wiki";
 
 afterEach(() => vi.unstubAllGlobals());
 it("preserves empty scope and source/revision identity in actual requests", async () => {
@@ -33,6 +33,18 @@ it("preserves chosen scope when opening verified portable Wiki links", () => {
 it("rejects invalid explicit URL scope without broadening it", () => {
   expect(wikiScopeFromUrl("broken").mode).toBe("empty");
   expect(wikiScopeFromUrl(JSON.stringify({ mode: "chosen", source_ids: "all", root_ids: [] })).mode).toBe("empty");
+});
+it("updates scope or revision without discarding the rest of the Wiki URL", () => {
+  const chosen = { mode: "chosen" as const, source_ids: ["one"], root_ids: [] };
+  const selected = new URL(wikiQueryHref("w=wiki&revision=saved&filter=notes", { scope: chosen }), "http://localhost");
+  expect(selected.searchParams.get("w")).toBe("wiki");
+  expect(selected.searchParams.get("revision")).toBe("saved");
+  expect(selected.searchParams.get("filter")).toBe("notes");
+  expect(wikiScopeFromUrl(selected.searchParams.get("scope"))).toEqual(chosen);
+  const current = new URL(wikiQueryHref(selected.searchParams.toString(), { revision: null }), "http://localhost");
+  expect(current.searchParams.has("revision")).toBe(false);
+  expect(current.searchParams.get("w")).toBe("wiki");
+  expect(wikiScopeFromUrl(current.searchParams.get("scope"))).toEqual(chosen);
 });
 
 it("keeps explicit app links inside the current scope and pins captured contributor revisions", () => {

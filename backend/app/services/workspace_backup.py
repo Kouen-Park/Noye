@@ -94,7 +94,8 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
     archive.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="noye-snapshot-") as temporary:
         staged = Path(temporary)
-        for folder in ("sources", "documents", "wiki"):
+        retained_assets = {}
+        for folder in ("sources", "documents", "wiki", "knowledge"):
             source = root / folder
             if source.is_symlink() or (source.exists() and not source.is_dir()):
                 raise ValueError("Workspace folders must be regular directories.")
@@ -105,6 +106,8 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
                         raise ValueError("Workspace backups do not follow links or special files.")
                     if item.is_file():
                         before = _digest(item)
+                        if folder == "knowledge":
+                            retained_assets[item] = before
                         target = staged / folder / item.relative_to(source)
                         target.parent.mkdir(parents=True, exist_ok=True)
                         shutil.copyfile(item, target)
@@ -165,6 +168,9 @@ def create_backup(root: Path, database: Path, archive: Path) -> dict:
                 raise ValueError("An original changed during backup. Retry when it is idle.")
         from app.services.folder_backup import verify_assets
 
+        for path, digest in retained_assets.items():
+            if not path.is_file() or _digest(path) != digest:
+                raise ValueError("Recovered writing changed during backup. Retry when idle.")
         verify_assets(captured_assets)
         manifest = {
             "format": "noye-workspace",

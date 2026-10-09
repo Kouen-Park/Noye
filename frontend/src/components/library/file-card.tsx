@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 
 import { StageBar, StatusPill } from "@/components/library/status-indicators";
 import { isProcessing, type StoredFile } from "@/lib/api";
@@ -37,6 +38,7 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
   const extractionFailed = failed && stopped === null;
   const working = isProcessing(file.status);
   const stalled = isStalled(file);
+  const folderOriginal = Boolean(file.folder_root_id);
 
   return (
     <li
@@ -67,6 +69,10 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
           <span className="font-mono tabular-nums">{factsLine(file)}</span>
         </p>
 
+        {folderOriginal && <p className="mt-1 text-[12.5px] text-ink-soft">
+          Folder original. Manage processing, disconnection and derived indexes in Folders.
+        </p>}
+
         {file.file_type === "pdf" && file.no_text_pages != null && (
           <div className="mt-2 text-[12.5px] text-ink-soft">
             <p>Text extracted from {file.extracted_page_count} of {file.page_count} pages.</p>
@@ -94,7 +100,8 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
 
         {failed && (
           <p className="mt-1.5 text-[12.5px] text-ink-soft">
-            {stopped === "cancelled"
+            {folderOriginal ? "Check this source in Folders before retrying."
+              : stopped === "cancelled"
               ? "Retry whenever you're ready."
               : stopped === "interrupted"
                 ? "Retry to finish indexing this file."
@@ -102,7 +109,7 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
           </p>
         )}
 
-        {confirming && (
+        {confirming && !folderOriginal && (
           <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-md bg-fail-wash px-2.5 py-2">
             <p className="text-[12.5px] text-fail">
               Remove {file.name}? This cannot be undone.
@@ -132,9 +139,10 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
         )}
       </div>
 
-      {!confirming && (
+      {(!confirming || folderOriginal) && (
         <div className="flex w-full justify-end gap-2 pl-[46px] sm:w-auto sm:pl-0">
-          {failed && (
+          {folderOriginal && <Link href="/folders/" className="min-h-11 rounded-md border border-edge-strong px-2.5 py-2 text-[12.5px] font-semibold text-accent-ink hover:bg-brand-wash md:min-h-0 md:py-1.5">Manage in Folders</Link>}
+          {failed && !folderOriginal && (
             <button
               type="button"
               onClick={() => onRetry(file.id)}
@@ -153,7 +161,7 @@ export function FileCard({ file, onRemove, onRetry, onCancel, stopping, register
               {stopping ? "Stopping…" : "Stop"}
             </button>
           )}
-          {!working && (
+          {!working && !folderOriginal && (
             <button
               ref={removeButtonRef}
               type="button"

@@ -103,6 +103,8 @@ export interface StoredFile {
   extracted_page_count?: number | null;
   created_at: string;
   updated_at: string;
+  /** Set for folder originals, including paused or disconnected history. */
+  folder_root_id?: string | null;
 }
 
 export const TERMINAL_STATUSES: readonly FileStatus[] = ["READY", "FAILED"];
@@ -521,6 +523,7 @@ export type IndexProblem =
 
 /** One file whose original or derived index no longer agrees with SQLite. */
 export interface FileIntegrityProblem {
+  folder_root_id?: string | null;
   file_id: string;
   file_name: string;
   problems: IndexProblem[];

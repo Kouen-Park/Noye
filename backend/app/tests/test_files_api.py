@@ -789,3 +789,64 @@ def test_source_appears_in_the_openapi_schema(client) -> None:
     paths = client.get("/openapi.json").json()["paths"]
     assert "/files/{file_id}/source" in paths
     assert "get" in paths["/files/{file_id}/source"]
+
+
+@pytest.mark.parametrize(
+    "connected,processing", [(True, True), (True, False), (False, True), (False, False)]
+)
+def test_upload_can_replace_disconnected_history_without_deleting_it(
+    client, db, tmp_path, connected, processing
+) -> None:
+    import hashlib
+
+    from app.services.folders import register_root, update_root
+
+    folder = tmp_path / "connected-originals"
+    folder.mkdir()
+    original = folder / "notes.txt"
+    content = b"Original knowledge retained for historical citations."
+    original.write_bytes(content)
+    digest = hashlib.sha256(content).hexdigest()
+    root_id = register_root(db, folder, "connected")
+    record = file_store.create_file(
+        db, name="notes.txt", file_type=FileType.TEXT,
+        path=str(original), size=len(content), content_hash=digest,
+    )
+    info = original.stat()
+    db.execute(
+        "INSERT INTO sources "
+        "(file_id,root_id,relative_path,device,inode,size,mtime_ns,version,availability) "
+        "VALUES (?,?,?,?,?,?,?,?,?)",
+        (record.id, root_id, "notes.txt", info.st_dev, info.st_ino,
+         info.st_size, info.st_mtime_ns, digest, "available"),
+    )
+    db.execute(
+        "INSERT INTO source_versions VALUES (?,?,?,?)",
+        (record.id, digest, str(original), record.created_at.isoformat()),
+    )
+    db.commit()
+    update_root(db, root_id, processing=processing, disconnect=not connected)
+    result = upload(client, name="independent.txt", content=content)
+    assert result.status_code == (409 if connected else 201)
+    assert original.read_bytes() == content
+    assert db.execute(
+        "SELECT count(*) FROM sources WHERE file_id=?", (record.id,)
+    ).fetchone()[0] == 1
+    assert db.execute(
+        "SELECT count(*) FROM source_versions WHERE file_id=?", (record.id,)
+    ).fetchone()[0] == 1
+    if connected:
+        assert "Folders" in result.json()["detail"]
+        assert "Delete that one first" not in result.json()["detail"]
+    else:
+        uploaded_id = result.json()["id"]
+        assert uploaded_id != record.id
+        assert file_store.get_file(db, uploaded_id).path != str(original)
+        assert file_store.find_by_content_hash(db, digest).id == record.id
+        active = file_store.find_by_content_hash(db, digest, exclude_disconnected=True)
+        assert active.id == uploaded_id
+        # Even when an older disconnected row matches, the new upload blocks
+        # another upload; history cannot mask an active duplicate.
+        repeated = upload(client, name="another-copy.txt", content=content)
+        assert repeated.status_code == 409
+        assert "independent.txt" in repeated.json()["detail"]

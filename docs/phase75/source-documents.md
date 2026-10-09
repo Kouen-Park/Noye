@@ -151,6 +151,14 @@ history, coverage and saved evidence with current availability. PATCH requires
 draft. A feature-owned trigger also records edits through the legacy document API.
 Historical revisions are read only in the UI. Unsaved editor drafts survive
 navigation locally; save them before expecting a workspace backup to contain them.
+Source-document drafts retain their expected revision. A restored older or
+unknown-base draft blocks Save and its keyboard shortcut until the user compares
+the latest revision and explicitly reapplies the draft or uses saved content.
+Reapplication changes the expected revision, without bypassing the server's
+conflict check or automatically merging prose. An acknowledged save advances the
+base of additional typing only when both the base revision and editor instance
+match; another window's draft is not silently rebased. Choosing saved content
+reloads the full document so history, coverage and export metadata also refresh.
 
 `GET /source-documents/{id}/export.md?revision=...&provenance=true` exports the
 chosen immutable revision with optional coverage/original snapshot appendix.

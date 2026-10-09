@@ -16,8 +16,11 @@ truth for *values* — never hardcode a colour in a component.
 Direction update, 2026-10-03: both web and desktop now open into a chat-focused
 workspace: conversations on the left, readable central prose and a bottom
 composer, explicit provider selection with the configured model name, and an
-answer-specific passage inspection panel. Below 1280px the panel sits above the
-conversation; below 768px navigation collapses into a menu. Library, Search and
+answer-specific passage inspection drawer. The drawer is a native modal dialog
+with a scrolling body, inert background and focus restoration on close. It never
+takes height from the conversation. Provider/source and document options open in
+bounded scrolling panels so short windows retain the conversation and composer.
+Below 768px navigation collapses into a menu. Library, Search and
 Documents remain accessible. Added 2026-10-05: a desktop-only first-run guide shows
 measured hardware, a conservative model candidate and local/Gemini prerequisites.
 It uses the shared semantic tokens, with a fixed header/footer and a scrolling
@@ -32,6 +35,11 @@ Retrieved passages are labelled **consulted**, not verified support. No fabricat
 retrieval stage or progress percentage appears while waiting for a model. Chat
 uses the existing safe Markdown renderer but does not load model-generated images
 automatically or opt into document-only printing.
+Document creation requires the explicit composer option; ordinary and negated
+questions do not select it through keyword matching. Document jobs disclose local
+Ollama independently of the provider selected for ordinary chat. Within the app
+session, drafts, source scope, document options and pending answers survive route
+navigation. This state is not replayed after restart.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,

@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from app.api.deps import get_db
 from app.config import data_directory
 from app.db.database import connect
+from app.db.sources import issues
 from app.main import app
 from app.services.folder_backup import reconnect_assets
 from app.services.folders import register_root, root_record, update_root
@@ -55,7 +56,7 @@ def test_backup_retains_bytes_versions_authored_wiki_jobs_and_requires_reconnect
         (new_root / "wiki/sources/authored.md").write_text("newer local edit")
         reconnect_assets(restored, root_id, new)
         assert (new_root / "wiki/sources/authored.md").read_text() == "newer local edit"
-        assert saved_asset.exists() and root_record(restored, root_id)["error"]
+        assert saved_asset.exists() and issues(restored, root_id, "recovery")
         historical = EvidenceReader(restored).read(
             first.id,
             first.content_hash,

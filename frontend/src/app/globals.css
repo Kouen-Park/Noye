@@ -214,3 +214,29 @@ progress::-moz-progress-bar { background: var(--brand); }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Inspect evidence without taking height away from the conversation. Native
+   modal semantics provide inert background content and keyboard containment. */
+.passage-dialog {
+  width: min(520px, calc(100vw - 24px));
+  height: calc(100dvh - 24px);
+  max-height: calc(100dvh - 24px);
+  max-width: calc(100vw - 24px);
+  margin: auto 12px auto auto;
+  padding: 0;
+}
+.passage-dialog::backdrop { background: color-mix(in srgb, var(--ink) 25%, transparent); }
+.chat-controls, .chat-options { position: relative; }
+.chat-controls-content, .chat-options-content {
+  position: absolute;
+  z-index: 20;
+  width: 100%;
+  max-height: min(45dvh, max(100px, calc(100dvh - 420px)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.chat-controls-content { top: 100%; right: 0; }
+.chat-options-content { bottom: 100%; left: 0; }
+@media (max-height: 700px) {
+  .chat-eyebrow, .chat-context-help { display: none; }
+}

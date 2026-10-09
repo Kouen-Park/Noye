@@ -17,6 +17,15 @@ export function wikiHref(id: string, scope: WikiScope, revision?: string): strin
   return `/wiki/?w=${encodeURIComponent(id)}&scope=${encodeURIComponent(JSON.stringify(scope))}`
     + (revision ? `&revision=${encodeURIComponent(revision)}` : "");
 }
+export function wikiQueryHref(query: string, updates: { scope?: WikiScope; revision?: string | null }): string {
+  const params = new URLSearchParams(query);
+  if (updates.scope) params.set("scope", JSON.stringify(updates.scope));
+  if (updates.revision !== undefined) {
+    if (updates.revision) params.set("revision", updates.revision);
+    else params.delete("revision");
+  }
+  return `/wiki/${params.size ? `?${params}` : ""}`;
+}
 
 /** Markdown cannot grant a new material scope or arbitrary local-file navigation. */
 export function wikiLinkHref(href: string, scope: WikiScope, contributors: WikiContributor[] = []): string | undefined {

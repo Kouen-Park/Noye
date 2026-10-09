@@ -103,6 +103,14 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
       </div>
     </div>
     {root.error && <p className="mt-2 text-sm text-fail">{root.error}</p>}
+    {!!root.recovery_conflicts?.length && <div role="alert" className="mt-3 rounded border border-fail p-3 text-sm">
+      <p className="font-semibold">Recovered writing needs review</p>
+      <ul className="mt-2 space-y-1">{root.recovery_conflicts.map(issue => <li key={issue.relative_path}>
+        {issue.relative_path && <strong className="break-all">{issue.relative_path}: </strong>}{issue.message}
+      </li>)}</ul>
+      <p className="mt-2 text-ink-soft">Acknowledging hides this warning and keeps both versions.</p>
+      <button className={actionClass + " mt-2"} disabled={busy} onClick={() => void act(() => update({ acknowledge_recovery_conflicts: true }))}>Acknowledge recovery conflicts</button>
+    </div>}
     {error && <p role="alert" className="mt-2 text-fail">{error}</p>}
     <div className="my-4 border-y border-edge py-3 text-sm">
       <label className="flex min-h-11 items-center gap-2">
@@ -154,7 +162,7 @@ function SourceRow({ entry, root, busy, act }: {
   return <li className="border-t border-edge py-2 text-sm">
     <div className="flex flex-wrap items-center gap-2">
       <span className="min-w-0 break-all font-medium">{entry.relative_path.split("/").pop()}</span>
-      <span className="text-xs text-ink-soft">{source ? `${source.availability} · ${source.processing_state}` : entry.excluded ? "Excluded from intake" : "Waiting for discovery / unsupported format"}</span>
+      <span className="text-xs text-ink-soft">{entry.intake_error ? "Discovery failed" : source ? `${source.availability} · ${source.processing_state}` : entry.excluded ? "Excluded from intake" : "Waiting for discovery / unsupported format"}</span>
       {source && <>
         <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => void act(() => revealSource(source.source_id))}>Finder</button>
         {source.job && (jobIsActive(source.job)
@@ -165,6 +173,7 @@ function SourceRow({ entry, root, busy, act }: {
         {root.organization_prefix && <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => setFiling(!filing)}>File manually</button>}
       </>}
     </div>
+    {entry.intake_error && <p role="alert" className="mt-1 text-fail"><span className="break-all">{entry.relative_path}</span>: {entry.intake_error}</p>}
     {source?.job && source.job.total > 0 && <p className="mt-1 text-xs text-ink-soft">{source.job.stage} · {source.job.completed} / {source.job.total} · attempt {source.job.attempt}</p>}
     {source?.knowledge_job && <div className="mt-2 rounded border border-edge p-3" aria-label="Source knowledge processing">
       <p>Local knowledge · {source.knowledge_job.state} · {source.knowledge_job.stage}</p>
@@ -178,7 +187,7 @@ function SourceRow({ entry, root, busy, act }: {
       </div>
     </div>}
     {source?.manual_category && <p className="mt-1 text-xs text-ink-soft">Manually fixed: {source.manual_category}</p>}
-    {source?.error && <p className="mt-1 text-fail">{source.error}</p>}
+    {source?.error && !entry.intake_error && <p className="mt-1 text-fail">{source.error}</p>}
     {filing && source && <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => {
       event.preventDefault(); void act(() => folderRequest(`/${root.id}/file`, "POST", {
         source_id: source.source_id, destination, expected_version: source.version, manual: true,

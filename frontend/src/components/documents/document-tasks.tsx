@@ -6,7 +6,7 @@ import { type CoverageSource, type DocumentTask, listDocumentTasks } from "@/lib
 import { wikiJobAction } from "@/lib/wiki";
 
 const active = new Set(["queued", "running", "cancelling"]);
-export function DocumentTasks({ conversationId }: { conversationId: string | null }) {
+export function DocumentTasks({ conversationId, refreshToken }: { conversationId: string | null; refreshToken?: unknown }) {
   const [tasks, setTasks] = useState<DocumentTask[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
@@ -28,7 +28,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
     };
     void load();
     return () => { controller.abort(); clearTimeout(timer); };
-  }, [conversationId, refresh]);
+  }, [conversationId, refresh, refreshToken]);
   const action = async (id: string, kind: "cancel" | "resume") => {
     try { await wikiJobAction(id, kind); setRefresh(n => n + 1); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Could not update document job."); }
@@ -53,8 +53,7 @@ export function DocumentTasks({ conversationId }: { conversationId: string | nul
       {(request.clarification || job?.error) && <p role="alert" className="mt-2 text-sm text-fail">{request.clarification ?? job?.error}</p>}
       {request.clarification && <p className="mt-1 text-xs text-ink-soft">Clarify the request or choose sources, then submit a new document request.</p>}
       <div className="mt-2 flex flex-wrap gap-3 text-sm">
-        {request.artifact_id && <><Link className="inline-flex min-h-11 items-center font-semibold text-brand underline" href={`/documents?d=${encodeURIComponent(request.artifact_id)}`}>Open document</Link>
-          <Link className="inline-flex min-h-11 items-center text-brand underline" href={`/documents?d=${encodeURIComponent(request.artifact_id)}&export=1`}>Edit and export</Link></>}
+        {request.artifact_id && <Link className="inline-flex min-h-11 items-center font-semibold text-brand underline" href={`/documents?d=${encodeURIComponent(request.artifact_id)}`}>Open document</Link>}
         {job && active.has(job.state) && <button className="min-h-11 underline" type="button" disabled={job.state === "cancelling"} onClick={() => void action(job.id, "cancel")}>Cancel document job</button>}
         {job && !request.clarification && ["failed", "interrupted", "cancelled"].includes(job.state) && <button className="min-h-11 underline" type="button" onClick={() => void action(job.id, "resume")}>Retry frozen request</button>}
       </div>

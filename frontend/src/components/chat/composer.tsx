@@ -16,6 +16,7 @@ import { useId, useState, type RefObject } from "react";
 interface ComposerProps {
   onAsk: (question: string) => void;
   pending: boolean;
+  documentMode?: boolean;
   /** Disabled while a conversation is loading, or when the backend is unreachable. */
   disabled?: boolean;
   value?: string;
@@ -23,7 +24,7 @@ interface ComposerProps {
   inputRef?: RefObject<HTMLTextAreaElement | null>;
 }
 
-export function Composer({ onAsk, pending, disabled = false, value: controlledValue, onChange, inputRef }: ComposerProps) {
+export function Composer({ onAsk, pending, documentMode = false, disabled = false, value: controlledValue, onChange, inputRef }: ComposerProps) {
   const inputId = useId();
   const [localValue, setLocalValue] = useState("");
   const value = controlledValue ?? localValue;
@@ -76,7 +77,7 @@ export function Composer({ onAsk, pending, disabled = false, value: controlledVa
         </button>
       </div>
       <p id={`${inputId}-help`} className="mt-2 px-2 text-[11px] leading-relaxed text-ink-soft">
-        Enter to ask · Shift+Enter for a new line. Uses your selected AI; local models can take a while.
+        {documentMode ? "Enter to create · Shift+Enter for a new line. Document jobs use local Ollama." : "Enter to ask · Shift+Enter for a new line. Uses your selected AI; local models can take a while."}
       </p>
     </form>
   );

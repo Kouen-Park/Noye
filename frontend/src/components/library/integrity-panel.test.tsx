@@ -44,6 +44,14 @@ function renderPanel(
 }
 
 describe("IntegrityPanel", () => {
+  it("directs a changed folder original to Folders without offering Library re-indexing", () => {
+    const props = renderPanel({ status: soundStatus({ problems: [{ file_id: "source-1",
+      file_name: "note.txt", folder_root_id: "root-1", problems: ["SOURCE_CHANGED"],
+      searchable: false, indexed_points: null, expected_points: null }] }) });
+    expect(screen.getByRole("link", { name: "Manage in Folders" })).toHaveAttribute("href", "/folders");
+    expect(screen.queryByRole("button", { name: "Re-index file" })).not.toBeInTheDocument();
+    expect(props.onReingest).not.toHaveBeenCalled();
+  });
   it.each(["INDEX_UNKNOWN", "INDEX_CHANGED"] as const)(
     "offers an explicit rebuild for %s", (problem) => {
       renderPanel({ status: soundStatus({ searchable_files: 0, problems: [{

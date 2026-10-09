@@ -12,6 +12,7 @@ from app.config import sources_dir
 from app.db import files as file_store
 from app.db import jobs
 from app.db.database import connect, init_schema
+from app.db.sources import clear_issue, issues, record_issue
 from app.models.files import FileType
 from app.services import ingestion
 from app.services.folders import (
@@ -166,6 +167,7 @@ class FolderScanner:
                     self.observed.pop(key, None)
                     continue
                 moved = False
+                clear_issue(connection, root_id, "intake", relative)
                 if source is None and identities[signature[:2]] == 1:
                     candidates = [
                         row
@@ -273,8 +275,14 @@ class FolderScanner:
                     self.observed.pop(key, None)
                     continue
                 message = (
-                    "Source unavailable or still changing. Check permissions and retry a scan."
+                    str(exc)
+                    if isinstance(exc, SourceError)
+                    else (
+                        "Source unavailable. Check its permissions in Finder, "
+                        "then reconcile this folder."
+                    )
                 )
+                record_issue(connection, root_id, "intake", relative, message)
                 if source:
                     with connection:
                         connection.execute(
@@ -283,6 +291,9 @@ class FolderScanner:
                         )
                         if source["availability"] != "unavailable":
                             emit(connection, "unavailable", source=source, error=message)
+        for issue in issues(connection, root_id, "intake"):
+            if issue["relative_path"] not in inventory:
+                clear_issue(connection, root_id, "intake", issue["relative_path"])
         # A missing declaration requires a complete accessible scan and a quiet interval.
         for relative, source in by_path.items():
             if relative in inventory or source["availability"] == "missing":

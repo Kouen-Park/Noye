@@ -138,9 +138,11 @@ class FileOut(BaseModel):
     extracted_page_count: int | None
     created_at: str
     updated_at: str
+    folder_root_id: str | None = None
 
     @classmethod
-    def of(cls, record: File) -> FileOut:
+    def of(cls, record: File, db: sqlite3.Connection) -> FileOut:
+        source = db.execute("SELECT root_id FROM sources WHERE file_id=?", (record.id,)).fetchone()
         return cls(
             id=record.id,
             name=record.name,
@@ -151,11 +153,14 @@ class FileOut(BaseModel):
             page_count=record.page_count,
             chunk_count=record.chunk_count,
             no_text_pages=record.no_text_pages,
-            extracted_page_count=(record.page_count - len(record.no_text_pages)
-                                  if record.no_text_pages is not None
-                                  and record.page_count is not None else None),
+            extracted_page_count=(
+                record.page_count - len(record.no_text_pages)
+                if record.no_text_pages is not None and record.page_count is not None
+                else None
+            ),
             created_at=record.created_at.isoformat(),
             updated_at=record.updated_at.isoformat(),
+            folder_root_id=source["root_id"] if source else None,
         )
 
     # `path` is deliberately absent: the client has no use for a server
@@ -269,18 +274,26 @@ def upload_file(
     # A pre-Phase-6 file has content_hash NULL and so is never matched. That is
     # unavoidable — its bytes were never hashed — and the failure is the safe
     # direction: a missed duplicate, not a wrongly refused upload.
-    existing = file_store.find_by_content_hash(db, content_hash)
+    # Disconnected history still owns its citations and versions, but must not
+    # prevent an independent upload. The upload owns a separate copy and ID.
+    existing = file_store.find_by_content_hash(db, content_hash, exclude_disconnected=True)
     if existing is not None:
         target.unlink(missing_ok=True)
-        logger.info(
-            "Upload refused, duplicate of file=%s", existing.id
-        )
+        logger.info("Upload refused, duplicate of file=%s", existing.id)
+        folder_source = db.execute(
+            "SELECT 1 FROM sources WHERE file_id=?", (existing.id,)
+        ).fetchone()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=(
                 f"You already have this file, as \u201c{existing.name}\u201d. "
-                "Delete that one first if you want to replace it, or re-index it "
-                "from the library if it needs another attempt."
+                + (
+                    "Manage this source in Folders. Disconnect matching folders before "
+                    "importing a copy; existing uploads also prevent duplicates."
+                    if folder_source
+                    else "Delete that one first if you want to replace it, or re-index it "
+                    "from the library if it needs another attempt."
+                )
             ),
         )
 
@@ -301,7 +314,7 @@ def upload_file(
         )
         job_store.queue(db, record.id)
         background.add_task(_ingest_in_background, record.id)
-        return FileOut.of(record)
+        return FileOut.of(record, db)
     except BaseException:
         release_file(file_id)
         db.execute("DELETE FROM files WHERE id=?", (file_id,))
@@ -313,14 +326,14 @@ def upload_file(
 @router.get("", response_model=list[FileOut])
 def list_files(db: sqlite3.Connection = Depends(get_db)) -> list[FileOut]:
     """List every file, newest first."""
-    return [FileOut.of(record) for record in file_store.list_files(db)]
+    return [FileOut.of(record, db) for record in file_store.list_files(db)]
 
 
 @router.get("/{file_id}", response_model=FileOut)
 def get_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileOut:
     """Read one file's current state. This is the polling endpoint."""
     try:
-        return FileOut.of(file_store.get_file(db, file_id))
+        return FileOut.of(file_store.get_file(db, file_id), db)
     except file_store.FileRecordNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
@@ -376,7 +389,7 @@ def reingest_file(
         file_store.reset_counts(db, file_id)
         record = file_store.set_status(db, file_id, FileStatus.UPLOADING)
         background.add_task(_ingest_in_background, file_id)
-        return FileOut.of(record)
+        return FileOut.of(record, db)
     except BaseException:
         release_file(file_id)
         raise
@@ -390,7 +403,7 @@ def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileO
     except file_store.FileRecordNotFound as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     if cancel_ingestion(file_id, db):
-        return FileOut.of(record)
+        return FileOut.of(record, db)
     try:
         reserve_ingestion(file_id)
     except MaintenanceBusy as exc:
@@ -404,7 +417,7 @@ def cancel_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> FileO
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         if not record.status.is_processing:
             raise HTTPException(status_code=409, detail="This file is not being processed.")
-        return FileOut.of(cancel_orphaned_file(db, file_id))
+        return FileOut.of(cancel_orphaned_file(db, file_id), db)
     finally:
         release_file(file_id)
 
@@ -449,7 +462,8 @@ def read_source(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> Respo
         except SourceError as exc:
             raise HTTPException(404, str(exc)) from exc
         return Response(
-            data, media_type=SOURCE_MEDIA_TYPES[record.file_type],
+            data,
+            media_type=SOURCE_MEDIA_TYPES[record.file_type],
             headers={"Content-Disposition": "inline; filename*=UTF-8''" + quote(record.name)},
         )
     path = Path(record.path)
@@ -501,8 +515,9 @@ def source_status(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> Sou
     folder_source = db.execute("SELECT * FROM sources WHERE file_id=?", (file_id,)).fetchone()
     if folder_source:
         try:
-            _, digest, _ = read_original(root_record(db, folder_source["root_id"]),
-                                         folder_source["relative_path"])
+            _, digest, _ = read_original(
+                root_record(db, folder_source["root_id"]), folder_source["relative_path"]
+            )
             return SourceStatus(status="available", current_hash=digest)
         except SourceError:
             return SourceStatus(status="unavailable")
@@ -530,7 +545,8 @@ def delete_file(file_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     """
     if db.execute("SELECT 1 FROM sources WHERE file_id=?", (file_id,)).fetchone():
         raise HTTPException(
-            409, "This is a connected original. Disconnect its folder to stop using it. "
+            409,
+            "This is a connected original. Disconnect its folder to stop using it. "
             "Delete originals explicitly in Finder; Noye preserves their version history.",
         )
     try:
