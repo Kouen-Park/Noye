@@ -98,9 +98,13 @@ def read_original(root, relative):
             with os.fdopen(fd, "rb") as handle:
                 before = os.fstat(handle.fileno())
                 limit = get_settings().max_upload_mb * 1024 * 1024
-                if not stat.S_ISREG(before.st_mode) or before.st_size > limit:
+                if not stat.S_ISREG(before.st_mode):
+                    raise SourceError("invalid_path", "Source is not a regular file.")
+                if before.st_size > limit:
                     raise SourceError(
-                        "invalid_path", "Source is not a regular supported-size file."
+                        "too_large",
+                        f"This file exceeds the {get_settings().max_upload_mb} MB "
+                        "limit. Split or reduce it in Finder, then reconcile this folder.",
                     )
                 data = handle.read(limit + 1)
                 after = os.fstat(handle.fileno())

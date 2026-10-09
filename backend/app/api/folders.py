@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from app.api.deps import get_db
 from app.api.models import desktop_control
+from app.db.sources import clear_issue, issues
 from app.services import ingestion, knowledge_jobs
 from app.services.filing import file_source, recover_filing
 from app.services.folder_scanner import collect, folder_lock
@@ -17,10 +18,12 @@ from app.services.source_catalog import SourceCatalog
 router = APIRouter(prefix="/folders", tags=["folders"], dependencies=[Depends(desktop_control)])
 
 
-def public_root(root):
-    return {
+def public_root(root, db):
+    result = {
         key: value for key, value in dict(root).items() if key not in {"path", "device", "inode"}
     }
+    result["recovery_conflicts"] = issues(db, root["id"], "recovery")
+    return result
 
 
 def fail(exc):
@@ -33,7 +36,7 @@ def fail(exc):
 @router.get("")
 def roots(db: sqlite3.Connection = Depends(get_db)):
     return [
-        public_root(row) for row in db.execute("SELECT * FROM source_roots ORDER BY created_at")
+        public_root(row, db) for row in db.execute("SELECT * FROM source_roots ORDER BY created_at")
     ]
 
 
@@ -41,6 +44,7 @@ class RootPatch(BaseModel):
     processing: bool | None = None
     organization_prefix: str | None = None
     disconnect: bool = False
+    acknowledge_recovery_conflicts: bool = False
 
 
 @router.patch("/{root_id}")
@@ -64,7 +68,9 @@ def control(root_id: str, body: RootPatch, db: sqlite3.Connection = Depends(get_
                     job = knowledge_jobs.get(db, row["id"])
                     if any(item["root_id"] == root_id for item in job["manifest"]):
                         knowledge_jobs.cancel(db, row["id"])
-            return public_root(root)
+            if body.acknowledge_recovery_conflicts:
+                clear_issue(db, root_id, "recovery")
+            return public_root(root, db)
     except (SourceError, ingestion.AlreadyIngesting) as exc:
         fail(exc)
 
@@ -81,6 +87,9 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
     except (SourceError, OSError):
         entries = []
     by_path = {source["relative_path"]: source for source in sources}
+    intake_errors = {
+        item["relative_path"]: item["message"] for item in issues(db, root_id, "intake")
+    }
     for source in sources:
         latest = db.execute(
             "SELECT id FROM knowledge_jobs WHERE kind='wiki' AND subject_id=? "
@@ -90,9 +99,15 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
         source["knowledge_job"] = knowledge_jobs.get(db, latest["id"]) if latest else None
     for entry in entries:
         entry["source"] = by_path.pop(entry["relative_path"], None)
+        entry["intake_error"] = intake_errors.pop(entry["relative_path"], None)
     entries.extend(
         {"relative_path": path, "kind": "file", "source": source}
         for path, source in by_path.items()
+    )
+    entries.extend(
+        {"relative_path": path, "kind": "file", "intake_error": message}
+        for path, message in intake_errors.items()
+        if not any(entry["relative_path"] == path for entry in entries)
     )
     known = {entry["relative_path"] for entry in entries}
     for entry in list(entries):
@@ -102,7 +117,7 @@ def tree(root_id: str, db: sqlite3.Connection = Depends(get_db)):
                 entries.append({"relative_path": relative, "kind": "directory", "remembered": True})
                 known.add(relative)
     return {
-        "root": public_root(root),
+        "root": public_root(root, db),
         "entries": sorted(entries, key=lambda row: row["relative_path"]),
     }
 

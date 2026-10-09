@@ -163,6 +163,19 @@ def _step_9_source_documents(connection: sqlite3.Connection) -> None:
     install(connection)
 
 
+def _step_10_folder_issues(connection: sqlite3.Connection) -> None:
+    from app.db.sources import FOLDER_ISSUE_SCHEMA
+
+    for statement in FOLDER_ISSUE_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+    connection.execute(
+        "INSERT OR IGNORE INTO folder_issues "
+        "SELECT id,'recovery','',error,updated_at FROM source_roots "
+        "WHERE error LIKE '%recovered Wiki/output conflicts%'"
+    )
+
+
 MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_1_file_provenance,
     _step_2_index_identity,
@@ -175,6 +188,7 @@ MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
     _step_7_wiki_revisions,
     _step_8_knowledge_integration,
     _step_9_source_documents,
+    _step_10_folder_issues,
 )
 
 #: Where a fully migrated database stands.

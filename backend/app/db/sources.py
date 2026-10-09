@@ -49,3 +49,44 @@ CREATE TABLE IF NOT EXISTS knowledge_jobs (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_jobs_active ON knowledge_jobs(dedupe_key)
     WHERE state IN ('queued','running','cancelling');
 """
+
+FOLDER_ISSUE_SCHEMA = """
+CREATE TABLE IF NOT EXISTS folder_issues (
+    root_id TEXT NOT NULL REFERENCES source_roots(id),
+    kind TEXT NOT NULL CHECK(kind IN ('intake','recovery')),
+    relative_path TEXT NOT NULL, message TEXT NOT NULL, updated_at TEXT NOT NULL,
+    PRIMARY KEY(root_id,kind,relative_path)
+);
+"""
+
+
+def issues(connection, root_id, kind):
+    return [
+        dict(row)
+        for row in connection.execute(
+            "SELECT relative_path,message FROM folder_issues WHERE root_id=? AND kind=? "
+            "ORDER BY relative_path",
+            (root_id, kind),
+        )
+    ]
+
+
+def record_issue(connection, root_id, kind, relative_path, message):
+    from app.db.jobs import now
+
+    with connection:
+        connection.execute(
+            "INSERT INTO folder_issues VALUES (?,?,?,?,?) "
+            "ON CONFLICT(root_id,kind,relative_path) DO UPDATE SET "
+            "message=excluded.message,updated_at=excluded.updated_at",
+            (root_id, kind, relative_path, message, now()),
+        )
+
+
+def clear_issue(connection, root_id, kind, relative_path=None):
+    with connection:
+        connection.execute(
+            "DELETE FROM folder_issues WHERE root_id=? AND kind=? "
+            "AND (? IS NULL OR relative_path=?)",
+            (root_id, kind, relative_path, relative_path),
+        )

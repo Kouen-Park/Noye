@@ -7,6 +7,7 @@ import stat
 import uuid
 from pathlib import Path
 
+from app.db.sources import clear_issue, record_issue
 from app.services.folders import SourceError, read_original, root_handle
 
 
@@ -123,7 +124,6 @@ def reconnect_assets(connection, root_id, workspace):
     recovered = Path(workspace) / "knowledge" / root_id
     if not recovered.is_dir():
         return
-    conflicts = 0
     for path in recovered.rglob("*"):
         if path.is_symlink():
             raise SourceError("invalid_path", "Recovered knowledge contains a link.")
@@ -151,19 +151,19 @@ def reconnect_assets(connection, root_id, workspace):
                 except FileExistsError:
                     _, digest, _ = read_original(root, relative)
                     if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
-                        conflicts += 1
+                        record_issue(
+                            connection,
+                            root_id,
+                            "recovery",
+                            relative,
+                            "Recovered Wiki/output conflicts with the existing file. "
+                            "Both versions were preserved; the recovered copy remains "
+                            "in the restored workspace.",
+                        )
+                        continue
+                clear_issue(connection, root_id, "recovery", relative)
             finally:
                 try:
                     os.unlink(temporary, dir_fd=fd)
                 except FileNotFoundError:
                     pass
-    if conflicts:
-        with connection:
-            connection.execute(
-                "UPDATE source_roots SET error=? WHERE id=?",
-                (
-                    f"{conflicts} recovered Wiki/output conflicts retained in the restored "
-                    "workspace. Existing edits were preserved.",
-                    root_id,
-                ),
-            )

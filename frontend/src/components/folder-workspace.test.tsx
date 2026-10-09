@@ -4,6 +4,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 import { FolderWorkspace } from "./folder-workspace";
 import { chooseSourceFolder, folderRequest } from "@/lib/folders";
 import { actOnJob } from "@/lib/jobs";
+import type { FolderEntry } from "@/lib/folders";
 
 vi.mock("@/lib/runtime", () => ({ isDesktopRuntime: () => true }));
 vi.mock("@/lib/jobs", () => ({ actOnJob: vi.fn(), jobIsActive: () => false }));
@@ -11,16 +12,20 @@ vi.mock("@/lib/folders", () => ({ chooseSourceFolder: vi.fn(), folderRequest: vi
   revealFolder: vi.fn(), revealSource: vi.fn() }));
 
 let root: { id: string; name: string; kind: string; connected: number; processing: number;
-  organization_prefix: string | null; availability: string; error: null };
+  organization_prefix: string | null; availability: string; error: null;
+  recovery_conflicts?: { relative_path: string; message: string }[] };
 let remembered = false;
+let extraEntries: FolderEntry[] = [];
 beforeEach(() => {
   remembered = false;
+  extraEntries = [];
   vi.resetAllMocks();
   root = { id: "root-1", name: "Synthetic knowledge", kind: "connected", connected: 1,
     processing: 1, organization_prefix: null, availability: "available", error: null };
   vi.mocked(chooseSourceFolder).mockResolvedValue(null);
   vi.mocked(folderRequest).mockImplementation(async (path = "", method = "GET", body) => {
     if (method === "PATCH") { Object.assign(root, body);
+      if ((body as { acknowledge_recovery_conflicts?: boolean })?.acknowledge_recovery_conflicts) root.recovery_conflicts = [];
       if ((body as { disconnect?: boolean })?.disconnect) { root.connected = 0; root.availability = "disconnected"; }
       return root; }
     if (path.endsWith("/filing")) return [];
@@ -32,9 +37,31 @@ beforeEach(() => {
         version: "version-1", availability: root.availability, processing_state: "FAILED", error: "Interrupted",
         manual_category: null, job: { id: "job-1", state: "interrupted", total: 40, completed: 16, stage: "embedding", attempt: 1 },
       } },
+      ...extraEntries,
     ] };
     return [{ ...root }];
   });
+});
+
+it("shows a discovered size failure with the original relative path and recovery guidance", async () => {
+  extraEntries = [{ relative_path: "sources/inbox/large.pdf", kind: "file", source: null,
+    intake_error: "This file exceeds the 100 MB limit. Split or reduce it in Finder, then reconcile this folder." }];
+  render(<FolderWorkspace />);
+  await screen.findByText("Discovery failed");
+  expect(screen.getByRole("alert")).toHaveTextContent("sources/inbox/large.pdf");
+  expect(screen.getByRole("alert")).toHaveTextContent("100 MB");
+  expect(screen.getByRole("alert")).toHaveTextContent("Finder");
+});
+
+it("keeps recovery conflicts visible until the user acknowledges them", async () => {
+  root.recovery_conflicts = [{ relative_path: "documents/report.md", message: "Both versions were preserved in the restored workspace." }];
+  render(<FolderWorkspace />);
+  await screen.findByText("Recovered writing needs review");
+  await userEvent.click(screen.getByRole("button", { name: "Refresh folders" }));
+  expect(await screen.findByText("Recovered writing needs review")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Acknowledge recovery conflicts" }));
+  await waitFor(() => expect(screen.queryByText("Recovered writing needs review")).not.toBeInTheDocument());
+  expect(folderRequest).toHaveBeenCalledWith("/root-1", "PATCH", { acknowledge_recovery_conflicts: true });
 });
 
 it("uses the native picker and cancellation never sends a path to an HTTP registration", async () => {

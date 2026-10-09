@@ -8,6 +8,7 @@ export interface FolderRoot {
   id: string; name: string; kind: "managed" | "connected";
   connected: number; processing: number; organization_prefix: string | null;
   availability: "available" | "unavailable" | "disconnected"; error: string | null;
+  recovery_conflicts?: { relative_path: string; message: string }[];
 }
 export interface FolderSource {
   source_id: string; root_id: string; relative_path: string; name: string;
@@ -16,6 +17,7 @@ export interface FolderSource {
 }
 export interface FolderEntry {
   relative_path: string; kind: "directory" | "file"; source?: FolderSource | null; excluded?: boolean; remembered?: boolean;
+  intake_error?: string | null;
 }
 export interface FolderTree { root: FolderRoot; entries: FolderEntry[] }
 export interface FilingRecord {
