@@ -96,7 +96,7 @@ describe("MessageBubble", () => {
     expect(screen.getByText("Key idea").tagName).toBe("STRONG");
     expect(screen.getByText("First point").tagName).toBe("LI");
     expect(container.querySelector("script")).toBeNull();
-    expect(screen.getByText("Unsafe").getAttribute("href")).not.toContain("javascript:");
+    expect(screen.getByText("Unsafe").closest("a")).toBeNull();
     expect(container.querySelector("img")).toBeNull();
     expect(container.querySelector('[data-print="document"]')).toBeNull();
   });
