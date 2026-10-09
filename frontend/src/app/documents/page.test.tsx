@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import DocumentsPage from '@/app/documents/page';
@@ -61,6 +61,45 @@ it('late legacy Save cannot replace B or change its save target', async () => {
   await userEvent.type(screen.getByLabelText(/Document content/), ' unintended');
   await userEvent.click(screen.getByRole('button', { name: 'Save' }));
   expect(docs.updateDocument).toHaveBeenLastCalledWith('b', { title: 'Document b', content: 'Body b unintended' });
+});
+it.each([
+  ['  Renamed  ', 'Renamed'],
+  ['', 'Document a'],
+])('settles the legacy saved baseline for title %j', async (draftTitle, savedTitle) => {
+  render(<DocumentsPage />);
+  await screen.findByLabelText(/Document content/);
+  fireEvent.change(screen.getByLabelText('Title'), { target: { value: draftTitle } });
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await screen.findByRole('button', { name: 'Saved' });
+  expect(docs.updateDocument).toHaveBeenCalledWith('a', { title: savedTitle, content: 'Body a' });
+  expect(screen.getByLabelText('Title')).toHaveValue(savedTitle);
+  expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
+  expect(localStorage.getItem('noye-document-draft:a')).toBeNull();
+});
+it('keeps newer title and body typing while a trimmed legacy title save is pending', async () => {
+  const pending = deferred<docs.NoyeDocument>();
+  vi.mocked(docs.updateDocument).mockReturnValueOnce(pending.promise);
+  render(<DocumentsPage />);
+  await screen.findByLabelText(/Document content/);
+  fireEvent.change(screen.getByLabelText('Title'), { target: { value: '  Renamed  ' } });
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await userEvent.type(screen.getByLabelText('Title'), ' later');
+  await userEvent.type(screen.getByLabelText(/Document content/), ' later body');
+  await act(async () => pending.resolve({ ...makeDoc('a'), title: 'Renamed' }));
+  expect(screen.getByLabelText('Title')).toHaveValue('Renamed later');
+  expect(screen.getByLabelText(/Document content/)).toHaveValue('Body a later body');
+  expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+  expect(JSON.parse(localStorage.getItem('noye-document-draft:a')!)).toMatchObject({ title: 'Renamed later', content: 'Body a later body' });
+});
+it('keeps a normalized authored title dirty when its legacy save fails', async () => {
+  vi.mocked(docs.updateDocument).mockRejectedValueOnce(new docs.ApiError(500, 'Save failed'));
+  render(<DocumentsPage />);
+  await screen.findByLabelText(/Document content/);
+  fireEvent.change(screen.getByLabelText('Title'), { target: { value: '  Renamed  ' } });
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  await screen.findByText('Save failed');
+  expect(screen.getByLabelText('Title')).toHaveValue('Renamed');
+  expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
 });
 it('late source revision cannot replace a different document', async () => {
   const pending = deferred<sourceDocs.SourceDocument>();

@@ -118,7 +118,11 @@ export function DocumentEditor({
 
   const save = () => {
     if (!draftReady || !dirty || saving || readOnly || reviewRequired || comparing) return;
-    void onSave({ title: draftTitle.trim() || base.title, content: draftContent,
+    const savedTitle = draftTitle.trim() || base.title;
+    // Match the value sent to the server now. Normalizing after the response
+    // would overwrite title edits made while the save was pending.
+    setDraftTitle(savedTitle);
+    void onSave({ title: savedTitle, content: draftContent,
       ...(revisionId && expectedRevision ? { expectedRevision, draftOwner } : {}) });
   };
 
