@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { ProviderSelector } from "@/components/provider-selector";
 import { ApiError, type GenerationProvider, generateDocument } from "@/lib/api";
@@ -34,6 +34,12 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<GenerationProvider>("ollama");
+  const activeMessage = useRef<string | null>(null);
+
+  useEffect(() => {
+    activeMessage.current = messageId;
+    return () => { activeMessage.current = null; };
+  }, [messageId]);
 
   if (!open) {
     return (
@@ -54,11 +60,13 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
     setError(null);
     generateDocument(messageId, asked, provider).then(
       (document) => {
-        // Navigate rather than clear: the reason to make a document is to work on
-        // it, and leaving the person in chat would make them go looking.
+        // Generation still saves the document after leaving this message. Only
+        // navigate while its action remains open in the current workspace.
+        if (activeMessage.current !== messageId) return;
         router.push(`/documents?d=${encodeURIComponent(document.id)}`);
       },
       (cause: unknown) => {
+        if (activeMessage.current !== messageId) return;
         setPending(false);
         setError(
           cause instanceof ApiError ? cause.message : "Could not draft that document.",
@@ -135,6 +143,7 @@ export function CreateDocumentAction({ messageId }: { messageId: string }) {
             : "Takes about as long as an answer."}
         </span>
       </div>
+      {pending && <p className="mt-1.5 text-[11.5px] text-ink-faint">If you leave, the saved draft will be available in Documents.</p>}
     </div>
   );
 }
