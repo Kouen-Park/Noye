@@ -40,25 +40,27 @@ export function JobsPanel({ revision, onChange }: { revision: string; onChange: 
   const visible = jobs.filter((job) => job.state !== "complete");
   if (!visible.length && !error) return null;
   return (
-    <section className="mt-5 rounded-lg border border-edge bg-card p-4" aria-label="Processing jobs">
-      <h2 className="font-semibold">Processing jobs</h2>
-      <p className="mt-1 text-[13px] text-ink-soft">
+    <section className="mt-3 border-b border-edge pb-3" aria-label="Processing jobs">
+      <h2 className="text-[13px] font-semibold">Processing jobs</h2>
+      <details className="noye-details mt-1"><summary className="text-[12px] text-ink-soft">About processing and retries</summary>
+      <p className="mt-1 text-[12px] text-ink-soft">
         Progress is saved between embedding batches. Interrupted jobs wait for your retry,
         which processes the original again. Noye runs one file at a time.
       </p>
+      </details>
       {error && <div role="alert" className="mt-2 text-fail">{error}
         <button type="button" className="ml-3 underline" onClick={() => setRefresh((v) => v + 1)}>
           Refresh jobs
         </button>
       </div>}
-      <ul className="mt-3 space-y-3">
+      <ul className="mt-2 space-y-2">
         {visible.map((job) => (
-          <li key={job.id} className="border-t border-edge pt-2 text-[13px]">
+          <li key={job.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-edge pt-2 text-[13px]">
             <strong>{job.file_name}</strong> · attempt {job.attempt} · {job.state}
-            <p className="text-ink-soft">{job.stage}
+            <p className="text-[12px] text-ink-soft">{job.stage}
               {job.total > 0 && " · " + job.completed + " / " + job.total + " passages embedded"}
             </p>
-            {job.error && <p className="text-fail">{job.error}</p>}
+            {job.error && <p className="w-full text-[12px] text-fail">{job.error}</p>}
             {jobIsActive(job)
               ? <button type="button" className="mt-1 underline" disabled={busy === job.id || job.state === "cancelling"}
                   onClick={() => void act(job, "cancel")}>

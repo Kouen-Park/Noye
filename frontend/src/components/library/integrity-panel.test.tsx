@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -44,6 +44,30 @@ function renderPanel(
 }
 
 describe("IntegrityPanel", () => {
+  it("keeps a healthy summary compact and Details does not start a check", async () => {
+    const props = renderPanel();
+    expect(screen.getByText(/2 of 2 ready files are searchable/)).toBeVisible();
+    expect(screen.getByText(/compare the expected passages with Qdrant/)).not.toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Index health details" }));
+    expect(screen.getByText(/compare the expected passages with Qdrant/)).toBeVisible();
+    expect(props.onCheck).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole("button", { name: "Check stored index" }));
+    expect(props.onCheck).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the rebuild decision visible across Details toggles and restores Keep focus", async () => {
+    const props = renderPanel({ status: soundStatus({ searchable_files: 0, problems: [{
+      file_id: "file-1", file_name: "notes.md", problems: ["MODEL_CHANGED"],
+      searchable: false, indexed_points: null, expected_points: null,
+    }] }) });
+    const rebuild = screen.getByRole("button", { name: "Rebuild index" });
+    await userEvent.click(rebuild);
+    await userEvent.click(screen.getByRole("button", { name: "Index health details" }));
+    expect(screen.getByText(/Local embedding can take several minutes/)).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Keep current index" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Rebuild index" })).toHaveFocus());
+    expect(props.onRebuild).not.toHaveBeenCalled();
+  });
   it("directs a changed folder original to Folders without offering Library re-indexing", () => {
     const props = renderPanel({ status: soundStatus({ problems: [{ file_id: "source-1",
       file_name: "note.txt", folder_root_id: "root-1", problems: ["SOURCE_CHANGED"],
