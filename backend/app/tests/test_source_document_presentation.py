@@ -152,6 +152,38 @@ def test_unsupported_heading_is_replaced_and_empty_section_omitted(workspace):
     }
 
 
+def test_unmeasured_performance_heading_cannot_be_approved_by_the_model(workspace):
+    db, *_ = workspace
+    discover(workspace, content="Project Alpha stops writes on Sundays. Backups run daily.")
+
+    def unmeasured(payload, result):
+        if payload["task"] == "outline":
+            result["sections"][0]["title"] = "Sunday write policies and performance"
+
+    artifact = run(db, enqueue(db), model(transform=unmeasured)[0])
+    revision = store.current(db, artifact)
+    assert "Sunday write policies and performance" not in revision["content"]
+    assert "## Source notes" in revision["content"]
+    assert any(
+        item["code"] == "unsupported_heading"
+        for item in revision["metadata"]["coverage"]["presentation_limits"]
+    )
+
+
+@pytest.mark.parametrize(
+    "title,originals",
+    [
+        ("Runtime performance", "The measured runtime was 12 milliseconds."),
+        ("Performance", "The measured result was 12 ms."),
+        ("성능", "실행 시간은 12ms였다."),
+        ("Throughput", "Measured throughput was 37 requests per second."),
+        ("Performance", "Trial Cedar finishes in 18 minutes."),
+    ],
+)
+def test_performance_heading_guard_retains_measured_bilingual_topics(title, originals):
+    assert presentation.has_performance_context(title, originals)
+
+
 def test_heading_quantity_is_rejected_even_if_model_verifier_approves(workspace):
     db, *_ = workspace
     discover(workspace)

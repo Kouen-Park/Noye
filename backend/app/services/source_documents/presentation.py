@@ -120,6 +120,31 @@ def is_absence_heading(title):
     )
 
 
+def has_performance_context(title, originals):
+    # A local model approved a combined policy/performance heading from Sunday
+    # permissions alone. Require a performance topic or measurement in the
+    # originals before asking that model to judge the remaining heading meaning.
+    if not re.search(
+        r"\b(?:performance|efficiency|throughput|latency|speed|benchmarks?)\b|"
+        r"성능|효율|처리량|지연|속도",
+        title,
+        re.IGNORECASE,
+    ):
+        return True
+    return bool(
+        re.search(
+            r"\b(?:performance|efficiency|throughput|latency|speed|benchmarks?|runtime|"
+            r"memory|elapsed)\b|\brun\s+time\b|"
+            r"\b(?:took|finished|completed|finishes|completes|duration|takes)\b"
+            r"[^.!?\n]{0,60}\d+(?:\.\d+)?\s*(?:seconds?|minutes?|hours?|s|min|h)\b|"
+            r"\d+(?:\.\d+)?\s*(?:ms|µs|ns|milliseconds?|microseconds?|nanoseconds?)\b|"
+            r"성능|효율|처리량|지연|속도|메모리|(?:실행|수행|처리|응답)\s*시간|소요",
+            originals,
+            re.IGNORECASE,
+        )
+    )
+
+
 def neutral_title(language, *, section=False):
     if language == "Korean":
         return "원문 정리" if section else "원문 기반 문서"
