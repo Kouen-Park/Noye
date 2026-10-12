@@ -24,14 +24,8 @@ import { ApiError, type SearchResponse, searchKnowledge } from "@/lib/api";
  */
 export default function SearchPage() {
   return (
-    <AppShell current="Search">
-      <h1 className="text-[27px]">Search</h1>
-      <p className="mt-1 max-w-[60ch] text-ink-soft">
-        Find a passage by what it means, not the words it happens to use. Every result
-        opens the page it came from.
-      </p>
-
-      <Suspense fallback={<p className="mt-7 text-ink-soft">Opening search…</p>}>
+    <AppShell current="Search" title="Search" description="Find passages and open their original sources.">
+      <Suspense fallback={<p className="text-ink-soft">Opening search…</p>}>
         <SearchView />
       </Suspense>
     </AppShell>
@@ -118,11 +112,10 @@ function SearchResults({ query }: { query: string }) {
       </p>
 
       {phase === "idle" && (
-        <div className="mt-7 rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center">
-          <p className="font-display text-lg">Ask your library something</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Search your library</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
-            Noye compares meaning, so a question in your own words will find the right
-            passage even when it shares no keywords with it.
+            Use a question or describe what you want to find.
           </p>
         </div>
       )}
@@ -148,8 +141,8 @@ function SearchResults({ query }: { query: string }) {
       )}
 
       {nothingIndexed && (
-        <div className="mt-7 rounded-lg border border-edge-strong bg-card px-6 py-10 text-center">
-          <p className="font-display text-lg">Nothing is searchable yet</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Nothing is searchable yet</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
             Search covers files that have finished indexing. Add something to your library,
             or wait for a file that is still processing.
@@ -164,8 +157,8 @@ function SearchResults({ query }: { query: string }) {
       )}
 
       {noMatches && (
-        <div className="mt-7 rounded-lg border border-edge-strong bg-card px-6 py-10 text-center">
-          <p className="font-display text-lg">Nothing matched that</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Nothing matched that</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
             Searched {searchedFiles} {searchedFiles === 1 ? "file" : "files"}. Try
             describing what you are after differently, or in more words.
@@ -174,10 +167,10 @@ function SearchResults({ query }: { query: string }) {
       )}
 
       {phase === "done" && results.length > 0 && (
-        <section aria-labelledby="results-heading" className="mt-7">
+        <section aria-labelledby="results-heading" className="mt-5">
           <p
             id="results-heading"
-            className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint"
+            className="mb-2 text-[12px] font-medium text-ink-soft"
           >
             {results.length} {results.length === 1 ? "passage" : "passages"} from{" "}
             {searchedFiles} {searchedFiles === 1 ? "file" : "files"}

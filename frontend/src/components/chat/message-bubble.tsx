@@ -21,7 +21,7 @@ export function MessageBubble({ message, onInspect, inspected = false, panelId }
   if (message.role === "user") {
     return (
       <li className="flex justify-end py-4">
-        <div className="max-w-[85%] rounded-2xl rounded-br-sm border border-edge-strong bg-card px-4 py-3 text-[15px] leading-relaxed">
+        <div className="max-w-[85%] rounded-lg rounded-br-sm bg-brand-wash px-4 py-3 text-[15px] leading-relaxed">
           <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{message.content}</p>
         </div>
       </li>
@@ -51,8 +51,8 @@ export function MessageBubble({ message, onInspect, inspected = false, panelId }
         {onInspect ? message.citations.length > 0 && (
           <button type="button" onClick={(event) => onInspect(message, event.currentTarget)}
             aria-expanded={inspected} aria-controls={inspected ? panelId : undefined}
-            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-md border border-edge-strong px-3 text-xs font-semibold text-brand hover:bg-brand-wash">
-            <span aria-hidden="true" className="grid h-5 min-w-5 place-items-center rounded-sm bg-brand px-1 font-mono text-[10px] text-ink-inverse">{message.citations.length}</span>
+            className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-md pr-3 text-[12px] font-medium text-brand underline-offset-4 hover:underline">
+            <span aria-hidden="true" className="grid h-5 min-w-5 place-items-center rounded-sm bg-brand-wash px-1 text-[12px] tabular-nums text-brand">{message.citations.length}</span>
             {message.citations.length === 1 ? "Passage consulted" : "Passages consulted"}
           </button>
          ) : !message.knowledge && <Passages citations={message.citations} />}

@@ -3574,6 +3574,15 @@ rather than repeating the completed reliability branches or Phase 7 implementati
 preservation, index/rebuild correctness and source provenance, then measure
 retrieval, answer quality and inference latency.
 
+**Desktop design update, 2026-10-12:** the owner selected the work-centered
+direction. Shared compact navigation/headers, left document/Wiki lists,
+above-body save/exports, focus reading, readable text roles and quiet intake/
+evidence metadata are implemented in `fix/desktop-design`. The record in
+`docs/phase8/desktop-design.md` separates automated tests, fixture geometry and
+native observations. Native Markdown retained unsaved Korean text; PDF contents
+and the OS original-link destination remain unconfirmed in this pass. Keep the
+broader acceptance checks below open.
+
 -   [ ] Resolve remaining reliability and quality defects found in the packaged app.
 -   [ ] Recheck Phase 7 follow-up handling (§12.6) against quality and latency targets.
 -   [ ] Expand the Phase 7 retrieval evaluation and refine thresholds/chunking on

@@ -49,15 +49,15 @@ export function SearchForm({ initialQuery, onSubmit, pending }: SearchFormProps)
 
       <div className="mt-1.5 flex flex-wrap gap-2">
         <div className="relative flex min-w-0 flex-1 items-center">
-          <SearchIcon className="pointer-events-none absolute left-3 h-4 w-4 text-ink-faint" />
+          <SearchIcon className="pointer-events-none absolute left-3 h-4 w-4 text-ink-soft" />
           <input
             id={inputId}
             type="search"
             value={value}
             onChange={(event) => setValue(event.target.value)}
-            placeholder="Ask in your own words, not keywords"
+            placeholder="Search your files in your own words"
             autoComplete="off"
-            className="min-h-11 w-full rounded-md border border-edge-strong bg-card pl-9 pr-3 text-[14.5px] placeholder:text-ink-faint"
+            className="min-h-11 w-full rounded-md border border-edge-strong bg-card pl-9 pr-3 text-[15px] placeholder:text-ink-soft"
           />
         </div>
         <button

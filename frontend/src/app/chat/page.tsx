@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { Suspense, useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { DocumentTasks } from "@/components/documents/document-tasks";
@@ -14,7 +14,7 @@ import { SourceSelector } from "@/components/chat/source-selector";
 import { ConversationList } from "@/components/chat/conversation-list";
 import { MessageBubble } from "@/components/chat/message-bubble";
 import { PassageList } from "@/components/chat/passages";
-import { BookIcon, CrossIcon } from "@/components/icons";
+import { CrossIcon } from "@/components/icons";
 import { ProviderSelector } from "@/components/provider-selector";
 import {
   ApiError, type AskResponse, type ChatMessage, type ConversationSummary, type GenerationProvider,
@@ -84,7 +84,10 @@ function ChatView() {
   };
 
   return (
-    <AppShell current="Chat" workspace sidebar={
+    <ConversationWorkspace key={conversationId ?? `new-${newSession}`} conversationId={conversationId}
+      title={conversations.find((conversation) => conversation.id === conversationId)?.title}
+      provider={provider} onProviderChange={setProvider} busy={busy}
+      refreshList={refreshList} sidebar={
       <>
         <ConversationList conversations={conversations} currentId={conversationId}
           loading={!listLoaded} disabled={busy} onRename={rename} onDelete={remove}
@@ -94,14 +97,7 @@ function ChatView() {
           <p>{listError}</p><button type="button" onClick={refreshList} className="mt-1 min-h-11 underline">Retry conversations</button>
         </div>}
       </>
-    }>
-      {/* A route change creates a fresh controller. Late reads/answers cannot
-          populate the next conversation or redirect it back to the old one. */}
-      <ConversationWorkspace key={conversationId ?? `new-${newSession}`} conversationId={conversationId}
-        title={conversations.find((conversation) => conversation.id === conversationId)?.title}
-        provider={provider} onProviderChange={setProvider} busy={busy}
-        refreshList={refreshList} />
-    </AppShell>
+    } />
   );
 }
 
@@ -120,13 +116,14 @@ function closeSettingsOnEscape(event: KeyboardEvent<HTMLDetailsElement>) {
   event.currentTarget.querySelector("summary")?.focus();
 }
 
-function ConversationWorkspace({ conversationId, title, provider, onProviderChange, busy, refreshList }: {
+function ConversationWorkspace({ conversationId, title, provider, onProviderChange, busy, refreshList, sidebar }: {
   conversationId: string | null;
   title?: string;
   provider: GenerationProvider;
   onProviderChange: (provider: GenerationProvider) => void;
   busy: boolean;
   refreshList: () => void;
+  sidebar: ReactNode;
 }) {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -244,43 +241,46 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
   const heading = title ?? savedTitle ?? (conversationId ? "Conversation" : "New conversation");
 
   return (
-    <>
-      <header className="shrink-0 border-b border-edge px-5 py-3 md:px-7">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-          <div className="min-w-0 pt-1">
-            <p className="chat-eyebrow mb-1 text-[11px] font-semibold tracking-[0.1em] text-ink-soft uppercase">Research chat</p>
-            <h1 className="line-clamp-1 text-xl md:text-[23px]" title={heading}>{heading}</h1>
+    <AppShell current="Chat" workspace sidebar={sidebar} title={heading} actions={
+          <div role="group" aria-label="Conversation controls" className="flex max-w-full flex-wrap items-center gap-x-4">
+            <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-controls min-w-0">
+              <summary className="min-h-11 cursor-pointer py-3 text-[12px] font-medium text-ink-soft">AI &amp; sources · {PROVIDER_NAMES[session.pending?.provider ?? provider]}<span className="ml-2">· {scope === null ? "All files" : scope.length === 0 ? "No files" : `${scope.length} files`}</span></summary>
+              <div className="chat-controls-content rounded-lg border border-edge bg-card p-3 shadow-lg">
+                <ProviderSelector value={session.pending?.provider ?? provider} onChange={onProviderChange} disabled={busy} compact />
+                <SourceSelector scope={scope} onChange={changeScope} disabled={busy || scopeSaving || !loaded} />
+              </div>
+            </details>
+            <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-options min-w-0 text-[12px] text-ink-soft">
+              <summary className="min-h-11 cursor-pointer py-3 font-medium">{documentMode ? "Document options · Local Ollama" : "Chat options"}</summary>
+              <div className="chat-options-content rounded-lg border border-edge bg-card p-3 shadow-lg">
+                <div className="space-y-1">
+                  <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setChatOptions(sessionKey, { documentMode: event.target.checked })} />Create an editable document</label>
+                  {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setChatOptions(sessionKey, { collectionMode: event.target.checked })} />Use every source in the selected scope</label>}
+                </div>
+                {documentMode && <p className="mt-2 text-[12px] leading-relaxed text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
+              </div>
+            </details>
           </div>
-          <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-controls min-w-0 lg:w-[350px] lg:shrink-0">
-            <summary className="min-h-11 cursor-pointer py-3 text-xs font-semibold text-ink-soft">AI &amp; sources · {PROVIDER_NAMES[session.pending?.provider ?? provider]}</summary>
-            <div className="chat-controls-content rounded-lg border border-edge-strong bg-card p-3 shadow-lg">
-            <ProviderSelector value={session.pending?.provider ?? provider} onChange={onProviderChange} disabled={busy} compact />
-            <SourceSelector scope={scope} onChange={changeScope} disabled={busy || scopeSaving || !loaded} />
-            </div>
-          </details>
-        </div>
-      </header>
-
-      <div className="flex min-h-0 flex-1 flex-col xl:flex-row">
+    }>
+      <div className="noye-chat-workspace flex min-h-0 flex-1 flex-col xl:flex-row">
         <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Conversation">
           <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 md:px-8">
-            <div className="mx-auto max-w-[720px] py-5">
+            <div className="mx-auto max-w-[760px] py-4">
               {(error || session.error) && <div role="alert" className="mb-4 rounded-lg border border-fail bg-fail-wash p-4 text-sm text-fail">
                 <p>{error || session.error}</p>
                 {!loaded && !loading && <button type="button" onClick={() => { setError(null); setLoading(true); setAttempt((current) => current + 1); }} className="mt-2 min-h-11 underline">Retry opening conversation</button>}
               </div>}
               {loading ? <p role="status" className="py-8 text-sm text-ink-soft">Opening conversation…</p> :
-                loaded && messages.length === 0 ? <div className="py-6 md:py-14">
-                  <BookIcon className="mb-5 h-8 w-8 text-brand" />
-                  <h2 className="max-w-[18ch] font-display text-[32px] leading-tight md:text-[40px]">Your files.<br />A clearer picture.</h2>
-                  <p className="mt-4 max-w-[48ch] text-[14px] leading-relaxed text-ink-soft">Ask a question, connect ideas, or find a detail. Noye searches your library and keeps the passages close by.</p>
-                  <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+                loaded && messages.length === 0 ? <div className="py-6 md:py-10">
+                  <h2 className="text-[24px] font-semibold">Ask your files</h2>
+                  <p className="mt-2 max-w-[52ch] text-[15px] leading-relaxed text-ink-soft">Find a detail, compare ideas, or create a document from your sources.</p>
+                  <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                     {["What are the main ideas in these files?", "Compare the approaches in my documents."].map((question) => (
                       <button key={question} type="button" disabled={busy} onClick={() => { setDraft(question); inputRef.current?.focus(); }}
-                        className="min-h-11 rounded-lg border border-edge-strong px-3 py-2 text-left text-[13px] text-ink hover:bg-card disabled:opacity-60">{question}</button>
+                        className="min-h-11 rounded-md border border-edge bg-card px-3 py-2 text-left text-[13px] text-ink hover:bg-brand-wash disabled:opacity-60">{question}</button>
                     ))}
                   </div>
-                  <p className="mt-4 text-xs text-ink-soft">Nothing in your library yet? <Link href="/library" className="inline-flex min-h-11 items-center font-semibold text-brand underline underline-offset-4">Add your first file</Link></p>
+                  <Link href="/library" className="mt-3 inline-flex min-h-11 items-center text-[12px] text-brand underline underline-offset-4">Manage files in Library</Link>
                 </div> : null}
               <ul aria-label="Messages">
                 {messages.map((message) => <MessageBubble key={message.id} message={message} panelId={panelId}
@@ -291,26 +291,15 @@ function ConversationWorkspace({ conversationId, title, provider, onProviderChan
             </div>
           </div>
           <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">
-            <div className="mx-auto max-w-[720px]">
+            <div className="mx-auto max-w-[760px]">
               {busy && !pending && <p role="status" className="mb-2 text-xs text-ink-soft">An answer is still being saved in another conversation.</p>}
-              <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-options mb-2 text-xs text-ink-soft">
-                <summary className="min-h-11 cursor-pointer py-3">{documentMode ? "Document options · Local Ollama" : "Chat options"}</summary>
-                <div className="chat-options-content rounded-lg border border-edge-strong bg-card p-3 shadow-lg">
-                <div className="flex flex-wrap items-center gap-3">
-                <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setChatOptions(sessionKey, { documentMode: event.target.checked })} />Create an editable document</label>
-                {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setChatOptions(sessionKey, { collectionMode: event.target.checked })} />Use every source in the selected scope</label>}
-                </div>
-                {documentMode && <p className="mb-2 text-xs text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
-                </div>
-              </details>
               <Composer onAsk={ask} pending={pending} documentMode={documentMode} disabled={!loaded || scopeSaving || (busy && !pending) || (conversationId === null && !!session.completion)} value={draft} onChange={setDraft} inputRef={inputRef} />
-              <p className="chat-context-help mt-2 text-center text-[11px] leading-relaxed text-ink-soft">Recent turns help resolve follow-up questions. Answers use retrieved excerpts as evidence.</p>
             </div>
           </footer>
         </section>
         {inspecting && <PassagePanel id={panelId} message={inspecting} onClose={closePassages} />}
       </div>
-    </>
+    </AppShell>
   );
 }
 
@@ -332,9 +321,9 @@ function PassagePanel({ id, message, onClose }: { id: string; message: ChatMessa
         <button ref={closeRef} type="button" onClick={close} aria-label="Close passages"
           className="grid h-11 w-11 shrink-0 place-items-center rounded-md border border-edge-strong text-ink-soft hover:bg-card"><CrossIcon className="h-4 w-4" /></button>
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-ink-soft">Retrieved context for this answer, not verified support. Open the originals to check the details.</p>
+      <p className="mt-2 text-xs leading-relaxed text-ink-soft">Retrieved context, not verified support. Check the originals.</p>
       <PassageList citations={message.citations} />
-      <p className="mt-4 text-xs leading-relaxed text-ink-soft">Saved references remain here if a file is deleted; its original will no longer open.</p>
+      <p className="mt-4 text-xs leading-relaxed text-ink-soft">Deleted files keep saved references but their originals cannot open.</p>
     </aside>
     </dialog>
   );

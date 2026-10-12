@@ -2,6 +2,8 @@
 
 mod backend;
 mod folders;
+mod menu;
+mod originals;
 mod preferences;
 mod workspaces;
 
@@ -21,6 +23,7 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .manage(backend)
         .setup(move |app| {
+            menu::install(app.handle())?;
             app.manage(Arc::new(preferences::PreferenceStore::new(app.handle())?));
             managed.start(app.handle());
             Ok(())
@@ -32,7 +35,8 @@ fn main() {
             workspaces::workspace_locations,
             workspaces::select_workspace,
             folders::choose_source_folder,
-            folders::reveal_source_folder
+            folders::reveal_source_folder,
+            originals::open_original
         ])
         .build(tauri::generate_context!())
         .expect("could not build Noye desktop")

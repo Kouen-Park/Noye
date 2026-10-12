@@ -70,6 +70,30 @@ export function PlusIcon({ className }: IconProps) {
   );
 }
 
+export function FolderIcon({ className }: IconProps) {
+  return <svg {...base} strokeWidth={1.8} className={className}>
+    <path d="M3 7V5h6l2 2h10v13H3z" />
+  </svg>;
+}
+
+export function OpenBookIcon({ className }: IconProps) {
+  return <svg {...base} strokeWidth={1.8} className={className}>
+    <path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15" />
+  </svg>;
+}
+
+export function SidebarIcon({ className }: IconProps) {
+  return <svg {...base} strokeWidth={1.8} className={className}>
+    <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" />
+  </svg>;
+}
+
+export function SettingsIcon({ className }: IconProps) {
+  return <svg {...base} strokeWidth={1.8} className={className}>
+    <path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="3" fill="var(--sunken)" /><circle cx="15" cy="17" r="3" fill="var(--sunken)" />
+  </svg>;
+}
+
 export function CheckIcon({ className }: IconProps) {
   return (
     <svg {...base} strokeWidth={2.6} className={className}>

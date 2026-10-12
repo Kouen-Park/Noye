@@ -1,6 +1,7 @@
 "use client";
 
 import { invoke, isTauri } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { openWorkspace } from "@/lib/native-workspace";
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 
@@ -8,7 +9,7 @@ import { getRuntimeServices, type RuntimeServices } from "@/lib/api";
 import { setDesktopBaseUrl } from "@/lib/runtime";
 import { DesktopSetupDialog, useSetupGuide } from "./desktop-setup";
 import { AiSettingsDialog } from "./ai-settings";
-import { OPEN_AI_SETTINGS_EVENT } from "@/lib/ai-settings";
+import { OPEN_AI_SETTINGS_EVENT, OPEN_SETUP_GUIDE_EVENT, TOGGLE_NAVIGATION_EVENT } from "@/lib/ai-settings";
 
 interface BackendStatus {
   state: "starting" | "ready" | "failed";
@@ -87,9 +88,33 @@ function DesktopWorkspace({ children }: { children: ReactNode }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   useEffect(() => {
     const open = () => { setup.close(); setSettingsOpen(true); };
+    const guide = () => { setSettingsOpen(false); setup.show(); };
+    const shortcut = (event: KeyboardEvent) => {
+      if (event.key === "," && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
+        event.preventDefault(); open();
+      }
+    };
     window.addEventListener(OPEN_AI_SETTINGS_EVENT, open);
-    return () => window.removeEventListener(OPEN_AI_SETTINGS_EVENT, open);
+    window.addEventListener(OPEN_SETUP_GUIDE_EVENT, guide);
+    window.addEventListener("keydown", shortcut);
+    return () => {
+      window.removeEventListener(OPEN_AI_SETTINGS_EVENT, open);
+      window.removeEventListener(OPEN_SETUP_GUIDE_EVENT, guide);
+      window.removeEventListener("keydown", shortcut);
+    };
   });
+  useEffect(() => {
+    let stopped = false;
+    let unlisten: (() => void) | undefined;
+    void listen<string>("noye-menu-action", event => {
+      const actions: Record<string, string> = { settings: OPEN_AI_SETTINGS_EVENT, setup: OPEN_SETUP_GUIDE_EVENT, sidebar: TOGGLE_NAVIGATION_EVENT };
+      const name = actions[event.payload];
+      if (!stopped && name) window.dispatchEvent(new Event(name));
+    }).then(remove => { if (stopped) remove(); else unlisten = remove; }).catch(() => {
+      // Keyboard and sidebar actions remain available if a native listener fails.
+    });
+    return () => { stopped = true; unlisten?.(); };
+  }, []);
   return <>
     <DesktopServices onSetup={setup.show} onSettings={() => setSettingsOpen(true)} />
     {setup.storageWarning && <p role="status" className="px-5 py-2 text-xs text-ink-soft">Could not remember this guide&apos;s dismissal. It may reopen on your next launch.</p>}
@@ -127,11 +152,12 @@ function DesktopServices({ onSetup, onSettings }: { onSetup: () => void; onSetti
     services.ollama && !services.embedding_model ? "the embedding model is not installed" : null,
   ].filter(Boolean).join("; ") : "";
 
+  if (!needsAttention) return null;
   return (
-    <aside aria-label="Desktop AI setup" className={`flex shrink-0 flex-wrap items-center justify-between gap-x-4 border-b border-edge-strong px-5 text-sm text-ink ${needsAttention ? "bg-accent-wash py-2" : "bg-canvas"}`}>
-      {needsAttention ? <p role="status" className="min-w-0 flex-1">
+    <aside aria-label="Desktop AI setup" className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 border-b border-edge px-5 py-2 text-sm text-ink bg-accent-wash">
+      <p role="status" className="min-w-0 flex-1">
         {failed ? "Could not check local services." : `Local setup needs attention: ${missing}.`}
-      </p> : <span className="text-xs text-ink-soft">Local-first workspace</span>}
+      </p>
       <div className="flex shrink-0 items-center gap-2"><button onClick={(event) => {
         // WebKit does not always focus a pointer-clicked button before showModal.
         event.currentTarget.focus();

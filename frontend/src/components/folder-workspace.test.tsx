@@ -75,6 +75,7 @@ it("uses the native picker and cancellation never sends a path to an HTTP regist
 
 it("requires an explicitly chosen organization area and preserves disconnect semantics", async () => {
   render(<FolderWorkspace />);
+  await userEvent.click(await screen.findByLabelText("Folder options for Synthetic knowledge"));
   const optin = await screen.findByRole("checkbox");
   expect(optin).not.toBeChecked(); expect(optin).toBeDisabled();
   await userEvent.selectOptions(screen.getByLabelText("Organization area"), "sources");
@@ -96,6 +97,7 @@ it("shows interrupted progress and explicitly retries the existing ingestion job
 it("keeps a manual destination draft when collision-safe filing is rejected", async () => {
   root.organization_prefix = "sources";
   render(<FolderWorkspace />);
+  await userEvent.click(await screen.findByRole("button", { name: "Source details for sources/inbox/note.txt" }));
   await userEvent.click(await screen.findByRole("button", { name: "File manually" }));
   const destination = screen.getByLabelText("Relative destination");
   await userEvent.type(destination, "sources/Topic/collision.txt");
@@ -115,8 +117,26 @@ it("retains the authorized filing area while an unavailable folder shows remembe
   remembered = true;
   render(<FolderWorkspace />);
   await screen.findByRole("button", { name: "Re-select folder" });
+  await userEvent.click(screen.getByLabelText("Folder options for Synthetic knowledge"));
+  await userEvent.click(screen.getByRole("button", { name: "Source details for sources/inbox/note.txt" }));
   expect(screen.getByLabelText("Organization area")).toHaveValue("sources");
   expect(screen.getByRole("button", { name: "Open in Finder" })).toBeDisabled();
   expect(screen.getByRole("button", { name: "File manually" })).toBeDisabled();
   expect(screen.getByText(/Registered location/)).toBeInTheDocument();
+});
+
+it("preserves filing and organization drafts across disclosures and refresh", async () => {
+  root.organization_prefix = "sources";
+  render(<FolderWorkspace />);
+  await userEvent.click(await screen.findByRole("button", { name: "Source details for sources/inbox/note.txt" }));
+  await userEvent.click(screen.getByRole("button", { name: "File manually" }));
+  const destination = screen.getByLabelText("Relative destination");
+  await userEvent.type(destination, "sources/Topic/draft.txt");
+  await userEvent.click(screen.getByRole("button", { name: "Source details for sources/inbox/note.txt" }));
+  expect(destination).not.toBeVisible();
+  await userEvent.click(screen.getByRole("button", { name: "Refresh folders" }));
+  await userEvent.click(screen.getByRole("button", { name: "Source details for sources/inbox/note.txt" }));
+  expect(screen.getByLabelText("Relative destination")).toHaveValue("sources/Topic/draft.txt");
+  expect(screen.getByText("Interrupted")).toBeVisible();
+  expect(folderRequest).not.toHaveBeenCalledWith("/root-1/file", "POST", expect.anything());
 });

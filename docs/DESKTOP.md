@@ -569,3 +569,14 @@ and the remaining acceptance limits are recorded in that document.
 The full upload → live RAG → draft → export → backup/recovery acceptance flow,
 real provider access, repeat-filename WebKit download reliability and other
 operating systems remain Phase 8 work.
+
+## Work-centered design — 2026-10-12
+
+The desktop now uses compact shared navigation and workspace headers, left
+document/Wiki lists and above-body save/export controls. Collapse is remembered;
+focus reading and Details preserve mounted drafts and selected revisions.
+Healthy services have no top strip. Settings and AI Setup are accessible from
+navigation and native menus; Command-comma opens Settings and Command-Shift-L
+toggles navigation. See the [design validation record](phase8/desktop-design.md)
+for measured layouts, native Markdown preservation, remaining PDF/original-link
+confirmation and Phase 8 limits.

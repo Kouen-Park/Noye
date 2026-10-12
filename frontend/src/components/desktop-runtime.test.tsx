@@ -1,14 +1,18 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DesktopRuntime } from "./desktop-runtime";
+import { AppShell } from "./app-shell";
+import { OPEN_AI_SETTINGS_EVENT, TOGGLE_NAVIGATION_EVENT } from "@/lib/ai-settings";
 
-const mocks = vi.hoisted(() => ({ isTauri: vi.fn(), invoke: vi.fn(), services: vi.fn(), setup: vi.fn(), setUrl: vi.fn() }));
+const mocks = vi.hoisted(() => ({ isTauri: vi.fn(), invoke: vi.fn(), services: vi.fn(), setup: vi.fn(), setUrl: vi.fn(), listen: vi.fn() }));
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: mocks.isTauri, invoke: mocks.invoke }));
+vi.mock("@tauri-apps/api/event", () => ({ listen: mocks.listen }));
+vi.mock("./ai-settings", () => ({ AiSettingsDialog: ({ onClose }: { onClose: () => void }) => <div role="dialog" aria-label="Settings"><button onClick={onClose}>Close settings</button></div> }));
 vi.mock("@/lib/runtime", () => ({ setDesktopBaseUrl: mocks.setUrl }));
 vi.mock("@/lib/api", () => ({ getRuntimeServices: mocks.services, getDesktopSetup: mocks.setup }));
-beforeEach(() => localStorage.setItem("noye.desktop.setup-guide.v1", "seen"));
-afterEach(() => { vi.resetAllMocks(); vi.useRealTimers(); localStorage.removeItem("noye.desktop.setup-guide.v1"); });
+beforeEach(() => { vi.resetAllMocks(); localStorage.setItem("noye.desktop.setup-guide.v1", "seen"); mocks.listen.mockResolvedValue(vi.fn()); });
+afterEach(() => { cleanup(); vi.useRealTimers(); localStorage.removeItem("noye.desktop.setup-guide.v1"); });
 
 describe("desktop startup", () => {
   it("does not invoke desktop commands in the browser", async () => {
@@ -70,13 +74,52 @@ describe("desktop startup", () => {
     mocks.invoke.mockResolvedValue({ state: "ready", url: "http://127.0.0.1:34567", error: null });
     mocks.services.mockResolvedValue({ ollama: true, qdrant: true, generation_model: true, embedding_model: true });
     mocks.setup.mockRejectedValue(new Error("offline"));
-    render(<DesktopRuntime><p>Library</p></DesktopRuntime>);
+    render(<DesktopRuntime><AppShell current="Library"><p>Library content</p></AppShell></DesktopRuntime>);
     const opener = await screen.findByRole("button", { name: "AI setup" });
     fireEvent.click(opener);
     await screen.findByRole("alert");
     fireEvent.click(screen.getByRole("button", { name: "Skip for now" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(opener).toHaveFocus();
+  });
+
+  it("hides the healthy service strip and opens settings from keyboard and native menu without remounting content", async () => {
+    mocks.isTauri.mockReturnValue(true);
+    mocks.invoke.mockResolvedValue({ state: "ready", url: "http://127.0.0.1:34567", error: null });
+    mocks.services.mockResolvedValue({ ollama: true, qdrant: true, generation_model: true, embedding_model: true });
+    render(<DesktopRuntime><input aria-label="Draft" defaultValue="unfinished" /></DesktopRuntime>);
+    const draft = await screen.findByRole("textbox");
+    await waitFor(() => expect(mocks.listen).toHaveBeenCalledTimes(1));
+    expect(screen.queryByRole("complementary", { name: "Desktop AI setup" })).not.toBeInTheDocument();
+    fireEvent.keyDown(window, { key: ",", metaKey: true });
+    expect(screen.getByRole("dialog", { name: "Settings" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Close settings" }));
+    const listener = mocks.listen.mock.calls[0][1];
+    act(() => listener({ payload: "settings" }));
+    expect(screen.getByRole("dialog", { name: "Settings" })).toBeVisible();
+    expect(screen.getByRole("textbox")).toBe(draft);
+    expect(draft).toHaveValue("unfinished");
+    const sidebar = vi.fn();
+    window.addEventListener(TOGGLE_NAVIGATION_EVENT, sidebar);
+    act(() => listener({ payload: "sidebar" }));
+    expect(sidebar).toHaveBeenCalledTimes(1);
+    window.removeEventListener(TOGGLE_NAVIGATION_EVENT, sidebar);
+    act(() => window.dispatchEvent(new Event(OPEN_AI_SETTINGS_EVENT)));
+    expect(screen.getByRole("dialog", { name: "Settings" })).toBeVisible();
+  });
+
+  it("removes a native listener that resolves after its workspace has unmounted", async () => {
+    mocks.isTauri.mockReturnValue(true);
+    mocks.invoke.mockResolvedValue({ state: "ready", url: "http://127.0.0.1:34567", error: null });
+    mocks.services.mockResolvedValue({ ollama: true, qdrant: true, generation_model: true, embedding_model: true });
+    let resolve!: (remove: () => void) => void;
+    mocks.listen.mockImplementation(() => new Promise(done => { resolve = done; }));
+    const { unmount } = render(<DesktopRuntime><p>Library</p></DesktopRuntime>);
+    await screen.findByText("Library");
+    const remove = vi.fn();
+    unmount();
+    await act(async () => resolve(remove));
+    expect(remove).toHaveBeenCalledTimes(1);
   });
 
   it("does not wait forever when the native command stops responding", async () => {

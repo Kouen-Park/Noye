@@ -15,11 +15,11 @@ import { STAGE_COUNT, stageLabel, stageNumber, statusWord } from "@/lib/status";
 export function StatusPill({ status, error = null }: { status: FileStatus; error?: string | null }) {
   const word = statusWord(status, error);
   const shared =
-    "inline-flex items-center gap-1 rounded-full py-[3px] pl-[6px] pr-2 text-[11px] font-bold";
+    "inline-flex items-center gap-1 rounded py-0.5 px-1.5 text-[12px] font-medium";
 
   if (status === "READY") {
     return (
-      <span className={`${shared} border border-edge-strong font-semibold text-ink-soft`}>
+      <span className={`${shared} text-ink-soft`}>
         <CheckIcon className="h-3 w-3" />
         {word}
       </span>

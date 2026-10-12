@@ -36,7 +36,7 @@
   --ink: light-dark(#292421, #f0f1f3);
   --ink-soft: light-dark(#6a6055, #b3b9c4);   /* secondary copy, facts */
   --ink-on-sunken: light-dark(#5b5349, #b3b9c4);
-  --ink-faint: light-dark(#98907f, #858e9b);  /* eyebrows, disabled */
+  --ink-faint: light-dark(#746a5e, #959eab);  /* readable low-emphasis copy */
 
   /* Text placed ON a filled --brand or --accent surface. */
   --ink-inverse: light-dark(#f4efe6, #15191f);
@@ -94,6 +94,12 @@
 
   --focus-ring: 2px solid var(--brand);
   --focus-offset: 2px;
+
+  /* Roles, not a separate size for every label. */
+  --text-ui: 14px;
+  --text-body: 16px;
+  --text-meta: 12px;
+  --sidebar-width: 200px;
 }
 
 /* Explicit overrides for a future theme toggle. light-dark() reads

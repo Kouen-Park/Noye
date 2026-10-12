@@ -132,6 +132,7 @@ it("exports the current unsaved body and the selected provenance in both formats
   render(<DocumentEditor title="Notes" content="# Original" saving={false} onSave={vi.fn()}
     documentId="doc" provenance={"## Provenance\n\nSaved exact excerpt"} />);
   await userEvent.type(body(), " edited");
+  await userEvent.click(screen.getByText("Export options"));
   await userEvent.click(screen.getByRole("checkbox", { name: "Include provenance" }));
   await userEvent.click(screen.getByRole("tab", { name: "Preview" }));
   expect(screen.getByText("Saved exact excerpt").closest('[data-print="document"]')).toBeInTheDocument();
@@ -157,4 +158,13 @@ it("reports a rejected native print request", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Export PDF" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("Could not open the print dialog");
   print.mockRestore();
+});
+
+it("keeps save and export actions before the long editable body", () => {
+  editor({ documentId: "toolbar-order", content: "한국어 English\n".repeat(300) });
+  const content = body();
+  for (const action of [screen.getByRole("button", { name: "Saved" }), screen.getByRole("link", { name: "Export .md" }), screen.getByRole("button", { name: "Export PDF" })]) {
+    expect(action.compareDocumentPosition(content) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  }
+  expect(screen.getByRole("status")).toHaveTextContent("All changes saved");
 });

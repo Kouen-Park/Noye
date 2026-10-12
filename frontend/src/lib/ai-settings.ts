@@ -4,6 +4,8 @@ import type { GenerationProvider } from "./api";
 
 export const AI_SETTINGS_EVENT = "noye-ai-settings-changed";
 export const OPEN_AI_SETTINGS_EVENT = "noye-open-ai-settings";
+export const OPEN_SETUP_GUIDE_EVENT = "noye-open-setup-guide";
+export const TOGGLE_NAVIGATION_EVENT = "noye-toggle-navigation";
 export const PROVIDER_NAMES = { ollama: "Ollama · Local", openai: "OpenAI (ChatGPT)", anthropic: "Claude", gemini: "Gemini" };
 export type CloudProvider = Exclude<GenerationProvider, "ollama">;
 export interface AiSettings {

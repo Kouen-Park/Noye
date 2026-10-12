@@ -35,18 +35,18 @@ export function SavedEvidence({ citation }: { citation: ChatCitation }) {
   };
 
   return (
-    <div className="w-full space-y-2 border-t border-edge pt-2 text-[12px] text-ink-soft">
+    <div className="w-full space-y-2 text-xs text-ink-soft">
       <p>Saved excerpts · {new Date(snapshot.captured_at).toLocaleString()}</p>
       {snapshot.excerpts.map((excerpt, index) => (
         <div key={`${excerpt.retrieval_rank}:${index}`}>
-          <blockquote className="whitespace-pre-wrap break-words border-l-2 border-accent pl-2 text-ink">{excerpt.content}</blockquote>
+          <blockquote className="whitespace-pre-wrap break-words border-l-2 border-edge-strong pl-3 text-[15px] leading-7 text-ink">{excerpt.content}</blockquote>
           <details className="mt-1">
             <summary className="cursor-pointer">Source version · chunk {excerpt.chunk_index}</summary>
-            <p className="break-all font-mono text-[11px]">{excerpt.source_hash ? `SHA-256: ${excerpt.source_hash}` : "Original version unknown"}</p>
+            <p className="break-all font-mono text-xs">{excerpt.source_hash ? `SHA-256: ${excerpt.source_hash}` : "Original version unknown"}</p>
           </details>
         </div>
       ))}
-      <button type="button" disabled={pending} onClick={checkOriginal} className="min-h-11 rounded-md border border-edge-strong px-2 disabled:opacity-60">
+      <button type="button" disabled={pending} onClick={checkOriginal} className="noye-button border border-edge-strong disabled:opacity-60">
         {pending ? "Checking original…" : "Check original"}
       </button>
       {status && <p role="status">{status}</p>}

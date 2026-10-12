@@ -49,10 +49,7 @@ export function ExportControls({
   const markdownUrl = new URL(exportUrl ?? documentExportUrl(documentId, includeProvenance), "http://localhost");
   markdownUrl.searchParams.set("provenance", String(includeProvenance));
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {onProvenanceChange && <label className="flex min-h-11 items-center gap-2 text-xs text-ink-soft">
-        <input type="checkbox" checked={includeProvenance} onChange={(event) => onProvenanceChange(event.target.checked)} />Include provenance
-      </label>}
+    <div aria-label="Document exports" className="flex flex-wrap items-center gap-2">
       <a
         href={disabled ? undefined : markdownUrl.toString()}
         onClick={(event) => {
@@ -67,9 +64,9 @@ export function ExportControls({
         }}
         download
         aria-disabled={disabled}
-        className={`min-h-11 rounded-md border border-edge-strong px-3 py-2 text-[12.5px] font-semibold md:min-h-0 ${
+        className={`noye-button ${
           disabled
-            ? "cursor-not-allowed text-ink-faint"
+            ? "cursor-not-allowed text-ink-soft"
             : "text-accent-ink hover:bg-brand-wash"
         }`}
       >
@@ -88,17 +85,25 @@ export function ExportControls({
             ? "Uses your browser's print dialog — choose Save as PDF"
             : "Switch to Preview first, so the PDF is the document rather than its Markdown"
         }
-        className="min-h-11 rounded-md border border-edge-strong px-3 text-[12.5px] font-semibold text-accent-ink hover:bg-brand-wash disabled:cursor-not-allowed disabled:text-ink-faint md:min-h-0 md:py-2"
+        className="noye-button font-semibold text-accent-ink hover:bg-brand-wash disabled:cursor-not-allowed disabled:text-ink-soft"
       >
         Export PDF
       </button>
 
-      <p className="text-[11.5px] text-ink-faint">
+      <details className="noye-export-options">
+      <summary className="noye-button cursor-pointer">Export options</summary>
+      <div className="noye-export-options-panel rounded-md border border-edge-strong bg-card p-3 text-ink-soft">
+      {onProvenanceChange && <label className="flex min-h-10 items-center gap-2 text-xs">
+        <input type="checkbox" checked={includeProvenance} onChange={(event) => onProvenanceChange(event.target.checked)} />Include provenance
+      </label>}
+      <p className="noye-meta">
         {previewVisible
           ? "PDF uses your browser's print dialog."
           : "Switch to Preview to export a PDF."}
       </p>
-      {content !== undefined && <p className="w-full text-xs text-ink-soft">Exports include the current editor text, including unsaved edits.</p>}
+      {content !== undefined && <p className="mt-2 text-xs">Exports include the current editor text, including unsaved edits.</p>}
+      </div>
+      </details>
       {printError && <p role="alert" className="w-full text-xs text-danger">Could not open the print dialog. Try again, or export Markdown.</p>}
     </div>
   );

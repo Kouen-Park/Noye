@@ -9,7 +9,13 @@ import * as sourceDocs from '@/lib/source-documents';
 
 const nav = vi.hoisted(() => ({ query: '', push: vi.fn(), replace: vi.fn() }));
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams(nav.query), useRouter: () => nav }));
-vi.mock('@/components/app-shell', () => ({ AppShell: ({ children }: { children: React.ReactNode }) => <main>{children}</main> }));
+vi.mock('@/components/app-shell', async () => {
+  const { useState } = await import('react');
+  return {
+    AppShell: ({ children }: { children: React.ReactNode }) => <main>{children}</main>,
+    useWorkspaceLayout: () => { const [readingFocus, setReadingFocus] = useState(false); return { readingFocus, setReadingFocus }; },
+  };
+});
 vi.mock('@/lib/api', async get => ({ ...await get<typeof import('@/lib/api')>(), readDocument: vi.fn(), listDocuments: vi.fn(), updateDocument: vi.fn(), createDocument: vi.fn(), deleteDocument: vi.fn() }));
 vi.mock('@/lib/source-documents', async get => ({ ...await get<typeof import('@/lib/source-documents')>(), readSourceDocument: vi.fn(), editSourceDocument: vi.fn() }));
 const makeDoc = (id: string): docs.NoyeDocument => ({ id, title: `Document ${id}`, content: `Body ${id}`, source_conversation_id: null, source_message_id: null, source_instruction: null, citations: [], created_at: '', updated_at: '' });
@@ -28,6 +34,88 @@ beforeEach(() => {
   vi.mocked(sourceDocs.readSourceDocument).mockRejectedValue(new docs.ApiError(404, 'Not source driven'));
 });
 afterEach(cleanup);
+it('repeated focus changes preserve a pending source save, draft owner and base', async () => {
+  const pending = deferred<sourceDocs.SourceDocument>();
+  vi.mocked(sourceDocs.readSourceDocument).mockResolvedValue(makeSourceDoc('a'));
+  vi.mocked(sourceDocs.editSourceDocument).mockReturnValue(pending.promise);
+  render(<DocumentsPage />);
+  const content = await screen.findByLabelText(/Document content/);
+  await userEvent.type(content, ' 한글 authored');
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+  const retained = localStorage.getItem('noye-document-draft:a');
+  const editor = screen.getByRole('region', { name: 'Document editor' });
+  const loads = vi.mocked(sourceDocs.readSourceDocument).mock.calls.length;
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  expect(screen.queryByRole('complementary', { name: 'Document list' })).not.toBeInTheDocument();
+  expect(screen.getByRole('region', { name: 'Document editor' })).toBe(editor);
+  expect(screen.getByLabelText(/Document content/)).toBe(content);
+  expect(content).toHaveValue('Body a-r2 한글 authored');
+  expect(localStorage.getItem('noye-document-draft:a')).toBe(retained);
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  expect(screen.getByRole('complementary', { name: 'Document list' })).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  expect(screen.getByLabelText(/Document content/)).toBe(content);
+  expect(localStorage.getItem('noye-document-draft:a')).toBe(retained);
+  expect(screen.getByRole('button', { name: 'Saving…' })).toBeDisabled();
+  expect(sourceDocs.readSourceDocument).toHaveBeenCalledTimes(loads);
+  expect(nav.query).toBe('d=a');
+  expect(sourceDocs.editSourceDocument).toHaveBeenCalledWith('a', 'r2', { title: 'Document a', content: 'Body a-r2 한글 authored' });
+  await userEvent.type(content, ' later');
+  const saved = makeSourceDoc('a', 'r3');
+  saved.content = saved.revision.content = 'Body a-r2 한글 authored';
+  saved.revisions.unshift({ id: 'r3', origin: 'user', title: saved.title, created_at: '2026-10-08' });
+  await act(async () => pending.resolve(saved));
+  await waitFor(() => expect(screen.getByLabelText(/Document content/)).toHaveValue('Body a-r2 한글 authored later'));
+  expect(JSON.parse(localStorage.getItem('noye-document-draft:a')!).expectedRevision).toBe('r3');
+  expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+});
+it('focus reading keeps the selected historical document revision read only', async () => {
+  vi.mocked(sourceDocs.readSourceDocument).mockImplementation(async (_id, revision) => makeSourceDoc('a', revision ?? 'r2'));
+  render(<DocumentsPage />);
+  await screen.findByLabelText(/Document content/);
+  await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Revision' }), 'r1');
+  await waitFor(() => expect(screen.getByLabelText(/Document content/)).toHaveValue('Body a-r1'));
+  const content = screen.getByLabelText(/Document content/);
+  const loads = vi.mocked(sourceDocs.readSourceDocument).mock.calls.length;
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Focus reading' }));
+  expect(screen.getByLabelText(/Document content/)).toBe(content);
+  expect(content).toHaveAttribute('readonly');
+  expect(screen.getByRole('combobox', { name: 'Revision' })).toHaveValue('r1');
+  expect(sourceDocs.readSourceDocument).toHaveBeenCalledTimes(loads);
+  expect(sourceDocs.editSourceDocument).not.toHaveBeenCalled();
+});
+it('uses one optional details row while preserving the source draft and visible partial status', async () => {
+  const document = makeSourceDoc('a');
+  document.source_instruction = 'Write retained notes';
+  document.revision.metadata.coverage.partial = true;
+  document.revision.metadata.coverage.presentation_limits = [{ code: 'language_limit', reason: 'Translation remains unresolved.' }];
+  vi.mocked(sourceDocs.readSourceDocument).mockResolvedValue(document);
+  const { container } = render(<DocumentsPage />);
+  const content = await screen.findByLabelText(/Document content/);
+  await userEvent.type(content, ' 한국어 retained');
+  const editor = screen.getByRole('region', { name: 'Document editor' });
+  const retained = localStorage.getItem('noye-document-draft:a');
+  const summary = screen.getByText('Details · 0 evidence passages · review limits');
+  const disclosure = summary.closest('details')!;
+  expect(container.querySelectorAll('.noye-work-pane > .noye-work-details')).toHaveLength(1);
+  expect(disclosure).not.toHaveAttribute('open');
+  expect(screen.getAllByText('Partial document')[0].closest('details')).toBeNull();
+  await userEvent.click(summary);
+  await userEvent.click(screen.getByText(/Originals, coverage and saved evidence/));
+  expect(screen.getByText('Translation remains unresolved.')).toBeInTheDocument();
+  await userEvent.click(summary);
+  expect(disclosure).not.toHaveAttribute('open');
+  expect(screen.getByRole('region', { name: 'Document editor' })).toBe(editor);
+  expect(screen.getByLabelText(/Document content/)).toBe(content);
+  expect(content).toHaveValue('Body a-r2 한국어 retained');
+  expect(localStorage.getItem('noye-document-draft:a')).toBe(retained);
+  expect(sourceDocs.readSourceDocument).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole('combobox', { name: 'Revision' })).toHaveValue('r2');
+});
 it('Documents restores dirty draft after switching documents and returning', async () => {
   const view = render(<DocumentsPage />);
   await userEvent.type(await screen.findByLabelText(/Document content/), ' unsaved authored work');

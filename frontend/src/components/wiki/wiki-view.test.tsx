@@ -5,6 +5,10 @@ import { WikiView } from "@/components/wiki/wiki-view";
 import * as api from "@/lib/wiki";
 
 const query = vi.hoisted(() => ({ value: "", listeners: new Set<() => void>(), push: vi.fn() }));
+vi.mock("@/components/app-shell", async () => {
+  const { useState } = await import("react");
+  return { useWorkspaceLayout: () => { const [readingFocus, setReadingFocus] = useState(false); return { readingFocus, setReadingFocus }; } };
+});
 vi.mock("next/navigation", async () => {
   const { useSyncExternalStore } = await import("react");
   return {
@@ -14,7 +18,7 @@ vi.mock("next/navigation", async () => {
     useRouter: () => ({ push: query.push }),
   };
 });
-vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), listWiki: vi.fn(), listWikiSources: vi.fn(), listWikiJobs: vi.fn(), readWiki: vi.fn(), readWikiRevision: vi.fn(), adoptWiki: vi.fn(), generateWiki: vi.fn(), wikiJobAction: vi.fn() }));
+vi.mock("@/lib/wiki", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/wiki")>(), listWiki: vi.fn(), listWikiSources: vi.fn(), listWikiJobs: vi.fn(), readWiki: vi.fn(), readWikiRevision: vi.fn(), editWiki: vi.fn(), adoptWiki: vi.fn(), generateWiki: vi.fn(), wikiJobAction: vi.fn() }));
 const sources: api.WikiSource[] = ["one", "two"].map(id => ({ source_id: id, root_id: "root", relative_path: id + ".txt", name: id, version: "hash", availability: "available", processing_state: "READY", error: null }));
 const currentRevision: api.WikiRevision = { id: "current", wiki_id: "wiki", parent_id: null, origin: "generated", title: "Notes", content: "Current saved content", created_at: "2026-10-07", evidence: [], metadata: {} };
 const currentPage: api.WikiPage = { id: "wiki", title: "Notes", kind: "source", current_revision: "current", publication_error: null, updated_at: "2026-10-07", proposal_count: 0, revision: currentRevision, revisions: [], relations: [] };
@@ -30,6 +34,88 @@ beforeEach(() => {
   vi.mocked(api.listWiki).mockResolvedValue([]);
   vi.mocked(api.listWikiSources).mockResolvedValue(sources);
   vi.mocked(api.listWikiJobs).mockResolvedValue([]);
+});
+
+it("repeated focus changes keep a pending Wiki save, draft owner, scope and base", async () => {
+  const pending = deferred<api.WikiPage>();
+  const scope: api.WikiScope = { mode: "chosen", source_ids: ["one"], root_ids: [] };
+  query.value = `w=wiki&scope=${encodeURIComponent(JSON.stringify(scope))}`;
+  vi.mocked(api.listWiki).mockResolvedValue([currentPage]);
+  vi.mocked(api.readWiki).mockResolvedValue(currentPage);
+  vi.mocked(api.editWiki).mockReturnValue(pending.promise);
+  render(<WikiView />);
+  await userEvent.click(await screen.findByRole("button", { name: "Edit Markdown" }));
+  const content = screen.getByLabelText("Markdown");
+  await userEvent.type(content, " 한글 authored");
+  await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  const retained = localStorage.getItem("noye:wiki-draft:wiki");
+  const editor = screen.getByRole("region", { name: "Wiki content" });
+  const location = query.value;
+  const loads = vi.mocked(api.readWiki).mock.calls.length;
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  expect(screen.queryByRole("complementary", { name: "Wiki pages" })).not.toBeInTheDocument();
+  expect(screen.getByRole("region", { name: "Wiki content" })).toBe(editor);
+  expect(screen.getByLabelText("Markdown")).toBe(content);
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBe(retained);
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  expect(screen.getByRole("complementary", { name: "Wiki pages" })).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  expect(screen.getByLabelText("Markdown")).toBe(content);
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBe(retained);
+  expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  expect(api.readWiki).toHaveBeenCalledTimes(loads);
+  expect(query.value).toBe(location);
+  expect(api.editWiki).toHaveBeenCalledWith("wiki", "current", "Notes", "Current saved content 한글 authored", scope);
+  await act(async () => pending.resolve({ ...currentPage, revision: { ...currentRevision, id: "saved", content: "Current saved content 한글 authored" } }));
+  expect(screen.getByLabelText("Markdown")).toHaveValue("Current saved content 한글 authored");
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBeNull();
+});
+
+it("focus reading leaves the Wiki historical URL and revision unchanged", async () => {
+  query.value = "w=wiki&revision=old";
+  vi.mocked(api.readWiki).mockResolvedValue(currentPage);
+  vi.mocked(api.readWikiRevision).mockResolvedValue({ ...currentRevision, id: "old", content: "Historical Korean 한국어 English" });
+  render(<WikiView />);
+  const content = (await screen.findByText("Historical Korean 한국어 English")).closest("section");
+  const loads = vi.mocked(api.readWikiRevision).mock.calls.length;
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  await userEvent.click(screen.getByRole("button", { name: "Focus reading" }));
+  expect(screen.getByText("Historical Korean 한국어 English").closest("section")).toBe(content);
+  expect(query.value).toBe("w=wiki&revision=old");
+  expect(api.readWikiRevision).toHaveBeenCalledTimes(loads);
+  expect(api.editWiki).not.toHaveBeenCalled();
+  expect(screen.getByRole("button", { name: "Return to current" })).toBeInTheDocument();
+});
+
+it("uses one optional details row without remounting a draft or hiding publication failure", async () => {
+  query.value = "w=wiki";
+  const saved = { ...currentPage, publication_error: "Generated update failed; your current revision remains.", revisions: [currentRevision] };
+  vi.mocked(api.readWiki).mockResolvedValue(saved);
+  const { container } = render(<WikiView />);
+  await userEvent.click(await screen.findByRole("button", { name: "Edit Markdown" }));
+  const content = screen.getByLabelText("Markdown");
+  await userEvent.type(content, " 한국어 retained");
+  const editor = screen.getByRole("region", { name: "Wiki content" });
+  const retained = localStorage.getItem("noye:wiki-draft:wiki");
+  const summary = screen.getByText("Details · 0 original passages · 1 revision");
+  const disclosure = summary.closest("details")!;
+  expect(container.querySelectorAll(".noye-work-pane > .noye-work-details")).toHaveLength(1);
+  expect(disclosure).not.toHaveAttribute("open");
+  expect(screen.getByText(saved.publication_error).closest("details")).toBeNull();
+  await userEvent.click(summary);
+  await userEvent.click(screen.getByText("Revision history · 1"));
+  expect(screen.getByRole("button", { name: /generated.*Notes/ })).toBeInTheDocument();
+  await userEvent.click(summary);
+  expect(disclosure).not.toHaveAttribute("open");
+  expect(screen.getByRole("region", { name: "Wiki content" })).toBe(editor);
+  expect(screen.getByLabelText("Markdown")).toBe(content);
+  expect(content).toHaveValue("Current saved content 한국어 retained");
+  expect(localStorage.getItem("noye:wiki-draft:wiki")).toBe(retained);
+  expect(api.readWiki).toHaveBeenCalledTimes(1);
+  expect(query.value).toBe("w=wiki");
 });
 
 it("rechecks the selected historical revision after the material scope changes", async () => {
