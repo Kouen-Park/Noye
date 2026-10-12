@@ -11,7 +11,7 @@ it("restores an unsaved draft after leaving and reopening the document", async (
   first.unmount();
   render(<DocumentEditor {...props} />);
   await waitFor(() => expect(screen.getByLabelText(/document content/i)).toHaveValue("# Saved\n한국어 edit"));
-  expect(screen.getByRole("status")).toHaveTextContent("Restored your local unsaved draft");
+  expect(screen.getByText(/Restored your local unsaved draft/)).toHaveAttribute("role", "status");
 });
 it("keeps a historical selected revision read only and exports its body", async () => {
   const onSave = vi.fn();
@@ -24,6 +24,7 @@ it("keeps a historical selected revision read only and exports its body", async 
   await userEvent.click(screen.getByRole("tab", { name: "Preview" }));
   expect(screen.getByRole("heading", { name: "Historical 한국어" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Export .md" })).toHaveAttribute("href", expect.stringContaining("revision=rev-old"));
+  await userEvent.click(screen.getByText("Export options"));
   await userEvent.click(screen.getByRole("checkbox", { name: "Include provenance" }));
   const exportUrl = new URL(screen.getByRole("link", { name: "Export .md" }).getAttribute("href")!);
   expect(exportUrl.searchParams.getAll("provenance")).toEqual(["true"]);

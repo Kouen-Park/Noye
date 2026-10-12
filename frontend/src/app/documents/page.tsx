@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
-import { AppShell } from "@/components/app-shell";
-import { SourceDocumentDetails } from "@/components/documents/source-document-details";
+import { AppShell, useWorkspaceLayout } from "@/components/app-shell";
+import { SourceDocumentDetails, SourceDocumentRevision } from "@/components/documents/source-document-details";
 import { editSourceDocument, isSourceDocument, readSourceDocument, sourceDocumentExportUrl, type SourceDocument } from "@/lib/source-documents";
 import { DocumentEditor, type DocumentPatch } from "@/components/documents/document-editor";
 import { acknowledgeDocumentDraft } from "@/lib/document-draft";
@@ -32,16 +32,8 @@ import {
  */
 export default function DocumentsPage() {
   return (
-    <AppShell current="Documents">
-      <div>
-        <h1 className="text-[27px]">Documents</h1>
-        <p className="mt-1 max-w-[60ch] text-ink-soft">
-          Turn an answer into something you can keep. Everything here is yours to
-          edit — nothing regenerates behind your back.
-        </p>
-      </div>
-
-      <Suspense fallback={<p className="mt-7 text-ink-soft">Opening documents…</p>}>
+    <AppShell current="Documents" title="Documents" description="Your writing, saved with its original evidence." workspace>
+      <Suspense fallback={<p role="status" className="p-4 text-ink-soft">Opening documents…</p>}>
         <DocumentsView />
       </Suspense>
     </AppShell>
@@ -58,6 +50,7 @@ function DocumentsView() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
+  const { readingFocus, setReadingFocus } = useWorkspaceLayout();
   /** Which document the loaded body belongs to, so a stale load is ignored. */
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
   const activeDocument = useRef<string | null>(null);
@@ -94,6 +87,7 @@ function DocumentsView() {
   }, [documentId, fail]);
   const shown = documentId && loadedFor === documentId && open?.id === documentId ? open : null;
   const sourceDocument = shown && isSourceDocument(shown) ? shown : null;
+  const evidenceCount = sourceDocument?.revision.metadata.citations.length ?? shown?.citations.length ?? 0;
   const chooseRevision = (id?: string) => {
     if (!documentId) return;
     const request = ++revisionRequest.current;
@@ -159,8 +153,20 @@ function DocumentsView() {
   );
 
   return (
-    <div className="mt-6 flex flex-col gap-6 lg:flex-row-reverse">
-      <div className="lg:w-[240px] lg:shrink-0">
+    <div className="noye-workspace">
+      <div className="noye-toolbar border-b border-edge">
+        <p className="min-w-0 flex-1 truncate text-sm text-ink-soft">{shown?.title ?? "Choose a document"}</p>
+        {sourceDocument && <>
+          {sourceDocument.revision.metadata.coverage.partial && <span className="noye-meta text-fail">Partial document</span>}
+          <SourceDocumentRevision document={sourceDocument} onRevision={chooseRevision} />
+        </>}
+        <button type="button" aria-pressed={readingFocus} aria-controls="document-list"
+          onClick={() => setReadingFocus(!readingFocus)} className="noye-button">
+          Focus reading
+        </button>
+      </div>
+      <div className="noye-split">
+      <aside id="document-list" aria-label="Document list" hidden={readingFocus} className="noye-secondary-list">
         <DocumentList
           documents={documents}
           currentId={documentId}
@@ -168,9 +174,9 @@ function DocumentsView() {
           onDelete={remove}
           onNew={startNew}
         />
-      </div>
+      </aside>
 
-      <div className="min-w-0 flex-1">
+      <div className="noye-work-pane">
         {error !== null && (
           <div className="mb-3 rounded-lg border border-fail bg-fail-wash px-4 py-3">
             <p className="font-semibold text-fail">{error}</p>
@@ -194,14 +200,6 @@ function DocumentsView() {
           </div>
         ) : (
           <>
-            {shown.source_instruction !== null && (
-              <p className="mb-3 text-[12.5px] text-ink-soft">
-                Drafted from your instruction:{" "}
-                <span className="italic">“{shown.source_instruction}”</span>
-              </p>
-            )}
-
-            {sourceDocument && <SourceDocumentDetails document={sourceDocument} onRevision={chooseRevision} />}
             <DocumentEditor
               key={`${shown.id}:${sourceDocument?.revision.id ?? "legacy"}`}
               title={shown.title}
@@ -219,20 +217,27 @@ function DocumentsView() {
               readOnly={!!sourceDocument && sourceDocument.revision.id !== sourceDocument.revisions[0]?.id}
               exportUrl={sourceDocument ? sourceDocumentExportUrl(shown.id, sourceDocument.revision.id) : undefined}
             />
-
+            {(sourceDocument || shown.source_instruction !== null || shown.citations.length > 0) && <details aria-label="Document details" className="noye-work-details">
+            <summary>Details · {evidenceCount} evidence {evidenceCount === 1 ? "passage" : "passages"}{(sourceDocument?.revision.metadata.coverage.synthesis_limits?.length || sourceDocument?.revision.metadata.coverage.presentation_limits?.length) ? " · review limits" : ""}</summary>
+            {sourceDocument && <SourceDocumentDetails document={sourceDocument} onRevision={chooseRevision} showRevision={false} />}
+            {shown.source_instruction !== null && (
+              <details className="noye-details"><summary>Draft instruction</summary><p className="mt-2 text-sm text-ink-soft">{shown.source_instruction}</p></details>
+            )}
             {shown.citations.length > 0 && (
-              <div className="mt-4 border-t border-edge pt-3">
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
+              <details className="noye-details">
+                <summary>
                   Evidence saved with the first draft
-                </h2>
+                </summary>
                 <PassageList citations={shown.citations} />
-                <p className="mt-1.5 text-[11.5px] text-ink-faint">
+                <p className="mt-1.5 noye-meta">
                   These describe the draft, not what you have written since.
                 </p>
-              </div>
+              </details>
             )}
+            </details>}
           </>
         )}
+      </div>
       </div>
     </div>
   );

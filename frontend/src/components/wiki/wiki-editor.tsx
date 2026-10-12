@@ -97,13 +97,17 @@ export function WikiEditor({ page, scope, onSaved }: {
       else window.localStorage.removeItem(draftKey);
     } catch { setError("Could not preserve this draft across navigation. Save changes before leaving."); }
   }
-  return <section aria-label="Wiki content" className="min-w-0 rounded-lg border border-edge bg-card p-5">
-    <div className="mb-4 flex flex-wrap items-center gap-3">
-      <button type="button" onClick={() => setWriting(!writing)} className="min-h-11 rounded border border-edge-strong px-3">{writing ? "Preview" : "Edit Markdown"}</button>
-      <button type="button" disabled={!dirty || saving} onClick={save} className="min-h-11 rounded bg-brand px-3 text-on-brand disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
-      <button type="button" disabled={saving} onClick={analysis} className="min-h-11 rounded border border-edge-strong px-3">Save as analysis</button>
-      {dirty && <span role="status" className="text-sm text-ink-soft">Unsaved edits · local draft retained; save to include in backups</span>}
+  return <section aria-label="Wiki content" className="noye-editor">
+    <div className="noye-toolbar">
+      {writing ? <label className="min-w-0 flex-1 text-xs text-ink-soft">Title<input disabled={saving} value={draft.title} onChange={e => change({ ...draft, title: e.target.value })} className="mt-1 block min-h-10 w-full rounded border border-edge-strong bg-card px-3 text-base text-ink" /></label> : <h2 className="min-w-0 flex-1 break-words font-display text-xl">{draft.title}</h2>}
     </div>
+    <div className="noye-toolbar border-b border-edge">
+      <button type="button" onClick={() => setWriting(!writing)} className="noye-button">{writing ? "Preview" : "Edit Markdown"}</button>
+      <button type="button" disabled={!dirty || saving} onClick={save} className="noye-button bg-brand text-ink-inverse disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
+      <button type="button" disabled={saving} onClick={analysis} className="noye-button">Save as analysis</button>
+      <span role="status" className="noye-meta">{dirty ? "Unsaved edits · local draft retained; save to include in backups" : "All changes saved"}</span>
+    </div>
+    <div className="noye-editor-body">
     {savedAnalysis && <p role="status" className="mb-3 text-sm text-ink-soft">Analysis saved. <Link
       href={wikiHref(savedAnalysis.id, savedAnalysis.scope)} className="text-accent-ink underline">Open saved analysis · {savedAnalysis.title}</Link></p>}
     {error && <p role="alert" className="mb-3 text-fail">{error} Your draft is still here.</p>}
@@ -120,10 +124,10 @@ export function WikiEditor({ page, scope, onSaved }: {
         <button type="button" disabled={saving} onClick={() => resolveConflict(false)} className="min-h-11 rounded border border-edge-strong px-3">Discard my draft and use latest</button>
       </div>
     </section>}
-    {writing ? <div className="space-y-3">
-      <label className="block text-sm">Title<input disabled={saving} value={draft.title} onChange={e => change({ ...draft, title: e.target.value })} className="mt-1 block min-h-11 w-full rounded border border-edge-strong bg-canvas px-3" /></label>
-      <label className="block text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="mt-1 block min-h-[55vh] w-full rounded border border-edge-strong bg-canvas p-3 font-mono text-sm" /></label>
+    {writing ? <div className="flex h-full min-h-0 flex-col">
+      <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="noye-editor-input w-full rounded border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed" /></label>
     </div> : <MarkdownContent content={wikiPreviewContent(draft.content, revision.metadata.contributors, scope)} allowImages={false}
       rewriteLink={href => wikiLinkHref(href, scope, revision.metadata.contributors)} />}
+    </div>
   </section>;
 }

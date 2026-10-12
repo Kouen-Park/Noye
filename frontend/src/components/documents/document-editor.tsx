@@ -149,7 +149,63 @@ export function DocumentEditor({
   };
 
   return (
-    <div>
+    <section aria-label="Document editor" className="noye-editor">
+      <div className="noye-toolbar items-end">
+        <div className="min-w-0 flex-1">
+          <label htmlFor={titleId} className="block text-[12px] font-semibold text-ink-soft">
+            Title
+          </label>
+          <input
+            id={titleId}
+            readOnly={readOnly}
+            value={draftTitle}
+            onChange={(event) => setDraftTitle(event.target.value)}
+            className="mt-1 min-h-10 w-full rounded-md border border-edge-strong bg-card px-2.5 text-base"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={save}
+          disabled={!draftReady || !dirty || saving || readOnly || reviewRequired || comparing}
+          className="noye-button bg-brand font-semibold text-ink-inverse disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {saving ? "Saving…" : dirty ? "Save" : "Saved"}
+        </button>
+      </div>
+
+      <div className="noye-toolbar border-b border-edge">
+      <div
+        role="tablist"
+        aria-label="Editor view"
+        className="flex gap-1"
+      >
+        {(["write", "preview"] as const).map((value) => (
+          <button
+            key={value}
+            role="tab"
+            type="button"
+            aria-selected={tab === value}
+            onClick={() => {
+              setTab(value);
+              onViewChange?.(value);
+            }}
+            className={`noye-button border-transparent ${
+              tab === value
+                ? "border-b-2 border-brand font-semibold text-ink"
+                : "text-ink-soft hover:text-ink"
+            }`}
+          >
+            {value === "write" ? "Write" : "Preview"}
+          </button>
+        ))}
+      </div>
+      <span role="status" className="noye-meta">{readOnly ? "Historical revision · read only" : dirty ? "Unsaved changes" : "All changes saved"}</span>
+      {documentId && <div className="ml-auto"><ExportControls exportUrl={exportUrl} documentId={documentId} previewVisible={tab === "preview"}
+        content={exportContent} title={draftTitle} includeProvenance={includeProvenance}
+        onProvenanceChange={setIncludeProvenance} /></div>}
+      </div>
+
+      <div className="noye-editor-body">
       {restored && dirty && <p role="status" className="mb-3 text-xs text-ink-soft">Restored your local unsaved draft. Save to include it in workspace backups.</p>}
       {reviewRequired && <p role="alert" className="mb-3 text-sm text-fail">This draft has an older or unknown base revision. Compare it with the latest saved revision before saving.</p>}
       {comparisonError && <p role="alert" className="mb-3 text-sm text-fail">{comparisonError} Your draft is still here.</p>}
@@ -165,63 +221,8 @@ export function DocumentEditor({
           <button type="button" onClick={() => resolveComparison(false)} className="min-h-11 rounded border border-edge-strong px-3">Use latest saved content</button>
         </div>
       </section>}
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="min-w-0 flex-1">
-          <label htmlFor={titleId} className="block text-[12px] font-semibold text-ink-soft">
-            Title
-          </label>
-          <input
-            id={titleId}
-            readOnly={readOnly}
-            value={draftTitle}
-            onChange={(event) => setDraftTitle(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-md border border-edge-strong bg-card px-2.5 text-[14.5px]"
-          />
-        </div>
-        <button
-          type="button"
-          onClick={save}
-          disabled={!draftReady || !dirty || saving || readOnly || reviewRequired || comparing}
-          className="min-h-11 rounded-md bg-brand px-4 text-[13.5px] font-semibold text-ink-inverse disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {saving ? "Saving…" : dirty ? "Save" : "Saved"}
-        </button>
-      </div>
-
-      <div
-        role="tablist"
-        aria-label="Editor view"
-        className="mt-4 flex gap-1 border-b border-edge"
-      >
-        {(["write", "preview"] as const).map((value) => (
-          <button
-            key={value}
-            role="tab"
-            type="button"
-            aria-selected={tab === value}
-            onClick={() => {
-              setTab(value);
-              onViewChange?.(value);
-            }}
-            className={`min-h-11 rounded-t-md px-3 text-[13px] md:min-h-0 md:py-2 ${
-              tab === value
-                ? "border-b-2 border-brand font-semibold text-ink"
-                : "text-ink-soft hover:text-ink"
-            }`}
-          >
-            {value === "write" ? "Write" : "Preview"}
-          </button>
-        ))}
-        {dirty && (
-          <span className="ml-auto self-center text-[12px] text-ink-faint">
-            Unsaved changes
-          </span>
-        )}
-      </div>
-
-      <div className="mt-3">
         {tab === "write" ? (
-          <>
+          <div className="flex h-full min-h-0 flex-col">
             <label htmlFor={bodyId} className="sr-only">
               Document content, in Markdown
             </label>
@@ -240,22 +241,16 @@ export function DocumentEditor({
               }}
               spellCheck
               placeholder="# Your document&#10;&#10;Markdown works here."
-              className="min-h-[420px] w-full resize-y rounded-md border border-edge-strong bg-card p-3 font-mono text-[13.5px] leading-relaxed placeholder:text-ink-faint"
+              className="noye-editor-input w-full rounded-md border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed placeholder:text-ink-soft"
             />
-            <p className="mt-1.5 text-[12px] text-ink-faint">
+            <p className="mt-1.5 noye-meta">
               Markdown. ⌘S saves.
             </p>
-          </>
+          </div>
         ) : (
           <DocumentPreview content={draftContent} provenance={includeProvenance ? provenance : ""} />
         )}
       </div>
-      {documentId && <div className="mt-5 border-t border-edge pt-3">
-        {readOnly && <p className="mb-2 text-xs text-ink-soft">Viewing a saved historical revision. Select the latest revision to edit.</p>}
-        <ExportControls exportUrl={exportUrl} documentId={documentId} previewVisible={tab === "preview"}
-          content={exportContent} title={draftTitle} includeProvenance={includeProvenance}
-          onProvenanceChange={setIncludeProvenance} />
-      </div>}
-    </div>
+    </section>
   );
 }

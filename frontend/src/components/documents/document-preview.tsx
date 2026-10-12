@@ -1,5 +1,6 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { OriginalLink, isOriginalHref } from "@/components/original-link";
 
 /**
  * The rendered document.
@@ -31,7 +32,7 @@ export function DocumentPreview({ content, provenance = "" }: { content: string;
   }
 
   return (
-    <div data-print="document" className="max-w-[72ch] text-[14.5px] leading-relaxed">
+    <div data-print="document" className="noye-prose max-w-[72ch]">
       <MarkdownContent content={content} />
       {provenance && <section data-print-provenance>
         <MarkdownContent content={provenance} />
@@ -45,7 +46,7 @@ export function MarkdownContent({ content, allowImages = true, rewriteLink }: {
   content: string; allowImages?: boolean; rewriteLink?: (href: string) => string | undefined;
 }) {
   return (
-    <div className="[overflow-wrap:anywhere]">
+    <div className="noye-prose [overflow-wrap:anywhere]">
       <Markdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -85,6 +86,7 @@ export function MarkdownContent({ content, allowImages = true, rewriteLink }: {
           a: ({ href, children, ...props }) => {
             const destination = href && rewriteLink ? rewriteLink(href) : href;
             if (!destination) return <span>{children}</span>;
+            if (isOriginalHref(destination)) return <OriginalLink href={destination} className="text-accent-ink underline">{children}</OriginalLink>;
             return <a className="text-accent-ink underline" target="_blank"
               rel="noopener noreferrer" {...props} href={destination}>{children}</a>;
           },

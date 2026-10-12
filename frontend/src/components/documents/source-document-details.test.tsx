@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 import { SourceDocumentDetails } from "./source-document-details";
 import { type SourceDocument } from "@/lib/source-documents";
@@ -30,4 +31,22 @@ it("reads older revisions without claiming the new presentation checks ran", () 
   render(<SourceDocumentDetails document={old} onRevision={vi.fn()} />);
   expect(screen.queryByText("Document structure and language limits")).not.toBeInTheDocument();
   expect(screen.getByText("Partial document")).toBeInTheDocument();
+});
+
+it("keeps original location, availability and saved passage behind a quiet disclosure", async () => {
+  const saved = structuredClone(document);
+  saved.revision.metadata.citations = [{
+    id: "evidence", source: { source_id: "source", root_id: null, name: "Original 한국어.pdf", source_hash: "hash", source_version: "version", relative_path: "Original 한국어.pdf" },
+    page_number: 7, passage_index: 2, start: 10, end: 30, text: "Saved passage context", current_status: "available", quote: "Exact saved quote", quote_start: 11, quote_end: 20,
+  }];
+  render(<SourceDocumentDetails document={saved} onRevision={vi.fn()} />);
+  const disclosure = screen.getByText(/Originals, coverage and saved evidence/);
+  expect(disclosure.closest("details")).not.toHaveAttribute("open");
+  await userEvent.click(disclosure);
+  expect(screen.getByText(/Original 한국어.pdf.*page 7.*available/)).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Open original" })).toHaveAttribute("href", expect.stringMatching(/\/files\/source\/source#page=7$/));
+  expect(screen.getByText("Exact saved quote")).toBeInTheDocument();
+  await userEvent.click(screen.getByText("Passage details"));
+  expect(screen.getByText("Saved passage context")).toBeInTheDocument();
+  expect(screen.getByText(/Version: version.*passage 2/)).toBeInTheDocument();
 });
