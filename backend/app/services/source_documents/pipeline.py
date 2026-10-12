@@ -511,6 +511,7 @@ def generate(context, *, settings=None, client=None):
         {
             "task": "outline",
             "intent": intent,
+            "output_language": intent["language"],
             "instruction": req["request"]["instruction"],
             "selected_source_count": len(plan["selected_ids"]),
             "rules": "Plan concise topical sections in the requested language. "
@@ -593,15 +594,22 @@ def generate(context, *, settings=None, client=None):
         entry["no_text_pages"] = json.loads(row[0]) if row and row[0] else []
         entry["passages_read"] = len(passages)
         entry["characters_read"] = sum(len(p.text) for p in passages)
+        # A refused/failed model stage still read these originals. Persist the
+        # observed coverage before inference; only verified batches count as processed.
+        store.save_request(db, req["id"], report=report)
 
         def payload(group):
             return {
                 "task": "process_original_sections",
                 "intent": intent,
+                "output_language": intent["language"],
                 "outline": outline.model_dump(),
                 "passages": [{"evidence_id": p.id, "text": p.text} for p in group],
-                "rules": "Extract only relevant supported claims, assign an outline section_id, "
-                "and attach exact verbatim quotes. Empty claims are allowed for irrelevant text. "
+                "rules": "Write claim.text in output_language, translating factual prose when "
+                "needed. Keep supports.quote verbatim in the ORIGINAL language; do not "
+                "translate quotes. Extract only relevant supported claims, assign an outline "
+                "section_id, and attach exact verbatim quotes. Empty claims are allowed for "
+                "irrelevant text. "
                 "This call contains one bounded batch from ONE source. Other selected sources "
                 "and remaining batches are read separately; do not claim they are absent or "
                 "lack evidence. Extract this source's facts, not cross-source conclusions. "
@@ -751,6 +759,7 @@ def generate(context, *, settings=None, client=None):
             return {
                 "task": "cross_source_synthesis",
                 "intent": intent,
+                "output_language": intent["language"],
                 "heading": heading_title,
                 "claims": group,
                 "rules": "Write concise editable paragraphs or comparison "

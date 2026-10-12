@@ -15,7 +15,8 @@ from app.tests.test_source_documents import enqueue, model, run, workspace
 )
 def test_wrong_output_language_fails_before_any_artifact(workspace, stage):
     db, *_ = workspace
-    discover(workspace)
+    original = "Reservoir stores 37 litres."
+    discover(workspace, content=original)
 
     def wrong_language(payload, result):
         if payload["task"] == stage:
@@ -27,6 +28,12 @@ def test_wrong_output_language_fails_before_any_artifact(workspace, stage):
     with pytest.raises(local.DocumentError, match="requested English"):
         run(db, enqueue(db), model(transform=wrong_language)[0])
     assert documents.count_documents(db) == 0
+    if stage == "process_original_sections":
+        entry = store.request(db, "request")["report"]["sources"][0]
+        assert entry["passages_read"] == 1
+        assert entry["characters_read"] == len(original)
+        assert entry["characters_processed"] == 0
+        assert entry["state"] == "pending"
 
 
 def test_explicit_language_directive_overrides_wrong_model_intent(workspace):
@@ -100,8 +107,15 @@ def test_korean_generated_prose_keeps_english_original_quotes(workspace):
             for claim in result["claims"]:
                 claim["text"] = "저수지는 37리터를 저장합니다."
 
-    artifact = run(
-        db, enqueue(db, instruction="한국어로 보고서를 작성해줘."), model(transform=korean)[0]
+    client, calls = model(transform=korean)
+    artifact = run(db, enqueue(db, instruction="한국어로 보고서를 작성해줘."), client)
+    prose_calls = [
+        payload
+        for payload in calls
+        if payload["task"] in {"outline", "process_original_sections", "cross_source_synthesis"}
+    ]
+    assert prose_calls and all(
+        payload.get("output_language") == "Korean" for payload in prose_calls
     )
     revision = store.current(db, artifact)
     assert "저수지는 37리터" in revision["content"]
