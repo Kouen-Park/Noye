@@ -246,6 +246,12 @@ def run(workspace, scenario, retry_job=None):
         "context_tokens": settings.generation_context_tokens,
         "output_tokens": settings.generation_output_tokens,
         "thinking": settings.ollama_thinking,
+        "prompt_version": service.PROMPT_VERSION
+        if scenario == "wiki"
+        else jobs.pipeline.local.PROMPT_VERSION,
+        "pipeline_sha256": hashlib.sha256(
+            Path((service.pipeline if scenario == "wiki" else jobs.pipeline).__file__).read_bytes()
+        ).hexdigest(),
         "original_hashes": {
             relative: hashlib.sha256((originals / relative).read_bytes()).hexdigest()
             for relative in corpus
