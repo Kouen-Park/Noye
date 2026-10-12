@@ -69,6 +69,25 @@ def test_korean_output_directive_handles_the_euro_particle():
     assert presentation.requested_language("영문으로 보고서 작성", "Korean") == "English"
 
 
+@pytest.mark.parametrize("label", ["Source", "Original", "Input"])
+@pytest.mark.parametrize("output,source", [("Korean", "English"), ("English", "Korean")])
+def test_source_language_field_does_not_override_requested_output(label, output, source):
+    assert (
+        presentation.requested_language(
+            f"Write the report in {output}. {label} language: {source}.", source
+        )
+        == output
+    )
+    assert presentation.requested_language(f"{label} language: {source}.", output) == output
+
+
+@pytest.mark.parametrize(
+    "instruction", ["Language: English", "Write notes. Output language: English"]
+)
+def test_explicit_output_language_field_remains_authoritative(instruction):
+    assert presentation.requested_language(instruction, "Korean") == "English"
+
+
 def test_korean_generated_prose_keeps_english_original_quotes(workspace):
     db, *_ = workspace
     source = discover(workspace, "Reservoir.txt", "Reservoir stores 37 litres.")
@@ -237,6 +256,8 @@ def test_unsupported_language_is_partial_instead_of_certified(workspace):
     [
         "## Unsupported architecture\nReservoir stores 37 litres.",
         "Unsupported architecture\n===\nReservoir stores 37 litres.",
+        "Unsupported architecture\r\n===\r\nReservoir stores 37 litres.",
+        "Unsupported architecture\r===\rReservoir stores 37 litres.",
     ],
 )
 def test_generated_prose_cannot_inject_an_unreviewed_heading(workspace, text):

@@ -41,6 +41,20 @@ def requested_language(instruction, inferred):
             re.IGNORECASE,
         )
     )
+    # "Source language: English" describes the input, even when its field comes
+    # after an explicit output directive. Bare/output language fields still apply.
+    directives = [
+        directive
+        for directive in directives
+        if not (
+            directive.group(3)
+            and re.search(
+                r"\b(?:sources?|originals?|input)[\s-]*$",
+                instruction[: directive.start()],
+                re.IGNORECASE,
+            )
+        )
+    ]
     return (
         language_name(next(g for g in directives[-1].groups() if g))
         if directives
@@ -70,6 +84,9 @@ def check_language(text, language):
 
 
 def check_shape(text, *, heading=False):
+    # Markdown recognizes LF, CRLF and lone CR as line endings. Normalize only
+    # the checked copy, so alternate line endings cannot hide a Setext heading.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     if (heading and ("\n" in text or "\r" in text or text.lstrip().startswith("#"))) or (
         not heading
         and re.search(r"(?m)^[ \t]{0,3}#{1,6}\s|^[^\n]+\n[ \t]{0,3}(?:=+|-+)[ \t]*$", text)
