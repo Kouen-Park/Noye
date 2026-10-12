@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { ConversationSummary } from "@/lib/api";
 import { PlusIcon } from "@/components/icons";
@@ -39,6 +39,8 @@ export function ConversationList({
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [actions, setActions] = useState<string | null>(null);
+  const actionId = useId();
 
   return (
     <fieldset disabled={disabled} aria-label="Conversations" className="min-w-0 disabled:opacity-60">
@@ -46,11 +48,11 @@ export function ConversationList({
           type="button"
           onClick={onNew}
           data-navigation
-          className="flex min-h-11 w-full items-center gap-2 rounded-md border border-edge-strong bg-canvas px-3 text-sm font-semibold text-brand hover:bg-brand-wash disabled:cursor-not-allowed"
+          className="flex min-h-11 w-full items-center gap-2 rounded-md border border-edge bg-card px-3 text-[13px] font-semibold text-brand hover:bg-brand-wash disabled:cursor-not-allowed"
         >
           <PlusIcon className="h-4 w-4" />New chat
         </button>
-        <p className="mt-5 px-2 text-[12px] font-semibold text-ink-soft">Recent conversations</p>
+        <p className="mt-4 px-2 text-[12px] font-medium text-ink-soft">Recent conversations</p>
 
       {loading ? <p role="status" className="mt-2 px-2 text-xs text-ink-soft">Loading conversations…</p> : conversations.length === 0 ? (
         <p className="mt-2 text-[12.5px] text-ink-soft">Nothing asked yet.</p>
@@ -126,7 +128,13 @@ export function ConversationList({
             }
 
             return (
-              <li key={conversation.id} className="group flex items-stretch gap-1">
+              <li key={conversation.id} onKeyDown={event => {
+                if (event.key === "Escape" && actions === conversation.id) {
+                  setActions(null);
+                  event.currentTarget.querySelector<HTMLButtonElement>("[data-actions]")?.focus();
+                }
+              }}>
+                <div className="flex items-stretch gap-1">
                 <button
                   type="button"
                   onClick={() => onOpen(conversation.id)}
@@ -146,30 +154,38 @@ export function ConversationList({
                   <span className="block truncate" title={conversation.title}>
                     {conversation.title}
                   </span>
-                  <span className="font-mono text-[10.5px] tabular-nums text-ink-soft">
+                  <span className="text-[12px] tabular-nums text-ink-soft">
                     {conversation.message_count}{" "}
                     {conversation.message_count === 1 ? "message" : "messages"}
                   </span>
                 </button>
+                <button type="button" data-actions aria-label={`Actions for ${conversation.title}`}
+                  aria-expanded={actions === conversation.id} aria-controls={actions === conversation.id ? `${actionId}-${conversation.id}` : undefined}
+                  onClick={() => setActions(actions === conversation.id ? null : conversation.id)}
+                  className="min-h-11 w-9 shrink-0 rounded-md text-[20px] text-ink-soft hover:bg-card hover:text-ink"><span aria-hidden="true">⋯</span></button>
+                </div>
+                {actions === conversation.id && <div id={`${actionId}-${conversation.id}`} className="mb-2 flex gap-2 px-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     setDraft(conversation.title);
+                    setActions(null);
                     setEditing(conversation.id);
                   }}
                   aria-label={`Rename ${conversation.title}`}
-                  className="min-h-11 min-w-11 rounded-md px-1.5 text-[11px] text-ink-soft hover:bg-canvas hover:text-ink"
+                  className="min-h-11 rounded-md px-2 text-[12px] text-ink-soft hover:bg-card hover:text-ink"
                 >
-                  Edit
+                  Rename
                 </button>
                 <button
                   type="button"
-                  onClick={() => setConfirming(conversation.id)}
+                  onClick={() => { setActions(null); setConfirming(conversation.id); }}
                   aria-label={`Delete ${conversation.title}`}
-                  className="min-h-11 min-w-11 rounded-md px-1.5 text-[11px] text-ink-soft hover:bg-canvas hover:text-fail"
+                  className="min-h-11 rounded-md px-2 text-[12px] text-ink-soft hover:bg-card hover:text-fail"
                 >
-                  ✕
+                  Delete
                 </button>
+                </div>}
               </li>
             );
           })}

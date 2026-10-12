@@ -44,7 +44,7 @@ export function Composer({ onAsk, pending, documentMode = false, disabled = fals
         event.preventDefault();
         send();
       }}
-      className="rounded-2xl border border-edge-strong bg-card p-3 shadow-sm"
+      className="rounded-lg border border-edge-strong bg-card p-3"
     >
       <label htmlFor={inputId} className="sr-only">
         Ask about your documents
@@ -71,12 +71,12 @@ export function Composer({ onAsk, pending, documentMode = false, disabled = fals
         <button
           type="submit"
           disabled={blocked || value.trim() === ""}
-          className="min-h-11 shrink-0 rounded-full bg-brand px-4 text-[13px] font-semibold text-ink-inverse hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 shrink-0 rounded-md bg-brand px-4 text-[13px] font-semibold text-ink-inverse hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
           {pending ? "Thinking…" : "Ask"}
         </button>
       </div>
-      <p id={`${inputId}-help`} className="mt-2 px-2 text-[11px] leading-relaxed text-ink-soft">
+      <p id={`${inputId}-help`} className="mt-2 px-2 text-[12px] leading-relaxed text-ink-soft">
         {documentMode ? "Enter to create · Shift+Enter for a new line. Document jobs use local Ollama." : "Enter to ask · Shift+Enter for a new line. Uses your selected AI; local models can take a while."}
       </p>
     </form>

@@ -25,8 +25,7 @@ describe("SavedEvidence", () => {
 
   it("keeps historical excerpts separate from the current-source link in the shared panel", () => {
     render(<PassageList citations={[citation]} />);
-    expect(screen.getByText(citation.evidence!.excerpts[0].content)
-      .closest(".col-span-2")).not.toBeNull();
+    expect(screen.getByText(citation.evidence!.excerpts[0].content).closest("a")).toBeNull();
     expect(screen.getByRole("link", { name: "Open One.md" })).toHaveTextContent("Open current");
     expect(readSourceStatus).not.toHaveBeenCalled();
   });

@@ -125,7 +125,7 @@ describe("chat workspace", () => {
     send();
     expect(api.askQuestion).toHaveBeenCalledWith("My question", undefined, "gemini", null);
     expect(screen.getByText("Waiting for Gemini…")).toBeInTheDocument();
-    for (const name of ["New chat", "Open Chat c1", "Rename Chat c1", "Delete Chat c1"]) {
+    for (const name of ["New chat", "Open Chat c1", "Actions for Chat c1"]) {
       expect(screen.getByRole("button", { name })).toBeDisabled();
     }
     expect(screen.getByRole("combobox")).toBeDisabled();
@@ -168,6 +168,7 @@ describe("chat workspace", () => {
     vi.mocked(api.deleteConversation).mockReturnValue(removed.promise);
     const view = renderChat();
     await screen.findByText("Saved answer");
+    await userEvent.click(screen.getByRole("button", { name: "Actions for Chat c1" }));
     await userEvent.click(screen.getByRole("button", { name: "Delete Chat c1" }));
     await userEvent.click(screen.getByRole("button", { name: "Delete" }));
     navigation.query = "c=c2";
@@ -194,14 +195,15 @@ describe("chat workspace", () => {
   });
 
   it("exposes the mobile menu's expanded state", async () => {
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
     renderChat();
     await screen.findByRole("option", { name: /local-model/ });
-    const menu = screen.getByRole("button", { name: "Menu & chats" });
+    const menu = screen.getByRole("button", { name: "Open navigation" });
     expect(menu).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(menu);
-    expect(screen.getByRole("button", { name: "Close menu" })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", { name: "Close navigation" })).toHaveAttribute("aria-expanded", "true");
     await userEvent.click(screen.getByRole("button", { name: "Open Chat c1" }));
-    expect(screen.getByRole("button", { name: "Menu & chats" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "Open navigation" })).toHaveAttribute("aria-expanded", "false");
     expect(navigation.push).toHaveBeenCalledWith("/chat?c=c1");
   });
 
@@ -235,7 +237,7 @@ describe("chat workspace", () => {
 
   it("does not animate conversation scrolling when reduced motion is requested", async () => {
     const scroll = vi.fn();
-    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
     const original = HTMLElement.prototype.scrollTo;
     HTMLElement.prototype.scrollTo = scroll;
     try {
@@ -306,6 +308,39 @@ describe("chat workspace", () => {
     fireEvent.click(screen.getByText("Document options · Local Ollama"));
     expect(screen.getByRole("checkbox", { name: "Create an editable document" })).toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Use every source in the selected scope" })).toBeChecked();
+  });
+
+  it("keeps the draft and selected mode when toolbar disclosures close", async () => {
+    renderChat();
+    await screen.findByRole("option", { name: /local-model/ });
+    const input = screen.getByLabelText("Ask about your documents");
+    fireEvent.change(input, { target: { value: "Retained while arranging the workspace" } });
+    fireEvent.keyDown(screen.getByRole("combobox"), { key: "Escape" });
+    fireEvent.click(screen.getByText("Chat options"));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Create an editable document" }));
+    fireEvent.keyDown(screen.getByRole("checkbox", { name: "Create an editable document" }), { key: "Escape" });
+    expect(input).toHaveValue("Retained while arranging the workspace");
+    expect(screen.getByText("Document options · Local Ollama")).toBeInTheDocument();
+    expect(api.askQuestion).not.toHaveBeenCalled();
+    expect(sourceDocs.generateSourceDocument).not.toHaveBeenCalled();
+  });
+
+  it("preserves a pending request and follow-up draft while navigation collapses", async () => {
+    const asked = deferred<api.AskResponse>();
+    vi.mocked(api.askQuestion).mockReturnValue(asked.promise);
+    renderChat();
+    await screen.findByRole("option", { name: /local-model/ });
+    send();
+    const input = screen.getByLabelText("Ask about your documents");
+    fireEvent.change(input, { target: { value: "Follow-up during layout changes" } });
+    await userEvent.click(screen.getByRole("button", { name: "Collapse navigation" }));
+    expect(input).toHaveValue("Follow-up during layout changes");
+    expect(screen.getByText("Waiting for Ollama…")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Expand navigation" }));
+    expect(input).toHaveValue("Follow-up during layout changes");
+    expect(api.askQuestion).toHaveBeenCalledTimes(1);
+    await act(async () => asked.resolve(response()));
+    expect(navigation.replace).toHaveBeenCalledWith("/chat?c=saved");
   });
 
   it("keeps cached completions in order when a reopened conversation has newer turns", async () => {
