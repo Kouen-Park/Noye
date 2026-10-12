@@ -29,3 +29,21 @@ it("allows an explicit repeat search to refresh the same query", async () => {
   await screen.findByText("alpha passage");
   expect(searchKnowledge).toHaveBeenCalledTimes(2);
 });
+
+it.each([
+  [0, "Nothing is searchable yet", "Nothing matched that"],
+  [2, "Nothing matched that", "Nothing is searchable yet"],
+] as const)("distinguishes zero eligible files from no matches after searching %i files", async (count, expected, absent) => {
+  vi.mocked(searchKnowledge).mockResolvedValue({ query: "alpha", searched_files: count, results: [] });
+  render(<SearchPage />);
+  await screen.findByText(expected);
+  expect(screen.queryByText(absent)).not.toBeInTheDocument();
+});
+
+it("shows an unavailable search as an error rather than claiming zero searchable files", async () => {
+  vi.mocked(searchKnowledge).mockRejectedValue(new Error("Unavailable index"));
+  render(<SearchPage />);
+  await screen.findByText("Something went wrong searching.");
+  expect(screen.queryByText("Nothing is searchable yet")).not.toBeInTheDocument();
+  expect(screen.queryByText("Nothing matched that")).not.toBeInTheDocument();
+});
