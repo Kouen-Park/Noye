@@ -11,7 +11,7 @@ use tauri_plugin_shell::{
 #[derive(Clone, Serialize)]
 pub struct BackendStatus {
     state: &'static str,
-    url: Option<String>,
+    pub(crate) url: Option<String>,
     error: Option<String>,
 }
 
