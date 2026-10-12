@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
 
 import { CheckIcon, CrossIcon } from "@/components/icons";
 import type { IntegrityPhase } from "@/hooks/use-library";
@@ -29,6 +30,12 @@ const COPY: Record<Exclude<IndexProblem, "POINTS_MISSING">, string> = {
     "The saved original changed after it was indexed. Re-index it to use the current contents.",
   MODEL_CHANGED:
     "Its passages were created by an older embedding model, so this file is not searchable.",
+  INDEX_UNKNOWN:
+    "Its processing version was not recorded. Rebuild the index before searching this file.",
+  INDEX_CHANGED:
+    "The embedding or document processing settings changed. Rebuild the index before searching this file.",
+  IDENTITY_UNAVAILABLE:
+    "The installed embedding model could not be verified. Check Ollama and its model installation, then check again.",
 };
 
 function problemCopy(file: FileIntegrityProblem, problem: IndexProblem): string {
@@ -43,7 +50,7 @@ function needsWholeRebuild(status: IndexStatus | null): boolean {
   return Boolean(
     status?.problems.some((file) =>
       file.problems.some(
-        (problem) => problem === "MODEL_CHANGED" || problem === "POINTS_MISSING",
+        (problem) => ["MODEL_CHANGED", "POINTS_MISSING", "INDEX_UNKNOWN", "INDEX_CHANGED"].includes(problem),
       ),
     ),
   );
@@ -60,7 +67,10 @@ export function IntegrityPanel({
   onRebuild,
 }: IntegrityPanelProps) {
   const [confirmingRebuild, setConfirmingRebuild] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const detailsId = useId();
   const rebuildButtonRef = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef(false);
   const checking = phase === "checking";
   const rebuilding = phase === "rebuilding";
   const hasProblems = Boolean(status && status.problems.length > 0);
@@ -68,27 +78,33 @@ export function IntegrityPanel({
   const pointCheckUnavailable = Boolean(
     status?.deep && !status.point_check_complete,
   );
+  useEffect(() => {
+    if (!confirmingRebuild && returnFocus.current) {
+      returnFocus.current = false;
+      rebuildButtonRef.current?.focus();
+    }
+  }, [confirmingRebuild]);
 
   return (
     <section
       aria-labelledby="index-health-heading"
-      className="mt-5 rounded-lg border border-edge-strong bg-card px-4 py-4"
+      className="border-b border-edge py-3"
     >
-      <div className="flex flex-wrap items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 id="index-health-heading" className="text-[17px]">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+          <h2 id="index-health-heading" className="text-[13px] font-semibold">
             Index health
           </h2>
           {phase === "loading" && status === null ? (
-            <p className="mt-1 text-[13px] text-ink-soft">Checking your library…</p>
+            <p className="text-[12px] text-ink-soft">Checking your library…</p>
           ) : hasProblems ? (
-            <p className="mt-1 flex items-center gap-1.5 text-[13px] text-fail">
+            <p className="flex items-center gap-1.5 text-[12px] text-fail">
               <CrossIcon className="h-3.5 w-3.5 shrink-0" />
               {status!.problems.length} {status!.problems.length === 1 ? "file needs" : "files need"}{" "}
               attention.
             </p>
           ) : (
-            <p className="mt-1 flex items-center gap-1.5 text-[13px] text-ink-soft">
+            <p className="flex items-center gap-1.5 text-[12px] text-ink-soft">
               <CheckIcon className="h-3.5 w-3.5 shrink-0" />
               {status
                 ? `${status.searchable_files} of ${status.ready_files} ready ${status.ready_files === 1 ? "file is" : "files are"} searchable.`
@@ -101,25 +117,30 @@ export function IntegrityPanel({
           type="button"
           onClick={() => void onCheck()}
           disabled={checking || rebuilding}
-          className="min-h-11 rounded-md border border-edge-strong px-3 text-[12.5px] font-semibold text-ink-soft hover:bg-brand-wash disabled:cursor-wait disabled:opacity-60 md:min-h-0 md:py-2"
+          className="noye-button text-ink-soft disabled:cursor-wait"
         >
           {checking ? "Checking…" : "Check stored index"}
         </button>
+        <button type="button" className="noye-button text-ink-soft" aria-expanded={detailsOpen}
+          aria-controls={detailsId} aria-label="Index health details"
+          onClick={() => setDetailsOpen(value => !value)}>Details</button>
       </div>
 
+      <div id={detailsId} hidden={!detailsOpen} className="mt-2 text-[12px] text-ink-soft">
       {status && !status.deep && (
-        <p className="mt-2 text-[12.5px] text-ink-faint">
-          Source files and embedding models were checked. Use “Check stored index” to compare
+        <p>
+          Source versions and index compatibility are checked here. Use “Check stored index” to compare
           the expected passages with Qdrant.
         </p>
       )}
 
       {status?.deep && status.point_check_complete && !hasProblems && (
-        <p className="mt-2 rounded-md border border-edge-strong px-3 py-2 text-[12.5px] text-ink-soft">
+        <p>
           Stored index checked. All expected passages are present.
         </p>
       )}
 
+      </div>
       {pointCheckUnavailable && (
         <div className="mt-3 rounded-md border border-fail bg-fail-wash px-3 py-2">
           <p className="font-semibold text-fail">The stored index could not be checked.</p>
@@ -139,9 +160,13 @@ export function IntegrityPanel({
         <ul className="mt-3 space-y-2">
           {status.problems.map((file) => {
             const canReingest =
+              !file.folder_root_id &&
               file.problems.includes("SOURCE_CHANGED") &&
               !file.problems.includes("MODEL_CHANGED") &&
-              !file.problems.includes("POINTS_MISSING");
+              !file.problems.includes("POINTS_MISSING") &&
+              !file.problems.includes("INDEX_UNKNOWN") &&
+              !file.problems.includes("INDEX_CHANGED") &&
+              !file.problems.includes("IDENTITY_UNAVAILABLE");
             const busy = busyFileIds.includes(file.file_id);
             return (
               <li
@@ -155,7 +180,9 @@ export function IntegrityPanel({
                     </p>
                     <ul className="mt-1.5 space-y-1 text-[12.5px] text-ink-soft">
                       {file.problems.map((problem) => (
-                        <li key={problem}>• {problemCopy(file, problem)}</li>
+                        <li key={problem}>• {file.folder_root_id && problem === "MISSING_SOURCE"
+                          ? "The saved snapshot is missing. Check this source and rebuild from its original in Folders."
+                          : problemCopy(file, problem)}</li>
                       ))}
                     </ul>
                   </div>
@@ -169,6 +196,7 @@ export function IntegrityPanel({
                       {busy ? "Re-indexing…" : "Re-index file"}
                     </button>
                   )}
+                  {file.folder_root_id && <Link href="/folders/" className="min-h-11 rounded-md border border-edge-strong px-3 py-2 text-[12.5px] font-semibold text-accent-ink">Manage in Folders</Link>}
                 </div>
               </li>
             );
@@ -208,8 +236,8 @@ export function IntegrityPanel({
             <button
               type="button"
               onClick={() => {
+                returnFocus.current = true;
                 setConfirmingRebuild(false);
-                rebuildButtonRef.current?.focus();
               }}
               className="min-h-11 rounded-md border border-edge-strong px-3 text-[12.5px] text-ink-soft hover:bg-brand-wash md:min-h-0 md:py-2"
             >
@@ -224,7 +252,7 @@ export function IntegrityPanel({
           <p>
             {rebuildResult.queued === 0
               ? "No files were queued for rebuilding."
-              : `${rebuildResult.queued} ${rebuildResult.queued === 1 ? "file is" : "files are"} being rebuilt with ${rebuildResult.embedding_model}. Progress appears on the file cards below.`}
+              : `${rebuildResult.queued} ${rebuildResult.queued === 1 ? "file is" : "files are"} being rebuilt with ${rebuildResult.embedding_model}. Progress appears on the file rows below.`}
           </p>
           {rebuildResult.collection_recreated && (
             <p className="mt-1">

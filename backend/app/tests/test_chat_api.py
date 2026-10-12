@@ -23,6 +23,7 @@ from app.db import files as file_store
 from app.db.database import connect, init_schema
 from app.main import app
 from app.models.files import FileStatus, FileType
+from app.services import index_identity
 from app.services.embeddings import EmbeddingError
 from app.services.generation import Answer, GenerationError
 from app.services.indexing import IndexingError
@@ -49,6 +50,8 @@ def add_ready_file(db: sqlite3.Connection, name: str = "Algorithms.pdf") -> str:
     record = file_store.create_file(
         db, name=name, file_type=FileType.PDF, path=f"/tmp/{name}", size=1024
     )
+    identity = index_identity.current_index_identity()
+    file_store.set_index_identity(db, record.id, identity.fingerprint, identity.metadata_json)
     file_store.set_status(db, record.id, FileStatus.READY)
     return record.id
 
@@ -245,6 +248,51 @@ def test_the_question_is_trimmed(client, db, monkeypatch) -> None:
 
 
 # --- failures keep the question ----------------------------------------------
+
+
+@pytest.mark.parametrize("provider", ["ollama", "gemini", "openai", "anthropic"])
+def test_compatible_index_preserves_explicit_provider(client, db, monkeypatch, provider):
+    """The identity/desktop merge must retain both readiness and provider forwarding."""
+    file_id = add_ready_file(db)
+    calls = []
+
+    def answer(question, **kwargs):
+        calls.append((question, kwargs))
+        return Answer(text="A recorded answer", sources=[chunk(file_id)])
+
+    monkeypatch.setattr(chat_api, "answer_question", answer)
+    response = client.post("/chat", json={"question": "Use my source", "provider": provider})
+
+    assert response.status_code == 201
+    assert response.json()["searched_files"] == 1
+    assert calls == [("Use my source", {
+        "limit": chat_api.DEFAULT_LIMIT, "file_ids": [file_id], "provider": provider,
+    })]
+    assert response.json()["answer"]["citations"][0]["file_id"] == file_id
+
+
+@pytest.mark.parametrize("provider", ["ollama", "gemini", "openai", "anthropic"])
+def test_identity_failure_is_a_saved_turn_before_any_generation(
+    client, db, monkeypatch, provider
+):
+    add_ready_file(db)
+
+    def unavailable(**kwargs):
+        raise EmbeddingError("Cannot verify installed embedding identity")
+
+    monkeypatch.setattr(index_identity, "current_index_identity", unavailable)
+    monkeypatch.setattr(chat_api, "answer_question", lambda *args, **kwargs: pytest.fail(
+        "Generation must not run when compatibility lookup fails"
+    ))
+    response = client.post("/chat", json={"question": "Keep my question", "provider": provider})
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["searched_files"] == 0
+    assert body["answer"]["error"] == "Cannot verify installed embedding identity"
+    stored = conversation_store.list_messages(db, body["conversation_id"])
+    assert [message.content for message in stored] == ["Keep my question", ""]
+    assert stored[1].error == body["answer"]["error"]
 
 
 @pytest.mark.parametrize(
@@ -462,3 +510,70 @@ def test_a_real_question_is_answered_and_cited_end_to_end(db, tmp_path) -> None:
         assert reread["messages"][1]["citations"] == answer["citations"]
     finally:
         delete_file_chunks(record.id)
+
+
+def test_selected_scope_survives_reload_deletion_and_never_broadens(client, db, monkeypatch):
+    selected = add_ready_file(db, "Selected.pdf")
+    other = add_ready_file(db, "Other.pdf")
+    capture = {}
+    stub_answer(monkeypatch, Answer("Only selected", [chunk(selected)]), capture)
+    first = client.post("/chat", json={"question": "Topic", "file_ids": [selected]}).json()
+    cid = first["conversation_id"]
+    assert capture["file_ids"] == [selected]
+    assert client.get(f"/chat/conversations/{cid}").json()["source_scope"] == [selected]
+    file_store.delete_file(db, selected)
+    followup = client.post("/chat", json={"question": "And that?", "conversation_id": cid}).json()
+    assert followup["searched_files"] == 0
+    assert followup["answer"]["citations"] == []
+    assert "None of the selected files" in followup["answer"]["content"]
+    assert file_store.get_file(db, other).is_ready
+    assert client.put(f"/chat/conversations/{cid}/scope", json={"file_ids": []}).json()[
+        "source_scope"] == []
+    assert client.put(f"/chat/conversations/{cid}/scope", json={"file_ids": None}).json()[
+        "source_scope"] is None
+
+
+def test_empty_scope_skips_readiness_and_generation(client, monkeypatch):
+    def forbidden(*args, **kwargs):
+        raise AssertionError("An explicitly empty scope must not call services")
+    monkeypatch.setattr(chat_api, "_ready_file_names", forbidden)
+    monkeypatch.setattr(chat_api, "answer_question", forbidden)
+    body = client.post("/chat", json={"question": "Question", "file_ids": []}).json()
+    assert body["searched_files"] == 0
+    assert "No files are selected" in body["answer"]["content"]
+
+
+def test_followup_uses_bounded_context_and_captures_exact_evidence(
+    client, db, monkeypatch, tmp_path,
+):
+    from app.services.integrity import hash_file
+    file_id = add_ready_file(db)
+    path = tmp_path / "source.pdf"
+    path.write_bytes(b"original version")
+    db.execute("UPDATE files SET path = ? WHERE id = ?", (str(path), file_id))
+    db.commit()
+    file_store.set_content_hash(db, file_id, hash_file(path))
+    calls = []
+    def answer(question, **kwargs):
+        calls.append(kwargs)
+        from dataclasses import replace
+        evidence = replace(chunk(file_id), source_hash=hash_file(path),
+                           index_fingerprint="a" * 64)
+        return Answer("Short answer", [evidence])
+    monkeypatch.setattr(chat_api, "answer_question", answer)
+    first = client.post("/chat", json={"question": "Compare Dijkstra and Bellman-Ford"}).json()
+    cid = first["conversation_id"]
+    client.post("/chat", json={"question": "What about the second one?", "conversation_id": cid})
+    assert "Dijkstra" in calls[-1]["retrieval_query"]
+    assert "not evidence" in calls[-1]["history"]
+    citation = first["answer"]["citations"][0]
+    assert citation["evidence"]["excerpts"][0]["content"] == chunk(file_id).content
+    assert citation["evidence"]["excerpts"][0]["source_hash"] == hash_file(path)
+    path.write_bytes(b"changed")
+    reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
+    assert reloaded["evidence"] == citation["evidence"]
+    assert reloaded["original_status"] == "changed"
+    file_store.delete_file(db, file_id)
+    reloaded = client.get(f"/chat/conversations/{cid}").json()["messages"][1]["citations"][0]
+    assert reloaded["original_status"] == "missing"
+    assert reloaded["evidence"] == citation["evidence"]

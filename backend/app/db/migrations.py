@@ -111,7 +111,85 @@ def _step_1_file_provenance(connection: sqlite3.Connection) -> None:
 
 #: Ordered steps. Append only — never renumber or edit a released step, because a
 #: database that already ran it will not run it again.
-MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (_step_1_file_provenance,)
+def _step_2_index_identity(connection: sqlite3.Connection) -> None:
+    # NULL remains unknown. A model name alone cannot establish compatibility.
+    add_column_if_missing(connection, "files", "index_fingerprint", "TEXT")
+    add_column_if_missing(connection, "files", "index_metadata", "TEXT")
+
+
+def _step_3_citation_evidence(connection: sqlite3.Connection) -> None:
+    for table in ("message_citations", "document_citations"):
+        if _table_exists(connection, table):
+            add_column_if_missing(connection, table, "evidence_json", "TEXT")
+
+
+def _step_4_durable_jobs(connection: sqlite3.Connection) -> None:
+    from app.db.jobs import JOB_SCHEMA
+
+    # executescript would commit the runner's transaction before executing.
+    for statement in JOB_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+
+
+def _step_5_context_coverage(connection: sqlite3.Connection) -> None:
+    add_column_if_missing(connection, "conversations", "source_scope", "TEXT")
+    add_column_if_missing(connection, "files", "no_text_pages", "TEXT")
+
+
+def _step_6_folder_foundation(connection: sqlite3.Connection) -> None:
+    from app.db.sources import SOURCE_SCHEMA
+
+    for statement in SOURCE_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+
+
+def _step_7_wiki_revisions(connection: sqlite3.Connection) -> None:
+    from app.db.wiki import install
+
+    install(connection)
+
+
+def _step_8_knowledge_integration(connection: sqlite3.Connection) -> None:
+    from app.db.knowledge import install
+
+    install(connection)
+
+
+def _step_9_source_documents(connection: sqlite3.Connection) -> None:
+    from app.db.source_documents import install
+
+    install(connection)
+
+
+def _step_10_folder_issues(connection: sqlite3.Connection) -> None:
+    from app.db.sources import FOLDER_ISSUE_SCHEMA
+
+    for statement in FOLDER_ISSUE_SCHEMA.split(";"):
+        if statement.strip():
+            connection.execute(statement)
+    connection.execute(
+        "INSERT OR IGNORE INTO folder_issues "
+        "SELECT id,'recovery','',error,updated_at FROM source_roots "
+        "WHERE error LIKE '%recovered Wiki/output conflicts%'"
+    )
+
+
+MIGRATIONS: Sequence[Callable[[sqlite3.Connection], None]] = (
+    _step_1_file_provenance,
+    _step_2_index_identity,
+    # Tables can be absent in older file-only workspaces. SCHEMA creates
+    # them before migrations in the application; no historical text is backfilled.
+    _step_3_citation_evidence,
+    _step_4_durable_jobs,
+    _step_5_context_coverage,
+    _step_6_folder_foundation,
+    _step_7_wiki_revisions,
+    _step_8_knowledge_integration,
+    _step_9_source_documents,
+    _step_10_folder_issues,
+)
 
 #: Where a fully migrated database stands.
 LATEST_VERSION = len(MIGRATIONS)

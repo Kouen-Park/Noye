@@ -1,0 +1,754 @@
+{
+  "status": "complete",
+  "corpus": {
+    "Learning/HELIOS-baseline.md": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available.\n",
+    "Learning/HELIOS-alternative.txt": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown.\n",
+    "Learning/HELIOS-한국어.md": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다.\n"
+  },
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "backup_external_originals": "not included; internal version byte snapshots are included",
+  "restore": {
+    "destination": "/private/tmp/noye-knowledge-qa-20261008/app",
+    "missing_sources": [],
+    "rebuild_required": true,
+    "workspace_id": "d8c2787f-39ad-4b29-a85a-2ef7fc7162c8",
+    "external_roots": [
+      {
+        "id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+        "name": "knowledge",
+        "availability": "disconnected"
+      }
+    ],
+    "external_originals": "not included; internal version byte snapshots are included",
+    "missing_knowledge_roots": []
+  },
+  "indexing": [
+    {
+      "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+      "status": "READY",
+      "seconds": 9.957,
+      "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4"
+    },
+    {
+      "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+      "status": "READY",
+      "seconds": 9.521,
+      "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530"
+    },
+    {
+      "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+      "status": "READY",
+      "seconds": 18.271,
+      "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4"
+    }
+  ],
+  "questions": [
+    {
+      "id": "exact_exception",
+      "question": "For HELIOS, what are the capacity and Sunday limit? State exact units and exceptions.",
+      "scope": {
+        "mode": "all"
+      },
+      "expected": "37 litres; 29 litres on Sundays.",
+      "baseline": {
+        "passages": [
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6964339339533479,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          },
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5882652623117197,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          },
+          {
+            "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5579242431883316,
+            "text": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown."
+          }
+        ],
+        "retrieval_seconds": 2.322,
+        "answer": "The HELIOS reservoir has a capacity of 37 litres. On Sundays, the permitted capacity is limited to 29 litres. These figures are not counts of containers but measured operating limits. The baseline design uses a manual valve, while an electronic valve alternative exists but has not been deployed.",
+        "generation_seconds": 22.273,
+        "model_called": true
+      },
+      "wiki_original": {
+        "passages": [
+          {
+            "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5579242431883316,
+            "text": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown."
+          },
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6964339339533479,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          },
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5882652623117197,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          }
+        ],
+        "retrieval_seconds": 3.752,
+        "snapshot": {
+          "version": 1,
+          "route": "wiki_original",
+          "scope": {
+            "mode": "all"
+          },
+          "manifest": [
+            {
+              "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-한국어.md",
+              "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+              "availability": "available",
+              "processing_state": "READY"
+            },
+            {
+              "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-alternative.txt",
+              "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+              "availability": "available",
+              "processing_state": "READY"
+            },
+            {
+              "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-baseline.md",
+              "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+              "availability": "available",
+              "processing_state": "READY"
+            }
+          ],
+          "wiki_pages": [
+            {
+              "wiki_id": "1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54",
+              "revision_id": "72c51485-5e2b-4a62-b786-8a557c71c0e1",
+              "title": "HELIOS-baseline.md",
+              "kind": "source",
+              "origin": "generated",
+              "interpretation": "<!-- Wiki ID: 1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-05T23:27:32.248729+00:00; processing seconds: 69.430 -->\n\n# HELIOS-baseline.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Learning\n\nTags: Project HELIOS reservoir, capacity, cost measurement, manual valve, operating limits\n\n## Summary\n\nThe HELIOS reservoir has a total capacity of 37 litres, with a Sunday limit of 29 litres; these are operating limits rather than container counts, and the baseline design uses a manual valve without available cost data. [E1]\n\n- The HELIOS reservoir has a total capacity of 37 litres. [E1]\n\n- On Sundays, the permitted capacity is reduced to 29 litres. [E1]\n\n- These limits are measured operating limits, not a count of containers. [E1]\n\n- The baseline design uses a manual valve. [E1]\n\n- No cost measurement is available for the project. [E1]\n\n## Original evidence\n\n### E1: HELIOS-baseline.md\nSource ID: `6578d664-41f3-4250-ac0f-dba390b9f136`; version: `69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4`\n\nPassage 0, characters 0–259\n\n> # Project HELIOS reservoir\n> The HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\n> is 29 litres. These are measured operating limits, not a count of containers.\n> The baseline design uses a manual valve. No cost measurement is available.\n",
+              "source_ids": [
+                "6578d664-41f3-4250-ac0f-dba390b9f136"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "2afdd78d-d030-5335-a282-7f8d20bd211d",
+              "revision_id": "61730b84-c642-4d4c-afab-f5dd0c63bf3d",
+              "title": "HELIOS-alternative.txt",
+              "kind": "source",
+              "origin": "generated",
+              "interpretation": "<!-- Wiki ID: 2afdd78d-d030-5335-a282-7f8d20bd211d; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-07T06:18:15.330761+00:00; processing seconds: 86.961 -->\n\n# HELIOS-alternative.txt\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: Project HELIOS reservoir, alternative, undeployed\n\n## Summary\n\nThe Project HELIOS reservoir alternative maintains a capacity of 37 litres and adheres to Sunday's limit of 29 litres, utilizing an electronic valve instead of the baseline manual valve. This option has not been deployed, and its price remains unknown. [E1]\n\n- The Project HELIOS reservoir alternative retains a capacity of 37 litres and Sunday's limit of 29 litres. [E1]\n\n- The Project HELIOS reservoir alternative uses an electronic valve instead of the baseline manual valve. [E1]\n\n- The Project HELIOS reservoir alternative has not been deployed. [E1]\n\n- The price of the Project HELIOS reservoir alternative is unknown. [E1]\n\n## Original evidence\n\n### E1: HELIOS-alternative.txt\nSource ID: `3f07c00d-cc52-47ca-b416-c7e4f9534807`; version: `71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530`\n\nPassage 0, characters 0–248\n\n> Project HELIOS reservoir alternative\n> This alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\n> It uses an electronic valve instead of the baseline manual valve.\n> This alternative has not been deployed. Its price is unknown.\n",
+              "source_ids": [
+                "3f07c00d-cc52-47ca-b416-c7e4f9534807"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb",
+              "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+              "title": "HELIOS-한국어.md",
+              "kind": "source",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "6d9817f2-2baf-57df-85f8-9891ad6a2ca4",
+              "revision_id": "2da4ea68-eafb-4b71-a986-d1fad786f60f",
+              "title": "Project HELIOS reservoir",
+              "kind": "project",
+              "origin": "generated",
+              "interpretation": "# Project HELIOS reservoir\n\nInterpretation across source summaries. Verify exact details in originals.\n\n## HELIOS-한국어.md\n\n[Source Wiki](../sources/c363f0c8-808b-53c9-a582-74897ec7aabb.md)\n\nProject HELIOS reservoir is a manual valve system with a base capacity of 37 liters, limited to 29 liters on Sundays.\n\n- supporting_evidence: The target evidence confirms the HELIOS reservoir's capacity details and manual valve design, which are explicitly stated in the origin text.\n\n- alternative: The target explicitly states it uses an electronic valve instead of the baseline manual valve, while the origin describes the baseline as a manual valve system.\n\n## HELIOS-alternative.txt\n\n[Source Wiki](../sources/2afdd78d-d030-5335-a282-7f8d20bd211d.md)\n\nThe Project HELIOS reservoir alternative maintains a capacity of 37 litres and adheres to Sunday's limit of 29 litres, utilizing an electronic valve instead of the baseline manual valve. This option has not been deployed, and its price remains unknown.\n\n- alternative: The origin text explicitly states the Project HELIOS reservoir alternative utilizes an electronic valve instead of the baseline manual valve, while the target text confirms the baseline design uses a manual valve.\n\n## HELIOS-baseline.md\n\n[Source Wiki](../sources/1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54.md)\n\nThe HELIOS reservoir has a total capacity of 37 litres, with a Sunday limit of 29 litres; these are operating limits rather than container counts, and the baseline design uses a manual valve without available cost data.\n",
+              "source_ids": [
+                "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+                "6578d664-41f3-4250-ac0f-dba390b9f136",
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": [
+                {
+                  "revision_id": "2a84e246-89a6-4237-bceb-e4edae6809c6",
+                  "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb"
+                },
+                {
+                  "revision_id": "61730b84-c642-4d4c-afab-f5dd0c63bf3d",
+                  "wiki_id": "2afdd78d-d030-5335-a282-7f8d20bd211d"
+                },
+                {
+                  "revision_id": "72c51485-5e2b-4a62-b786-8a557c71c0e1",
+                  "wiki_id": "1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54"
+                }
+              ]
+            },
+            {
+              "wiki_id": "832b9865-e3bf-5684-a314-2889c91b4d0d",
+              "revision_id": "a7cb3c1a-b106-478b-863d-b05e93c098b9",
+              "title": "HELIOS-한국어.md analysis",
+              "kind": "analysis",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": [
+                {
+                  "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+                  "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb"
+                }
+              ]
+            }
+          ],
+          "warnings": [],
+          "wiki_state": "matched",
+          "insufficient_evidence": false,
+          "traversal": {
+            "depth": 1,
+            "page_limit": 12
+          },
+          "consumed_source_ids": [
+            "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+          ]
+        },
+        "answer": "For HELIOS, the reservoir's capacity is 37 litres, with a permitted capacity of 29 litres on Sundays. These limits apply to measured operating conditions rather than a count of containers. The limit on Sundays constitutes an exception to the baseline daily capacity.",
+        "generation_seconds": 16.206,
+        "model_called": true
+      }
+    },
+    {
+      "id": "cross_source",
+      "question": "Compare HELIOS manual and electronic valve designs, deployment status and measured price.",
+      "scope": {
+        "mode": "all"
+      },
+      "expected": "Manual baseline; electronic alternative not deployed; unknown price.",
+      "baseline": {
+        "passages": [
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5501331332702553,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          },
+          {
+            "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5232177778897318,
+            "text": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown."
+          },
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.4982362332327452,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          }
+        ],
+        "retrieval_seconds": 0.148,
+        "answer": "Based on the provided excerpts:\n\n*   **Manual Valve:** This is the baseline design for Project HELIOS, uses a manual valve, and has no available cost measurement (price is interpreted as 0 in some contexts but this is not factual).\n*   **Electronic Valve:** This is an alternative to the baseline, also retains a capacity of 37 litres with a Sunday limit of 29 litres. It has not been deployed yet. Its price is unknown.",
+        "generation_seconds": 20.473,
+        "model_called": true
+      },
+      "wiki_original": {
+        "passages": [
+          {
+            "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5232177778897318,
+            "text": "Project HELIOS reservoir alternative\nThis alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\nIt uses an electronic valve instead of the baseline manual valve.\nThis alternative has not been deployed. Its price is unknown."
+          },
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.4982362332327452,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          },
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.5501331332702553,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          }
+        ],
+        "retrieval_seconds": 0.436,
+        "snapshot": {
+          "version": 1,
+          "route": "wiki_original",
+          "scope": {
+            "mode": "all"
+          },
+          "manifest": [
+            {
+              "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-한국어.md",
+              "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+              "availability": "available",
+              "processing_state": "READY"
+            },
+            {
+              "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-alternative.txt",
+              "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+              "availability": "available",
+              "processing_state": "READY"
+            },
+            {
+              "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-baseline.md",
+              "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+              "availability": "available",
+              "processing_state": "READY"
+            }
+          ],
+          "wiki_pages": [
+            {
+              "wiki_id": "1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54",
+              "revision_id": "72c51485-5e2b-4a62-b786-8a557c71c0e1",
+              "title": "HELIOS-baseline.md",
+              "kind": "source",
+              "origin": "generated",
+              "interpretation": "<!-- Wiki ID: 1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-05T23:27:32.248729+00:00; processing seconds: 69.430 -->\n\n# HELIOS-baseline.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Learning\n\nTags: Project HELIOS reservoir, capacity, cost measurement, manual valve, operating limits\n\n## Summary\n\nThe HELIOS reservoir has a total capacity of 37 litres, with a Sunday limit of 29 litres; these are operating limits rather than container counts, and the baseline design uses a manual valve without available cost data. [E1]\n\n- The HELIOS reservoir has a total capacity of 37 litres. [E1]\n\n- On Sundays, the permitted capacity is reduced to 29 litres. [E1]\n\n- These limits are measured operating limits, not a count of containers. [E1]\n\n- The baseline design uses a manual valve. [E1]\n\n- No cost measurement is available for the project. [E1]\n\n## Original evidence\n\n### E1: HELIOS-baseline.md\nSource ID: `6578d664-41f3-4250-ac0f-dba390b9f136`; version: `69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4`\n\nPassage 0, characters 0–259\n\n> # Project HELIOS reservoir\n> The HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\n> is 29 litres. These are measured operating limits, not a count of containers.\n> The baseline design uses a manual valve. No cost measurement is available.\n",
+              "source_ids": [
+                "6578d664-41f3-4250-ac0f-dba390b9f136"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "2afdd78d-d030-5335-a282-7f8d20bd211d",
+              "revision_id": "61730b84-c642-4d4c-afab-f5dd0c63bf3d",
+              "title": "HELIOS-alternative.txt",
+              "kind": "source",
+              "origin": "generated",
+              "interpretation": "<!-- Wiki ID: 2afdd78d-d030-5335-a282-7f8d20bd211d; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-07T06:18:15.330761+00:00; processing seconds: 86.961 -->\n\n# HELIOS-alternative.txt\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: Project HELIOS reservoir, alternative, undeployed\n\n## Summary\n\nThe Project HELIOS reservoir alternative maintains a capacity of 37 litres and adheres to Sunday's limit of 29 litres, utilizing an electronic valve instead of the baseline manual valve. This option has not been deployed, and its price remains unknown. [E1]\n\n- The Project HELIOS reservoir alternative retains a capacity of 37 litres and Sunday's limit of 29 litres. [E1]\n\n- The Project HELIOS reservoir alternative uses an electronic valve instead of the baseline manual valve. [E1]\n\n- The Project HELIOS reservoir alternative has not been deployed. [E1]\n\n- The price of the Project HELIOS reservoir alternative is unknown. [E1]\n\n## Original evidence\n\n### E1: HELIOS-alternative.txt\nSource ID: `3f07c00d-cc52-47ca-b416-c7e4f9534807`; version: `71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530`\n\nPassage 0, characters 0–248\n\n> Project HELIOS reservoir alternative\n> This alternative retains the capacity of 37 litres and Sunday's limit of 29 litres.\n> It uses an electronic valve instead of the baseline manual valve.\n> This alternative has not been deployed. Its price is unknown.\n",
+              "source_ids": [
+                "3f07c00d-cc52-47ca-b416-c7e4f9534807"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb",
+              "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+              "title": "HELIOS-한국어.md",
+              "kind": "source",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            },
+            {
+              "wiki_id": "6d9817f2-2baf-57df-85f8-9891ad6a2ca4",
+              "revision_id": "2da4ea68-eafb-4b71-a986-d1fad786f60f",
+              "title": "Project HELIOS reservoir",
+              "kind": "project",
+              "origin": "generated",
+              "interpretation": "# Project HELIOS reservoir\n\nInterpretation across source summaries. Verify exact details in originals.\n\n## HELIOS-한국어.md\n\n[Source Wiki](../sources/c363f0c8-808b-53c9-a582-74897ec7aabb.md)\n\nProject HELIOS reservoir is a manual valve system with a base capacity of 37 liters, limited to 29 liters on Sundays.\n\n- supporting_evidence: The target evidence confirms the HELIOS reservoir's capacity details and manual valve design, which are explicitly stated in the origin text.\n\n- alternative: The target explicitly states it uses an electronic valve instead of the baseline manual valve, while the origin describes the baseline as a manual valve system.\n\n## HELIOS-alternative.txt\n\n[Source Wiki](../sources/2afdd78d-d030-5335-a282-7f8d20bd211d.md)\n\nThe Project HELIOS reservoir alternative maintains a capacity of 37 litres and adheres to Sunday's limit of 29 litres, utilizing an electronic valve instead of the baseline manual valve. This option has not been deployed, and its price remains unknown.\n\n- alternative: The origin text explicitly states the Project HELIOS reservoir alternative utilizes an electronic valve instead of the baseline manual valve, while the target text confirms the baseline design uses a manual valve.\n\n## HELIOS-baseline.md\n\n[Source Wiki](../sources/1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54.md)\n\nThe HELIOS reservoir has a total capacity of 37 litres, with a Sunday limit of 29 litres; these are operating limits rather than container counts, and the baseline design uses a manual valve without available cost data.\n",
+              "source_ids": [
+                "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+                "6578d664-41f3-4250-ac0f-dba390b9f136",
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": [
+                {
+                  "revision_id": "2a84e246-89a6-4237-bceb-e4edae6809c6",
+                  "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb"
+                },
+                {
+                  "revision_id": "61730b84-c642-4d4c-afab-f5dd0c63bf3d",
+                  "wiki_id": "2afdd78d-d030-5335-a282-7f8d20bd211d"
+                },
+                {
+                  "revision_id": "72c51485-5e2b-4a62-b786-8a557c71c0e1",
+                  "wiki_id": "1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54"
+                }
+              ]
+            },
+            {
+              "wiki_id": "832b9865-e3bf-5684-a314-2889c91b4d0d",
+              "revision_id": "a7cb3c1a-b106-478b-863d-b05e93c098b9",
+              "title": "HELIOS-한국어.md analysis",
+              "kind": "analysis",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": [
+                {
+                  "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+                  "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb"
+                }
+              ]
+            }
+          ],
+          "warnings": [],
+          "wiki_state": "matched",
+          "insufficient_evidence": false,
+          "traversal": {
+            "depth": 1,
+            "page_limit": 12
+          },
+          "consumed_source_ids": [
+            "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+            "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+          ]
+        },
+        "answer": "The HELIOS reservoir baseline design uses a manual valve, while an alternative with an electronic valve exists but has not been deployed. Measured operating limits are 37 litres (daily) and 29 litres (Sunday), applying to both designs. The price of the manual valve design is unknown, as no cost measurement is available. The price of the electronic valve alternative is also unknown; although Excerpt 3 contains Korean text suggesting one might not interpret the price as zero because no measurement was taken, no actual monetary value is provided in the excerpts for either design.",
+        "generation_seconds": 38.197,
+        "model_called": true
+      }
+    },
+    {
+      "id": "chosen_baseline",
+      "question": "What are the HELIOS capacity and Sunday restriction?",
+      "scope": {
+        "mode": "chosen",
+        "source_ids": [
+          "6578d664-41f3-4250-ac0f-dba390b9f136"
+        ]
+      },
+      "expected": "37 litres; Sunday 29 litres; only baseline evidence.",
+      "baseline": {
+        "passages": [
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6448640836469623,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          }
+        ],
+        "retrieval_seconds": 0.089,
+        "answer": "The HELIOS reservoir's capacity is 37 litres, with a permitted capacity of 29 litres on Sundays.",
+        "generation_seconds": 35.68,
+        "model_called": true
+      },
+      "wiki_original": {
+        "passages": [
+          {
+            "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+            "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6448640836469623,
+            "text": "# Project HELIOS reservoir\nThe HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\nis 29 litres. These are measured operating limits, not a count of containers.\nThe baseline design uses a manual valve. No cost measurement is available."
+          }
+        ],
+        "retrieval_seconds": 0.15,
+        "snapshot": {
+          "version": 1,
+          "route": "wiki_original",
+          "scope": {
+            "mode": "chosen",
+            "source_ids": [
+              "6578d664-41f3-4250-ac0f-dba390b9f136"
+            ]
+          },
+          "manifest": [
+            {
+              "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-baseline.md",
+              "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+              "availability": "available",
+              "processing_state": "READY"
+            }
+          ],
+          "wiki_pages": [
+            {
+              "wiki_id": "1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54",
+              "revision_id": "72c51485-5e2b-4a62-b786-8a557c71c0e1",
+              "title": "HELIOS-baseline.md",
+              "kind": "source",
+              "origin": "generated",
+              "interpretation": "<!-- Wiki ID: 1b2ab2d9-53bb-5c57-9c04-f1fe5b23dc54; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-05T23:27:32.248729+00:00; processing seconds: 69.430 -->\n\n# HELIOS-baseline.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Learning\n\nTags: Project HELIOS reservoir, capacity, cost measurement, manual valve, operating limits\n\n## Summary\n\nThe HELIOS reservoir has a total capacity of 37 litres, with a Sunday limit of 29 litres; these are operating limits rather than container counts, and the baseline design uses a manual valve without available cost data. [E1]\n\n- The HELIOS reservoir has a total capacity of 37 litres. [E1]\n\n- On Sundays, the permitted capacity is reduced to 29 litres. [E1]\n\n- These limits are measured operating limits, not a count of containers. [E1]\n\n- The baseline design uses a manual valve. [E1]\n\n- No cost measurement is available for the project. [E1]\n\n## Original evidence\n\n### E1: HELIOS-baseline.md\nSource ID: `6578d664-41f3-4250-ac0f-dba390b9f136`; version: `69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4`\n\nPassage 0, characters 0–259\n\n> # Project HELIOS reservoir\n> The HELIOS reservoir's capacity is 37 litres. On Sundays the permitted capacity\n> is 29 litres. These are measured operating limits, not a count of containers.\n> The baseline design uses a manual valve. No cost measurement is available.\n",
+              "source_ids": [
+                "6578d664-41f3-4250-ac0f-dba390b9f136"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            }
+          ],
+          "warnings": [],
+          "wiki_state": "matched",
+          "insufficient_evidence": false,
+          "traversal": {
+            "depth": 1,
+            "page_limit": 12
+          },
+          "consumed_source_ids": [
+            "6578d664-41f3-4250-ac0f-dba390b9f136"
+          ]
+        },
+        "answer": "The HELIOS reservoir's capacity is 37 litres, which drops to 29 litres on Sundays. These figures represent measured operating limits rather than a count of containers. The baseline design utilizes a manual valve, and no cost measurement data is available.",
+        "generation_seconds": 5.297,
+        "model_called": true
+      }
+    },
+    {
+      "id": "korean",
+      "question": "HELIOS의 기본 용량과 일요일 제한, 가격은 얼마인가요? 한국어로 답하세요.",
+      "scope": {
+        "mode": "chosen",
+        "source_ids": [
+          "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+        ]
+      },
+      "expected": "37리터; 일요일 29리터; 가격 미측정, 0원 아님.",
+      "baseline": {
+        "passages": [
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6406551437430472,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          }
+        ],
+        "retrieval_seconds": 0.096,
+        "answer": "HELIOS 저수지의 기본 용량은 37리터이며, 일요일에는 29리터로 제한됩니다. 가격은 측정하지 않았으므로 명확히 알려지지 않았습니다.",
+        "generation_seconds": 23.326,
+        "model_called": true
+      },
+      "wiki_original": {
+        "passages": [
+          {
+            "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+            "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+            "passage_index": 0,
+            "page_number": null,
+            "score": 0.6406551437430472,
+            "text": "# Project HELIOS reservoir 실험 기록\nHELIOS 저수지의 기본 용량은 37리터이며 일요일에는 29리터로 제한한다.\n기본 설계는 수동 밸브를 사용한다. 전자 밸브 대안은 아직 배포되지 않았다.\n가격은 측정하지 않았으므로 0원으로 해석하면 안 된다."
+          }
+        ],
+        "retrieval_seconds": 0.113,
+        "snapshot": {
+          "version": 1,
+          "route": "wiki_original",
+          "scope": {
+            "mode": "chosen",
+            "source_ids": [
+              "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+            ]
+          },
+          "manifest": [
+            {
+              "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+              "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+              "relative_path": "Learning/HELIOS-한국어.md",
+              "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+              "availability": "available",
+              "processing_state": "READY"
+            }
+          ],
+          "wiki_pages": [
+            {
+              "wiki_id": "832b9865-e3bf-5684-a314-2889c91b4d0d",
+              "revision_id": "a7cb3c1a-b106-478b-863d-b05e93c098b9",
+              "title": "HELIOS-한국어.md analysis",
+              "kind": "analysis",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": [
+                {
+                  "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+                  "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb"
+                }
+              ]
+            },
+            {
+              "wiki_id": "c363f0c8-808b-53c9-a582-74897ec7aabb",
+              "revision_id": "3f2ccc69-f859-4146-aeb0-e317f99f56de",
+              "title": "HELIOS-한국어.md",
+              "kind": "source",
+              "origin": "user",
+              "interpretation": "# Authored HELIOS notes\n\n한국어 사용자 편집: 기본 37리터, 일요일 29리터. 가격은 미상입니다.\n",
+              "source_ids": [
+                "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+              ],
+              "revision_status": "unchanged",
+              "contributors": []
+            }
+          ],
+          "warnings": [],
+          "wiki_state": "matched",
+          "insufficient_evidence": false,
+          "traversal": {
+            "depth": 1,
+            "page_limit": 12
+          },
+          "consumed_source_ids": [
+            "a4fb424c-4111-41f7-b9ab-b64ffa22fae3"
+          ]
+        },
+        "answer": "HELIOS 저수지의 기본 용량은 37리터이며, 일요일에는 29리터로 제한됩니다. 가격에 대한 기록은 존재하지 않으므로, 금액을 알 수 없습니다.",
+        "generation_seconds": 4.901,
+        "model_called": true
+      }
+    },
+    {
+      "id": "empty",
+      "question": "What is the HELIOS capacity?",
+      "scope": {
+        "mode": "empty"
+      },
+      "expected": "No source evidence; no model call.",
+      "baseline": {
+        "passages": [],
+        "retrieval_seconds": 0.0,
+        "answer": "I could not find anything about that in your indexed documents.",
+        "generation_seconds": 0.0,
+        "model_called": false
+      },
+      "wiki_original": {
+        "passages": [],
+        "retrieval_seconds": 0.0,
+        "snapshot": {
+          "version": 1,
+          "route": "wiki_original",
+          "scope": {
+            "mode": "empty"
+          },
+          "manifest": [],
+          "wiki_pages": [],
+          "warnings": [],
+          "wiki_state": "no_matches",
+          "insufficient_evidence": true,
+          "traversal": {
+            "depth": 1,
+            "page_limit": 12
+          },
+          "consumed_source_ids": []
+        },
+        "answer": "I could not find anything about that in your indexed documents.",
+        "generation_seconds": 0.005,
+        "model_called": false
+      }
+    }
+  ],
+  "failures": {
+    "changed": {
+      "passage_count": 0,
+      "wiki_count": 0,
+      "insufficient": true,
+      "warnings": [
+        "Source 6578d664-41f3-4250-ac0f-dba390b9f136 excluded: stale_version."
+      ]
+    },
+    "missing": {
+      "passage_count": 0,
+      "wiki_count": 0,
+      "insufficient": true,
+      "warnings": [
+        "Source 6578d664-41f3-4250-ac0f-dba390b9f136 excluded: unavailable."
+      ]
+    }
+  },
+  "model": "qwen3.5:4b",
+  "embedding_model": "embeddinggemma",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "inventory": [
+    {
+      "source_id": "a4fb424c-4111-41f7-b9ab-b64ffa22fae3",
+      "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+      "relative_path": "Learning/HELIOS-한국어.md",
+      "version": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4",
+      "availability": "available",
+      "processing_state": "READY"
+    },
+    {
+      "source_id": "3f07c00d-cc52-47ca-b416-c7e4f9534807",
+      "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+      "relative_path": "Learning/HELIOS-alternative.txt",
+      "version": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+      "availability": "available",
+      "processing_state": "READY"
+    },
+    {
+      "source_id": "6578d664-41f3-4250-ac0f-dba390b9f136",
+      "root_id": "20c01b17-24d4-4ec3-a81d-2b1c95765717",
+      "relative_path": "Learning/HELIOS-baseline.md",
+      "version": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+      "availability": "available",
+      "processing_state": "READY"
+    }
+  ],
+  "passage_limit": 5,
+  "generation_model_info": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen35",
+    "families": [
+      "qwen35"
+    ],
+    "parameter_size": "4.7B",
+    "quantization_level": "Q4_K_M"
+  },
+  "original_hashes_after": {
+    "Learning/HELIOS-baseline.md": "69f274ed07e88408ad1c72a438c06891a01bfc16f5e55b717f70fa77d33ad4f4",
+    "Learning/HELIOS-alternative.txt": "71b50b9e4237ff2bcc9ba573e969142577d80ec01e0a79cdeb44def86db60530",
+    "Learning/HELIOS-한국어.md": "d88843982f6db75d59b10169dba841d5175fde8e96313e12603a6b6260043ec4"
+  }
+}

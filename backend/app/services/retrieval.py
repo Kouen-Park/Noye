@@ -15,7 +15,8 @@ from qdrant_client import QdrantClient, models
 from qdrant_client.http.exceptions import ApiException
 
 from app.config import get_settings
-from app.services.embeddings import embed_text
+from app.services import index_identity
+from app.services.embeddings import EmbeddingError, embed_text
 from app.services.indexing import (
     CHUNK_INDEX,
     CONTENT,
@@ -48,6 +49,9 @@ class SearchResult:
     page_number: int | None
     chunk_index: int
     score: float
+    source_hash: str | None = None
+    index_fingerprint: str | None = None
+    index_metadata: str | None = None
 
 
 def search(
@@ -74,11 +78,21 @@ def search(
         raise ValueError("Cannot search with an empty query")
     if limit <= 0:
         raise ValueError(f"limit must be positive, got {limit}")
+    if file_ids == []:
+        return []
 
     settings = get_settings()
     client = client or get_client()
 
+    identity = index_identity.current_index_identity()
     query_vector = embed_text(query)
+    if index_identity.current_index_identity() != identity:
+        raise EmbeddingError("The embedding configuration changed during the query. Retry.")
+    file_filter = _files_filter(file_ids)
+    conditions = list(file_filter.must or []) if file_filter else []
+    conditions.append(models.FieldCondition(
+        key="index_fingerprint", match=models.MatchValue(value=identity.fingerprint)
+    ))
 
     try:
         if not client.collection_exists(settings.qdrant_collection):
@@ -87,7 +101,7 @@ def search(
             collection_name=settings.qdrant_collection,
             query=query_vector,
             limit=limit,
-            query_filter=_files_filter(file_ids),
+            query_filter=models.Filter(must=conditions),
             score_threshold=min_score,
             with_payload=True,
         )
@@ -106,6 +120,9 @@ def _to_result(point) -> SearchResult:
         page_number=payload.get(PAGE_NUMBER),
         chunk_index=payload.get(CHUNK_INDEX, 0),
         score=point.score,
+        source_hash=payload.get("source_hash"),
+        index_fingerprint=payload.get("index_fingerprint"),
+        index_metadata=payload.get("index_metadata"),
     )
 
 

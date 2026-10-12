@@ -1,0 +1,133 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { MarkdownContent } from "@/components/documents/document-preview";
+import { editWiki, readWiki, saveWikiAnalysis, wikiHref, wikiLinkHref, wikiPreviewContent, type WikiPage, type WikiScope } from "@/lib/wiki";
+
+export function WikiEditor({ page, scope, onSaved }: {
+  page: WikiPage; scope: WikiScope; onSaved: (page: WikiPage) => void;
+}) {
+  const revision = page.revision!;
+  const [draft, setDraft] = useState({ title: revision.title, content: revision.content, expected: revision.id });
+  const [baseline, setBaseline] = useState({ title: revision.title, content: revision.content });
+  const [writing, setWriting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [comparison, setComparison] = useState<WikiPage | null>(null);
+  const [savedAnalysis, setSavedAnalysis] = useState<{ id: string; title: string; scope: WikiScope } | null>(null);
+  const [draftOwner] = useState(() => crypto.randomUUID());
+  const mounted = useRef(false);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const draftKey = `noye:wiki-draft:${page.id}`;
+  const dirty = draft.title !== baseline.title || draft.content !== baseline.content;
+  if (!dirty && draft.expected !== revision.id) {
+    setDraft({ title: revision.title, content: revision.content, expected: revision.id });
+    setBaseline({ title: revision.title, content: revision.content });
+  }
+  useEffect(() => {
+    let saved: { draft: typeof draft; baseline: typeof baseline } | null = null;
+    try {
+      const value = JSON.parse(window.localStorage.getItem(draftKey) ?? "null");
+      if (value && typeof value.draft?.title === "string" && typeof value.draft?.content === "string" && typeof value.draft?.expected === "string" && typeof value.baseline?.title === "string" && typeof value.baseline?.content === "string") saved = value;
+    } catch { /* The current in-memory draft remains editable if storage is unavailable. */ }
+    let live = true;
+    if (saved) { const restored = saved; Promise.resolve().then(() => { if (live) {
+      setDraft(restored.draft); setBaseline(restored.baseline);
+      try { window.localStorage.setItem(draftKey, JSON.stringify({ ...restored, owner: draftOwner })); }
+      catch { setError("Could not preserve this draft across navigation. Save changes before leaving."); }
+    } }); }
+    return () => { live = false; };
+  }, [draftKey, draftOwner]);
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => { if (dirty) event.preventDefault(); };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  function change(next: typeof draft) {
+    setDraft(next);
+    try { window.localStorage.setItem(draftKey, JSON.stringify({ draft: next, baseline, owner: draftOwner })); }
+    catch { setError("Could not preserve this draft across navigation. Save changes before leaving."); }
+  }
+  async function save() {
+    setSaving(true); setError(null);
+    try {
+      const result = await editWiki(page.id, draft.expected, draft.title, draft.content, scope);
+      const savedRevision = result.revision!;
+      const savedBaseline = { title: savedRevision.title, content: savedRevision.content };
+      try {
+        const retained = JSON.parse(window.localStorage.getItem(draftKey) ?? "null");
+        if (retained?.owner === draftOwner && retained.draft?.expected === draft.expected) {
+          if (retained.draft.title === draft.title && retained.draft.content === draft.content) window.localStorage.removeItem(draftKey);
+          else window.localStorage.setItem(draftKey, JSON.stringify({ draft: { ...retained.draft, expected: savedRevision.id }, baseline: savedBaseline, owner: draftOwner }));
+        }
+      } catch { /* The saved revision is durable; retained drafts remain recoverable. */ }
+      if (mounted.current) {
+        setDraft(current => current.expected === draft.expected ? { ...current, expected: savedRevision.id } : current);
+        setBaseline(savedBaseline); onSaved(result);
+      }
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save your changes."); }
+    finally { setSaving(false); }
+  }
+  async function analysis() {
+    setSaving(true); setError(null); setSavedAnalysis(null);
+    try {
+      const result = await saveWikiAnalysis(`${draft.title} analysis`, draft.content, [page.id], scope);
+      setSavedAnalysis({ id: result.id, title: result.title, scope });
+      onSaved(result);
+    }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save this analysis."); }
+    finally { setSaving(false); }
+  }
+  async function compareLatest() {
+    setSaving(true); setError(null);
+    try { setComparison(await readWiki(page.id, scope)); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not load the latest revision."); }
+    finally { setSaving(false); }
+  }
+  function resolveConflict(keepDraft: boolean) {
+    if (!comparison?.revision) return;
+    const latest = comparison.revision;
+    const nextBaseline = { title: latest.title, content: latest.content };
+    const next = { ...(keepDraft ? draft : nextBaseline), expected: latest.id };
+    setDraft(next); setBaseline(nextBaseline); setComparison(null); setError(null);
+    onSaved(comparison);
+    try {
+      if (keepDraft) window.localStorage.setItem(draftKey, JSON.stringify({ draft: next, baseline: nextBaseline, owner: draftOwner }));
+      else window.localStorage.removeItem(draftKey);
+    } catch { setError("Could not preserve this draft across navigation. Save changes before leaving."); }
+  }
+  return <section aria-label="Wiki content" className="noye-editor">
+    <div className="noye-toolbar">
+      {writing ? <label className="min-w-0 flex-1 text-xs text-ink-soft">Title<input disabled={saving} value={draft.title} onChange={e => change({ ...draft, title: e.target.value })} className="mt-1 block min-h-10 w-full rounded border border-edge-strong bg-card px-3 text-base text-ink" /></label> : <h2 className="min-w-0 flex-1 break-words font-display text-xl">{draft.title}</h2>}
+    </div>
+    <div className="noye-toolbar border-b border-edge">
+      <button type="button" onClick={() => setWriting(!writing)} className="noye-button">{writing ? "Preview" : "Edit Markdown"}</button>
+      <button type="button" disabled={!dirty || saving} onClick={save} className="noye-button bg-brand text-ink-inverse disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
+      <button type="button" disabled={saving} onClick={analysis} className="noye-button">Save as analysis</button>
+      <span role="status" className="noye-meta">{dirty ? "Unsaved edits · local draft retained; save to include in backups" : "All changes saved"}</span>
+    </div>
+    <div className="noye-editor-body">
+    {savedAnalysis && <p role="status" className="mb-3 text-sm text-ink-soft">Analysis saved. <Link
+      href={wikiHref(savedAnalysis.id, savedAnalysis.scope)} className="text-accent-ink underline">Open saved analysis · {savedAnalysis.title}</Link></p>}
+    {error && <p role="alert" className="mb-3 text-fail">{error} Your draft is still here.</p>}
+    {draft.expected !== revision.id && dirty && <p role="status" className="mb-3 text-ink-soft">A newer revision is available. Your draft is preserved; saving requires the current revision.</p>}
+    {dirty && (error || draft.expected !== revision.id) && <button type="button" disabled={saving} onClick={compareLatest}
+      className="mb-3 min-h-11 rounded border border-edge-strong px-3">Compare with latest revision</button>}
+    {comparison?.revision && <section aria-label="Resolve Wiki conflict" className="mb-4 space-y-3 rounded border border-edge-strong bg-canvas p-4">
+      <p className="font-semibold">Review the latest saved revision before choosing.</p>
+      <p className="text-sm text-ink-soft">Your draft is still editable below. Reapplying it makes your next save replace the revision shown here; it does not merge automatically.</p>
+      <label className="block text-sm">Latest saved title<input readOnly value={comparison.revision.title} className="mt-1 block w-full rounded border border-edge bg-card p-2" /></label>
+      <label className="block text-sm">Latest saved Markdown<textarea readOnly value={comparison.revision.content} className="mt-1 block min-h-40 w-full rounded border border-edge bg-card p-2 font-mono text-sm" /></label>
+      <div className="flex flex-wrap gap-3">
+        <button type="button" disabled={saving} onClick={() => resolveConflict(true)} className="min-h-11 rounded border border-edge-strong px-3">Reapply my draft to this revision</button>
+        <button type="button" disabled={saving} onClick={() => resolveConflict(false)} className="min-h-11 rounded border border-edge-strong px-3">Discard my draft and use latest</button>
+      </div>
+    </section>}
+    {writing ? <div className="flex h-full min-h-0 flex-col">
+      <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="noye-editor-input w-full rounded border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed" /></label>
+    </div> : <MarkdownContent content={wikiPreviewContent(draft.content, revision.metadata.contributors, scope)} allowImages={false}
+      rewriteLink={href => wikiLinkHref(href, scope, revision.metadata.contributors)} />}
+    </div>
+  </section>;
+}

@@ -24,15 +24,25 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
+from app.config import GenerationProvider
 from app.db import conversations as conversation_store
+from app.db import files as file_store
+from app.db import knowledge as knowledge_store
 from app.logging_config import get_logger
 from app.models.conversations import Conversation, Message, MessageCitation, Role
-from app.services.citations import build_citations
+from app.models.evidence import EvidenceSnapshot
+from app.models.files import FileStatus
+from app.models.wiki import WikiScope
+from app.services import knowledge_query
+from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import EmbeddingError
+from app.services.evidence import capture_citations, original_status
 from app.services.generation import NO_CONTEXT_ANSWER, GenerationError, answer_question
 from app.services.indexing import IndexingError
 from app.services.integrity import searchable_file_ids
 from app.services.retrieval import DEFAULT_LIMIT
+from app.services.source_catalog import SourceCatalog, SourceError
+from app.services.wiki.local import WikiError
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -70,9 +80,11 @@ class CitationOut(BaseModel):
     score: float
     #: Ready-made label: "Algorithms.pdf — page 34", or just the name.
     label: str
+    evidence: EvidenceSnapshot | None = None
+    original_status: str = "unknown"
 
     @classmethod
-    def of(cls, citation: MessageCitation) -> CitationOut:
+    def of(cls, citation: MessageCitation, db: sqlite3.Connection | None = None) -> CitationOut:
         return cls(
             file_id=citation.file_id,
             file_name=citation.file_name,
@@ -80,6 +92,8 @@ class CitationOut(BaseModel):
             chunk_indexes=list(citation.chunk_indexes),
             score=citation.best_score,
             label=citation.label,
+            evidence=citation.evidence,
+            original_status=original_status(db, citation) if db is not None else "unknown",
         )
 
 
@@ -93,16 +107,18 @@ class MessageOut(BaseModel):
     error: str | None
     citations: list[CitationOut]
     created_at: str
+    knowledge: dict | None = None
 
     @classmethod
-    def of(cls, message: Message) -> MessageOut:
+    def of(cls, message: Message, db: sqlite3.Connection | None = None) -> MessageOut:
         return cls(
             id=message.id,
             role=message.role,
             content=message.content,
             error=message.error,
-            citations=[CitationOut.of(citation) for citation in message.citations],
+            citations=[CitationOut.of(citation, db) for citation in message.citations],
             created_at=message.created_at.isoformat(),
+            knowledge=knowledge_store.read(db, message.id) if db is not None else None,
         )
 
 
@@ -114,15 +130,19 @@ class ConversationOut(BaseModel):
     created_at: str
     updated_at: str
     messages: list[MessageOut]
+    source_scope: list[str] | None = None
 
     @classmethod
-    def of(cls, conversation: Conversation) -> ConversationOut:
+    def of(
+        cls, conversation: Conversation, db: sqlite3.Connection | None = None
+    ) -> ConversationOut:
         return cls(
             id=conversation.id,
             title=conversation.title,
             created_at=conversation.created_at.isoformat(),
             updated_at=conversation.updated_at.isoformat(),
-            messages=[MessageOut.of(message) for message in conversation.messages],
+            messages=[MessageOut.of(message, db) for message in conversation.messages],
+            source_scope=conversation.source_scope,
         )
 
 
@@ -149,10 +169,13 @@ class ConversationSummary(BaseModel):
 class AskRequest(BaseModel):
     """A question, optionally continuing an existing conversation."""
 
-    question: str = Field(..., min_length=1)
+    question: str = Field(..., min_length=1, max_length=4000)
     #: Omit to start a new conversation, titled from this question.
     conversation_id: str | None = None
     limit: int = Field(DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)
+    provider: GenerationProvider = "ollama"
+    file_ids: list[str] | None = Field(default=None, max_length=200)
+    scope: WikiScope | None = None
 
 
 class AskResponse(BaseModel):
@@ -171,6 +194,21 @@ class AskResponse(BaseModel):
 
 class RenameRequest(BaseModel):
     title: str = Field(..., min_length=1)
+
+
+class ScopeRequest(BaseModel):
+    file_ids: list[str] | None = Field(default=None, max_length=200)
+
+
+@router.put("/conversations/{conversation_id}/scope", response_model=ConversationOut)
+def update_scope(
+    conversation_id: str, request: ScopeRequest, db: sqlite3.Connection = Depends(get_db)
+) -> ConversationOut:
+    try:
+        conversation = conversation_store.set_source_scope(db, conversation_id, request.file_ids)
+        return ConversationOut.of(conversation)
+    except conversation_store.ConversationNotFound as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 def _ready_file_names(db: sqlite3.Connection) -> dict[str, str]:
@@ -197,9 +235,10 @@ def ask(
     """
     question = request.question.strip()
     if not question:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Ask something first."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ask something first.")
+
+    if request.scope is not None and "file_ids" in request.model_fields_set:
+        raise HTTPException(400, "Choose either a material scope or file IDs, not both.")
 
     if request.conversation_id is None:
         conversation = conversation_store.create_conversation(db, first_question=question)
@@ -207,9 +246,23 @@ def ask(
         try:
             conversation = conversation_store.get_conversation(db, request.conversation_id)
         except conversation_store.ConversationNotFound as exc:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-            ) from exc
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+    if "file_ids" in request.model_fields_set:
+        conversation = conversation_store.set_source_scope(db, conversation.id, request.file_ids)
+    if request.scope is not None:
+        # Folder membership is fixed for this turn and persisted as the chosen
+        # inventory for later questions/documents. Links cannot add new members.
+        selected = (
+            None
+            if request.scope.mode == "all"
+            else [
+                item["source_id"] for item in SourceCatalog(db).freeze(request.scope.model_dump())
+            ]
+        )
+        conversation = conversation_store.set_source_scope(db, conversation.id, selected)
+    scope = conversation.source_scope
+    previous = conversation_store.recent_messages(db, conversation.id)
 
     # Written before the model is called: generation can take minutes and can
     # fail, and the user's question must survive either.
@@ -217,29 +270,93 @@ def ask(
         db, conversation.id, role=Role.USER, content=question
     )
 
-    ready = _ready_file_names(db)
-
-    if not ready:
-        answer = conversation_store.add_message(
-            db,
-            conversation.id,
-            role=Role.ASSISTANT,
-            content=(
-                "There is nothing in your library to answer from yet. Add a file, or "
-                "wait for one that is still processing."
-            ),
-        )
-        return AskResponse(
-            conversation_id=conversation.id,
-            conversation_title=conversation.title,
-            question=MessageOut.of(stored_question),
-            answer=MessageOut.of(answer),
-            searched_files=0,
-        )
-
+    ready = {}
+    context = None
+    material_scope = (
+        request.scope.model_dump()
+        if request.scope is not None
+        else {"mode": "all"}
+        if scope is None
+        else {"mode": "empty"}
+        if scope == []
+        else {"mode": "chosen", "source_ids": scope}
+    )
+    use_knowledge = (
+        request.provider == "ollama"
+        and db.execute(
+            "SELECT 1 FROM source_roots UNION SELECT 1 FROM wiki_pages LIMIT 1"
+        ).fetchone()
+        is not None
+    )
     try:
-        generated = answer_question(question, limit=request.limit, file_ids=list(ready))
-    except (EmbeddingError, IndexingError, GenerationError) as exc:
+        ready = _ready_file_names(db) if scope != [] else {}
+        if scope is not None:
+            ready = {file_id: name for file_id, name in ready.items() if file_id in scope}
+
+        if request.provider != "ollama":
+            folder_ids = {row[0] for row in db.execute("SELECT file_id FROM sources")}
+            if folder_ids & set(ready):
+                raise GenerationError(
+                    "Connected-folder questions require local Ollama. "
+                    "Select Ollama or use an upload-only material scope."
+                )
+
+        if not ready:
+            if use_knowledge:
+                context = knowledge_query.discover(db, question, material_scope, file_ids=[])
+            answer = conversation_store.add_message(
+                db,
+                conversation.id,
+                role=Role.ASSISTANT,
+                content=(
+                    "No files are selected for this conversation. Select a file to answer from."
+                    if scope == []
+                    else "None of the selected files has a compatible, ready index. "
+                    "Open the library to check the selected files."
+                    if scope is not None
+                    else "No compatible index is available for the ready files. "
+                    "Open the library to check index compatibility and rebuild when needed."
+                    if any(r.status is FileStatus.READY for r in file_store.list_files(db))
+                    else "There is nothing in your library to answer from yet. Add a file, or "
+                    "wait for one that is still processing."
+                ),
+                knowledge=context.snapshot if context is not None else None,
+            )
+            return AskResponse(
+                conversation_id=conversation.id,
+                conversation_title=conversation.title,
+                question=MessageOut.of(stored_question),
+                answer=MessageOut.of(answer, db),
+                searched_files=0,
+            )
+
+        # Expanded Wiki/original context stays local. Explicit cloud requests keep
+        # the existing retrieval payload and provider; no automatic switching occurs.
+        if use_knowledge:
+            context = knowledge_query.discover(
+                db,
+                retrieval_question(question, previous),
+                material_scope,
+                file_ids=list(ready),
+                limit=request.limit,
+            )
+            generated = knowledge_query.answer(context, question, history=recent_context(previous))
+        else:
+            generated = answer_question(
+                question,
+                limit=request.limit,
+                file_ids=list(ready),
+                provider=request.provider,
+                **(
+                    {
+                        "history": recent_context(previous),
+                        "retrieval_query": retrieval_question(question, previous),
+                    }
+                    if previous
+                    else {}
+                ),
+            )
+    except (EmbeddingError, IndexingError, GenerationError, SourceError, WikiError) as exc:
         # Neither the question nor the answer is logged. The conversation id
         # locates the turn for anyone who needs the text, in the database
         # where the user already keeps it.
@@ -268,30 +385,39 @@ def ask(
 
     # Citations come from the retrieval metadata, never from the model. The file
     # name is copied in here so the citation survives that file being deleted.
-    citations = [
-        MessageCitation(
-            file_id=citation.file_id,
-            file_name=citation.file_name or ready.get(citation.file_id, citation.file_id),
-            page_number=citation.page_number,
-            chunk_indexes=citation.chunk_indexes,
-            best_score=citation.best_score,
-        )
-        for citation in build_citations(generated.sources, file_names=ready)
-    ]
+    citations = capture_citations(generated.sources, ready)
 
-    answer = conversation_store.add_message(
-        db,
-        conversation.id,
-        role=Role.ASSISTANT,
-        content=generated.text,
-        citations=citations,
-    )
+    def save_answer():
+        stored = conversation_store.add_message(
+            db,
+            conversation.id,
+            role=Role.ASSISTANT,
+            content=generated.text,
+            citations=citations,
+            knowledge=context.snapshot if context is not None else None,
+        )
+        return stored
+
+    if context is not None:
+        try:
+            with context.session.commit_guard():
+                answer = save_answer()
+        except SourceError as exc:
+            answer = conversation_store.add_message(
+                db,
+                conversation.id,
+                role=Role.ASSISTANT,
+                content="",
+                error=str(exc),
+            )
+    else:
+        answer = save_answer()
 
     return AskResponse(
         conversation_id=conversation.id,
         conversation_title=conversation.title,
         question=MessageOut.of(stored_question),
-        answer=MessageOut.of(answer),
+        answer=MessageOut.of(answer, db),
         searched_files=len(ready),
     )
 
@@ -300,9 +426,7 @@ def ask(
 def list_conversations(db: sqlite3.Connection = Depends(get_db)) -> list[ConversationSummary]:
     """List conversations, most recently active first."""
     return [
-        ConversationSummary.of(
-            conversation, conversation_store.count_messages(db, conversation.id)
-        )
+        ConversationSummary.of(conversation, conversation_store.count_messages(db, conversation.id))
         for conversation in conversation_store.list_conversations(db)
     ]
 
@@ -313,7 +437,7 @@ def read_conversation(
 ) -> ConversationOut:
     """Read one conversation with its messages and their stored citations."""
     try:
-        return ConversationOut.of(conversation_store.read_conversation(db, conversation_id))
+        return ConversationOut.of(conversation_store.read_conversation(db, conversation_id), db)
     except conversation_store.ConversationNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
@@ -331,13 +455,11 @@ def rename_conversation(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
-    return ConversationOut.of(conversation_store.read_conversation(db, conversation_id))
+    return ConversationOut.of(conversation_store.read_conversation(db, conversation_id), db)
 
 
 @router.delete("/conversations/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_conversation(
-    conversation_id: str, db: sqlite3.Connection = Depends(get_db)
-) -> None:
+def delete_conversation(conversation_id: str, db: sqlite3.Connection = Depends(get_db)) -> None:
     """Delete a conversation and its messages.
 
     Only the record of the discussion goes; the documents it drew on are

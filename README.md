@@ -4,9 +4,17 @@
 
 Noye is a **local-first AI knowledge workspace** that turns your files into searchable, reusable knowledge.
 
-Upload PDFs, Markdown files, and notes. Noye is designed to process them locally, let you search and ask questions across your knowledge base, preserve source citations, and turn useful results into editable documents.
+Upload PDFs, Markdown files, and notes. Noye processes and searches them locally,
+preserves source citations, and turns useful results into editable documents.
+Generation defaults to local Ollama; you can explicitly select Gemini, OpenAI or Claude with your
+own API key for chat or document drafting.
 
 > 🚧 **Noye is currently under active development.** The features below describe the planned MVP unless marked complete.
+
+**Planned Phase 7.5:** choose local knowledge folders, let Noye classify files and
+maintain a linked wiki, then describe a task in chat. AI will discover and inspect
+relevant files to create editable notes, comparisons or reports with Markdown/PDF
+export. This folder/wiki and prompt-driven document workflow is not implemented yet.
 
 ## Why Noye?
 
@@ -32,6 +40,9 @@ Noye aims to provide one local workspace where you can:
 - Editable Markdown documents
 - Markdown and PDF export
 - Visible file-processing states
+- User-selected knowledge folders and automatic change detection *(Phase 7.5 planned)*
+- Source summaries, related links and maintained topic wiki *(Phase 7.5 planned)*
+- Prompt-driven source discovery and document creation from chat *(Phase 7.5 planned)*
 
 ## Tech Stack
 
@@ -44,7 +55,7 @@ Noye aims to provide one local workspace where you can:
 | Vector Search | Qdrant |
 | Local AI | Ollama |
 | Infrastructure | Docker |
-| Desktop | Tauri *(planned)* |
+| Desktop | Tauri 2 *(macOS foundation implemented; final acceptance pending)* |
 
 ## Architecture
 
@@ -97,6 +108,29 @@ Retrieved Knowledge + User Instruction
                  v
           Edit -> Save -> Export
 ```
+
+### Planned Phase 7.5 workflow
+
+```text
+Choose/connect a local folder → Add files in Finder → Detect and extract
+    → Classify → Source summaries + linked topic wiki
+Chat prompt → Discover relevant permitted files → Inspect sources
+    → Synthesize an editable document → Edit/save → Markdown/PDF export
+```
+
+For example, “summarize my COMPSCI 210 lecture notes” can create study notes;
+“compare the design decisions across my projects” can create a comparison. Courses
+and named collections are optional filters. Users need not pick every file or
+first obtain a chat answer: the task guides source discovery within enabled folders
+and any explicit source selection. Outputs report the material actually consulted
+and missing coverage, with references back to original files/pages.
+
+A managed knowledge folder can file originals into category folders. Connected
+existing folders retain their structure by default; automatic filing is enabled
+separately. Wiki summaries stay separate from originals, and user edits are
+preserved. Original extraction and passage retrieval remain available for detail
+omitted from summaries. These are planned behaviors; today's document route still
+starts from a saved answer and PDF export uses the print dialog.
 
 ## Project Structure
 
@@ -169,7 +203,55 @@ noye/
 - [x] Markdown export
 - [x] PDF export *(via your browser's print dialog)*
 
-### Phase 6 — Reliability and Quality
+### Phase 6 — Desktop Application
+
+- [x] Tauri integration with a bundled static UI
+- [x] Start and stop the app's own backend
+- [x] Persistent app-data directory and explicit workspace import
+- [x] Local macOS application bundle
+- [x] Chat-focused layout with conversation navigation and passage inspection
+- [x] Hardware recommendations and explicit model installation/deletion
+- [x] Persistent model/provider settings and macOS Keychain API keys
+- [x] Opt-in Ollama/Qdrant preparation, ownership-aware retry and shutdown
+- [ ] Signed/notarized distribution
+- [ ] Windows support
+
+### Phase 7 — Core Workflow Improvements
+
+- [x] Store retrieved excerpts and pass them to local document generation
+- [x] Preserve citation excerpts and original source versions
+- [x] Coordinate rebuilds with active ingestion/deletion
+- [x] Version indexes by embedding model, chunking and input format
+- [x] Back up and restore SQLite together with source files
+- [x] Persist jobs, recover after restart and cancel between batches
+- [x] Complete desktop data/service/model integration using Phase 6 foundations
+- [x] Restrict Qdrant port publishing to localhost
+- [x] Separate query/document embedding formats and validate input length
+- [x] Establish retrieval evaluation and assess hybrid search/reranking
+- [x] Support bounded conversation context and selected sources
+- [x] Improve evidence inspection, cited exports and PDF extraction coverage
+
+Completed implementation checks and remaining limits are recorded in the
+[workflow validation](docs/phase7/knowledge-workflow.md) and development plan.
+Hybrid search/reranking adoption depends on measured benefit. Broader quality
+and packaged workflow acceptance remain Phase 8 work.
+
+### Phase 7.5 — Knowledge Wiki and Source-Driven Documents *(planned)*
+
+- [ ] User-selected managed/connected folders, native change detection and restart catch-up
+- [ ] Automatic category folders/tags and source-summary wiki pages
+- [ ] Related-source links, backlinks and maintained concept/project pages
+- [ ] Wiki-first questions with original evidence and preserved source scope
+- [ ] General chat prompts that discover/read relevant files and create editable documents
+- [ ] Compatible recovery/backups and source-driven Markdown/PDF output
+
+This phase follows integrated Phase 7 and precedes Phase 8. It reuses the existing
+stack, evidence snapshots and durable jobs. New classification/wiki/document
+synthesis runs through local Ollama and retains the current cloud payload policy.
+The [development plan](NOYE_DEVELOPMENT_PLAN.md) specifies folder ownership,
+source coverage, edit preservation, milestones and acceptance checks.
+
+### Phase 8 — Reliability and Quality
 
 - [x] Upload size limits
 - [x] Duplicate detection
@@ -178,17 +260,27 @@ noye/
 - [x] Handle a change of embedding model
 - [x] Surface index integrity in the library
 
-### Phase 7 — Desktop Application
+- [ ] Stability and quality refinement after Phase 7 and Phase 7.5
+- [ ] Folder/wiki recovery, summary/link quality and prompt-driven document coverage checks
+- [ ] Expanded retrieval/answer quality and local/cloud latency validation
+- [ ] Final desktop end-to-end verification, including native Markdown/PDF export
 
-- [ ] Tauri integration
-- [ ] Start and manage the backend
-- [ ] macOS packaging
-- [ ] Folder watching
-- [ ] Windows support
+Completed safeguards above retain their status from earlier work. Phase 6 builds
+out the desktop app; Phase 7 implements the twelve improvements; Phase 7.5 adds
+the folder/wiki and prompt-driven source-document workflow. Phase 8 then refines
+stability/quality and validates the packaged workflow before MVP release. Relevant
+tests, lint, types and builds run throughout implementation.
 
 ## Privacy Philosophy
 
 **Local by default.** Personal knowledge should not require cloud storage.
+Selecting Gemini sends the question, bounded recent user questions and retrieved excerpts to Google; document
+drafting sends the instruction, stored answer and cited file names. Original files,
+embeddings, search and saved work remain local.
+
+Planned Phase 7.5 classification, wiki maintenance and source-driven synthesis
+remain local. Folder selection does not enable cloud storage or expand the existing
+cloud drafting payload; originals and saved excerpts are not silently transmitted.
 
 **Sources over hallucinations.** Generated answers should remain connected to the information they came from.
 
@@ -199,8 +291,9 @@ noye/
 ### Backend
 
 The backend serves ingestion, search, chat and documents over the routes listed
-below. Everything runs against local services — Qdrant and Ollama — so both have
-to be up for anything beyond `/health`.
+below. Ingestion and search need local Qdrant and Ollama embeddings, including
+when Gemini handles generation. Generation uses the provider explicitly selected
+for each request, defaulting to Ollama.
 
 ```bash
 cd backend
@@ -243,6 +336,8 @@ Available endpoints:
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Liveness check |
+| `GET` | `/ai/providers` | Generation model names and cloud-key availability; never returns credentials |
+| `GET` | `/runtime/services` | Bounded Ollama/Qdrant and installed-model checks; never generates or downloads |
 | `POST` | `/files` | Upload a file; ingestion runs in the background. Refuses one that is too large, empty, mislabelled, or one you already have |
 | `GET` | `/files` | List files, newest first |
 | `GET` | `/files/{id}` | Poll one file's processing status |
@@ -255,6 +350,7 @@ Available endpoints:
 | `GET` | `/chat/conversations` | List conversations, most recently active first |
 | `GET` | `/chat/conversations/{id}` | Read one conversation with its messages |
 | `PATCH` | `/chat/conversations/{id}` | Rename a conversation |
+| `PUT` | `/chat/conversations/{id}/scope` | Persist all/empty/chosen source selection |
 | `DELETE` | `/chat/conversations/{id}` | Delete a conversation; documents are untouched |
 | `GET` | `/documents` | List documents, most recently edited first |
 | `POST` | `/documents` | Create an empty document, or one from text you have |
@@ -262,14 +358,102 @@ Available endpoints:
 | `GET` | `/documents/{id}` | Read one document with its citations |
 | `PATCH` | `/documents/{id}` | Save a title or body edit |
 | `DELETE` | `/documents/{id}` | Delete a document |
-| `GET` | `/documents/{id}/export.md` | Download the stored Markdown |
+| `GET` | `/documents/{id}/export.md` | Download stored Markdown; `?provenance=true` adds saved evidence |
 | `GET` | `/index/status` | Whether the index still matches the files; `?deep=true` also compares point counts |
 | `POST` | `/index/rebuild` | Re-index every file from the originals on disk; returns 202 |
 
 Interactive docs are at `http://127.0.0.1:8000/docs`.
 
+Chat accepts `file_ids`: omitted reuses the conversation's scope, `null` searches
+all eligible files, `[]` searches nothing, and a list searches only those IDs.
+`PUT /chat/conversations/{id}/scope` saves that selection without asking a question.
+Deleted, unready or incompatible selections never broaden to the whole library.
+Follow-ups use bounded recent user questions; prior AI answers are not sent as
+context or used as evidence. Cloud chat disclosure includes this recent context.
+
+New answers retain the exact retrieved excerpts and the original hash/index
+fingerprint carried by their points. Existing references without snapshots remain
+explicitly unknown. The source panel reports changed/missing originals independently
+of these saved excerpts. PDF records expose `no_text_pages` and extraction coverage;
+this reports missing text, not a scan diagnosis or OCR result.
+
+Index compatibility includes the installed embedding model digest, vector dimension,
+input format and extraction/chunking settings. Changing the generation model alone
+does not invalidate it. Older indexes without this identity require an explicit
+rebuild; their original files, conversations and edited documents remain intact.
+The library distinguishes an unknown/changed index from an unavailable Ollama model.
+`CHUNK_SIZE` and `CHUNK_OVERLAP` default to 1000 and 150 characters; changing them
+requires rebuilding. Search filters Qdrant points by the verified fingerprint as
+well as eligible file IDs, so incompatible or legacy points cannot join a ranking.
+`EMBEDDING_INPUT_FORMAT=raw-v1` remains the measured default. The optional
+`embeddinggemma-v1` format separates query/document prefixes and requires an
+explicit rebuild. `EMBEDDING_MAX_INPUT_CHARS` bounds formatted request size;
+Ollama's token limit is also enforced with `truncate=false`.
+See [the recorded comparisons](docs/phase7/retrieval-evaluation.md).
+
+### Optional cloud generation
+
+Desktop: open **Settings → Cloud APIs** for OpenAI, Claude and Gemini key
+entry/removal using macOS Keychain. Saved keys are never returned to the UI.
+An explicit default-provider preference applies to new work, not existing selections.
+Saving keys never sends a validation request or activates billing.
+
+**Settings → Local models** downloads supported recommendations, reports layer
+progress, cancels/retries downloads, switches installed generation models and
+deletes unused models after exact-name confirmation. Confirm a folder on Ollama's
+actual model-storage volume first. Ollama must already be running. Current
+generation, fixed embeddings and models used by Noye inference are protected.
+See [desktop setup and validation](docs/DESKTOP.md) for remaining limits.
+
+**Settings → Services** can start an installed Ollama and prepare Qdrant through
+local Docker Desktop after explicit confirmation. It can open Docker Desktop or
+official installation guides; it does not run prerequisite installers. Qdrant's
+pinned image may be downloaded, with persistent app-data storage and only localhost
+port 6333 published. Already-running services are reused, not adopted or stopped.
+Only services started by this Noye session stop on quit; Docker and data remain.
+
+Web: configure OpenAI using `OPENAI_API_KEY`/`OPENAI_MODEL` and Claude using
+`ANTHROPIC_API_KEY`/`ANTHROPIC_MODEL` in the repository-root `.env`, never frontend
+environment variables. Gemini web configuration follows:
+
+Set these values in the repository-root `.env` (not `frontend/.env.local`), then
+restart the backend:
+
+```dotenv
+GEMINI_API_KEY=your-key-here
+GEMINI_MODEL=gemini-3.8-flash
+```
+
+Obtain a key from [Google AI Studio](https://aistudio.google.com/apikey).
+The model is configurable; choose one available to your project using the
+[official model list](https://ai.google.dev/gemini-api/docs/models).
+The chat screen and Create document form each have a provider selector. They
+start in local mode even when a Gemini key exists; no key enables cloud mode
+automatically. Without a key, Gemini is disabled and setup guidance is shown.
+
+Only FastAPI reads the key and sends it to Google in a header. Do not commit it,
+put it in a `NEXT_PUBLIC_*` variable, or paste it into a conversation. Provider
+errors never include Gemini's raw response body, which could echo private input.
+Noye makes one request and does not retry or switch providers on failure.
+
+Your API project's billing determines charges. Noye cannot turn a paid project
+into a free one or enforce Google's free quota; use a project without activated
+billing for free-only testing. A quota/rate-limit failure is shown as an error.
+Free-tier inputs and outputs may be used to improve Google products, so avoid
+confidential material and review the
+[data terms](https://ai.google.dev/gemini-api/terms) before selecting cloud mode.
+
+This does not change the embedding model or invalidate the local vector index.
+Gemini requires internet access; local mode continues to work without a Gemini key.
+
 The API has **no authentication** — Noye is local and single-user, so the server
 binds to `127.0.0.1`. Do not expose it on a network interface.
+
+Compose also publishes only Qdrant's REST port on `127.0.0.1:6333`; the backend
+does not use the gRPC port. CORS controls browser access and is not authentication
+or a network firewall. After changing an existing checkout, run
+`docker compose up -d qdrant` to recreate its port mapping without removing its
+storage volume. Avoid `docker compose down -v`, which deletes that derived index.
 
 ### Frontend
 
@@ -306,6 +490,11 @@ naming its file and page, with a link that opens the original at that page.
 answer, say what it should become, and edit the draft as Markdown with a rendered
 preview beside it.
 
+Phase 7.5 plans a second entry point: describe the desired document in chat, let
+AI discover and inspect relevant files in the permitted knowledge folders, and
+open the resulting artifact in this editor. Study notes are one example; reports
+and comparisons follow the same prompt-driven workflow. This is not implemented yet.
+
 A document is stored text, not a cached generation — nothing regenerates behind
 you, and the citations shown describe the first draft rather than what you have
 written since. Saving is deliberate: there is a Save button and `Cmd/Ctrl-S`, and
@@ -313,7 +502,10 @@ the browser warns before you navigate away with unsaved edits. Autosave is
 deliberately absent, because edits to a generated draft tend to be wholesale
 rather than incremental and one firing mid-thought would make undo your problem.
 
-Markdown export downloads exactly what is stored. PDF export uses your browser's
+The editor's Markdown and PDF exports both use the current text, including
+unsaved edits. **Include provenance** appends saved source labels, revisions and
+literal excerpts; it does not certify later edits. Direct API Markdown export
+uses the saved body. PDF export uses your browser's
 own print dialog — choose *Save as PDF* — so Noye needs no extra system libraries
 to produce one. A print stylesheet hides the application so the page that reaches
 the PDF is the document; it is available from the Preview tab, since printing the
@@ -344,12 +536,32 @@ plain custom properties with no framework dependency; components never hardcode
 a colour, and never need a `dark:` variant, because each token resolves itself
 per colour scheme.
 
+### macOS desktop preview
+
+The macOS shell bundles the static frontend and a frozen Python backend; it does
+not need Next.js or Python servers running separately. It starts its own loopback
+backend on an available port. Installed Ollama and local Docker Desktop remain
+prerequisites; Settings can prepare services explicitly. Quit stops the owned
+backend and service handles started by that session, never unrelated services.
+Nothing starts Docker, downloads models or enables cloud usage silently.
+
+See [the desktop build and data guide](docs/DESKTOP.md) for prerequisites,
+packaging, validation and a non-destructive import of existing web data. The
+chat-focused interface is included: conversations on the left, a bottom composer,
+local/cloud provider selection and an answer-specific passage panel. First-run
+recommendations, model management, Keychain-backed API settings and opt-in service
+preparation are included. Dark mode uses neutral charcoal and muted blue; light
+mode retains the original paper/forest palette. Implementation checks pass, but
+live setup, credential/model management and full workflow acceptance remain
+deferred to Phase 8. Native synthetic Markdown/PDF export checks are recorded in
+[workflow validation](docs/phase7/knowledge-workflow.md); this is not a signed public release.
+
 ### Supporting services
 
 Qdrant runs in Docker; Ollama runs on the host.
 
 ```bash
-docker compose up -d          # Qdrant on :6333
+docker compose up -d          # Qdrant REST on 127.0.0.1:6333
 brew services start ollama    # Ollama on :11434
 ollama pull embeddinggemma    # embeddings, 768 dimensions
 ollama pull qwen3.5:4b        # generation

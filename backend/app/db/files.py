@@ -11,6 +11,7 @@ depends on a module-level global.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import uuid
 from collections.abc import Sequence
@@ -47,8 +48,11 @@ def _to_file(row: sqlite3.Row) -> File:
         error=row["error"],
         page_count=row["page_count"],
         chunk_count=row["chunk_count"],
+        no_text_pages=json.loads(row["no_text_pages"]) if row["no_text_pages"] else None,
         content_hash=row["content_hash"],
         embedding_model=row["embedding_model"],
+        index_fingerprint=row["index_fingerprint"],
+        index_metadata=row["index_metadata"],
         created_at=datetime.fromisoformat(row["created_at"]),
         updated_at=datetime.fromisoformat(row["updated_at"]),
     )
@@ -69,13 +73,16 @@ def _to_chunk(row: sqlite3.Row) -> Chunk:
 
 
 def find_by_content_hash(
-    connection: sqlite3.Connection, content_hash: str
+    connection: sqlite3.Connection, content_hash: str, *, exclude_disconnected: bool = False
 ) -> File | None:
     """The oldest file with these exact bytes, or None.
 
     Oldest rather than newest: if several copies somehow exist, the one the user
     has had longest is the one they will recognise, and it is the one whose
     conversations and documents cite it.
+
+    Uploads may exclude disconnected folder history. Those rows remain valid
+    evidence records, but no longer prevent a separately owned upload.
 
     A ``content_hash`` of None is never matched — the caller must not pass one.
     NULL means "indexed before Noye recorded this", so treating two unknowns as
@@ -90,11 +97,14 @@ def find_by_content_hash(
     row = connection.execute(
         """
         SELECT * FROM files
-        WHERE content_hash = ?
+        WHERE content_hash = ? AND (? = 0 OR NOT EXISTS (
+            SELECT 1 FROM sources s JOIN source_roots r ON r.id = s.root_id
+            WHERE s.file_id = files.id AND r.connected = 0
+        ))
         ORDER BY created_at ASC
         LIMIT 1
         """,
-        (content_hash,),
+        (content_hash, int(exclude_disconnected)),
     ).fetchone()
     return _to_file(row) if row else None
 
@@ -191,11 +201,23 @@ def set_status(
         raise ValueError("A FAILED status requires an error message")
 
     stored_error = error if status is FileStatus.FAILED else None
+    from app.db.jobs import file_stage
+
     with connection:
         cursor = connection.execute(
             "UPDATE files SET status = ?, error = ?, updated_at = ? WHERE id = ?",
             (status.value, stored_error, _now_iso(), file_id),
         )
+        file_stage(connection, file_id, status.value, stored_error)
+        if status in (FileStatus.READY, FileStatus.FAILED):
+            source = connection.execute(
+                "SELECT * FROM sources WHERE file_id=?", (file_id,)
+            ).fetchone()
+            if source:
+                from app.services.folders import emit
+
+                emit(connection, "ready" if status is FileStatus.READY else "failed",
+                     source=dict(source), error=stored_error)
     if cursor.rowcount == 0:
         raise FileRecordNotFound(f"No file with id {file_id}")
     return get_file(connection, file_id)
@@ -256,6 +278,20 @@ def set_embedding_model(
     return get_file(connection, file_id)
 
 
+def set_index_identity(
+    connection: sqlite3.Connection, file_id: str, fingerprint: str | None, metadata: str | None
+) -> File:
+    """Persist observed processing identity after the corresponding vector write."""
+    with connection:
+        cursor = connection.execute(
+            "UPDATE files SET index_fingerprint = ?, index_metadata = ?, updated_at = ? "
+            "WHERE id = ?", (fingerprint, metadata, _now_iso(), file_id),
+        )
+    if cursor.rowcount == 0:
+        raise FileRecordNotFound(f"No file with id {file_id}")
+    return get_file(connection, file_id)
+
+
 def set_counts(
     connection: sqlite3.Connection,
     file_id: str,
@@ -302,7 +338,8 @@ def reset_counts(connection: sqlite3.Connection, file_id: str) -> File:
     """
     with connection:
         cursor = connection.execute(
-            "UPDATE files SET page_count = NULL, chunk_count = 0, updated_at = ? WHERE id = ?",
+            "UPDATE files SET page_count = NULL, no_text_pages = NULL, chunk_count = 0, "
+            "updated_at = ? WHERE id = ?",
             (_now_iso(), file_id),
         )
     if cursor.rowcount == 0:
@@ -371,3 +408,11 @@ def count_chunks(connection: sqlite3.Connection, file_id: str | None = None) -> 
             "SELECT COUNT(*) AS n FROM chunks WHERE file_id = ?", (file_id,)
         ).fetchone()
     return row["n"]
+
+
+def set_pdf_coverage(connection: sqlite3.Connection, file_id: str,
+                     no_text_pages: list[int] | None) -> None:
+    with connection:
+        connection.execute("UPDATE files SET no_text_pages = ? WHERE id = ?",
+                           (json.dumps(no_text_pages) if no_text_pages is not None else None,
+                            file_id))

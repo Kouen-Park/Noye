@@ -51,6 +51,10 @@ def legacy(tmp_path) -> sqlite3.Connection:
     connection = sqlite3.connect(tmp_path / "legacy.db")
     connection.row_factory = sqlite3.Row
     connection.executescript(LEGACY_FILES)
+    # Later additive migrations require the pre-existing chat/document tables too.
+    from app.db.database import SCHEMA
+
+    connection.executescript(SCHEMA)
     connection.execute(
         "INSERT INTO files (id, name, file_type, path, size, status, chunk_count,"
         " created_at, updated_at) VALUES"
@@ -69,8 +73,7 @@ class TestTheProblemThisSolves:
         Until then it documents why ALTER TABLE is necessary at all.
         """
         legacy.executescript(
-            "CREATE TABLE IF NOT EXISTS files ("
-            " id TEXT PRIMARY KEY, name TEXT, content_hash TEXT);"
+            "CREATE TABLE IF NOT EXISTS files ( id TEXT PRIMARY KEY, name TEXT, content_hash TEXT);"
         )
         assert "content_hash" not in columns(legacy, "files")
 
@@ -154,6 +157,35 @@ class TestAddColumnIfMissing:
 
 
 class TestInitSchemaOrdering:
+    @pytest.mark.parametrize("released_version", [3, 4])
+    def test_released_schema_gains_scope_and_coverage(self, tmp_path, released_version):
+        connection = connect(tmp_path / "version3.db")
+        connection.executescript(
+            LEGACY_FILES
+            + """
+            ALTER TABLE files ADD COLUMN content_hash TEXT;
+            ALTER TABLE files ADD COLUMN embedding_model TEXT;
+            ALTER TABLE files ADD COLUMN index_fingerprint TEXT;
+            ALTER TABLE files ADD COLUMN index_metadata TEXT;
+            CREATE TABLE conversations (
+                id TEXT PRIMARY KEY, title TEXT NOT NULL,
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+            );
+            INSERT INTO conversations VALUES ('saved', 'Keep this conversation',
+                '2026-10-05T00:00:00Z', '2026-10-05T00:00:00Z');
+            PRAGMA user_version = 3;
+        """
+        )
+        connection.execute(f"PRAGMA user_version = {released_version}")
+        init_schema(connection)
+        saved = connection.execute("SELECT * FROM conversations WHERE id = 'saved'").fetchone()
+        assert saved["title"] == "Keep this conversation"
+        assert saved["source_scope"] is None
+        assert "no_text_pages" in columns(connection, "files")
+        assert current_version(connection) == LATEST_VERSION
+        assert apply_migrations(connection) == 0
+        connection.close()
+
     def test_a_fresh_database_ends_where_a_migrated_one_does(self, tmp_path):
         """Both paths have to converge, or behaviour depends on install date."""
         fresh = connect(tmp_path / "fresh.db")
@@ -175,3 +207,47 @@ class TestInitSchemaOrdering:
         init_schema(connection)
         assert {"content_hash", "embedding_model"} <= columns(connection, "files")
         connection.close()
+
+
+@pytest.mark.parametrize("prior_version", [5, 6, 7])
+def test_phase75_additive_upgrade_preserves_phase7_writing_and_registry(tmp_path, prior_version):
+    from app.db.database import SCHEMA
+
+    db = connect(tmp_path / "upgrade.db")
+    db.executescript(SCHEMA)
+    for step in MIGRATIONS[:prior_version]:
+        step(db)
+    db.execute(
+        "INSERT INTO documents(id,title,content,created_at,updated_at) "
+        "VALUES ('authored','Keep','한국어 authored body','2026','2026')"
+    )
+    db.execute(
+        "INSERT INTO conversations(id,title,created_at,updated_at) "
+        "VALUES ('chat','Keep chat','2026','2026')"
+    )
+    db.execute(f"PRAGMA user_version={prior_version}")
+    db.commit()
+    if prior_version == 6:
+        db.execute(
+            "INSERT INTO source_roots(id,name,path,kind,device,inode,created_at,updated_at) "
+            "VALUES ('root','Keep root','/synthetic','connected',1,2,'2026','2026')"
+        )
+        db.commit()
+    init_schema(db)
+    assert (
+        db.execute("SELECT content FROM documents WHERE id='authored'").fetchone()[0]
+        == "한국어 authored body"
+    )
+    assert (
+        db.execute("SELECT title FROM conversations WHERE id='chat'").fetchone()[0] == "Keep chat"
+    )
+    assert db.execute("SELECT name FROM sqlite_master WHERE name='wiki_consumers'").fetchone()
+    if prior_version == 6:
+        assert (
+            db.execute("SELECT path FROM source_roots WHERE id='root'").fetchone()[0]
+            == "/synthetic"
+        )
+    assert current_version(db) == LATEST_VERSION
+    assert apply_migrations(db) == 0
+    assert db.execute("PRAGMA foreign_key_check").fetchall() == []
+    db.close()

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { SavedEvidence } from "@/components/saved-evidence";
+import { OriginalLink } from "@/components/original-link";
 
 import { type ChatCitation, sourceUrl } from "@/lib/api";
 
@@ -34,7 +36,7 @@ export function Passages({ citations }: PassagesProps) {
         type="button"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        className="flex min-h-11 w-full items-center gap-2 text-left text-[12px] font-bold uppercase tracking-[0.08em] text-ink-faint md:min-h-0"
+        className="flex min-h-9 w-full items-center gap-2 text-left text-[13px] font-semibold text-ink-soft"
       >
         <span
           aria-hidden="true"
@@ -45,45 +47,51 @@ export function Passages({ citations }: PassagesProps) {
         {citations.length} {citations.length === 1 ? "passage" : "passages"} consulted
       </button>
 
-      {open && (
-        <ol className="mt-2 space-y-1.5">
+      {open && <PassageList citations={citations} />}
+    </div>
+  );
+}
+
+/** Shared by the inline disclosure and the chat inspection panel. */
+export function PassageList({ citations }: PassagesProps) {
+  return (
+        <ol className="mt-3 divide-y divide-edge">
           {citations.map((citation, index) => {
             const hasPage = citation.page_number !== null;
             return (
               <li
                 key={`${citation.file_id}:${citation.page_number}:${index}`}
-                className="flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md border border-edge border-t-2 border-t-accent bg-canvas px-2.5 py-2"
+                className="space-y-2 py-4 first:pt-0"
               >
-                <span
-                  aria-hidden="true"
-                  className="grid h-[17px] min-w-[17px] place-items-center rounded-sm bg-brand px-1 font-mono text-[10px] font-bold text-ink-inverse"
-                >
-                  {index + 1}
-                </span>
-                <span className="truncate text-[12.5px] font-semibold" title={citation.file_name}>
+                <div className="flex flex-wrap items-center gap-2">
+                <span aria-hidden="true" className="text-xs tabular-nums text-ink-soft">{index + 1}.</span>
+                <span className="min-w-0 text-sm font-semibold [overflow-wrap:anywhere]" title={citation.file_name}>
                   {citation.file_name}
                 </span>
-                <span className="font-mono text-[11.5px] tabular-nums text-ink-soft">
+                <span className="text-xs tabular-nums text-ink-soft">
                   {hasPage ? `page ${citation.page_number}` : "no pages"}
                 </span>
-                <a
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                <p>Original: {citation.original_status ?? "unknown"}</p>
+                {!["missing", "unavailable", "disconnected"].includes(citation.original_status ?? "unknown") && <OriginalLink
                   href={sourceUrl(citation.file_id, citation.page_number)}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   aria-label={
                     hasPage
                       ? `Open ${citation.file_name} at page ${citation.page_number}`
                       : `Open ${citation.file_name}`
                   }
-                  className="ml-auto rounded-md border border-edge-strong px-2 py-1 text-[11.5px] font-semibold text-accent-ink hover:bg-brand-wash"
+                  className="noye-button ml-auto text-accent-ink"
                 >
-                  Open
-                </a>
+                  Open current
+                </OriginalLink>}
+                </div>
+                <div className="min-w-0">
+                  <SavedEvidence citation={citation} />
+                </div>
               </li>
             );
           })}
         </ol>
-      )}
-    </div>
   );
 }

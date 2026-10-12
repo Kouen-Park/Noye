@@ -1,242 +1,330 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 import { AppShell } from "@/components/app-shell";
+import { DocumentTasks } from "@/components/documents/document-tasks";
+import { documentScope, generateSourceDocument } from "@/lib/source-documents";
+import { chatSessionKey, clearNewChat, readChatSession, setChatDraft, setChatOptions, submitChatRequest, useChatBusy, useChatSession } from "@/lib/chat-session";
+import { PROVIDER_NAMES } from "@/lib/ai-settings";
 import { Composer } from "@/components/chat/composer";
+import { SourceSelector } from "@/components/chat/source-selector";
 import { ConversationList } from "@/components/chat/conversation-list";
 import { MessageBubble } from "@/components/chat/message-bubble";
+import { PassageList } from "@/components/chat/passages";
+import { CrossIcon } from "@/components/icons";
+import { ProviderSelector } from "@/components/provider-selector";
 import {
-  ApiError,
-  type ChatMessage,
-  type ConversationSummary,
-  askQuestion,
-  deleteConversation,
-  listConversations,
-  readConversation,
-  renameConversation,
+  ApiError, type AskResponse, type ChatMessage, type ConversationSummary, type GenerationProvider,
+  askQuestion, deleteConversation, listConversations, readConversation, renameConversation, updateConversationScope,
 } from "@/lib/api";
 
-/**
- * Chat: ask questions of your own documents and see what the answer was built
- * from.
- *
- * The open conversation lives in the URL (`/chat?c=…`), matching how `/search`
- * keeps its query there: Back returns to the previous conversation and one can be
- * shared as a link.
- *
- * `useSearchParams` needs a Suspense boundary during prerender — the build fails
- * without one — so the part that reads the URL is its own component.
- */
 export default function ChatPage() {
-  return (
-    <AppShell current="Chat">
-      <h1 className="text-[27px]">Chat</h1>
-      <p className="mt-1 max-w-[60ch] text-ink-soft">
-        Ask about the files you have added. Every answer shows the passages it was
-        given, so you can check them yourself.
-      </p>
-
-      <Suspense fallback={<p className="mt-7 text-ink-soft">Opening chat…</p>}>
-        <ChatView />
-      </Suspense>
-    </AppShell>
-  );
+  // The URL-selected workspace also works in the desktop static export.
+  return <Suspense fallback={<AppShell current="Chat" workspace><p className="p-6 text-ink-soft" role="status">Opening chat…</p></AppShell>}><ChatView /></Suspense>;
 }
 
 function ChatView() {
   const router = useRouter();
-  const params = useSearchParams();
-  const conversationId = params.get("c");
-
+  const conversationId = useSearchParams().get("c");
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [offline, setOffline] = useState(false);
-  /** Which conversation the loaded messages belong to, so a stale load is ignored. */
-  const [loadedFor, setLoadedFor] = useState<string | null>(null);
-
-  const endRef = useRef<HTMLDivElement>(null);
+  const [listLoaded, setListLoaded] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
+  const busy = useChatBusy();
+  const [newSession, setNewSession] = useState(0);
+  const [provider, setProvider] = useState<GenerationProvider>("ollama");
+  const live = useRef(false);
+  const listRequest = useRef(0);
+  const selectedId = useRef(conversationId);
+  useEffect(() => {
+    selectedId.current = conversationId;
+    if (conversationId && readChatSession("new").completion?.conversationId === conversationId) clearNewChat();
+  }, [conversationId]);
 
   const refreshList = useCallback(() => {
-    listConversations().then(setConversations, (cause: unknown) => {
-      setOffline(cause instanceof ApiError && cause.isOffline);
-      setError(cause instanceof ApiError ? cause.message : "Could not load conversations.");
-    });
+    const request = ++listRequest.current;
+    listConversations().then(
+      (result) => {
+        if (!live.current || request !== listRequest.current) return;
+        setConversations(result);
+        setListLoaded(true);
+        setListError(null);
+      },
+      (cause: unknown) => {
+        if (!live.current || request !== listRequest.current) return;
+        setListLoaded(true);
+        setListError(cause instanceof ApiError ? cause.message : "Could not load conversations.");
+      },
+    );
   }, []);
 
   useEffect(() => {
+    live.current = true;
     refreshList();
+    return () => { live.current = false; };
   }, [refreshList]);
 
-  // The URL is the trigger for which conversation is shown. Reading it at render
-  // time rather than syncing in an effect: React 19 rejects a synchronous
-  // setState inside an effect body.
-  if (loadedFor !== conversationId) {
-    setLoadedFor(conversationId);
-    if (conversationId === null) {
-      setMessages([]);
-      setError(null);
-    } else {
-      readConversation(conversationId).then(
-        (conversation) => setMessages(conversation.messages),
-        (cause: unknown) => {
-          setMessages([]);
-          setOffline(cause instanceof ApiError && cause.isOffline);
-          setError(
-            cause instanceof ApiError ? cause.message : "Could not open that conversation.",
-          );
-        },
-      );
-    }
-  }
-
-  // Keep the newest turn in view as the conversation grows.
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages.length, pending]);
-
-  const ask = useCallback(
-    (question: string) => {
-      setPending(true);
-      setError(null);
-
-      // The question is shown immediately with a provisional id. The server
-      // records it too — this is so a slow local model does not leave the person
-      // staring at an empty screen wondering whether it registered.
-      const provisional: ChatMessage = {
-        id: `pending-${Date.now()}`,
-        role: "user",
-        content: question,
-        error: null,
-        citations: [],
-        created_at: new Date().toISOString(),
-      };
-      setMessages((current) => [...current, provisional]);
-
-      askQuestion(question, conversationId ?? undefined).then(
-        (response) => {
-          setPending(false);
-          // Replace the provisional turn with the stored pair, so ids and
-          // timestamps come from the server rather than from the client's clock.
-          setMessages((current) => [
-            ...current.filter((message) => message.id !== provisional.id),
-            response.question,
-            response.answer,
-          ]);
-          refreshList();
-          if (conversationId === null) {
-            // A new conversation: put it in the URL without a history entry, so
-            // Back leaves chat rather than returning to a blank composer.
-            setLoadedFor(response.conversation_id);
-            router.replace(`/chat?c=${encodeURIComponent(response.conversation_id)}`);
-          }
-        },
-        (cause: unknown) => {
-          setPending(false);
-          setMessages((current) =>
-            current.filter((message) => message.id !== provisional.id),
-          );
-          setOffline(cause instanceof ApiError && cause.isOffline);
-          setError(
-            cause instanceof ApiError ? cause.message : "Could not ask that question.",
-          );
-        },
-      );
-    },
-    [conversationId, refreshList, router],
-  );
-
-  const open = useCallback(
-    (id: string) => router.push(`/chat?c=${encodeURIComponent(id)}`),
-    [router],
-  );
-
-  const startNew = useCallback(() => router.push("/chat"), [router]);
-
-  const rename = useCallback(
-    (id: string, title: string) => {
-      renameConversation(id, title).then(refreshList, () =>
-        setError("Could not rename that conversation."),
-      );
-    },
-    [refreshList],
-  );
-
-  const remove = useCallback(
-    (id: string) => {
-      deleteConversation(id).then(
-        () => {
-          refreshList();
-          if (id === conversationId) router.replace("/chat");
-        },
-        () => setError("Could not delete that conversation."),
-      );
-    },
-    [conversationId, refreshList, router],
-  );
+  const rename = (id: string, title: string) => {
+    if (busy) return;
+    renameConversation(id, title).then(refreshList, () => {
+      if (live.current) setListError("Could not rename that conversation.");
+    });
+  };
+  const remove = (id: string) => {
+    if (busy) return;
+    deleteConversation(id).then(() => {
+      if (!live.current) return;
+      refreshList();
+      if (id === selectedId.current) router.replace("/chat");
+    }, () => {
+      if (live.current) setListError("Could not delete that conversation.");
+    });
+  };
 
   return (
-    <div className="mt-6 flex flex-col gap-6 lg:flex-row-reverse">
-      <div className="lg:w-[240px] lg:shrink-0">
-        <ConversationList
-          conversations={conversations}
-          currentId={conversationId}
-          onOpen={open}
-          onRename={rename}
-          onDelete={remove}
-          onNew={startNew}
-        />
-      </div>
+    <ConversationWorkspace key={conversationId ?? `new-${newSession}`} conversationId={conversationId}
+      title={conversations.find((conversation) => conversation.id === conversationId)?.title}
+      provider={provider} onProviderChange={setProvider} busy={busy}
+      refreshList={refreshList} sidebar={
+      <>
+        <ConversationList conversations={conversations} currentId={conversationId}
+          loading={!listLoaded} disabled={busy} onRename={rename} onDelete={remove}
+          onOpen={(id) => { if (!busy) router.push(`/chat?c=${encodeURIComponent(id)}`); }}
+          onNew={() => { if (!busy) { clearNewChat(); if (conversationId === null) setNewSession((current) => current + 1); else router.push("/chat"); } }} />
+        {listError && <div role="alert" className="mt-3 rounded-md border border-fail bg-fail-wash p-3 text-xs text-fail">
+          <p>{listError}</p><button type="button" onClick={refreshList} className="mt-1 min-h-11 underline">Retry conversations</button>
+        </div>}
+      </>
+    } />
+  );
+}
 
-      <div className="min-w-0 flex-1">
-        {/* An answer arrives without a page change, so it is announced. */}
-        <p role="status" aria-live="polite" className="sr-only">
-          {pending ? "Thinking about your question." : ""}
-        </p>
+function mergeTurn(messages: ChatMessage[], turn: AskResponse) {
+  const merged = messages.filter(message => !message.id.startsWith("pending-"));
+  let question = merged.findIndex(message => message.id === turn.question.id);
+  if (question === -1) { question = merged.length; merged.push(turn.question); }
+  if (!merged.some(message => message.id === turn.answer.id)) merged.splice(question + 1, 0, turn.answer);
+  return merged;
+}
 
-        {error !== null && (
-          <div className="mb-3 rounded-lg border border-fail bg-fail-wash px-4 py-3">
-            <p className="font-semibold text-fail">{error}</p>
-            {offline && (
-              <p className="mt-1 text-[13px] text-fail">
-                Noye keeps your files on this machine, so its backend has to be running.
-              </p>
-            )}
-          </div>
-        )}
+function closeSettingsOnEscape(event: KeyboardEvent<HTMLDetailsElement>) {
+  if (event.key !== "Escape") return;
+  event.preventDefault();
+  event.currentTarget.open = false;
+  event.currentTarget.querySelector("summary")?.focus();
+}
 
-        {messages.length === 0 && !pending ? (
-          <div className="rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center">
-            <p className="font-display text-lg">Ask your first question</p>
-            <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
-              Answers are built only from the files you have added, and each one shows
-              the passages behind it so you can judge them yourself.
-            </p>
-          </div>
-        ) : (
-          <ul>
-            {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
-            {pending && (
-              <li className="mb-3">
-                <div className="max-w-[68ch] rounded-lg border border-edge-strong bg-card px-3.5 py-2.5">
-                  <p className="noye-pulse text-[14.5px] text-ink-soft">
-                    Reading your documents…
-                  </p>
+function ConversationWorkspace({ conversationId, title, provider, onProviderChange, busy, refreshList, sidebar }: {
+  conversationId: string | null;
+  title?: string;
+  provider: GenerationProvider;
+  onProviderChange: (provider: GenerationProvider) => void;
+  busy: boolean;
+  refreshList: () => void;
+  sidebar: ReactNode;
+}) {
+  const router = useRouter();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [savedTitle, setSavedTitle] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(conversationId === null);
+  const [loading, setLoading] = useState(conversationId !== null);
+  const [attempt, setAttempt] = useState(0);
+  const sessionKey = chatSessionKey(conversationId);
+  const session = useChatSession(sessionKey);
+  const pending = session.pending !== null;
+  const [error, setError] = useState<string | null>(null);
+  const draft = session.draft;
+  const setDraft = (value: string) => setChatDraft(sessionKey, value);
+  const scope = session.scope;
+  const setScope = (value: string[] | null) => setChatOptions(sessionKey, { scope: value });
+  const documentMode = session.documentMode;
+  const collectionMode = session.collectionMode;
+  const [scopeSaving, setScopeSaving] = useState(false);
+  const [inspecting, setInspecting] = useState<ChatMessage | null>(null);
+  const panelId = useId();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sourceButton = useRef<HTMLButtonElement | null>(null);
+  const live = useRef(false);
+  const documentDispatch = useRef<{ key: string; id: string } | null>(null);
+
+  useEffect(() => {
+    live.current = true;
+    return () => { live.current = false; };
+  }, []);
+
+  useEffect(() => {
+    if (conversationId === null) return;
+    const controller = new AbortController();
+    readConversation(conversationId, controller.signal).then(
+      (conversation) => {
+        if (controller.signal.aborted) return;
+        const turn = readChatSession(sessionKey).completion?.turn;
+        setMessages(turn ? mergeTurn(conversation.messages, turn) : conversation.messages);
+        setChatOptions(sessionKey, { scope: conversation.source_scope ?? null });
+        setSavedTitle(conversation.title);
+        setLoaded(true);
+        setLoading(false);
+      },
+      (cause: unknown) => {
+        if (controller.signal.aborted) return;
+        setLoading(false);
+        setError(cause instanceof ApiError ? cause.message : "Could not open that conversation.");
+      },
+    );
+    return () => controller.abort();
+  }, [conversationId, attempt, sessionKey]);
+
+  useEffect(() => {
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    scrollRef.current?.scrollTo?.({ top: scrollRef.current.scrollHeight, behavior: reduced ? "auto" : "smooth" });
+  }, [messages.length, pending]);
+
+  useEffect(() => {
+    const completion = session.completion;
+    if (!loaded || (!completion && !session.error)) return;
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      if (!completion) { setMessages(current => current.filter(m => !m.id.startsWith("pending-"))); return; }
+      const turn = completion.turn;
+      if (turn) setMessages(current => mergeTurn(current, turn));
+      else if (conversationId) setAttempt(n => n + 1);
+      if (conversationId === null) router.replace(`/chat?c=${encodeURIComponent(completion.conversationId)}`);
+    });
+    return () => { cancelled = true; };
+  }, [session.completion, session.error, conversationId, router, loaded]);
+
+  const ask = (question: string) => {
+    if (busy || scopeSaving || !loaded) return;
+    setError(null);
+    if (documentMode) {
+      const key = JSON.stringify([question, scope, conversationId, collectionMode]);
+      if (documentDispatch.current?.key !== key) documentDispatch.current = { key, id: crypto.randomUUID() };
+      const requestId = documentDispatch.current.id;
+      void submitChatRequest(sessionKey, "document", "ollama", question, async () => {
+        const response = await generateSourceDocument(question, documentScope(scope), conversationId ?? undefined,
+          collectionMode ? "collection" : "auto", requestId);
+        documentDispatch.current = null;
+        return { conversationId: response.request.request.conversation_id };
+      }).then(refreshList);
+      return;
+    }
+    const provisional: ChatMessage = {
+      id: `pending-${Date.now()}`, role: "user", content: question, error: null,
+      citations: [], created_at: new Date().toISOString(),
+    };
+    setMessages(current => [...current, provisional]);
+    void submitChatRequest(sessionKey, "answer", provider, question, async () => {
+      const turn = await askQuestion(question, conversationId ?? undefined, provider, scope);
+      return { conversationId: turn.conversation_id, turn };
+    }).then(refreshList);
+  };
+
+  const changeScope = (ids: string[] | null) => {
+    if (busy || scopeSaving || !loaded) return;
+    if (conversationId === null) { setScope(ids); return; }
+    setScopeSaving(true);
+    updateConversationScope(conversationId, ids).then(() => {
+      if (live.current) { setScope(ids); setError(null); }
+    }, (cause: unknown) => {
+      if (live.current) setError(cause instanceof ApiError ? cause.message : "Could not save selected files.");
+    }).finally(() => { if (live.current) setScopeSaving(false); });
+  };
+
+  const closePassages = () => {
+    setInspecting(null);
+    sourceButton.current?.focus();
+  };
+  const heading = title ?? savedTitle ?? (conversationId ? "Conversation" : "New conversation");
+
+  return (
+    <AppShell current="Chat" workspace sidebar={sidebar} title={heading} actions={
+          <div role="group" aria-label="Conversation controls" className="flex max-w-full flex-wrap items-center gap-x-4">
+            <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-controls min-w-0">
+              <summary className="min-h-11 cursor-pointer py-3 text-[12px] font-medium text-ink-soft">AI &amp; sources · {PROVIDER_NAMES[session.pending?.provider ?? provider]}<span className="ml-2">· {scope === null ? "All files" : scope.length === 0 ? "No files" : `${scope.length} files`}</span></summary>
+              <div className="chat-controls-content rounded-lg border border-edge bg-card p-3 shadow-lg">
+                <ProviderSelector value={session.pending?.provider ?? provider} onChange={onProviderChange} disabled={busy} compact />
+                <SourceSelector scope={scope} onChange={changeScope} disabled={busy || scopeSaving || !loaded} />
+              </div>
+            </details>
+            <details name="chat-settings" onKeyDown={closeSettingsOnEscape} className="chat-options min-w-0 text-[12px] text-ink-soft">
+              <summary className="min-h-11 cursor-pointer py-3 font-medium">{documentMode ? "Document options · Local Ollama" : "Chat options"}</summary>
+              <div className="chat-options-content rounded-lg border border-edge bg-card p-3 shadow-lg">
+                <div className="space-y-1">
+                  <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={documentMode} disabled={busy || !loaded} onChange={event => setChatOptions(sessionKey, { documentMode: event.target.checked })} />Create an editable document</label>
+                  {documentMode && <label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={collectionMode} disabled={busy} onChange={event => setChatOptions(sessionKey, { collectionMode: event.target.checked })} />Use every source in the selected scope</label>}
                 </div>
-              </li>
-            )}
-          </ul>
-        )}
-
-        <div ref={endRef} />
-
-        <Composer onAsk={ask} pending={pending} />
+                {documentMode && <p className="mt-2 text-[12px] leading-relaxed text-ink-soft">Document jobs use local Ollama and original files. Conversation turns help interpret intent only.</p>}
+              </div>
+            </details>
+          </div>
+    }>
+      <div className="noye-chat-workspace flex min-h-0 flex-1 flex-col xl:flex-row">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col" aria-label="Conversation">
+          <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 md:px-8">
+            <div className="mx-auto max-w-[760px] py-4">
+              {(error || session.error) && <div role="alert" className="mb-4 rounded-lg border border-fail bg-fail-wash p-4 text-sm text-fail">
+                <p>{error || session.error}</p>
+                {!loaded && !loading && <button type="button" onClick={() => { setError(null); setLoading(true); setAttempt((current) => current + 1); }} className="mt-2 min-h-11 underline">Retry opening conversation</button>}
+              </div>}
+              {loading ? <p role="status" className="py-8 text-sm text-ink-soft">Opening conversation…</p> :
+                loaded && messages.length === 0 ? <div className="py-6 md:py-10">
+                  <h2 className="text-[24px] font-semibold">Ask your files</h2>
+                  <p className="mt-2 max-w-[52ch] text-[15px] leading-relaxed text-ink-soft">Find a detail, compare ideas, or create a document from your sources.</p>
+                  <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                    {["What are the main ideas in these files?", "Compare the approaches in my documents."].map((question) => (
+                      <button key={question} type="button" disabled={busy} onClick={() => { setDraft(question); inputRef.current?.focus(); }}
+                        className="min-h-11 rounded-md border border-edge bg-card px-3 py-2 text-left text-[13px] text-ink hover:bg-brand-wash disabled:opacity-60">{question}</button>
+                    ))}
+                  </div>
+                  <Link href="/library" className="mt-3 inline-flex min-h-11 items-center text-[12px] text-brand underline underline-offset-4">Manage files in Library</Link>
+                </div> : null}
+              <ul aria-label="Messages">
+                {messages.map((message) => <MessageBubble key={message.id} message={message} panelId={panelId}
+                  inspected={inspecting?.id === message.id} onInspect={(selected, button) => { sourceButton.current = button; setInspecting(selected); }} />)}
+                {pending && <li className="py-5" role="status"><p className="text-[12px] font-semibold text-brand">Noye</p><p className="mt-2 text-sm text-ink-soft">Waiting for {session.pending?.provider === "ollama" ? "Ollama" : PROVIDER_NAMES[session.pending?.provider ?? provider]}…</p><p className="mt-1 text-xs text-ink-soft">{session.pending?.kind === "document" ? "Starting a local document job. Progress will appear here." : "Your question is being processed. The answer will appear here."}</p></li>}
+              </ul>
+              <DocumentTasks key={conversationId ?? "new"} conversationId={conversationId} refreshToken={session.completion} />
+            </div>
+          </div>
+          <footer className="shrink-0 px-4 pt-2 pb-3 md:px-8 md:pb-4">
+            <div className="mx-auto max-w-[760px]">
+              {busy && !pending && <p role="status" className="mb-2 text-xs text-ink-soft">An answer is still being saved in another conversation.</p>}
+              <Composer onAsk={ask} pending={pending} documentMode={documentMode} disabled={!loaded || scopeSaving || (busy && !pending) || (conversationId === null && !!session.completion)} value={draft} onChange={setDraft} inputRef={inputRef} />
+            </div>
+          </footer>
+        </section>
+        {inspecting && <PassagePanel id={panelId} message={inspecting} onClose={closePassages} />}
       </div>
-    </div>
+    </AppShell>
+  );
+}
+
+function PassagePanel({ id, message, onClose }: { id: string; message: ChatMessage; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const close = () => { dialog.current?.close(); onClose(); };
+  useEffect(() => {
+    const element = dialog.current;
+    element?.showModal(); closeRef.current?.focus();
+    return () => { element?.close(); };
+  }, []);
+  return (
+    <dialog ref={dialog} aria-label="Inspect consulted passages" onCancel={event => { event.preventDefault(); close(); }} className="passage-dialog rounded-lg border border-edge-strong bg-canvas text-ink">
+    <aside id={id} aria-label="Passages consulted" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); close(); } }}
+      className="h-full overflow-y-auto overscroll-contain p-4 md:p-5">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-lg">Passages consulted</h2>
+        <button ref={closeRef} type="button" onClick={close} aria-label="Close passages"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-md border border-edge-strong text-ink-soft hover:bg-card"><CrossIcon className="h-4 w-4" /></button>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-ink-soft">Retrieved context, not verified support. Check the originals.</p>
+      <PassageList citations={message.citations} />
+      <p className="mt-4 text-xs leading-relaxed text-ink-soft">Deleted files keep saved references but their originals cannot open.</p>
+    </aside>
+    </dialog>
   );
 }

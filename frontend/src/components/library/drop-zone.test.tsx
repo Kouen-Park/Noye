@@ -11,6 +11,17 @@ function fileInput(): HTMLInputElement {
 }
 
 describe("DropZone", () => {
+  it("keeps the compact Add files input labeled, separate and repeatable", async () => {
+    const onFiles = vi.fn();
+    render(<DropZone compact onFiles={onFiles} uploading={["in-flight.txt"]} />);
+    const input = screen.getByLabelText("Add files") as HTMLInputElement;
+    const chosen = new File(["Notes"], "notes.txt", { type: "text/plain" });
+    expect(document.querySelector("label")?.contains(input)).toBe(false);
+    await userEvent.upload(input, chosen);
+    await userEvent.upload(input, chosen);
+    expect(onFiles).toHaveBeenCalledTimes(2);
+    expect(screen.getByText(/Adding in-flight.txt/)).toBeVisible();
+  });
   it("exposes a real file input that the label names", () => {
     render(<DropZone onFiles={vi.fn()} uploading={[]} />);
     const input = fileInput();

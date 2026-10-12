@@ -1,0 +1,198 @@
+{
+  "dataset_sha256": "760a60a40d73882ac541f5fbbafc342ff10e9726c45f2d377cbc618a6b9d1643",
+  "reviewer": "Codex rubric inspection of the saved local-model answers (not independent human review)",
+  "rows": {
+    "q01": {
+      "answer_sha256": "a3e3e0f847ae33c07627da20d7575f36f91b87843644c32a1bd8765fdef1df52",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Lists preserved work and all exclusions correctly."
+    },
+    "q02": {
+      "answer_sha256": "0c42912af9eaac2462b7ac674b5a99bb69c9bfd05f466eaa0ffafd7b426e68a0",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correctly excludes weights; unnecessary greeting and excerpt marker."
+    },
+    "q03": {
+      "answer_sha256": "885ca54e9a09a59918be0262637ece42f6aa72c8eec09c483ca15dcf0a872eb2",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": false,
+      "note": "Correct no-overwrite result, but answers the Korean question in English."
+    },
+    "q04": {
+      "answer_sha256": "16c56f6463fa3764adc2f83cf337cccfac9ead1918668d1b4f966f832f834271",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct refusal for active work; wording of refusing new work is imprecise."
+    },
+    "q05": {
+      "answer_sha256": "94433eb837a7d798059ed20d20c2b213262072bf17f04e8228b64df062b59860",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correctly allows cancellation; omits the completed-files-only search detail."
+    },
+    "q06": {
+      "answer_sha256": "3ae85ac5a068f561f86fc64bb5c4c76b239052ba6e8df1619d953ed04bc5d72b",
+      "correct": false,
+      "faithful": false,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Incorrect yes conclusion confuses generation changes with a replaced embedding-model digest."
+    },
+    "q07": {
+      "answer_sha256": "1c26edb7360bb6ace81c0e5b04d8c3588e6d594f98db78f7d224d7bb43deb11a",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Both chunk size and overlap included correctly; adds a model-written excerpt marker."
+    },
+    "q08": {
+      "answer_sha256": "e153b794352a4a6df2fd1303f5277991582890d3b492e27fc3028f6e662a058a",
+      "correct": true,
+      "faithful": false,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct main no-invalidation answer; adds an unsupported conditional link to replacing the embedding tag."
+    },
+    "q09": {
+      "answer_sha256": "46f4d9e8096d4146088e5ce629283e5cf5c9ea82a346a2c794242f911749c2cc",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct explicit rebuild and unknown identity, but omits preservation of existing writing."
+    },
+    "q10": {
+      "answer_sha256": "d114888364b827e263e0de3dca816e11a0f7b5e0ff1d1c9cd313f302a60c6ccf",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct host and REST port; omits unused gRPC detail."
+    },
+    "q11": {
+      "answer_sha256": "c3d154ceaafa45035736edcf5c4da11ffd993298d3ef9895179219efeeed800d",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": false,
+      "note": "Correct distinction from authentication; responds in English to a Korean question."
+    },
+    "q12": {
+      "answer_sha256": "1f6ce27dcbed54dceaa66796d7cba028c6fad50c0c1a6fe877e6f63f6da02668",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct no automatic download; does not discuss the separate unavailable-service state."
+    },
+    "q13": {
+      "answer_sha256": "5d9e134692ae935527d7bb12963b6da933d9ae8856762d270172e41b743543f4",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct unchanged historical evidence and missing-original status."
+    },
+    "q14": {
+      "answer_sha256": "ddee569b78d519d7ca3470c65dcf62c7ddd047784375f99205947a3c6e2dd262",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct document survival; Korean wording is awkward."
+    },
+    "q15": {
+      "answer_sha256": "9f7c7258eec381a2afa87aeaad886f92b94011e2f53f6035ff81f0e326394bbb",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct all/empty distinction and no broadening after deletion."
+    },
+    "q16": {
+      "answer_sha256": "2afc158a6f26aa69e03237c35914ab94849dd0f2509873dd5a0751c99f95bec8",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": false,
+      "note": "Correctly avoids scan classification; responds in English to a Korean question."
+    },
+    "q17": {
+      "answer_sha256": "bbe652fb9226e93fbe718f3655eac314f2d775dbbc698410a1da370627f0b50d",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct NX-742 meaning and remediation from the error-codes passage."
+    },
+    "q18": {
+      "answer_sha256": "8d615340941002b6e8f81880941e6ca9bc0f8de1005bec25bd041bd677567a6e",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct NX-724 printer meaning and unrelatedness to source/model changes."
+    },
+    "q19": {
+      "answer_sha256": "79f6be5dd884ac54afc909355851aab9192e3417596d16b8f4863c31bde36355",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct rejection rather than truncation; omits that task formatting counts."
+    },
+    "q20": {
+      "answer_sha256": "61f2ad2e0c9d7459df8c2574f852bc4d6dfec7d0cb232317246ec210b18c0c7e",
+      "correct": false,
+      "faithful": false,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Incorrectly says backups preserve vectors and refuses the reason explicitly present in writing-ko."
+    },
+    "q21": {
+      "answer_sha256": "096841c4cf7e3c17362b4206986216c7d2c4565ba141e9da3b5f331747566e57",
+      "correct": true,
+      "faithful": true,
+      "abstained": false,
+      "response_language_matches": true,
+      "note": "Correct processing identity versus unchanged historical evidence, but lacks the separate source hash detail."
+    },
+    "q22": {
+      "answer_sha256": "c794b99d3eb60f23f9db05bd839cbe6085dcf1ec852819e2718d29854d02c507",
+      "correct": true,
+      "faithful": true,
+      "abstained": true,
+      "response_language_matches": true,
+      "note": "Correctly says no subscription price is given; no invented price."
+    },
+    "q23": {
+      "answer_sha256": "671211f135278e0aadc6bb2b42744886c35cd80adfd17f3639a031e31ce32ebd",
+      "correct": true,
+      "faithful": true,
+      "abstained": true,
+      "response_language_matches": true,
+      "note": "Correctly declines absent cloud-sync provider."
+    },
+    "q24": {
+      "answer_sha256": "b233fa68d51cb60c86031c7a66c3e52ac48f02c8fc2bab5f4f0df5079876fa49",
+      "correct": true,
+      "faithful": true,
+      "abstained": true,
+      "response_language_matches": true,
+      "note": "Correctly declines NX-999 without substituting a similar error code."
+    }
+  }
+}

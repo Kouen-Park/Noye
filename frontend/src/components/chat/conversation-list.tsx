@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type { ConversationSummary } from "@/lib/api";
+import { PlusIcon } from "@/components/icons";
 
 /**
  * Past conversations, most recently active first.
@@ -21,6 +22,8 @@ interface ConversationListProps {
   onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
   onNew: () => void;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 export function ConversationList({
@@ -30,27 +33,28 @@ export function ConversationList({
   onRename,
   onDelete,
   onNew,
+  disabled = false,
+  loading = false,
 }: ConversationListProps) {
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [actions, setActions] = useState<string | null>(null);
+  const actionId = useId();
 
   return (
-    <div>
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
-          Conversations
-        </h2>
+    <fieldset disabled={disabled} aria-label="Conversations" className="min-w-0 disabled:opacity-60">
         <button
           type="button"
           onClick={onNew}
-          className="min-h-11 rounded-md border border-edge-strong px-2.5 text-[12.5px] font-semibold text-accent-ink hover:bg-brand-wash md:min-h-0 md:py-1"
+          data-navigation
+          className="flex min-h-11 w-full items-center gap-2 rounded-md border border-edge bg-card px-3 text-[13px] font-semibold text-brand hover:bg-brand-wash disabled:cursor-not-allowed"
         >
-          New
+          <PlusIcon className="h-4 w-4" />New chat
         </button>
-      </div>
+        <p className="mt-4 px-2 text-[12px] font-medium text-ink-soft">Recent conversations</p>
 
-      {conversations.length === 0 ? (
+      {loading ? <p role="status" className="mt-2 px-2 text-xs text-ink-soft">Loading conversations…</p> : conversations.length === 0 ? (
         <p className="mt-2 text-[12.5px] text-ink-soft">Nothing asked yet.</p>
       ) : (
         <ul className="mt-2 space-y-1">
@@ -67,7 +71,7 @@ export function ConversationList({
                       if (title !== "") onRename(conversation.id, title);
                       setEditing(null);
                     }}
-                    className="flex gap-1.5"
+                    className="flex min-h-11 gap-1.5"
                   >
                     <input
                       autoFocus
@@ -107,14 +111,14 @@ export function ConversationList({
                         onDelete(conversation.id);
                         setConfirming(null);
                       }}
-                      className="rounded-md bg-fail px-2.5 py-1 text-[12px] font-semibold text-canvas"
+                      className="min-h-11 rounded-md bg-fail px-2.5 py-1 text-[12px] font-semibold text-ink-inverse"
                     >
                       Delete
                     </button>
                     <button
                       type="button"
                       onClick={() => setConfirming(null)}
-                      className="rounded-md border border-edge-strong px-2.5 py-1 text-[12px] text-ink-soft"
+                      className="min-h-11 rounded-md border border-edge-strong px-2.5 py-1 text-[12px] text-ink-soft"
                     >
                       Keep
                     </button>
@@ -124,17 +128,24 @@ export function ConversationList({
             }
 
             return (
-              <li key={conversation.id} className="group flex items-stretch gap-1">
+              <li key={conversation.id} onKeyDown={event => {
+                if (event.key === "Escape" && actions === conversation.id) {
+                  setActions(null);
+                  event.currentTarget.querySelector<HTMLButtonElement>("[data-actions]")?.focus();
+                }
+              }}>
+                <div className="flex items-stretch gap-1">
                 <button
                   type="button"
                   onClick={() => onOpen(conversation.id)}
+                  data-navigation
                   aria-current={isCurrent ? "true" : undefined}
                   // Named explicitly, like the Edit and Delete controls beside
                   // it: the visible text already includes the message count, so
                   // without this the three controls for one row are hard to tell
                   // apart when navigating by control.
                   aria-label={`Open ${conversation.title}`}
-                  className={`min-h-11 min-w-0 flex-1 rounded-md px-2.5 text-left text-[13px] md:min-h-0 md:py-1.5 ${
+                  className={`min-h-11 min-w-0 flex-1 rounded-md px-2.5 py-2 text-left text-[13px] ${
                     isCurrent
                       ? "bg-card font-semibold text-ink shadow-[inset_2.5px_0_0_var(--brand)]"
                       : "text-ink-soft hover:bg-card hover:text-ink"
@@ -143,35 +154,43 @@ export function ConversationList({
                   <span className="block truncate" title={conversation.title}>
                     {conversation.title}
                   </span>
-                  <span className="font-mono text-[10.5px] tabular-nums text-ink-faint">
+                  <span className="text-[12px] tabular-nums text-ink-soft">
                     {conversation.message_count}{" "}
                     {conversation.message_count === 1 ? "message" : "messages"}
                   </span>
                 </button>
+                <button type="button" data-actions aria-label={`Actions for ${conversation.title}`}
+                  aria-expanded={actions === conversation.id} aria-controls={actions === conversation.id ? `${actionId}-${conversation.id}` : undefined}
+                  onClick={() => setActions(actions === conversation.id ? null : conversation.id)}
+                  className="min-h-11 w-9 shrink-0 rounded-md text-[20px] text-ink-soft hover:bg-card hover:text-ink"><span aria-hidden="true">⋯</span></button>
+                </div>
+                {actions === conversation.id && <div id={`${actionId}-${conversation.id}`} className="mb-2 flex gap-2 px-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     setDraft(conversation.title);
+                    setActions(null);
                     setEditing(conversation.id);
                   }}
                   aria-label={`Rename ${conversation.title}`}
-                  className="rounded-md px-1.5 text-[11px] text-ink-faint hover:text-ink"
+                  className="min-h-11 rounded-md px-2 text-[12px] text-ink-soft hover:bg-card hover:text-ink"
                 >
-                  Edit
+                  Rename
                 </button>
                 <button
                   type="button"
-                  onClick={() => setConfirming(conversation.id)}
+                  onClick={() => { setActions(null); setConfirming(conversation.id); }}
                   aria-label={`Delete ${conversation.title}`}
-                  className="rounded-md px-1.5 text-[11px] text-ink-faint hover:text-fail"
+                  className="min-h-11 rounded-md px-2 text-[12px] text-ink-soft hover:bg-card hover:text-fail"
                 >
-                  ✕
+                  Delete
                 </button>
+                </div>}
               </li>
             );
           })}
         </ul>
       )}
-    </div>
+    </fieldset>
   );
 }

@@ -12,6 +12,7 @@ behind it.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import uuid
 from collections.abc import Sequence
@@ -24,6 +25,7 @@ from app.models.conversations import (
     Role,
     derive_title,
 )
+from app.models.evidence import decode_evidence, encode_evidence
 
 
 class ConversationNotFound(LookupError):
@@ -48,6 +50,7 @@ def _to_conversation(row: sqlite3.Row) -> Conversation:
         title=row["title"],
         created_at=datetime.fromisoformat(row["created_at"]),
         updated_at=datetime.fromisoformat(row["updated_at"]),
+        source_scope=json.loads(row["source_scope"]) if row["source_scope"] else None,
     )
 
 
@@ -70,6 +73,7 @@ def _to_citation(row: sqlite3.Row) -> MessageCitation:
         page_number=row["page_number"],
         chunk_indexes=tuple(int(part) for part in raw.split(",") if part != ""),
         best_score=row["best_score"],
+        evidence=decode_evidence(row["evidence_json"]),
     )
 
 
@@ -138,9 +142,7 @@ def list_conversations(connection: sqlite3.Connection) -> list[Conversation]:
     By ``updated_at`` rather than ``created_at``: the sidebar should surface what
     the user was last talking about, not what they started longest ago.
     """
-    rows = connection.execute(
-        "SELECT * FROM conversations ORDER BY updated_at DESC, id"
-    ).fetchall()
+    rows = connection.execute("SELECT * FROM conversations ORDER BY updated_at DESC, id").fetchall()
     return [_to_conversation(row) for row in rows]
 
 
@@ -183,9 +185,7 @@ def delete_conversation(connection: sqlite3.Connection, conversation_id: str) ->
         ConversationNotFound: no such id.
     """
     with connection:
-        cursor = connection.execute(
-            "DELETE FROM conversations WHERE id = ?", (conversation_id,)
-        )
+        cursor = connection.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
     if cursor.rowcount == 0:
         raise ConversationNotFound(f"No conversation with id {conversation_id}")
 
@@ -202,6 +202,7 @@ def add_message(
     error: str | None = None,
     citations: Sequence[MessageCitation] = (),
     message_id: str | None = None,
+    knowledge: dict | None = None,
 ) -> Message:
     """Append a message, with its citations, and mark the conversation active.
 
@@ -243,8 +244,8 @@ def add_message(
             """
             INSERT INTO message_citations
                 (id, message_id, position, file_id, file_name, page_number,
-                 chunk_indexes, best_score)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                 chunk_indexes, best_score, evidence_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
                 (
@@ -256,10 +257,17 @@ def add_message(
                     citation.page_number,
                     ",".join(str(index) for index in citation.chunk_indexes),
                     citation.best_score,
+                    encode_evidence(citation.evidence),
                 )
                 for position, citation in enumerate(record.citations)
             ],
         )
+
+        if knowledge is not None:
+            connection.execute(
+                "INSERT INTO message_knowledge VALUES (?,?)",
+                (record.id, json.dumps(knowledge, ensure_ascii=False)),
+            )
 
     touch_conversation(connection, conversation_id)
     return record
@@ -325,3 +333,24 @@ def count_messages(connection: sqlite3.Connection, conversation_id: str | None =
             (conversation_id,),
         ).fetchone()
     return row["n"]
+
+
+def set_source_scope(
+    connection: sqlite3.Connection, conversation_id: str, file_ids: list[str] | None
+) -> Conversation:
+    get_conversation(connection, conversation_id)
+    with connection:
+        connection.execute(
+            "UPDATE conversations SET source_scope = ?, updated_at = ? WHERE id = ?",
+            (json.dumps(file_ids) if file_ids is not None else None, _now_iso(), conversation_id),
+        )
+    return get_conversation(connection, conversation_id)
+
+
+def recent_messages(connection: sqlite3.Connection, conversation_id: str) -> list[Message]:
+    rows = connection.execute(
+        "SELECT * FROM messages WHERE conversation_id = ? AND error IS NULL "
+        "ORDER BY created_at DESC, id DESC LIMIT 4",
+        (conversation_id,),
+    ).fetchall()
+    return [_to_message(row) for row in reversed(rows)]

@@ -22,21 +22,26 @@ matter more than the happy path:
 
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 import threading
+from contextlib import contextmanager
 from dataclasses import replace
+from pathlib import Path
 
 import httpx
 from qdrant_client import QdrantClient
 
 from app.config import get_settings
 from app.db import files as file_store
+from app.db import jobs as job_store
 from app.db.database import connect, init_schema
 from app.logging_config import get_logger, timed
 from app.models.files import Chunk as ChunkRow
 from app.models.files import File, FileStatus
+from app.services import index_identity
 from app.services.chunking import chunk_pages
-from app.services.embeddings import embed_chunks
+from app.services.embeddings import DEFAULT_BATCH_SIZE, EmbeddingError, embed_chunks
 from app.services.extraction import ExtractedPage, extract_file
 from app.services.indexing import delete_file_chunks, index_chunks, point_id
 from app.services.integrity import hash_file
@@ -106,6 +111,10 @@ class AlreadyIngesting(RuntimeError):
     """
 
 
+class MaintenanceBusy(AlreadyIngesting):
+    """Library maintenance conflicts with this operation."""
+
+
 # Which files are being ingested in this process, right now.
 #
 # This is the only reliable answer to "is this file busy?". A row's status
@@ -118,6 +127,34 @@ class AlreadyIngesting(RuntimeError):
 # multi-process deployment would need this in SQLite instead.
 _in_flight: dict[str, threading.Event | None] = {}
 _in_flight_lock = threading.Lock()
+_rebuilding = False
+_readers: dict[str, int] = {}
+_pipeline_slot = threading.Semaphore(1)
+
+
+def begin_rebuild() -> None:
+    """Block new writes before inspecting or changing the collection."""
+    global _rebuilding
+    with _in_flight_lock:
+        if _rebuilding or _readers:
+            raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
+        _rebuilding = True
+
+
+def require_idle_library() -> None:
+    """A destructive reset cannot overlap any existing ingestion or deletion."""
+    with _in_flight_lock:
+        if _in_flight or _readers:
+            raise MaintenanceBusy(
+                "Files are being processed or removed. Wait for them to finish "
+                "before rebuilding an index with a different vector size."
+            )
+
+
+def end_rebuild() -> None:
+    global _rebuilding
+    with _in_flight_lock:
+        _rebuilding = False
 
 
 def is_ingesting(file_id: str) -> bool:
@@ -126,11 +163,36 @@ def is_ingesting(file_id: str) -> bool:
         return file_id in _in_flight
 
 
-def _claim(file_id: str, cancellation: threading.Event | None = None) -> None:
+def _claim(
+    file_id: str, cancellation: threading.Event | None = None, *, rebuilding: bool = False
+) -> None:
     with _in_flight_lock:
-        if file_id in _in_flight:
+        if _rebuilding and not rebuilding:
+            raise MaintenanceBusy("An index rebuild is in progress. Wait for it to finish.")
+        if file_id in _in_flight or _readers.get(file_id):
             raise AlreadyIngesting(f"File {file_id} is already being ingested")
         _in_flight[file_id] = cancellation
+
+
+@contextmanager
+def read_access(file_ids):
+    """Short immutable-evidence read/commit reservation, shared with all file writes."""
+    identifiers = set(file_ids)
+    with _in_flight_lock:
+        if _rebuilding or any(identifier in _in_flight for identifier in identifiers):
+            raise MaintenanceBusy("Source maintenance is active. Retry the evidence read.")
+        for identifier in identifiers:
+            _readers[identifier] = _readers.get(identifier, 0) + 1
+    try:
+        yield
+    finally:
+        with _in_flight_lock:
+            for identifier in identifiers:
+                remaining = _readers[identifier] - 1
+                if remaining:
+                    _readers[identifier] = remaining
+                else:
+                    _readers.pop(identifier)
 
 
 def reserve_ingestion(file_id: str) -> None:
@@ -138,19 +200,34 @@ def reserve_ingestion(file_id: str) -> None:
     _claim(file_id, threading.Event())
 
 
+def reserve_rebuild_ingestion(file_id: str) -> None:
+    """Reserve maintenance's own work while ordinary writes are blocked."""
+    _claim(file_id, threading.Event(), rebuilding=True)
+
+
 def reserve_delete(file_id: str) -> None:
     """Keep ingestion and a second delete out until deletion finishes."""
     _claim(file_id)
 
 
-def cancel_ingestion(file_id: str) -> bool:
+def cancel_ingestion(file_id: str, connection: sqlite3.Connection | None = None) -> bool:
     """Ask a queued or running pipeline to stop at its next safe checkpoint."""
     with _in_flight_lock:
         cancellation = _in_flight.get(file_id)
         if cancellation is None:
             return False
+        if connection is not None:
+            job_store.request_cancel(connection, file_id)
         cancellation.set()
         return True
+
+
+def cancel_all_ingestion() -> None:
+    """Called as soon as the desktop parent closes, before ASGI begins draining."""
+    with _in_flight_lock:
+        for cancellation in _in_flight.values():
+            if cancellation is not None:
+                cancellation.set()
 
 
 def release_file(file_id: str) -> None:
@@ -211,8 +288,18 @@ def ingest_file(
     else:
         cancellation = threading.Event()
         _claim(file_id, cancellation)
+    acquired = False
     try:
         try:
+            job = job_store.latest(connection, file_id)
+            if job is None or job["state"] not in job_store.OPEN_STATES:
+                job_store.queue(connection, file_id)
+            if record.status is FileStatus.READY:
+                file_store.set_status(connection, file_id, FileStatus.UPLOADING)
+            while not acquired:
+                _check_cancel(cancellation)
+                acquired = _pipeline_slot.acquire(timeout=0.1)
+            _check_cancel(cancellation)
             logger.info(
                 "Ingestion started file=%s type=%s size=%d",
                 record.id,
@@ -222,14 +309,23 @@ def ingest_file(
             _check_cancel(cancellation)
             pages = _extract(connection, record)
             _check_cancel(cancellation)
+            identity = index_identity.current_index_identity(client=http_client)
             chunks = _chunk(connection, record, pages)
             _check_cancel(cancellation)
             _embed_and_index(
-                connection, record, chunks, qdrant_client=qdrant_client, http_client=http_client,
+                connection,
+                record,
+                chunks,
+                qdrant_client=qdrant_client,
+                http_client=http_client,
                 cancellation=cancellation,
+                identity=identity,
             )
             _check_cancel(cancellation)
-        except IngestionError as exc:
+            from app.services.source_catalog import save_extraction
+
+            save_extraction(connection, file_id)
+        except (IngestionError, EmbeddingError) as exc:
             # The full reason is the user's and reaches the UI through the file
             # row. The log keeps only its first sentence: the rest is advice
             # written for a person ("Check that it is running (brew services
@@ -288,15 +384,24 @@ def ingest_file(
         logger.info("Ingestion cancelled file=%s", file_id)
         return _fail(connection, record, "Processing was cancelled.", qdrant_client=qdrant_client)
     finally:
+        if acquired:
+            _pipeline_slot.release()
         _release(file_id, cancellation)
 
 
 def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage]:
     file_store.set_status(connection, record.id, FileStatus.EXTRACTING)
+    file_store.reset_counts(connection, record.id)
 
     try:
+        # Hash and parse the same byte copy. Checking a live path twice alone
+        # cannot establish which revision a lazy PDF/text reader actually saw.
+        source_bytes = Path(record.path).read_bytes()
+        before = hashlib.sha256(source_bytes).hexdigest()
         with timed(logger, "Extracted", file=record.id):
-            pages = extract_file(record.path, record.file_type)
+            pages = extract_file(record.path, record.file_type, source_bytes=source_bytes)
+    except FileNotFoundError as exc:
+        raise IngestionError(f"File not found: {record.path}") from exc
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -307,21 +412,27 @@ def _extract(connection: sqlite3.Connection, record: File) -> list[ExtractedPage
     content_hash = hash_file(record.path)
     if content_hash is None:
         raise IngestionError("Could not read the source file while recording its identity.")
+    if before != content_hash:
+        raise IngestionError("The original changed during extraction. Retry processing it.")
     file_store.set_content_hash(connection, record.id, content_hash)
 
     # Only meaningful for page-aware formats; Markdown and text come back as a
     # single placeholder page, and reporting "1 page" for them would be noise.
     if record.file_type.has_pages:
         file_store.set_counts(connection, record.id, page_count=len(pages))
+        file_store.set_pdf_coverage(
+            connection, record.id, [page.page_number for page in pages if not page.content.strip()]
+        )
     return pages
 
 
-def _chunk(
-    connection: sqlite3.Connection, record: File, pages: list[ExtractedPage]
-) -> list:
+def _chunk(connection: sqlite3.Connection, record: File, pages: list[ExtractedPage]) -> list:
     file_store.set_status(connection, record.id, FileStatus.CHUNKING)
 
-    chunks = chunk_pages(pages, file_id=record.id)
+    settings = get_settings()
+    chunks = chunk_pages(
+        pages, file_id=record.id, chunk_size=settings.chunk_size, overlap=settings.chunk_overlap
+    )
 
     if not record.file_type.has_pages:
         # Drop the placeholder page number here, before anything downstream sees
@@ -355,10 +466,13 @@ def _embed_and_index(
     qdrant_client: QdrantClient | None,
     http_client: httpx.Client | None,
     cancellation: threading.Event,
+    identity: index_identity.IndexIdentity,
 ) -> None:
     file_store.set_status(connection, record.id, FileStatus.EMBEDDING)
 
     try:
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during processing. Retry.")
         with timed(
             logger,
             "Embedded",
@@ -366,7 +480,16 @@ def _embed_and_index(
             chunks=len(chunks),
             model=get_settings().ollama_embedding_model,
         ):
-            vectors = embed_chunks(chunks, client=http_client)
+            vectors = []
+            job_store.progress(connection, record.id, 0, len(chunks))
+            for start in range(0, len(chunks), DEFAULT_BATCH_SIZE):
+                _check_cancel(cancellation)
+                batch = chunks[start : start + DEFAULT_BATCH_SIZE]
+                vectors.extend(embed_chunks(batch, client=http_client))
+                job_store.progress(connection, record.id, len(vectors), len(chunks))
+                _check_cancel(cancellation)
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during processing. Retry.")
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
@@ -375,19 +498,30 @@ def _embed_and_index(
     # otherwise leave the tail of the first run searchable.
     try:
         _check_cancel(cancellation)
+        job_store.progress(connection, record.id, len(chunks), len(chunks), "indexing")
         with timed(logger, "Indexed", file=record.id, points=len(chunks)):
             delete_file_chunks(record.id, client=qdrant_client)
             _check_cancel(cancellation)
-            index_chunks(chunks, vectors, client=qdrant_client)
+            index_chunks(
+                chunks,
+                vectors,
+                client=qdrant_client,
+                index_fingerprint=identity.fingerprint,
+                source_hash=file_store.get_file(connection, record.id).content_hash,
+                index_metadata=identity.metadata_json,
+            )
         _check_cancel(cancellation)
+        if index_identity.current_index_identity(client=http_client) != identity:
+            raise IngestionError("The embedding configuration changed during indexing. Retry.")
     except Exception as exc:
         raise IngestionError(str(exc)) from exc
 
     # After the write, not before. This column is read to decide whether a file's
     # vectors are from the current embedding space, so it must never name a model
     # for vectors that were not actually stored.
-    file_store.set_embedding_model(
-        connection, record.id, get_settings().ollama_embedding_model
+    file_store.set_embedding_model(connection, record.id, get_settings().ollama_embedding_model)
+    file_store.set_index_identity(
+        connection, record.id, identity.fingerprint, identity.metadata_json
     )
 
     rows = [
@@ -441,4 +575,5 @@ def _fail(
     # it would have a FAILED file claiming an embedding space it no longer occupies,
     # which is exactly the confusion the column exists to prevent.
     file_store.set_embedding_model(connection, record.id, None)
+    file_store.set_index_identity(connection, record.id, None, None)
     return file_store.set_status(connection, record.id, FileStatus.FAILED, error=reason)

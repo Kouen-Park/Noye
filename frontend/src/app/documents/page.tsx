@@ -1,12 +1,15 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
-import { AppShell } from "@/components/app-shell";
-import { DocumentEditor } from "@/components/documents/document-editor";
+import { AppShell, useWorkspaceLayout } from "@/components/app-shell";
+import { SourceDocumentDetails, SourceDocumentRevision } from "@/components/documents/source-document-details";
+import { editSourceDocument, isSourceDocument, readSourceDocument, sourceDocumentExportUrl, type SourceDocument } from "@/lib/source-documents";
+import { DocumentEditor, type DocumentPatch } from "@/components/documents/document-editor";
+import { acknowledgeDocumentDraft } from "@/lib/document-draft";
 import { DocumentList } from "@/components/documents/document-list";
-import { ExportControls } from "@/components/documents/export-controls";
+import { PassageList } from "@/components/chat/passages";
 import {
   ApiError,
   type DocumentSummary,
@@ -29,16 +32,8 @@ import {
  */
 export default function DocumentsPage() {
   return (
-    <AppShell current="Documents">
-      <div>
-        <h1 className="text-[27px]">Documents</h1>
-        <p className="mt-1 max-w-[60ch] text-ink-soft">
-          Turn an answer into something you can keep. Everything here is yours to
-          edit — nothing regenerates behind your back.
-        </p>
-      </div>
-
-      <Suspense fallback={<p className="mt-7 text-ink-soft">Opening documents…</p>}>
+    <AppShell current="Documents" title="Documents" description="Your writing, saved with its original evidence." workspace>
+      <Suspense fallback={<p role="status" className="p-4 text-ink-soft">Opening documents…</p>}>
         <DocumentsView />
       </Suspense>
     </AppShell>
@@ -51,13 +46,16 @@ function DocumentsView() {
   const documentId = params.get("d");
 
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
-  const [open, setOpen] = useState<NoyeDocument | null>(null);
+  const [open, setOpen] = useState<NoyeDocument | SourceDocument | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
-  const [view, setView] = useState<"write" | "preview">("write");
+  const { readingFocus, setReadingFocus } = useWorkspaceLayout();
   /** Which document the loaded body belongs to, so a stale load is ignored. */
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const activeDocument = useRef<string | null>(null);
+  const revisionRequest = useRef(0);
+  const saveRequest = useRef(0);
 
   const fail = useCallback((cause: unknown, fallback: string) => {
     setOffline(cause instanceof ApiError && cause.isOffline);
@@ -74,24 +72,30 @@ function DocumentsView() {
     refreshList();
   }, [refreshList]);
 
-  // The URL decides which document is open. Read at render time rather than
-  // synced in an effect, which React 19 rejects.
-  if (loadedFor !== documentId) {
-    setLoadedFor(documentId);
-    setView("write");
-    if (documentId === null) {
-      setOpen(null);
-      setError(null);
-    } else {
-      readDocument(documentId).then(
-        (document) => setOpen(document),
-        (cause: unknown) => {
-          setOpen(null);
-          fail(cause, "Could not open that document.");
-        },
-      );
-    }
-  }
+  useEffect(() => {
+    activeDocument.current = documentId;
+    const request = ++revisionRequest.current;
+    if (!documentId) return;
+    const controller = new AbortController();
+    readSourceDocument(documentId, undefined, controller.signal).catch(cause => {
+      if (cause instanceof ApiError && cause.status === 404) return readDocument(documentId, controller.signal);
+      throw cause;
+    }).then(document => {
+      if (!controller.signal.aborted && revisionRequest.current === request) { setOpen(document); setLoadedFor(documentId); setError(null); }
+    }, cause => { if (!controller.signal.aborted && revisionRequest.current === request) { setOpen(null); setLoadedFor(documentId); fail(cause, "Could not open that document."); } });
+    return () => { activeDocument.current = null; controller.abort(); };
+  }, [documentId, fail]);
+  const shown = documentId && loadedFor === documentId && open?.id === documentId ? open : null;
+  const sourceDocument = shown && isSourceDocument(shown) ? shown : null;
+  const evidenceCount = sourceDocument?.revision.metadata.citations.length ?? shown?.citations.length ?? 0;
+  const chooseRevision = (id?: string) => {
+    if (!documentId) return;
+    const request = ++revisionRequest.current;
+    const current = () => activeDocument.current === documentId && revisionRequest.current === request;
+    readSourceDocument(documentId, id).then(document => {
+      if (current()) { setOpen(document); setError(null); }
+    }, cause => { if (current()) fail(cause, "Could not open that revision."); });
+  };
 
   const openDocument = useCallback(
     (id: string) => router.push(`/documents?d=${encodeURIComponent(id)}`),
@@ -110,21 +114,29 @@ function DocumentsView() {
   }, [fail, refreshList, router]);
 
   const save = useCallback(
-    async (patch: { title: string; content: string }) => {
-      if (!open) return;
+    async ({ expectedRevision, draftOwner, ...patch }: DocumentPatch) => {
+      if (!shown) return;
+      const document = shown;
+      const revision = ++revisionRequest.current;
+      const request = ++saveRequest.current;
       setSaving(true);
       setError(null);
       try {
-        const saved = await updateDocument(open.id, patch);
-        setOpen(saved);
+        const saved = isSourceDocument(document)
+          ? await editSourceDocument(document.id, expectedRevision ?? document.revision.id, patch)
+          : await updateDocument(document.id, patch);
+        if (isSourceDocument(saved) && isSourceDocument(document)) {
+          acknowledgeDocumentDraft(document.id, expectedRevision ?? document.revision.id, saved.revision.id, draftOwner);
+        }
+        if (activeDocument.current === document.id && revisionRequest.current === revision) setOpen(saved);
         refreshList();
       } catch (cause: unknown) {
-        fail(cause, "Could not save your changes.");
+        if (activeDocument.current === document.id && revisionRequest.current === revision) fail(cause, "Could not save your changes.");
       } finally {
-        setSaving(false);
+        if (saveRequest.current === request) setSaving(false);
       }
     },
-    [fail, open, refreshList],
+    [fail, shown, refreshList],
   );
 
   const remove = useCallback(
@@ -141,8 +153,20 @@ function DocumentsView() {
   );
 
   return (
-    <div className="mt-6 flex flex-col gap-6 lg:flex-row-reverse">
-      <div className="lg:w-[240px] lg:shrink-0">
+    <div className="noye-workspace">
+      <div className="noye-toolbar border-b border-edge">
+        <p className="min-w-0 flex-1 truncate text-sm text-ink-soft">{shown?.title ?? "Choose a document"}</p>
+        {sourceDocument && <>
+          {sourceDocument.revision.metadata.coverage.partial && <span className="noye-meta text-fail">Partial document</span>}
+          <SourceDocumentRevision document={sourceDocument} onRevision={chooseRevision} />
+        </>}
+        <button type="button" aria-pressed={readingFocus} aria-controls="document-list"
+          onClick={() => setReadingFocus(!readingFocus)} className="noye-button">
+          Focus reading
+        </button>
+      </div>
+      <div className="noye-split">
+      <aside id="document-list" aria-label="Document list" hidden={readingFocus} className="noye-secondary-list">
         <DocumentList
           documents={documents}
           currentId={documentId}
@@ -150,9 +174,9 @@ function DocumentsView() {
           onDelete={remove}
           onNew={startNew}
         />
-      </div>
+      </aside>
 
-      <div className="min-w-0 flex-1">
+      <div className="noye-work-pane">
         {error !== null && (
           <div className="mb-3 rounded-lg border border-fail bg-fail-wash px-4 py-3">
             <p className="font-semibold text-fail">{error}</p>
@@ -164,7 +188,7 @@ function DocumentsView() {
           </div>
         )}
 
-        {open === null ? (
+        {shown === null ? (
           <div
             className="rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center"
           >
@@ -176,51 +200,44 @@ function DocumentsView() {
           </div>
         ) : (
           <>
-            {open.source_instruction !== null && (
-              <p className="mb-3 text-[12.5px] text-ink-soft">
-                Drafted from your instruction:{" "}
-                <span className="italic">“{open.source_instruction}”</span>
-              </p>
-            )}
-
             <DocumentEditor
-              key={open.id}
-              title={open.title}
-              content={open.content}
+              key={`${shown.id}:${sourceDocument?.revision.id ?? "legacy"}`}
+              title={shown.title}
+              content={shown.content}
               onSave={save}
               saving={saving}
-              onViewChange={setView}
+              documentId={shown.id}
+              revisionId={sourceDocument?.revision.id}
+              onCompareLatest={sourceDocument ? async () => {
+                const latest = await readSourceDocument(shown.id);
+                return { title: latest.title, content: latest.content, revisionId: latest.revision.id };
+              } : undefined}
+              onReloadLatest={sourceDocument ? () => chooseRevision() : undefined}
+              provenance={shown.provenance_markdown}
+              readOnly={!!sourceDocument && sourceDocument.revision.id !== sourceDocument.revisions[0]?.id}
+              exportUrl={sourceDocument ? sourceDocumentExportUrl(shown.id, sourceDocument.revision.id) : undefined}
             />
-
-            <div className="mt-5 border-t border-edge pt-3">
-              <ExportControls
-                documentId={open.id}
-                previewVisible={view === "preview"}
-              />
-            </div>
-
-            {open.citations.length > 0 && (
-              <div className="mt-4 border-t border-edge pt-3">
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
-                  Passages the first draft was built from
-                </h2>
-                <ul className="mt-2 space-y-1">
-                  {open.citations.map((citation, index) => (
-                    <li
-                      key={`${citation.file_id}:${citation.page_number}:${index}`}
-                      className="text-[12.5px] text-ink-soft"
-                    >
-                      {citation.label}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-1.5 text-[11.5px] text-ink-faint">
+            {(sourceDocument || shown.source_instruction !== null || shown.citations.length > 0) && <details aria-label="Document details" className="noye-work-details">
+            <summary>Details · {evidenceCount} evidence {evidenceCount === 1 ? "passage" : "passages"}{(sourceDocument?.revision.metadata.coverage.synthesis_limits?.length || sourceDocument?.revision.metadata.coverage.presentation_limits?.length) ? " · review limits" : ""}</summary>
+            {sourceDocument && <SourceDocumentDetails document={sourceDocument} onRevision={chooseRevision} showRevision={false} />}
+            {shown.source_instruction !== null && (
+              <details className="noye-details"><summary>Draft instruction</summary><p className="mt-2 text-sm text-ink-soft">{shown.source_instruction}</p></details>
+            )}
+            {shown.citations.length > 0 && (
+              <details className="noye-details">
+                <summary>
+                  Evidence saved with the first draft
+                </summary>
+                <PassageList citations={shown.citations} />
+                <p className="mt-1.5 noye-meta">
                   These describe the draft, not what you have written since.
                 </p>
-              </div>
+              </details>
             )}
+            </details>}
           </>
         )}
+      </div>
       </div>
     </div>
   );

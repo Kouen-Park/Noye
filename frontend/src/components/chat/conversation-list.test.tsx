@@ -25,6 +25,10 @@ function handlers() {
   };
 }
 
+async function openActions() {
+  await userEvent.click(screen.getByRole("button", { name: "Actions for How does Dijkstra choose?" }));
+}
+
 describe("ConversationList", () => {
   it("invites a first question when empty", () => {
     render(<ConversationList conversations={[]} currentId={null} {...handlers()} />);
@@ -73,7 +77,7 @@ describe("ConversationList", () => {
   it("starts a new one", async () => {
     const h = handlers();
     render(<ConversationList conversations={[]} currentId={null} {...h} />);
-    await userEvent.click(screen.getByRole("button", { name: "New" }));
+    await userEvent.click(screen.getByRole("button", { name: "New chat" }));
     expect(h.onNew).toHaveBeenCalled();
   });
 
@@ -81,6 +85,7 @@ describe("ConversationList", () => {
     const h = handlers();
     render(<ConversationList conversations={[conversation()]} currentId={null} {...h} />);
 
+    await openActions();
     await userEvent.click(screen.getByRole("button", { name: /^Rename/ }));
     const input = screen.getByLabelText("Conversation title");
     expect(input).toHaveValue("How does Dijkstra choose?");
@@ -95,6 +100,7 @@ describe("ConversationList", () => {
     const h = handlers();
     render(<ConversationList conversations={[conversation()]} currentId={null} {...h} />);
 
+    await openActions();
     await userEvent.click(screen.getByRole("button", { name: /^Rename/ }));
     const input = screen.getByLabelText("Conversation title");
     await userEvent.clear(input);
@@ -107,6 +113,7 @@ describe("ConversationList", () => {
     const h = handlers();
     render(<ConversationList conversations={[conversation()]} currentId={null} {...h} />);
 
+    await openActions();
     await userEvent.click(screen.getByRole("button", { name: /^Delete/ }));
 
     // The button gives no clue whether documents are at risk, so the confirm says.
@@ -121,6 +128,7 @@ describe("ConversationList", () => {
     const h = handlers();
     render(<ConversationList conversations={[conversation()]} currentId={null} {...h} />);
 
+    await openActions();
     await userEvent.click(screen.getByRole("button", { name: /^Delete/ }));
     await userEvent.click(screen.getByRole("button", { name: "Keep" }));
 
@@ -128,12 +136,13 @@ describe("ConversationList", () => {
     expect(screen.getByText("How does Dijkstra choose?")).toBeInTheDocument();
   });
 
-  it("names the conversation in its edit and delete controls", () => {
+  it("names the conversation in its edit and delete controls", async () => {
     // A list would otherwise be identical "Edit" and "✕" links to anyone
     // navigating by control.
     render(
       <ConversationList conversations={[conversation()]} currentId={null} {...handlers()} />,
     );
+    await openActions();
     expect(
       screen.getByRole("button", { name: "Open How does Dijkstra choose?" }),
     ).toBeInTheDocument();
@@ -143,5 +152,21 @@ describe("ConversationList", () => {
     expect(
       screen.getByRole("button", { name: "Delete How does Dijkstra choose?" }),
     ).toBeInTheDocument();
+  });
+
+  it("keeps uncommon actions collapsed and returns focus after Escape", async () => {
+    render(<ConversationList conversations={[conversation()]} currentId="c1" {...handlers()} />);
+    const trigger = screen.getByRole("button", { name: "Actions for How does Dijkstra choose?" });
+    expect(screen.queryByRole("button", { name: /^Rename/ })).not.toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await openActions();
+    await userEvent.click(screen.getByRole("button", { name: "Rename How does Dijkstra choose?" }));
+    await userEvent.keyboard("{Escape}");
+    await openActions();
+    await userEvent.keyboard("{Escape}");
+    const returnedTrigger = screen.getByRole("button", { name: "Actions for How does Dijkstra choose?" });
+    expect(returnedTrigger).toHaveFocus();
+    expect(returnedTrigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "Open How does Dijkstra choose?" })).toHaveAttribute("aria-current", "true");
   });
 });

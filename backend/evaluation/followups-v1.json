@@ -1,0 +1,26 @@
+{
+  "name": "atlas-followups-v1",
+  "corpus": "atlas-v1.json",
+  "cases": [
+    {
+      "id": "comparison-en",
+      "history": [
+        {"role": "user", "content": "Compare the AT-201 and AT-210 shortest-path experiments."},
+        {"role": "assistant", "content": "AT-201 used a heap and AT-210 used a linear scan."}
+      ],
+      "question": "Which was faster, and by how many milliseconds?",
+      "relevance": {"graph-lab-en": 2, "graph-lab-ko": 2, "graph-control-en": 2, "graph-control-ko": 2},
+      "expected_answer": "AT-201 was faster: 12 ms versus 39 ms, a difference of 27 ms."
+    },
+    {
+      "id": "comparison-ko",
+      "history": [
+        {"role": "user", "content": "DB-318과 DB-381의 백업 결과를 비교해 줘."},
+        {"role": "assistant", "content": "두 백업의 대화 및 편집 노트 수가 다릅니다."}
+      ],
+      "question": "그럼 두 결과의 대화 수 차이는 얼마야?",
+      "relevance": {"database-lab-en": 2, "database-lab-ko": 2, "database-control-en": 2, "database-control-ko": 2},
+      "expected_answer": "DB-318 has 87 conversations. DB-381 records 6 demonstration notes but no conversation count. The difference cannot be determined; do not interpret an absent count as zero. Answer in Korean."
+    }
+  ]
+}

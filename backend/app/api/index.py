@@ -18,12 +18,20 @@ from pydantic import BaseModel
 from app.api.deps import get_db
 from app.config import get_settings
 from app.db import files as file_store
+from app.db import jobs as job_store
 from app.logging_config import get_logger
 from app.models.files import FileStatus
+from app.services.embeddings import EmbeddingError
 from app.services.indexing import IndexingError
-from app.services.ingestion import ingest_in_background
+from app.services.ingestion import (
+    MaintenanceBusy,
+    end_rebuild,
+    ingest_in_background,
+    release_file,
+)
 from app.services.integrity import FileIntegrity, Problem, check_library
 from app.services.rebuild import plan_rebuild
+from app.services.source_catalog import folder_source_enabled
 
 router = APIRouter(prefix="/index", tags=["index"])
 
@@ -35,6 +43,7 @@ class FileProblems(BaseModel):
 
     file_id: str
     file_name: str
+    folder_root_id: str | None = None
     problems: list[Problem]
     #: Whether this file may currently answer a question.
     searchable: bool
@@ -42,16 +51,23 @@ class FileProblems(BaseModel):
     #: Qdrant unreachable — which is deliberately not the same as zero.
     indexed_points: int | None = None
     expected_points: int | None = None
+    index_fingerprint: str | None = None
+    expected_fingerprint: str | None = None
 
     @classmethod
-    def of(cls, report: FileIntegrity) -> FileProblems:
+    def of(
+        cls, report: FileIntegrity, *, enabled: bool = True, folder_root_id: str | None = None
+    ) -> FileProblems:
         return cls(
             file_id=report.file_id,
             file_name=report.file_name,
+            folder_root_id=folder_root_id,
             problems=list(report.problems),
-            searchable=report.is_searchable,
+            searchable=enabled and report.is_searchable,
             indexed_points=report.indexed_points,
             expected_points=report.expected_points,
+            index_fingerprint=report.index_fingerprint,
+            expected_fingerprint=report.expected_fingerprint,
         )
 
 
@@ -74,6 +90,7 @@ class IndexStatus(BaseModel):
     #: than every file with an empty problem list, which would make the response
     #: grow with the library and say nothing.
     problems: list[FileProblems]
+    rebuild_required: bool = False
 
 
 @router.get("/status", response_model=IndexStatus)
@@ -97,13 +114,13 @@ def index_status(
     records = file_store.list_files(db)
     reports = check_library(db, check_points=deep)
 
-    ready_ids = {
-        record.id for record in records if record.status is FileStatus.READY
+    ready_ids = {record.id for record in records if record.status is FileStatus.READY}
+    enabled_ids = {file_id for file_id in ready_ids if folder_source_enabled(db, file_id)}
+    roots = {
+        row["file_id"]: row["root_id"] for row in db.execute("SELECT file_id,root_id FROM sources")
     }
     searchable = sum(
-        1
-        for report in reports
-        if report.file_id in ready_ids and report.is_searchable
+        1 for report in reports if report.file_id in enabled_ids and report.is_searchable
     )
     ready_reports = [report for report in reports if report.file_id in ready_ids]
     point_check_complete = deep and all(
@@ -116,7 +133,22 @@ def index_status(
         searchable_files=searchable,
         deep=deep,
         point_check_complete=point_check_complete,
-        problems=[FileProblems.of(report) for report in reports if not report.is_sound],
+        problems=[
+            FileProblems.of(
+                report,
+                enabled=report.file_id in enabled_ids,
+                folder_root_id=roots.get(report.file_id),
+            )
+            for report in reports
+            if not report.is_sound
+        ],
+        rebuild_required=any(
+            any(
+                p in (Problem.MODEL_CHANGED, Problem.INDEX_UNKNOWN, Problem.INDEX_CHANGED)
+                for p in report.problems
+            )
+            for report in reports
+        ),
     )
 
 
@@ -142,9 +174,7 @@ class RebuildStarted(BaseModel):
     embedding_model: str
 
 
-@router.post(
-    "/rebuild", response_model=RebuildStarted, status_code=status.HTTP_202_ACCEPTED
-)
+@router.post("/rebuild", response_model=RebuildStarted, status_code=status.HTTP_202_ACCEPTED)
 def rebuild_index(
     background: BackgroundTasks,
     db: sqlite3.Connection = Depends(get_db),
@@ -166,6 +196,10 @@ def rebuild_index(
     """
     try:
         plan = plan_rebuild(db)
+    except MaintenanceBusy as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except EmbeddingError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     except IndexingError as exc:
         logger.warning("Rebuild could not start error=%s: %s", type(exc).__name__, exc)
         raise HTTPException(
@@ -173,10 +207,19 @@ def rebuild_index(
             detail=f"Could not reach the index to rebuild it: {exc}",
         ) from exc
 
-    for file_id in plan.file_ids:
-        file_store.reset_counts(db, file_id)
-        file_store.set_status(db, file_id, FileStatus.UPLOADING)
-        background.add_task(ingest_in_background, file_id)
+    try:
+        for file_id in plan.file_ids:
+            job_store.queue(db, file_id)
+            file_store.reset_counts(db, file_id)
+            file_store.set_status(db, file_id, FileStatus.UPLOADING)
+        background.add_task(_run_rebuild, plan.file_ids)
+    except BaseException:
+        for file_id in plan.file_ids:
+            file_store.set_status(
+                db, file_id, FileStatus.FAILED, error="The rebuild could not be scheduled. Retry."
+            )
+        _release_rebuild(plan.file_ids)
+        raise
 
     return RebuildStarted(
         queued=plan.queued,
@@ -187,3 +230,35 @@ def rebuild_index(
         collection_recreated=plan.collection_recreated,
         embedding_model=plan.embedding_model,
     )
+
+
+def _release_rebuild(file_ids: tuple[str, ...]) -> None:
+    for file_id in file_ids:
+        release_file(file_id)
+    end_rebuild()
+
+
+def _run_rebuild(file_ids: tuple[str, ...]) -> None:
+    """Hold the maintenance guard through the last background pipeline."""
+    try:
+        for file_id in file_ids:
+            ingest_in_background(file_id)
+    except BaseException:
+        from app.db.database import connect
+
+        connection = connect()
+        try:
+            for file_id in file_ids:
+                job = job_store.latest(connection, file_id)
+                if job and job["state"] in job_store.OPEN_STATES:
+                    file_store.set_status(
+                        connection,
+                        file_id,
+                        FileStatus.FAILED,
+                        error="The rebuild was interrupted. Retry.",
+                    )
+        finally:
+            connection.close()
+        raise
+    finally:
+        _release_rebuild(file_ids)

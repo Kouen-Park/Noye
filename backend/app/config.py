@@ -7,13 +7,20 @@ so hardcoding either one would let them drift apart silently.
 
 from __future__ import annotations
 
+import json
+import os
+import uuid
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #: Repository root — this file is ``<root>/backend/app/config.py``.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+GenerationProvider = Literal["ollama", "gemini", "openai", "anthropic"]
 
 
 class Settings(BaseSettings):
@@ -40,16 +47,42 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3.5:4b"
     ollama_embedding_model: str = "embeddinggemma"
+    embedding_input_format: Literal["raw-v1", "embeddinggemma-v1"] = "raw-v1"
+    # A request-size guard, not an estimate of token count. Ollama enforces tokens.
+    embedding_max_input_chars: int = Field(default=8192, gt=0)
     #: qwen3.5 is a reasoning model; thinking stays off for RAG answers because
     #: it costs roughly 30x the tokens and latency for no gain at answer length.
     ollama_thinking: bool = False
+    generation_context_tokens: int = Field(default=16384, ge=2048, le=32768)
+    generation_output_tokens: int = Field(default=2048, ge=128, le=4096)
+
+    # Optional cloud generation only; embeddings always remain local.
+    gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    gemini_model: str = Field(default="gemini-3.8-flash", pattern=r"^[A-Za-z0-9._-]+$")
+    openai_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    openai_model: str = Field(default="gpt-4.1-mini", pattern=r"^[A-Za-z0-9._-]+$")
+    anthropic_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    anthropic_model: str = Field(default="claude-haiku-4-5", pattern=r"^[A-Za-z0-9._-]+$")
 
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "noye"
     #: Must match the output dimension of ``ollama_embedding_model``.
     qdrant_vector_size: int = 768
+    chunk_size: int = Field(default=1000, gt=0)
+    chunk_overlap: int = Field(default=150, ge=0)
+
+    @model_validator(mode="after")
+    def validate_chunk_window(self) -> Settings:
+        if self.chunk_overlap >= self.chunk_size:
+            raise ValueError("CHUNK_OVERLAP must be smaller than CHUNK_SIZE")
+        if self.generation_output_tokens + 512 >= self.generation_context_tokens:
+            raise ValueError("Generation context must leave room for the prompt and output")
+        return self
 
     database_url: str = "sqlite:///./data/app.db"
+    #: Desktop supplies an absolute app-data directory. The web defaults stay
+    #: unchanged; neither app bundles nor temporary extraction dirs hold data.
+    noye_data_dir: Path | None = None
 
     #: Noye's own log level. Deliberately separate from uvicorn's: raising this
     #: must not raise httpx's, which logs request bodies and would put a user's
@@ -72,24 +105,85 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def _base_settings() -> Settings:
     """Return the process-wide settings, read from the environment once."""
-    return Settings()
+    data_root = os.environ.get("NOYE_DATA_DIR")
+    settings = Settings(_env_file=Path(data_root) / ".env") if data_root else Settings()
+    if settings.noye_data_dir and "qdrant_collection" not in settings.model_fields_set:
+        # A new desktop workspace must not rebuild/drop the web workspace's
+        # derived index. Explicit advanced configuration can still override it.
+        settings.qdrant_collection = "noye_desktop"
+        receipt = settings.noye_data_dir / "noye-workspace.json"
+        if receipt.exists():
+            marker = json.loads(receipt.read_text())
+            if marker.get("format") != "noye-restored-workspace" or marker.get("version") != 1:
+                raise ValueError("Invalid restored workspace identity")
+            identifier = uuid.UUID(marker["id"]).hex
+            settings.qdrant_collection = "noye_desktop_" + identifier
+    return settings
+
+
+_desktop_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    # Replace whole snapshots, never mutate settings held by an in-flight job.
+    return _desktop_settings or _base_settings()
+
+
+def apply_desktop_configuration(values: dict) -> None:
+    global _desktop_settings
+    allowed = {
+        "ollama_model",
+        "gemini_model",
+        "openai_model",
+        "anthropic_model",
+        "gemini_api_key",
+        "openai_api_key",
+        "anthropic_api_key",
+    }
+    if not _base_settings().noye_data_dir or not isinstance(values, dict) or set(values) - allowed:
+        raise ValueError("Invalid desktop configuration")
+    merged = get_settings().model_dump()
+    merged.update(values)
+    updated = Settings.model_validate(merged)
+    from app.services.model_usage import canonical, deleting, lock
+
+    with lock:
+        if canonical(updated.ollama_model) in deleting:
+            raise ValueError("The selected model is being deleted")
+        _desktop_settings = updated
+
+
+def _clear_settings() -> None:
+    global _desktop_settings
+    _desktop_settings = None
+    _base_settings.cache_clear()
+
+
+get_settings.cache_clear = _clear_settings
+
+
+def data_directory() -> Path:
+    """Persistent storage root, independent of the process working directory."""
+    configured = get_settings().noye_data_dir
+    return configured.expanduser().resolve() if configured else PROJECT_ROOT / "data"
 
 
 def sources_dir() -> Path:
     """Where original uploads are stored. Created on demand.
 
-    These files are Noye's source of truth: the SQLite metadata and the Qdrant
-    index are both derived from them and can be rebuilt.
+    Originals are the source of truth for extraction. SQLite also contains
+    conversations, edited documents and historical evidence requiring backup;
+    only the vector index is wholly derived and rebuildable.
     """
-    path = PROJECT_ROOT / "data" / "sources"
+    path = data_directory() / "sources"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 def documents_dir() -> Path:
     """Where generated, user-editable documents are stored. Created on demand."""
-    path = PROJECT_ROOT / "data" / "documents"
+    path = data_directory() / "documents"
     path.mkdir(parents=True, exist_ok=True)
     return path

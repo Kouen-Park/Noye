@@ -11,6 +11,9 @@
  * changes with it.
  */
 
+import type { KnowledgeSnapshot } from "@/components/chat/knowledge-evidence";
+import { apiBaseUrl } from "@/lib/runtime";
+
 /** Where a file is in the ingestion pipeline. Mirrors `FileStatus`. */
 export type FileStatus =
   | "UPLOADING"
@@ -23,6 +26,68 @@ export type FileStatus =
 /** Supported source formats. Mirrors `FileType`. */
 export type FileType = "pdf" | "md" | "txt";
 
+export type GenerationProvider = "ollama" | "gemini" | "openai" | "anthropic";
+
+export interface AiProvider {
+  id: GenerationProvider;
+  model: string;
+  configured: boolean;
+}
+
+/** Only model names and availability are returned, never credentials. */
+export async function listAiProviders(signal?: AbortSignal): Promise<AiProvider[]> {
+  const response = await request("/ai/providers", { signal });
+  return (await response.json()) as AiProvider[];
+}
+
+export interface DesktopSetup {
+  hardware: {
+    os: string;
+    architecture: string;
+    logical_cpus: number | null;
+    total_memory_bytes: number | null;
+    available_memory_bytes: number | null;
+    memory_measurement: "free_and_inactive_estimate" | "unknown";
+    workspace_disk_free_bytes: number | null;
+    acceleration: "apple_silicon_candidate" | "unknown";
+  };
+  recommendation: {
+    generation: {
+      name: string;
+      approximate_download_bytes: number;
+      minimum_total_memory_bytes: number;
+      estimated_working_memory_bytes: number;
+      source_url: string;
+    } | null;
+    memory_status: "estimated_fit" | "close_apps" | "unknown" | "insufficient_total";
+    acceleration_unverified: boolean;
+    embedding_model: string;
+    approximate_embedding_download_bytes: number | null;
+    workspace_disk_status: "unknown" | "low" | "check_model_location";
+    catalog_checked_on: string;
+  };
+  services: RuntimeServices;
+  installed_models: { name: string; size_bytes: number | null }[];
+  configured_generation_model: string;
+  gemini_configured: boolean;
+  readiness?: {
+    indexing_available: boolean;
+    local_generation_available: boolean;
+    cloud_configuration: Record<"openai" | "anthropic" | "gemini", boolean>;
+    cloud_access_verified: boolean;
+    reasons: string[];
+    context_tokens: number;
+    output_tokens: number;
+    input_byte_limit: number;
+  };
+}
+
+/** Read-only setup guidance; no model pulls, provider changes or key contents. */
+export async function getDesktopSetup(signal?: AbortSignal): Promise<DesktopSetup> {
+  const response = await request("/runtime/setup", { signal });
+  return (await response.json()) as DesktopSetup;
+}
+
 /** A file as the API reports it. `path` is deliberately absent server-side. */
 export interface StoredFile {
   id: string;
@@ -34,8 +99,12 @@ export interface StoredFile {
   /** Null for formats without pages, and until extraction has run. */
   page_count: number | null;
   chunk_count: number;
+  no_text_pages?: number[] | null;
+  extracted_page_count?: number | null;
   created_at: string;
   updated_at: string;
+  /** Set for folder originals, including paused or disconnected history. */
+  folder_root_id?: string | null;
 }
 
 export const TERMINAL_STATUSES: readonly FileStatus[] = ["READY", "FAILED"];
@@ -103,12 +172,10 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-
 async function request(path: string, init?: RequestInit): Promise<Response> {
   let response: Response;
   try {
-    response = await fetch(`${BASE_URL}${path}`, init);
+    response = await fetch(`${apiBaseUrl()}${path}`, init);
   } catch {
     // A network-level failure is the common case in local development: the
     // backend simply is not running. Status 0 marks that apart from an HTTP
@@ -178,7 +245,7 @@ export async function searchKnowledge(
  * cited page. Pageless formats get no fragment rather than a made-up one.
  */
 export function sourceUrl(fileId: string, pageNumber: number | null = null): string {
-  const base = `${BASE_URL}/files/${encodeURIComponent(fileId)}/source`;
+  const base = `${apiBaseUrl()}/files/${encodeURIComponent(fileId)}/source`;
   return pageNumber === null ? base : `${base}#page=${pageNumber}`;
 }
 
@@ -195,6 +262,30 @@ export type Role = "user" | "assistant";
  * attached. The UI must say what these are rather than implying they prove
  * anything.
  */
+export async function readSourceStatus(fileId: string): Promise<{
+  status: "available" | "missing" | "unavailable";
+  current_hash: string | null;
+}> {
+  const response = await request(`/files/${encodeURIComponent(fileId)}/source-status`);
+  return response.json();
+}
+
+export interface EvidenceExcerpt {
+  content: string;
+  chunk_index: number;
+  retrieval_rank: number;
+  score: number;
+  source_hash: string | null;
+  index_fingerprint: string | null;
+  index_metadata: string | null;
+}
+
+export interface EvidenceSnapshot {
+  version: number;
+  captured_at: string;
+  excerpts: EvidenceExcerpt[];
+}
+
 export interface ChatCitation {
   file_id: string;
   file_name: string;
@@ -204,10 +295,13 @@ export interface ChatCitation {
   score: number;
   /** "Algorithms.pdf — page 34", or just the file name. */
   label: string;
+  evidence?: EvidenceSnapshot | null;
+  original_status?: "unchanged" | "changed" | "missing" | "unknown" | "unavailable" | "disconnected";
 }
 
 /** One turn. `error` is set when answering failed; the question is still stored. */
 export interface ChatMessage {
+  knowledge?: KnowledgeSnapshot | null;
   id: string;
   role: Role;
   content: string;
@@ -222,6 +316,7 @@ export interface ChatConversation {
   created_at: string;
   updated_at: string;
   messages: ChatMessage[];
+  source_scope?: string[] | null;
 }
 
 /** A conversation in the sidebar. Carries no messages — they are not shown there. */
@@ -252,15 +347,13 @@ export interface AskResponse {
 export async function askQuestion(
   question: string,
   conversationId?: string,
+  provider: GenerationProvider = "ollama",
+  fileIds?: string[] | null,
 ): Promise<AskResponse> {
   const response = await request("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(
-      conversationId === undefined
-        ? { question }
-        : { question, conversation_id: conversationId },
-    ),
+    body: JSON.stringify({ question, conversation_id: conversationId, provider, file_ids: fileIds }),
   });
   return (await response.json()) as AskResponse;
 }
@@ -289,6 +382,14 @@ export async function renameConversation(id: string, title: string): Promise<Cha
   return (await response.json()) as ChatConversation;
 }
 
+export async function updateConversationScope(id: string, fileIds: string[] | null): Promise<ChatConversation> {
+  const response = await request(`/chat/conversations/${encodeURIComponent(id)}/scope`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ file_ids: fileIds }),
+  });
+  return (await response.json()) as ChatConversation;
+}
+
 /** Delete a conversation. The documents it drew on are untouched. */
 export async function deleteConversation(id: string): Promise<void> {
   await request(`/chat/conversations/${encodeURIComponent(id)}`, { method: "DELETE" });
@@ -297,16 +398,10 @@ export async function deleteConversation(id: string): Promise<void> {
 // --- documents ---------------------------------------------------------------
 
 /** A source a document's first draft was built from, as it was then. */
-export interface DocumentCitation {
-  file_id: string;
-  file_name: string;
-  page_number: number | null;
-  chunk_indexes: number[];
-  score: number;
-  label: string;
-}
+export type DocumentCitation = ChatCitation;
 
 export interface NoyeDocument {
+  provenance_markdown?: string;
   id: string;
   title: string;
   /** Markdown, as the user last left it. This is the document, not a cache. */
@@ -368,11 +463,12 @@ export async function createDocument(
 export async function generateDocument(
   messageId: string,
   instruction: string,
+  provider: GenerationProvider = "ollama",
 ): Promise<NoyeDocument> {
   const response = await request("/documents/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message_id: messageId, instruction }),
+    body: JSON.stringify({ message_id: messageId, instruction, provider }),
   });
   return (await response.json()) as NoyeDocument;
 }
@@ -398,8 +494,20 @@ export async function deleteDocument(id: string): Promise<void> {
 }
 
 /** Where to download a document's Markdown. A plain URL, handed to the browser. */
-export function documentExportUrl(id: string): string {
-  return `${BASE_URL}/documents/${encodeURIComponent(id)}/export.md`;
+export function documentExportUrl(id: string, provenance = false): string {
+  return `${apiBaseUrl()}/documents/${encodeURIComponent(id)}/export.md${provenance ? "?provenance=true" : ""}`;
+}
+
+export interface RuntimeServices {
+  ollama: boolean;
+  qdrant: boolean;
+  generation_model: boolean;
+  embedding_model: boolean;
+}
+
+export async function getRuntimeServices(signal?: AbortSignal): Promise<RuntimeServices> {
+  const response = await request("/runtime/services", { signal });
+  return (await response.json()) as RuntimeServices;
 }
 
 // --- index integrity ---------------------------------------------------------
@@ -408,10 +516,14 @@ export type IndexProblem =
   | "MISSING_SOURCE"
   | "SOURCE_CHANGED"
   | "MODEL_CHANGED"
+  | "INDEX_UNKNOWN"
+  | "INDEX_CHANGED"
+  | "IDENTITY_UNAVAILABLE"
   | "POINTS_MISSING";
 
 /** One file whose original or derived index no longer agrees with SQLite. */
 export interface FileIntegrityProblem {
+  folder_root_id?: string | null;
   file_id: string;
   file_name: string;
   problems: IndexProblem[];

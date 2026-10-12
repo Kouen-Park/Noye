@@ -1,0 +1,77 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { actOnJob, jobIsActive, readJobs, type IngestionJob } from "@/lib/jobs";
+
+export function JobsPanel({ revision, onChange }: { revision: string; onChange: () => void }) {
+  const [jobs, setJobs] = useState<IngestionJob[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    async function load() {
+      try {
+        const latest = await readJobs(controller.signal);
+        if (controller.signal.aborted) return;
+        setJobs(latest);
+        setError(null);
+        if (latest.some(jobIsActive)) timer = setTimeout(load, 1500);
+      } catch (caught) {
+        if (!controller.signal.aborted) setError((caught as Error).message);
+      }
+    }
+    void load();
+    return () => { controller.abort(); clearTimeout(timer); };
+  }, [revision, refresh]);
+
+  async function act(job: IngestionJob, action: "cancel" | "resume") {
+    setBusy(job.id);
+    setError(null);
+    try {
+      await actOnJob(job.id, action);
+      setRefresh((value) => value + 1);
+      onChange();
+    } catch (caught) { setError((caught as Error).message); }
+    finally { setBusy(null); }
+  }
+  const visible = jobs.filter((job) => job.state !== "complete");
+  if (!visible.length && !error) return null;
+  return (
+    <section className="mt-3 border-b border-edge pb-3" aria-label="Processing jobs">
+      <h2 className="text-[13px] font-semibold">Processing jobs</h2>
+      <details className="noye-details mt-1"><summary className="text-[12px] text-ink-soft">About processing and retries</summary>
+      <p className="mt-1 text-[12px] text-ink-soft">
+        Progress is saved between embedding batches. Interrupted jobs wait for your retry,
+        which processes the original again. Noye runs one file at a time.
+      </p>
+      </details>
+      {error && <div role="alert" className="mt-2 text-fail">{error}
+        <button type="button" className="ml-3 underline" onClick={() => setRefresh((v) => v + 1)}>
+          Refresh jobs
+        </button>
+      </div>}
+      <ul className="mt-2 space-y-2">
+        {visible.map((job) => (
+          <li key={job.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-edge pt-2 text-[13px]">
+            <strong>{job.file_name}</strong> · attempt {job.attempt} · {job.state}
+            <p className="text-[12px] text-ink-soft">{job.stage}
+              {job.total > 0 && " · " + job.completed + " / " + job.total + " passages embedded"}
+            </p>
+            {job.error && <p className="w-full text-[12px] text-fail">{job.error}</p>}
+            {jobIsActive(job)
+              ? <button type="button" className="mt-1 underline" disabled={busy === job.id || job.state === "cancelling"}
+                  onClick={() => void act(job, "cancel")}>
+                  {job.state === "cancelling" ? "Stopping after the current batch…" : "Stop processing"}
+                </button>
+              : job.folder_root_id ? <Link href="/folders/" className="mt-1 inline-block underline">Manage in Folders</Link>
+              : <button type="button" className="mt-1 underline" disabled={busy === job.id}
+                  onClick={() => void act(job, "resume")}>Retry from original</button>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

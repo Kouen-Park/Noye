@@ -554,3 +554,32 @@ def test_failure_clears_the_chunk_count_it_no_longer_has(db, qdrant, tmp_path) -
     assert file_store.count_chunks(db, record.id) == 0
     # The pages really were read, so that number stays true.
     assert result.page_count == 1
+
+
+def test_mixed_pdf_coverage_retains_physical_page_numbers(db, qdrant, tmp_path):
+    record = add_pdf(db, tmp_path, ["First text", None, "Third text", None])
+    # One blank page and one real image-only page both have no extracted text.
+    with pymupdf.open(record.path) as pdf:
+        image = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 10, 10), False)
+        image.clear_with(255)
+        pdf[3].insert_image(pymupdf.Rect(72, 72, 172, 172), pixmap=image)
+        pdf.saveIncr()
+    with ollama_client() as http:
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+    assert result.status is FileStatus.READY
+    assert result.page_count == 4
+    assert result.no_text_pages == [2, 4]
+    assert {chunk.page_number for chunk in file_store.list_chunks(db, record.id)} == {1, 3}
+    points = qdrant.scroll(get_settings().qdrant_collection, with_payload=True)[0]
+    assert all(point.payload["source_hash"] == result.content_hash for point in points)
+
+
+def test_failed_extraction_does_not_reuse_previous_pdf_coverage(db, qdrant, tmp_path):
+    record = add_pdf(db, tmp_path, ["First", None])
+    with ollama_client() as http:
+        ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+        Path(record.path).write_bytes(b"corrupt")
+        result = ingest_file(db, record.id, qdrant_client=qdrant, http_client=http)
+    assert result.status is FileStatus.FAILED
+    assert result.page_count is None
+    assert result.no_text_pages is None

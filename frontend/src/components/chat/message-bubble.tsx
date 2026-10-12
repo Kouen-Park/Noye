@@ -1,22 +1,28 @@
+import { KnowledgeEvidence } from "@/components/chat/knowledge-evidence";
 import { Passages } from "@/components/chat/passages";
 import { CreateDocumentAction } from "@/components/documents/create-document-action";
+import { MarkdownContent } from "@/components/documents/document-preview";
 import type { ChatMessage } from "@/lib/api";
 
 /**
  * One turn in a conversation.
  *
- * A question sits right-aligned on the brand colour; an answer is a card on the
- * left, so the two are distinguishable without reading. A failed turn is neither:
- * it is a bordered notice carrying the reason, because the user's question is
- * still there above it and what they need to know is why it went unanswered.
+ * Questions are compact bubbles; answers read as an unboxed column of prose.
+ * The inspection callback moves retrieved metadata into the workspace panel;
+ * the inline disclosure remains available to other consumers.
  */
 
-export function MessageBubble({ message }: { message: ChatMessage }) {
+export function MessageBubble({ message, onInspect, inspected = false, panelId }: {
+  message: ChatMessage;
+  onInspect?: (message: ChatMessage, button: HTMLButtonElement) => void;
+  inspected?: boolean;
+  panelId?: string;
+}) {
   if (message.role === "user") {
     return (
-      <li className="mb-3 flex justify-end">
-        <div className="max-w-[46ch] rounded-lg rounded-br-sm bg-brand px-3.5 py-2.5 text-[14.5px] text-ink-inverse">
-          <p className="whitespace-pre-wrap">{message.content}</p>
+      <li className="flex justify-end py-4">
+        <div className="max-w-[85%] rounded-lg rounded-br-sm bg-brand-wash px-4 py-3 text-[15px] leading-relaxed">
+          <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{message.content}</p>
         </div>
       </li>
     );
@@ -37,10 +43,19 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
   }
 
   return (
-    <li className="mb-3">
-      <div className="max-w-[68ch] rounded-lg rounded-bl-sm border border-edge-strong bg-card px-3.5 py-2.5">
-        <p className="whitespace-pre-wrap text-[14.5px] leading-relaxed">{message.content}</p>
-        <Passages citations={message.citations} />
+    <li className="py-5">
+      <div>
+        <p className="mb-2 text-[12px] font-semibold tracking-wide text-brand">Noye</p>
+        <div className="text-[15px] leading-7"><MarkdownContent content={message.content} allowImages={false} /></div>
+        {message.knowledge && <KnowledgeEvidence snapshot={message.knowledge} citations={message.citations} />}
+        {onInspect ? message.citations.length > 0 && (
+          <button type="button" onClick={(event) => onInspect(message, event.currentTarget)}
+            aria-expanded={inspected} aria-controls={inspected ? panelId : undefined}
+            className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-md pr-3 text-[12px] font-medium text-brand underline-offset-4 hover:underline">
+            <span aria-hidden="true" className="grid h-5 min-w-5 place-items-center rounded-sm bg-brand-wash px-1 text-[12px] tabular-nums text-brand">{message.citations.length}</span>
+            {message.citations.length === 1 ? "Passage consulted" : "Passages consulted"}
+          </button>
+         ) : !message.knowledge && <Passages citations={message.citations} />}
         {/* Offered only on an answer with something in it — there is nothing to
             make a document from otherwise, and the API refuses it anyway. */}
         {message.content.trim() !== "" && <CreateDocumentAction messageId={message.id} />}

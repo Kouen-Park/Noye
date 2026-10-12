@@ -1,0 +1,444 @@
+{
+  "version": 1,
+  "name": "lumen-synthetic-v1",
+  "description": "Invented non-personal project facts. Pre-chunked passages isolate ranking from PDF parsing. Grades 2=direct evidence, 1=related evidence. No actual product, legal or medical claims.",
+  "passages": [
+    {
+      "id": "backup-en",
+      "document_id": "storage",
+      "language": "en",
+      "text": "Lumen backups preserve original source files, the SQLite database, conversations, user-edited documents and saved evidence. Model weights, credentials and the derived vector index are excluded."
+    },
+    {
+      "id": "restore-en",
+      "document_id": "storage",
+      "language": "en",
+      "text": "Lumen restores a backup into a new destination. It never overwrites the active workspace. The restored derived index must be rebuilt before it is used."
+    },
+    {
+      "id": "backup-ko",
+      "document_id": "storage-ko",
+      "language": "ko",
+      "text": "루멘의 백업에는 원본 파일, SQLite 데이터베이스, 대화와 사용자가 편집한 문서가 포함된다. 모델 가중치와 인증 정보, 재생성할 수 있는 벡터 색인은 제외한다."
+    },
+    {
+      "id": "reset-en",
+      "document_id": "maintenance",
+      "language": "en",
+      "text": "Before a dimension-changing index reset, Lumen refuses active uploads, ingestion or deletion. It reserves eligible files before resetting the collection. A rebuild at the same vector dimension retains the collection."
+    },
+    {
+      "id": "cancel-ko",
+      "document_id": "maintenance",
+      "language": "ko",
+      "text": "루멘에서는 재색인 중 새 업로드와 삭제를 차단하지만 이미 대기 중이거나 처리 중인 작업의 취소 요청은 허용한다. 취소 후 해당 파일은 완전히 처리되기 전까지 검색에서 제외한다."
+    },
+    {
+      "id": "digest-en",
+      "document_id": "version",
+      "language": "en",
+      "text": "An embedding model tag can keep its name when the installed model changes. Lumen compares the installed model digest and vector dimension. Changing only the generation model does not invalidate the embedding index."
+    },
+    {
+      "id": "chunk-ko",
+      "document_id": "version",
+      "language": "ko",
+      "text": "루멘의 색인 버전은 임베딩 모델 digest, 벡터 차원, 질문과 문서의 입력 형식, 청크 크기와 중복 길이, 추출기 버전을 기록한다. 원본의 해시는 별도 원본 버전으로 저장한다."
+    },
+    {
+      "id": "unknown-en",
+      "document_id": "version",
+      "language": "en",
+      "text": "Lumen never guesses the processing version of a legacy index from its model name. Unknown versions require an explicit rebuild. Existing conversations and edited writing remain stored."
+    },
+    {
+      "id": "network-en",
+      "document_id": "services",
+      "language": "en",
+      "text": "Lumen exposes its REST service only at 127.0.0.1:7633. Its unused gRPC port is not published. CORS is a browser policy and is not authentication or a network firewall."
+    },
+    {
+      "id": "models-ko",
+      "document_id": "services",
+      "language": "ko",
+      "text": "루멘은 임베딩 모델이 설치되지 않으면 설치 필요 상태를 표시하고 자동 다운로드하지 않는다. 서비스가 응답하지 않는 경우와 모델이 설치되지 않은 경우를 구분한다."
+    },
+    {
+      "id": "citation-en",
+      "document_id": "evidence",
+      "language": "en",
+      "text": "Lumen saves immutable retrieved excerpt snapshots and the source revision behind each answer. When a source is edited or deleted, old evidence stays identical and the original is marked changed or missing."
+    },
+    {
+      "id": "writing-ko",
+      "document_id": "evidence",
+      "language": "ko",
+      "text": "루멘에서 사용자가 편집한 문서는 사용자의 작업물이다. 대화를 삭제해도 이 문서는 남는다. 벡터 색인은 원본으로 재생성할 수 있지만 사용자 편집 내용과 대화는 원본 파일만으로 복원할 수 없다."
+    },
+    {
+      "id": "scope-en",
+      "document_id": "sources",
+      "language": "en",
+      "text": "In Lumen, an unrestricted source scope searches all eligible files. An explicitly empty selection searches nothing. A deleted selected source never silently widens the scope."
+    },
+    {
+      "id": "pdf-ko",
+      "document_id": "sources",
+      "language": "ko",
+      "text": "루멘은 PDF의 실제 페이지 번호를 유지한다. 텍스트가 추출되지 않은 페이지와 전체 추출 범위를 표시한다. 빈 텍스트 페이지를 반드시 스캔이라고 단정하지 않으며 자동 OCR은 제공하지 않는다."
+    },
+    {
+      "id": "identifier-742",
+      "document_id": "errors",
+      "language": "en",
+      "text": "In the fictional Lumen protocol, error NX-742 means the saved source revision differs from the current original. Retry extraction after verifying the original."
+    },
+    {
+      "id": "identifier-724",
+      "document_id": "errors",
+      "language": "en",
+      "text": "In the fictional Lumen protocol, error NX-724 means the optional printer is unavailable. This error is unrelated to source revisions or embedding models."
+    },
+    {
+      "id": "length-en",
+      "document_id": "embedding",
+      "language": "en",
+      "text": "The fictional Lumen EMB-2048 rule rejects an oversized embedding input instead of silently truncating its tail. Input formatting counts toward the configured limit."
+    },
+    {
+      "id": "speed-ko",
+      "document_id": "embedding",
+      "language": "ko",
+      "text": "루멘은 검색 품질을 평가한 뒤에만 검색 방식을 바꾼다. 짧은 한국어 질문, 영어 자료, 정확한 식별자와 여러 문서의 질문을 별도로 측정한다."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q01",
+      "text": "What does a Lumen backup preserve and exclude?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "backup-en": 2,
+        "backup-ko": 1
+      },
+      "unanswerable": false,
+      "expected_answer": "Preserves sources, SQLite, conversations and edited documents; excludes weights, credentials and vectors."
+    },
+    {
+      "id": "q02",
+      "text": "루멘 백업에 모델 가중치도 포함되나요?",
+      "language": "ko",
+      "categories": [
+        "korean"
+      ],
+      "relevance": {
+        "backup-ko": 2,
+        "backup-en": 1
+      },
+      "unanswerable": false,
+      "expected_answer": "모델 가중치는 제외한다."
+    },
+    {
+      "id": "q03",
+      "text": "백업을 복원하면 사용 중인 작업 공간을 덮어쓰나요?",
+      "language": "ko",
+      "categories": [
+        "korean",
+        "cross-language"
+      ],
+      "relevance": {
+        "restore-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "새 위치에 복원하며 현재 작업 공간을 덮어쓰지 않는다."
+    },
+    {
+      "id": "q04",
+      "text": "When is a collection reset refused?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "reset-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "A dimension-changing reset refuses active uploads, ingestion or deletion."
+    },
+    {
+      "id": "q05",
+      "text": "재색인 중 이미 대기 중인 작업의 취소가 가능한가요?",
+      "language": "ko",
+      "categories": [
+        "korean"
+      ],
+      "relevance": {
+        "cancel-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "취소 요청은 허용되며 완전히 처리된 파일만 검색한다."
+    },
+    {
+      "id": "q06",
+      "text": "Can replacing a model under the same tag leave an old index compatible?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "digest-en": 2,
+        "chunk-ko": 1
+      },
+      "unanswerable": false,
+      "expected_answer": "The installed digest is compared; a same-name replacement can invalidate compatibility."
+    },
+    {
+      "id": "q07",
+      "text": "청크 크기와 중복 길이는 색인 버전에 포함되나요?",
+      "language": "ko",
+      "categories": [
+        "korean"
+      ],
+      "relevance": {
+        "chunk-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "두 설정 모두 색인 버전에 포함된다."
+    },
+    {
+      "id": "q08",
+      "text": "Does changing only the generation model invalidate embeddings?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "digest-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "No; the generation model is independent of the embedding index."
+    },
+    {
+      "id": "q09",
+      "text": "How are legacy indexes with unknown processing versions handled?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "unknown-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Require an explicit rebuild and preserve saved writing and conversations."
+    },
+    {
+      "id": "q10",
+      "text": "Which host and port expose the Lumen REST service?",
+      "language": "en",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "network-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "127.0.0.1:7633; gRPC is not published."
+    },
+    {
+      "id": "q11",
+      "text": "브라우저 CORS가 인증을 대신하나요?",
+      "language": "ko",
+      "categories": [
+        "korean",
+        "cross-language"
+      ],
+      "relevance": {
+        "network-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "CORS는 브라우저 정책이며 인증이나 네트워크 방화벽이 아니다."
+    },
+    {
+      "id": "q12",
+      "text": "Does Lumen automatically download a missing embedding model?",
+      "language": "en",
+      "categories": [
+        "english",
+        "cross-language"
+      ],
+      "relevance": {
+        "models-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "No; it reports the missing installation separately from service unavailability."
+    },
+    {
+      "id": "q13",
+      "text": "What happens to the evidence behind an old answer when its original is deleted?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "citation-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Saved snapshots stay identical; the original is marked missing."
+    },
+    {
+      "id": "q14",
+      "text": "대화를 삭제하면 사용자가 편집한 문서도 삭제되나요?",
+      "language": "ko",
+      "categories": [
+        "korean"
+      ],
+      "relevance": {
+        "writing-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "문서는 유지된다."
+    },
+    {
+      "id": "q15",
+      "text": "What is the difference between unrestricted and explicitly empty source selections?",
+      "language": "en",
+      "categories": [
+        "english"
+      ],
+      "relevance": {
+        "scope-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Unrestricted searches eligible files; empty searches nothing; missing selections do not widen scope."
+    },
+    {
+      "id": "q16",
+      "text": "텍스트가 없는 PDF 페이지를 항상 스캔이라고 판단하나요?",
+      "language": "ko",
+      "categories": [
+        "korean"
+      ],
+      "relevance": {
+        "pdf-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "그렇게 단정하지 않으며 추출되지 않은 페이지와 범위를 표시한다."
+    },
+    {
+      "id": "q17",
+      "text": "What does NX-742 mean?",
+      "language": "en",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "identifier-742": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Saved source revision differs from the current original; not a printer error."
+    },
+    {
+      "id": "q18",
+      "text": "NX-724 오류는 원본 버전이 바뀌었다는 뜻인가요?",
+      "language": "ko",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "identifier-724": 2,
+        "identifier-742": 1
+      },
+      "unanswerable": false,
+      "expected_answer": "NX-724는 프린터 사용 불가이며 원본 버전 변경은 NX-742이다."
+    },
+    {
+      "id": "q19",
+      "text": "What does EMB-2048 do to an oversized embedding input?",
+      "language": "en",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "relevance": {
+        "length-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Rejects it instead of silently truncating; formatting counts toward length."
+    },
+    {
+      "id": "q20",
+      "text": "Why must backups preserve SQLite if vectors can be rebuilt from originals?",
+      "language": "en",
+      "categories": [
+        "english",
+        "multi-document",
+        "cross-language"
+      ],
+      "relevance": {
+        "backup-en": 2,
+        "writing-ko": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Vectors are derived; originals alone cannot recover conversations and user-edited writing."
+    },
+    {
+      "id": "q21",
+      "text": "How do index versions and saved evidence address a changed source differently?",
+      "language": "en",
+      "categories": [
+        "english",
+        "multi-document"
+      ],
+      "relevance": {
+        "chunk-ko": 2,
+        "citation-en": 2
+      },
+      "unanswerable": false,
+      "expected_answer": "Processing fingerprint and source hash are separate; historical excerpt snapshots remain unchanged."
+    },
+    {
+      "id": "q22",
+      "text": "루멘의 유료 구독 가격은 얼마인가요?",
+      "language": "ko",
+      "categories": [
+        "korean",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "The excerpts contain no subscription price; decline rather than inventing one."
+    },
+    {
+      "id": "q23",
+      "text": "Which cloud synchronization provider does Lumen use?",
+      "language": "en",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "No cloud synchronization provider is described; decline."
+    },
+    {
+      "id": "q24",
+      "text": "What is the meaning of error NX-999?",
+      "language": "en",
+      "categories": [
+        "english",
+        "exact-identifier",
+        "negative"
+      ],
+      "relevance": {},
+      "unanswerable": true,
+      "expected_answer": "NX-999 is absent from the corpus; do not confuse it with NX-742 or NX-724."
+    }
+  ]
+}

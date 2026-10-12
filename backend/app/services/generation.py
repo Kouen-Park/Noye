@@ -1,4 +1,4 @@
-"""Grounded answer generation through Ollama.
+"""Grounded answers through local Ollama or explicitly selected Gemini.
 
 The model is given retrieved passages and asked to answer from them only. Two
 rules shape this module:
@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import httpx
 
-from app.config import get_settings
+from app.config import GenerationProvider, get_settings
 from app.services.retrieval import DEFAULT_LIMIT, SearchResult, search
 
 #: Generation is slower than embedding and answers can be long.
@@ -28,9 +28,7 @@ DEFAULT_TIMEOUT_SECONDS = 300.0
 #: Said to the user when retrieval found nothing worth answering from. Returned
 #: without calling the model at all: asking a model to answer from no context
 #: is exactly how ungrounded answers happen.
-NO_CONTEXT_ANSWER = (
-    "I could not find anything about that in your indexed documents."
-)
+NO_CONTEXT_ANSWER = "I could not find anything about that in your indexed documents."
 
 SYSTEM_PROMPT = """You are Noye, answering questions about the user's own documents.
 
@@ -46,9 +44,8 @@ Rules:
 class GenerationError(Exception):
     """An answer could not be generated.
 
-    Wraps an unreachable Ollama, a model that has not been pulled, and a
-    malformed response, so callers do not depend on httpx or on Ollama's
-    response shape.
+    Wraps provider connection, configuration, quota and response errors so
+    callers do not depend on httpx or a provider's response shape.
     """
 
 
@@ -76,6 +73,9 @@ def answer_question(
     min_score: float | None = None,
     client: httpx.Client | None = None,
     qdrant_client=None,
+    provider: GenerationProvider = "ollama",
+    history: str = "",
+    retrieval_query: str | None = None,
 ) -> Answer:
     """Retrieve relevant chunks and answer the question from them.
 
@@ -87,13 +87,13 @@ def answer_question(
         ValueError: ``question`` is empty.
         EmbeddingError: the question could not be embedded.
         IndexingError: Qdrant could not be searched.
-        GenerationError: Ollama could not produce an answer.
+        GenerationError: the selected provider could not produce an answer.
     """
     if not question.strip():
         raise ValueError("Cannot answer an empty question")
 
     results = search(
-        question,
+        retrieval_query or question,
         limit=limit,
         file_ids=file_ids,
         min_score=min_score,
@@ -103,13 +103,13 @@ def answer_question(
     if not results:
         return Answer(text=NO_CONTEXT_ANSWER, sources=[])
 
-    prompt = build_prompt(question, results)
-    text = generate(prompt, client=client)
+    prompt = build_prompt(question, results, history=history)
+    text = generate(prompt, client=client, provider=provider)
 
     return Answer(text=text, sources=list(results))
 
 
-def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
+def build_prompt(question: str, results: Sequence[SearchResult], *, history: str = "") -> str:
     """Render retrieved passages and the question into a single prompt.
 
     Excerpts are numbered so the model can refer to them while reasoning, and
@@ -129,9 +129,14 @@ def build_prompt(question: str, results: Sequence[SearchResult]) -> str:
         excerpts.append(f"[{label}]\n{result.content}")
 
     joined = "\n\n".join(excerpts)
+    context = (
+        "Conversation context (only to resolve references; not source evidence):\n"
+        f"{history[:2400]}\n\n"
+        if history
+        else ""
+    )
     return (
-        f"{joined}\n\n"
-        f"Question: {question.strip()}\n\n"
+        f"{context}{joined}\n\nQuestion: {question.strip()}\n\n"
         "Answer using only the excerpts above."
     )
 
@@ -141,8 +146,10 @@ def generate(
     *,
     client: httpx.Client | None = None,
     system: str | None = None,
+    provider: GenerationProvider = "ollama",
+    local_only: bool = False,
 ) -> str:
-    """Send one prompt to Ollama and return the generated text.
+    """Send one prompt to the selected provider and return generated text.
 
     ``system`` overrides :data:`SYSTEM_PROMPT` for callers whose task is not
     answering a question — drafting a document, for instance. The transport,
@@ -151,19 +158,115 @@ def generate(
 
     Raises:
         ValueError: ``prompt`` is empty.
-        GenerationError: Ollama could not be reached or returned an unusable
+        GenerationError: the provider could not be reached or returned an unusable
             response.
     """
     if not prompt.strip():
         raise ValueError("Cannot generate from an empty prompt")
 
     settings = get_settings()
+    if local_only and provider != "ollama":
+        raise GenerationError("This original-evidence request requires local Ollama.")
     system_prompt = system or SYSTEM_PROMPT
+    if provider == "ollama":
+        # Conservative byte bound, not an exact tokenizer measurement. Never
+        # silently trim historical evidence or the user's instructions.
+        available = settings.generation_context_tokens - settings.generation_output_tokens - 512
+        if len(prompt.encode("utf-8")) + len(system_prompt.encode("utf-8")) > available:
+            raise GenerationError(
+                "This request exceeds the local model input budget. "
+                "Use fewer excerpts or a shorter instruction."
+            )
+    if provider not in ("ollama", "gemini", "openai", "anthropic"):
+        raise ValueError("Unknown generation provider")
+    if provider in ("openai", "anthropic"):
+        from app.services.cloud_generation import request_cloud
 
-    if client is None:
-        with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as owned_client:
-            return _request_generation(owned_client, prompt, settings, system_prompt)
-    return _request_generation(client, prompt, settings, system_prompt)
+        if client is None:
+            with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS, follow_redirects=False) as owned:
+                return request_cloud(owned, provider, prompt, settings, system_prompt)
+        return request_cloud(client, provider, prompt, settings, system_prompt)
+    request_generation = _request_gemini if provider == "gemini" else _request_generation
+    from contextlib import nullcontext
+
+    from app.services.local_ollama import LocalModelError, require_installed_local_model
+    from app.services.model_usage import ModelBusyError, inference
+
+    try:
+        with inference(settings.ollama_model) if provider == "ollama" else nullcontext():
+            if client is None:
+                with httpx.Client(
+                    timeout=DEFAULT_TIMEOUT_SECONDS,
+                    follow_redirects=False,
+                    trust_env=provider != "ollama",
+                ) as owned_client:
+                    if local_only:
+                        require_installed_local_model(settings, owned_client)
+                    return request_generation(owned_client, prompt, settings, system_prompt)
+            if local_only:
+                require_installed_local_model(settings, client)
+            return request_generation(client, prompt, settings, system_prompt)
+    except (ModelBusyError, LocalModelError) as error:
+        raise GenerationError(str(error)) from None
+
+
+def _request_gemini(client: httpx.Client, prompt: str, settings, system_prompt: str) -> str:
+    """One cloud request, without retries or fallback to another provider.
+
+    The key goes in a header, never a URL. Upstream bodies and exception messages
+    are not surfaced: they can echo the prompt or credentials into persisted
+    errors and logs. Only the answer text is returned, never thinking parts.
+    """
+    key = settings.gemini_api_key.get_secret_value().strip()
+    if not key:
+        raise GenerationError("Set GEMINI_API_KEY in the backend environment and restart Noye.")
+
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{settings.gemini_model}:generateContent"
+    )
+    try:
+        response = client.post(
+            url,
+            headers={"x-goog-api-key": key},
+            json={
+                "systemInstruction": {"parts": [{"text": system_prompt}]},
+                "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"maxOutputTokens": 4096},
+            },
+        )
+    except httpx.RequestError:
+        raise GenerationError("Could not reach Gemini. Check your internet connection.") from None
+
+    if response.status_code in (401, 403):
+        raise GenerationError("Gemini rejected the API key or permissions. Check your API project.")
+    if response.status_code == 429:
+        raise GenerationError(
+            "Gemini's quota or rate limit was reached. Try again later or select Ollama. "
+            "Noye has not switched providers or enabled billing."
+        )
+    if response.status_code == 404:
+        raise GenerationError("Gemini model is unavailable. Check GEMINI_MODEL and project access.")
+    if response.status_code >= 400:
+        raise GenerationError(f"Gemini returned HTTP {response.status_code}. Try again later.")
+
+    try:
+        body = response.json()
+        candidate = body["candidates"][0]
+        # Refuse blocked or truncated content rather than saving an incomplete draft.
+        if candidate.get("finishReason") != "STOP":
+            raise GenerationError("Gemini did not finish the answer. Try a shorter request.")
+        parts = candidate["content"]["parts"]
+        text = "".join(
+            part["text"]
+            for part in parts
+            if not part.get("thought") and isinstance(part.get("text"), str)
+        )
+    except (ValueError, KeyError, IndexError, TypeError, AttributeError):
+        raise GenerationError("Gemini returned no usable answer text.") from None
+    if not text.strip():
+        raise GenerationError("Gemini returned no usable answer text.")
+    return text.strip()
 
 
 def _request_generation(
@@ -177,6 +280,10 @@ def _request_generation(
         "system": system_prompt,
         "stream": False,
         "think": settings.ollama_thinking,
+        "options": {
+            "num_ctx": settings.generation_context_tokens,
+            "num_predict": settings.generation_output_tokens,
+        },
     }
 
     try:
@@ -205,9 +312,9 @@ def _request_generation(
         raise GenerationError("Ollama returned a non-JSON response") from exc
 
     text = body.get("response")
+    if body.get("done") is False or body.get("done_reason") == "length":
+        raise GenerationError("The local model reached its output limit. Request a shorter answer.")
     if not isinstance(text, str) or not text.strip():
-        raise GenerationError(
-            f"Ollama returned no answer text (keys: {sorted(body)})"
-        )
+        raise GenerationError(f"Ollama returned no answer text (keys: {sorted(body)})")
 
     return text.strip()

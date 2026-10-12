@@ -1,5 +1,6 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { OriginalLink, isOriginalHref } from "@/components/original-link";
 
 /**
  * The rendered document.
@@ -21,8 +22,8 @@ import remarkGfm from "remark-gfm";
  * document uses the same tokens as the rest of Noye and needs no extra dependency.
  */
 
-export function DocumentPreview({ content }: { content: string }) {
-  if (!content.trim()) {
+export function DocumentPreview({ content, provenance = "" }: { content: string; provenance?: string }) {
+  if (!content.trim() && !provenance.trim()) {
     return (
       <p className="text-[13.5px] text-ink-soft">
         Nothing to preview yet. What you write appears here.
@@ -31,10 +32,25 @@ export function DocumentPreview({ content }: { content: string }) {
   }
 
   return (
-    <div data-print="document" className="max-w-[72ch] text-[14.5px] leading-relaxed">
+    <div data-print="document" className="noye-prose max-w-[72ch]">
+      <MarkdownContent content={content} />
+      {provenance && <section data-print-provenance>
+        <MarkdownContent content={provenance} />
+      </section>}
+    </div>
+  );
+}
+
+/** Safe shared prose renderer. Chat never opts into document-only printing. */
+export function MarkdownContent({ content, allowImages = true, rewriteLink }: {
+  content: string; allowImages?: boolean; rewriteLink?: (href: string) => string | undefined;
+}) {
+  return (
+    <div className="noye-prose [overflow-wrap:anywhere]">
       <Markdown
         remarkPlugins={[remarkGfm]}
         components={{
+          ...(!allowImages ? { img: ({ alt }: { alt?: string }) => <span>{alt ? `[Image: ${alt}]` : "[Image omitted]"}</span> } : {}),
           h1: (props) => (
             <h1 className="mb-3 mt-5 font-display text-[22px] first:mt-0" {...props} />
           ),
@@ -67,14 +83,13 @@ export function DocumentPreview({ content }: { content: string }) {
               {...props}
             />
           ),
-          a: (props) => (
-            <a
-              className="text-accent-ink underline"
-              target="_blank"
-              rel="noopener noreferrer"
-              {...props}
-            />
-          ),
+          a: ({ href, children, ...props }) => {
+            const destination = href && rewriteLink ? rewriteLink(href) : href;
+            if (!destination) return <span>{children}</span>;
+            if (isOriginalHref(destination)) return <OriginalLink href={destination} className="text-accent-ink underline">{children}</OriginalLink>;
+            return <a className="text-accent-ink underline" target="_blank"
+              rel="noopener noreferrer" {...props} href={destination}>{children}</a>;
+          },
           hr: () => <hr className="my-5 border-edge" />,
           table: (props) => (
             <div className="mb-3 overflow-x-auto">

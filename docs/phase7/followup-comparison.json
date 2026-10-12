@@ -1,0 +1,119 @@
+{
+  "name": "atlas-followups-v1",
+  "input_format": "raw-v1",
+  "context_policy": "recent-user-questions-v1",
+  "model_digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1",
+  "generation_model": "qwen3.5:4b",
+  "corpus_sha256": "1db3fa61eb06da176fb55b62054953afaa78b01d9206501d6575441e7efede52",
+  "cases_sha256": "eb2c7e9baca5ec0d641249e8e7d73d8d33a7fc2601c49baab08eb1df24ae6005",
+  "context_sha256": "a49193da16680911bfd2652526d51b41bbef2302ef4128cbecd83d4a679cf78a",
+  "system": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "cold_embedding_ms": 809.8125830001663,
+  "note": "One explicitly unloaded embedding query. Subsequent queries are warm; in-memory Qdrant, not complete API/desktop latency. Answer judgments require an explicit reviewer.",
+  "rows": [
+    {
+      "id": "comparison-en",
+      "bounded": false,
+      "question": "Which was faster, and by how many milliseconds?",
+      "retrieval_query": "Which was faster, and by how many milliseconds?",
+      "history_chars": 0,
+      "ranking": [
+        "research-notes-en",
+        "research-notes-ko",
+        "graph-control-en",
+        "graph-lab-ko",
+        "graph-lab-en"
+      ],
+      "metrics_at_5": {
+        "recall": 0.75,
+        "precision": 0.6,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5143371794949736,
+        "negative_returned_context": null
+      },
+      "retrieval_ms": 21.185249992413446,
+      "expected_answer": "AT-201 was faster: 12 ms versus 39 ms, a difference of 27 ms.",
+      "answer": "Excerpt [3] states that AT-210 visited 48 vertices in 39 milliseconds. Excerpt [5] states that AT-201 visited 48 vertices in 12 milliseconds. Therefore, AT-201 was faster by 27 milliseconds (39 - 12 = 27).",
+      "answer_ms": 17966.971375019057,
+      "review": null
+    },
+    {
+      "id": "comparison-en",
+      "bounded": true,
+      "question": "Which was faster, and by how many milliseconds?",
+      "retrieval_query": "Compare the AT-201 and AT-210 shortest-path experiments.\nWhich was faster, and by how many milliseconds?",
+      "history_chars": 95,
+      "ranking": [
+        "graph-control-en",
+        "graph-lab-en",
+        "graph-lab-ko",
+        "graph-control-ko",
+        "graph-lab-procedure"
+      ],
+      "metrics_at_5": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "retrieval_ms": 21.295124985044822,
+      "expected_answer": "AT-201 was faster: 12 ms versus 39 ms, a difference of 27 ms.",
+      "answer": "AT-201 was faster, completing its run in 12 milliseconds compared to AT-210's 39 milliseconds. The difference is 27 milliseconds.",
+      "answer_ms": 4989.6478750160895,
+      "review": null
+    },
+    {
+      "id": "comparison-ko",
+      "bounded": false,
+      "question": "그럼 두 결과의 대화 수 차이는 얼마야?",
+      "retrieval_query": "그럼 두 결과의 대화 수 차이는 얼마야?",
+      "history_chars": 0,
+      "ranking": [
+        "database-lab-ko",
+        "database-lab-en",
+        "database-control-ko",
+        "database-control-en",
+        "seminar-agenda-ko"
+      ],
+      "metrics_at_5": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "retrieval_ms": 21.880832995520905,
+      "expected_answer": "DB-318 has 87 conversations. DB-381 records 6 demonstration notes but no conversation count. The difference cannot be determined; do not interpret an absent count as zero. Answer in Korean.",
+      "answer": "제시된 excerpt들은 DB-318 결과에 포함된 87 개의 대화를 명시하고 있으며, DB-381 대조군에는 그 기록이 없다고 합니다. 따라서 두 결과의 대화 수 차이는 계산할 수 없습니다.excerpt 에서 직접 두 결과의 대화 수를 모두 나열하여 차이가 명시되지는 않았습니다.",
+      "answer_ms": 8253.659875015728,
+      "review": null
+    },
+    {
+      "id": "comparison-ko",
+      "bounded": true,
+      "question": "그럼 두 결과의 대화 수 차이는 얼마야?",
+      "retrieval_query": "DB-318과 DB-381의 백업 결과를 비교해 줘.\n그럼 두 결과의 대화 수 차이는 얼마야?",
+      "history_chars": 68,
+      "ranking": [
+        "database-lab-ko",
+        "database-lab-en",
+        "database-control-ko",
+        "database-control-en",
+        "database-lab-procedure"
+      ],
+      "metrics_at_5": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "retrieval_ms": 29.22395899076946,
+      "expected_answer": "DB-318 has 87 conversations. DB-381 records 6 demonstration notes but no conversation count. The difference cannot be determined; do not interpret an absent count as zero. Answer in Korean.",
+      "answer": "DB-318 의 백업 결과는 대화 87 개를 포함하고, DB-381 의 대조군에는 대화 87 개에 대한 기록이 없습니다. 따라서 두 결과의 대화 수 차이는 모든 대화 (87 개) 입니다.",
+      "answer_ms": 6783.711207972374,
+      "review": null
+    }
+  ]
+}

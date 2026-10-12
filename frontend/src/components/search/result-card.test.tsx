@@ -24,6 +24,13 @@ describe("ResultCard", () => {
     expect(screen.getByText("page 34")).toBeInTheDocument();
   });
 
+  it("presents file and page context before the matching excerpt", () => {
+    render(<ResultCard hit={hit()} rank={1} />);
+    const excerpt = screen.getByText(/priority queue/);
+    expect(screen.getByText("Algorithms-lecture-07.pdf").compareDocumentPosition(excerpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByText("page 34").compareDocumentPosition(excerpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("says a pageless source has no pages rather than inventing page 1", () => {
     render(<ResultCard hit={hit({ page_number: null, file_name: "notes.md" })} rank={1} />);
     expect(screen.getByText("no pages")).toBeInTheDocument();

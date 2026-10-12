@@ -101,8 +101,11 @@ In particular:
 -   Do not make an external AI API mandatory for the core product.
 -   Do not introduce authentication, payments, collaboration, cloud
     sync, or agent frameworks into the MVP unless explicitly requested.
--   Do not begin Tauri packaging before the local web MVP is
-    sufficiently stable.
+-   Build Tauri in Phase 6 after the relevant existing unit/API/UI checks,
+    lint, types and builds pass. Phase 7 implements the twelve approved core
+    workflow improvements. Phase 7.5 adds folder-based knowledge, maintained wiki
+    pages and prompt-driven source documents; Phase 8 follows with stability/quality
+    refinement and final packaged-app acceptance. Validate each change as it lands.
 -   Do not copy Memex or another project's implementation wholesale.
     Noye should remain independently implemented.
 
@@ -122,6 +125,31 @@ Agents must:
 
 If an optional cloud provider is added in the future, it must not
 silently replace local mode.
+
+**Scope update, 2026-10-03:** the user requested both local inference and an
+API-key option to address local generation latency. Optional Gemini generation is
+now in scope for the MVP. Ollama remains the default; each chat/document request
+explicitly chooses a provider. Extraction, embeddings, Qdrant and persistence stay
+local. The key is server-only environment configuration in the web MVP. The UI
+discloses what leaves the computer before cloud use. There is no automatic fallback,
+retry or billing activation. Desktop credential entry and secure storage are Phase 6.
+
+**Scope update, 2026-10-05:** the user explicitly requested in-app model
+installation/deletion and OpenAI (ChatGPT), Claude and Gemini key settings.
+Optional OpenAI Responses and Anthropic Messages generation are now in scope.
+Desktop credentials use macOS Keychain, not plaintext preferences, and only
+availability is returned to the UI. Local remains the first-launch default;
+subsequent work can use an explicitly saved default provider. No automatic
+provider fallback, inference on key save, tools or embedding switch is added.
+
+**Scope update, 2026-10-05 (Phase 7.5 planning):** the owner requested user-selected
+local knowledge folders, automatic source classification, maintained source/topic
+wiki pages and related-document links. Chat should interpret a general prompt,
+discover and inspect relevant files within the user's enabled source scope, and
+create an editable document with Markdown/PDF export without requiring a prior
+assistant answer. Course-note synthesis is an example, not a course-only feature.
+This is approved planned work after Phase 7 and before Phase 8; no implementation
+is claimed. See §16A for ownership, local processing and acceptance requirements.
 
 ## 0.5 Citation and provenance rules
 
@@ -162,6 +190,11 @@ Citation display
 
 Do not discard provenance at an intermediate stage.
 
+Phase 7.5 extends this rule to wiki summaries, links and synthesized documents:
+preserve source IDs, versions and actual original locations through every derived
+layer. Wiki links and generated prose are not substitutes for original evidence;
+map citations from validated source metadata, not invented model references.
+
 ## 0.6 Data safety rules
 
 Agents must be conservative with user data.
@@ -169,6 +202,10 @@ Agents must be conservative with user data.
 -   Never mutate original source files unless explicitly requested.
 -   Generated/editable documents belong separately from original
     sources.
+-   Phase 7.5 automatic filing may move originals only inside an area the user
+    enabled for organization; never rewrite their bytes or overwrite collisions.
+    Connected existing folders retain their structure by default. Disconnecting
+    a folder does not authorize deleting its files. Preserve user-edited wiki pages.
 -   File deletion must eventually clean associated metadata and vectors.
 -   Destructive operations should be explicit.
 -   Never commit personal source documents, generated databases,
@@ -381,6 +418,13 @@ The differentiator is the full workflow:
 **source files → searchable knowledge → source-grounded answers →
 editable reusable documents**
 
+**Planned Phase 7.5 experience:** choose a local knowledge folder, add files in
+Finder, and let Noye maintain source summaries and related topic pages. A prompt
+can ask the AI to discover relevant files and produce a report, comparison or study
+note directly from them. Original passages remain available for exact details and
+provenance. This extends the current upload/RAG/answer-to-document workflow; it is
+not implemented yet.
+
 ### Product principles
 
 1.  **Local-first**
@@ -420,6 +464,8 @@ Example Noye use cases:
 -   Ask questions across several course documents.
 -   Find information from old project documentation.
 -   Generate study notes from selected sources.
+-   Planned in Phase 7.5: ask for a document in chat and let AI find and inspect
+    relevant local sources, including but not limited to lecture collections.
 -   Turn research into an editable Markdown document.
 -   Search personal technical notes.
 -   Produce a cited summary from multiple documents.
@@ -441,6 +487,8 @@ Example Noye use cases:
 -   [x] Semantic search
 -   [x] Ask questions over indexed knowledge
 -   [x] Local LLM generation through Ollama
+-   [x] Optional Gemini generation for chat and documents, selected per request;
+    automated transport/API/UI tests pass. Live Gemini validation requires a key.
 -   [x] File citations
 -   [x] Page citations
 -   [x] Conversation history — stored and re-readable; the model does not
@@ -455,6 +503,17 @@ Example Noye use cases:
 -   [x] Visible processing states
 -   [x] Delete files and associated vectors
 -   [x] Basic error handling
+
+### Approved Phase 7.5 extension (planned)
+
+-   [ ] User-selected knowledge folders, connected sources and change detection
+-   [ ] Automatic filing, source summaries, related links and maintained topic wiki
+-   [ ] Wiki-first questions with inspectable original evidence
+-   [ ] Prompt-driven source discovery and document generation from chat
+-   [ ] Compatible backup/recovery and source-based Markdown/PDF output
+
+Existing completed MVP items above retain their status. See §16A for delivery
+order and §17.10 for the expanded final acceptance.
 
 ### Explicitly out of scope for the first MVP
 
@@ -530,12 +589,19 @@ The development path should be:
 ``` text
 Local Web Application
         ↓
-Stable MVP
+Phase 6: Tauri Desktop Application
         ↓
-Tauri Desktop Application
+Phase 7: Twelve Core Workflow Improvements
+        ↓
+Phase 7.5: Knowledge Wiki and Source-Driven Documents
+        ↓
+Phase 8: Reliability, Quality and Final Acceptance
 ```
 
-Do **not** start by solving desktop packaging.
+Build the knowledge workflow first, then the desktop app and the twelve approved
+workflow improvements, then Phase 7.5's folder/wiki and prompt-driven document
+workflow, followed by stability/quality refinement and final acceptance. Validate
+each change as it lands rather than postponing all testing to Phase 8.
 
 ------------------------------------------------------------------------
 
@@ -624,7 +690,13 @@ Stores:
 
 Keep original sources separate from AI/user-generated documents.
 
-Suggested structure:
+The initial upload layout below is retained for compatibility. Current generated
+and edited document bodies live in SQLite; `documents/` may contain portable files.
+Phase 7.5's user-selected folders and Markdown wiki are planned separately in
+§16A.2. Folder selection is not permission to move an existing workspace database
+or reorganize all connected originals.
+
+Initial layout:
 
 ``` text
 data/
@@ -1499,8 +1571,8 @@ Decisions taken here:
 
 -   **Uploads are stored as `{file_id}__{filename}`.** Two uploads of the same
     name would otherwise overwrite each other. `File.name` keeps the original
-    for display. Duplicate *detection* is Phase 6; silently destroying the
-    first upload is not an acceptable stand-in for it.
+    for display. Duplicate *detection* belongs to the Phase 8 reliability
+    baseline; silently destroying the first upload is not an acceptable stand-in.
 -   **The response never includes `path`.** A server filesystem path is of no
     use to a client and invites being treated as a URL.
 -   **Delete removes vectors first, and aborts the whole delete if that
@@ -2056,7 +2128,7 @@ Features:
 -   [x] Rename — the title field, saved with the body
 -   [x] Delete
 -   [x] Export `.md`
--   [x] Export PDF — implemented, output not yet inspected (§13.6)
+-   [x] Export PDF — native synthetic output inspected (§16.8); broader acceptance remains Phase 8
 
 Example use:
 
@@ -2162,6 +2234,9 @@ someone wrote. Generating again creates a new document.
 
 ## 13.6 What was built, and the decisions taken along the way
 
+This is the historical Phase 5 checkpoint. §16.8 records the later native export
+inspection and fixes, including a long cited PDF without application chrome.
+
 Three branches, merged as #24 (persistence), #25 (API) and #26 (UI). Frontend
 tests went from 96 to 115; the backend suite collects 420, the documents tests
 among them.
@@ -2173,7 +2248,7 @@ attribute it depends on, but no printed page has been inspected, because Chromiu
 cannot launch at this machine's available memory. The checkboxes above say so
 rather than claiming it. This is the cost §13.2 accepted when it chose the
 browser's print path — weak control over output — and it should be confirmed by
-eye before Phase 6.
+eye during Phase 8's native export acceptance pass.
 
 **The print stylesheet is a whitelist.** Only `data-print="document"` and its
 ancestors survive printing. A blacklist would need every future control
@@ -2211,285 +2286,259 @@ proxy assertion outlives the assumption it was standing in for.
 **§12.6 is now more visible, not less.** Phase 5 makes chat the route into
 documents, so the fact that the model does not receive earlier conversation turns
 is easier to run into. Its cheapest option — rewriting a follow-up question
-before retrieval — is worth taking before or alongside Phase 6.
+before retrieval — belongs to Phase 7 item 11 after desktop implementation;
+Phase 8 rechecks the resulting quality and latency.
 
 
-# 14. Phase 6 --- Reliability and Quality
+# 14. Phase 6 --- Desktop Application
 
-The workflow is complete: a file becomes searchable knowledge, an answer cites its
-sources, and a document outlives both. Phase 6 is about what happens when that
-workflow meets a library that has been used for a while --- a file that changed on
-disk, the same PDF uploaded twice, an embedding model swapped out, a Qdrant volume
-that was deleted. None of those are hypothetical; all of them are silent today.
+**Sequence update, 2026-10-03:** implement Tauri in Phase 6, then the twelve approved
+core workflow improvements in Phase 7 (§16). Stability/quality refinement and final
+packaged-app acceptance follow in Phase 8 (§17.10). Proceed with desktop milestones
+once their relevant unit/API/UI tests, lint, types and builds pass; these checks continue throughout
+implementation. Completing this phase does not declare the desktop MVP accepted.
+Native PDF export, live RAG quality and local/cloud latency remain unresolved until
+observed in Phase 8's packaged-app acceptance pass.
 
-## 14.1 What the original checklist got wrong
+Use Tauri to package the application.
 
-The lists below were written before Phases 2--5 existed, and several of their items
-were delivered on the way. They should be **verified and ticked, not built**:
+Initial target:
 
--   *Delete vectors when source is deleted* --- Phase 2. Deletion removes the
-    original, the metadata and the vectors.
--   *File type validation* --- `FileType.from_filename` rejects an unknown
-    extension at upload with a 400, server-side. The frontend's `rejectionFor`
-    is a courtesy on top, not the enforcement.
--   *Empty-document handling* --- upload deletes and rejects a zero-byte file
-    rather than leaving a row that can never become READY.
--   *The whole UX group* --- empty, loading, error and processing states, source
-    display and keyboard usability were built across Phases 2--5 against
-    `DESIGN.md`'s floor, on all four surfaces.
-
-What genuinely remains is narrower and sharper than the list suggests: **size
-limits, duplicate detection, corrupt-file handling, the three kinds of index
-staleness, rebuilding on demand, and the whole of logging.**
-
-Two items carry over from earlier phases and belong here:
-
--   **§12.6** --- the model still does not receive earlier conversation turns.
-    Phase 5 made chat the route into documents, so this is now easier to run into.
-    Its cheapest option (rewrite a follow-up question before retrieval) is one
-    prompt and one model call.
--   **§13.6** --- nobody has inspected a printed PDF. That check is two minutes
-    and could invalidate a claim already shipped in the README, so it should
-    happen **before** Phase 6 work starts rather than after.
-
-## 14.2 The schema problem that comes first
-
-Every phase so far only ever **added tables**, and `CREATE TABLE IF NOT EXISTS` is
-enough for that. Phase 6 is the first phase that must **add columns to an existing
-table**: `files` needs at least the embedding model that produced its vectors, and
-a content hash.
-
-There is no migration mechanism --- verified: nothing in `app/db/` contains
-`ALTER`, `user_version`, or anything resembling a migration. And the failure mode
-is silent, which is what makes it dangerous. Re-running a `CREATE TABLE IF NOT
-EXISTS` that now names a new column against a database where the table already
-exists is a **no-op**; the column does not appear. Confirmed empirically rather
-than assumed. A user with an existing `data/app.db` would therefore get code
-expecting a column that is not there, and the first query would fail at runtime
-rather than at startup.
-
-So the migration runner is branch one, and nothing else in Phase 6 can land before
-it.
-
-**Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
-in order at startup.** Not Alembic --- that is a second dependency, a config file
-and a migrations directory for what will be a handful of `ALTER TABLE` statements
-on a single-user local SQLite database, and Noye's claim is that it works without
-setup. Reconsider if the schema ever starts changing *shape* rather than growing.
-
-**The requirement that matters: a migration must never lose the user's data.**
-Original files are the source of truth and the vector index is rebuildable, but
-SQLite holds the things that are *not* derived --- conversations and documents,
-which are the user's own questions and writing. So migrations are additive only,
-and any step that would drop or rewrite a column takes a file copy of the database
-first.
-
-## 14.3 Four decisions to take up front
-
-**What "duplicate" means.** Not the filename: the same name in two folders is
-legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
-the bytes**, computed while the upload is being written, stored on the row.
-
-The choice to make is what a duplicate *does*. Accepting it and pointing two rows
-at one blob saves disk but makes deletion ambiguous --- deleting one file would
-have to know the other still needs the bytes. **Refuse it, with a 409 naming the
-existing file**, because the user's actual question is "do I already have this?"
-and the answer should be a name they recognise. The hash earns its place twice
-over: it also detects a source file that changed since it was indexed.
-
-**What "stale" means.** Three distinct failures are currently indistinguishable,
-and each needs a different remedy, so each has to be detected separately rather
-than collapsed into one flag:
-
-1.  The **source changed on disk** since it was indexed --- the stored hash no
-    longer matches the file. Remedy: re-ingest that one file.
-2.  The **embedding model changed** --- the vectors are from a different space.
-    Detectable cheaply by comparing the stored model name against the
-    configuration; no Qdrant call needed.
-3.  The **index lost points SQLite says exist** --- a dropped collection, a
-    deleted Docker volume. Needs an actual count comparison against Qdrant, so it
-    is the expensive check and should not run on every request.
-
-**What a model change should do.** Not silently re-embed: on this machine a
-re-index of a real library is minutes to hours of local inference, and the user
-should choose when to pay that. Detect it, say so plainly, and offer the rebuild.
-
-The rule that makes this a correctness issue rather than a tidiness one:
-**search and chat must never mix vectors from two embedding spaces.** A cosine
-score between them is meaningless, so the ranking would be confidently wrong ---
-which is worse than returning nothing, because nothing is visible and a bad
-ranking is not. A file whose vectors are from a superseded model therefore leaves
-the searchable set, with a stated reason, exactly as a file mid-ingestion already
-does.
-
-**What logging may and may not record.** There is none today --- zero
-`import logging` in the backend, verified. Two rules before any is added:
-
--   **Never log file contents, a chunk, or a question's text.** This is a private
-    knowledge base whose whole claim is that it stays on the user's machine, and a
-    log file is the one place its contents would leak *outside* the files the user
-    chose to put there. A test should assert this rather than a comment asking for
-    it.
--   **Log the pipeline's decisions and every failure's cause.** The ingestion
-    error already reaches SQLite for the UI; the log is for whoever is debugging,
-    so it carries what the UI deliberately withholds --- timings, stack traces,
-    which model answered, how many chunks, which Qdrant call failed.
-
-Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
-No new dependency, and structured enough to grep.
-
-## 14.4 Branch and PR sequence
-
-```text
-1. feat/schema-migrations      user_version runner; unblocks everything
-2. feat/backend-logging        independent, and makes 3-7 debuggable
-3. feat/upload-limits          size cap, content hash, corrupt files      (needs 1)
-4. feat/duplicate-detection    the 409 path and its wording               (needs 3)
-5. feat/index-integrity        the three staleness checks, /index/status   (needs 1)
-6. feat/rebuild-index          rebuild endpoint and action                (needs 5)
-7. feat/library-integrity-ui   the surface for all of it                  (needs 4,6)
+``` text
+macOS
 ```
 
-Logging is second rather than last on purpose: every branch after it is easier to
-diagnose with it in place, and it is the one item with no dependency on the schema.
+Then:
 
-`feat/rebuild-index` should reuse what already exists rather than adding a path ---
-`indexing.py` already carries a collection reset whose docstring names the
-rebuild-index command as its intended caller, and `embeddings.py` already refuses
-a vector whose dimension disagrees with the configuration.
+``` text
+Windows
+```
 
-Not a branch, but Phase 6 work all the same: **threshold calibration and chunking
-parameters** need several real documents to measure against, which only now exists.
-Both were deferred from Phase 1 for exactly that reason.
+Desktop work includes:
 
-## 14.5 Acceptance and validation
+-   [x] Tauri setup
+-   [x] Start/manage the app's own backend
+-   [x] Manage local data directory and explicit copy-only web-data import
+-   [x] Opt-in Qdrant preparation, verified ownership, persistent storage and shutdown
+-   [x] Ollama availability, explicit installed-service start and model management
+-   [x] Application packaging (local unsigned preview)
+-   [x] macOS build (Apple Silicon; other machines not validated)
+-   [ ] Windows build
 
--   An existing `data/app.db` from before Phase 6 opens, gains its new columns, and
-    keeps every conversation, message and document. Tested against a real copied
-    database, not only a fresh one.
--   Uploading the same file twice is refused the second time, naming the first ---
-    including when it has been renamed.
--   A file edited on disk after indexing is reported as out of date, and
-    re-ingesting it makes the report go away.
--   Changing `ollama_embedding_model` takes the affected files out of search and
-    chat with a stated reason, and never mixes their vectors with new ones.
--   Deleting the Qdrant collection is detected and distinguished from the other two
-    staleness causes.
--   A rebuild restores search to what it was, from `data/sources/` alone.
--   A truncated or non-PDF-masquerading-as-PDF file fails with a reason the UI can
-    show, and leaves nothing behind.
--   A test asserts no chunk text, file content or question reaches the log.
--   Backend and frontend suites, lint, types and the production build pass. Record
-    any browser check that could not run under `Not validated`.
+## 14.1 Desktop implementation order
 
-## 14.6 Checklists
+1. **Tauri foundation and lifecycle:** macOS application shell, persistent app-data
+   location, managed backend startup/shutdown, readiness checks, and clear Ollama/
+   Qdrant availability. Package a built UI rather than relying on a development
+   server. Preserve existing user files, conversations and documents on migration.
+2. **Chat-focused interface:** familiar AI-assistant layout with conversation
+   navigation on the left, a readable central conversation and composer, model/
+   provider selection, and an inspectable source panel. Library and Documents
+   remain accessible. Reuse the existing palette and accessibility rules; the
+   requested interaction direction supersedes the older library-first framing.
+3. **First-run setup:** detect OS, architecture, total/available RAM, available
+   disk, and known inference acceleration. Detect Ollama and installed models.
+   Explain a conservative recommendation and its download size; the user chooses
+   local setup or a cloud key. Hardware estimates are guidance, not a guarantee
+   of measured speed. Optional short benchmarking can refine a recommendation.
+4. **Model installation:** offer recommended generation and embedding models with
+   explicit download confirmation, progress, cancel/retry, disk checks and usable
+   errors. Never silently download a model or enable cloud billing. Start with
+   Ollama's supported model-management API rather than arbitrary shell commands.
+5. **Persistent AI settings:** let the user change installed generation models and
+   providers later. Store cloud credentials using OS-protected credential storage;
+   return only availability to the UI. Changing a generation model needs no index
+   rebuild. Changing an embedding model does, and requires the existing explicit
+   rebuild workflow.
+6. **Handoff to Phase 7:** finish desktop implementation, record its validation
+   and outstanding defects, then implement the twelve improvements in §16.
+   Phase 8 (§17.10) performs subsequent stability/quality refinement and final
+   packaged-app acceptance; keep the MVP checklist open until then.
 
-### File handling
+## 14.2 Desktop implementation acceptance
 
--   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
--   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
--   [x] File size validation
--   [x] Duplicate detection
--   [x] Corrupt file handling
+- First launch presents a usable local recommendation or a cloud setup path.
+- Installation can finish, fail, be cancelled and retried with clear feedback.
+- Installed generation models, Gemini, OpenAI and Claude can be selected and changed later.
+- A provider/model switch does not discard saved conversations or documents.
+- Cloud payload disclosure appears before use; local mode sends no content to Google.
+- The packaged app launches and stops its own backend cleanly without stopping
+  unrelated user services.
+- Relevant unit/API/UI checks, lint, types and packaged builds pass for each
+  milestone; retain outstanding checks explicitly for Phase 8 (§17.10).
+- Full workflow acceptance, native export inspection and live quality/latency
+  measurement belong to Phase 8 and remain required before the MVP release.
 
-### Index integrity
+## 14.3 macOS foundation implementation
 
--   [x] Delete vectors when source is deleted --- Phase 2
--   [x] Schema migration runner *(prerequisite; see §14.2)*
--   [x] Detect a changed source file
--   [x] Detect an embedding model change
--   [x] Detect an index that lost points
--   [x] Rebuild index on demand
+Implemented on `feat/tauri-macos`, based on the unmerged
+`feat/optional-gemini` work. Branch names now follow the user's requested `feat/`
+prefix without `codex/`. No published history was rewritten.
 
-### UX
+The Tauri 2 application packages a Next.js static export and a native PyInstaller
+sidecar. The backend binds a reserved loopback socket on an OS-selected port and
+announces readiness only after SQLite schema initialization. The frontend waits
+for that announcement before mounting API consumers; source and Markdown export
+links use the same runtime address. A lost native command or failed startup has
+bounded waiting and a visible error rather than indefinite loading.
 
--   [x] Empty states --- all four surfaces, Phases 2--5
--   [x] Loading states --- all four surfaces, Phases 2--5
--   [x] Error states --- all four surfaces, Phases 2--5
--   [x] Processing states --- Phase 2
--   [x] Clear source display --- Phases 3--4
--   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
--   [x] Surface index integrity in the library
+The app owns only its sidecar. Closing the window or quitting requests graceful
+shutdown, with a bounded fallback for that child alone. Closed parent stdin also
+stops the backend if the parent disappears. A single-instance guard prevents
+accidental duplicate app launches. Ollama and Qdrant are inspected with bounded
+GET requests, never started, stopped or downloaded by this milestone.
 
-### Logging
+Desktop storage lives in macOS Application Support, not the app bundle or the
+frozen backend's extraction directory. The default desktop Qdrant collection is
+`noye_desktop`, separate from the web workspace's `noye`, so a desktop rebuild
+cannot silently discard the web index. Explicit workspace import copies sources,
+documents and a SQLite backup, rewrites copied source paths, rejects existing
+destinations and symbolic links, and leaves originals and credentials untouched.
+The copied library requires an explicit desktop-index rebuild. No existing user
+workspace was imported during implementation.
 
--   [x] Backend structured logging
--   [x] Processing errors
--   [x] Ollama errors
--   [x] Qdrant errors
--   [x] A test proving no user content is logged
+Build/data instructions and exact validation evidence are in `docs/DESKTOP.md`.
+This completes §14.1 step 1's local macOS foundation, not the desktop MVP release.
+The chat-focused layout is implemented under §14.4, with a read-only first-run
+recommendation guide under §14.5. Next: opt-in installation and secure persistent
+AI settings. Live RAG, citations, exports, inference latency,
+Windows, other Macs and signed/notarized distribution remain unvalidated; final
+macOS workflow acceptance and quality/latency measurement belong to Phase 8.
 
-### Carried over
+## 14.4 Chat-focused workspace implementation
 
-The post-#35 local-stack pass is recorded in
-[`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Real search,
-chat, document generation/editing and source/vector cleanup were observed.
-It also fixes a fresh-database startup race. The full live suite, browser file
-selection and printed-PDF inspection remain incomplete; these results do not
-close the remaining Phase 6 acceptance work.
+Implemented on the same `feat/tauri-macos` branch at the user's request. Web and
+desktop launch into Chat, with conversation navigation on the left, a bounded
+scrolling message column and bottom composer. Library, Search and Documents remain
+reachable. Provider selection shows the configured model; changing installed
+generation models belongs to §14.1 steps 4–5, not this milestone.
 
--   [ ] Rewrite a follow-up question before retrieval (§12.6)
--   [ ] Inspect a printed PDF (§13.6) --- do this first; it is two minutes
--   [ ] Calibrate the similarity threshold (deferred from Phase 1)
--   [ ] Measure chunking parameters (deferred from Phase 1)
+Each answer can open its own consulted-passage metadata in a right-hand panel on
+wide screens or an inline panel at smaller widths. It retains file/page links and
+the warning that retrieved context is not verified support. Markdown answers use
+the existing safe renderer, without automatic images or document print marking.
+The UI continues to disclose cloud payloads and the lack of previous-turn context.
+The waiting state names the selected provider without pretending to know which
+retrieval/generation stage is active.
+
+URL-keyed controllers abort stale reads and ignore late generation results after
+navigation; generation itself continues on the backend. Delete completion cannot
+reset a different open conversation. Failed questions return to the composer,
+IME composition does not submit Enter, and scrolling respects reduced motion.
+
+Frontend tests: **160 passed**; ESLint and TypeScript passed. The macOS/static UI
+build passed. Browser UI checks used synthetic in-memory conversations, not live
+AI or personal files. Native launch/navigation and cleanup were observed. Exact
+evidence and limitations are recorded in `docs/DESKTOP.md`.
+
+This completes §14.1 step 2. The first-run hardware prerequisite and read-only
+guide are described below. This does not complete final live RAG/PDF acceptance
+or fix inference latency.
+
+### First-run hardware foundation (2026-10-04)
+
+`GET /runtime/hardware` now reports OS, architecture, logical CPUs, workspace-volume
+free disk, and macOS total/free-plus-inactive memory. Missing or restricted probes
+return null, not zero. Apple Silicon architecture is an acceleration candidate,
+not a verified Metal device or speed benchmark. Queries are read-only and bounded;
+no credentials, user paths, model downloads or cloud calls are included.
+
+Hardware/API and existing desktop lifecycle tests: **22 passed**; backend Ruff
+passed. This is only the measurement prerequisite for §14.1 step 3. Recommendation
+rules and first-run UI were pending at this checkpoint; §14.5 adds the read-only
+guide. Installation and secure persistent settings remain pending.
+The user requested stopping at ordinary usage limits, so the milestone is not
+marked complete. See `docs/DESKTOP.md` for validation boundaries.
+
+## 14.5 Conservative recommendations and read-only setup guide
+
+Implemented 2026-10-05 on the same `feat/tauri-macos` branch. `GET /runtime/setup`
+combines measured hardware, GET-only local service/model inventory checks and a
+small versioned Ollama catalog. Recommendations use total RAM and current available
+memory, reserving headroom for the OS, app, local embeddings and short questions.
+Unknown acceleration considers only the smallest candidate. Busy/unknown memory
+does not claim the model fits; workspace disk is not claimed to be Ollama's actual
+model-storage volume. Download sizes come from official Ollama pages; memory budgets
+are Noye heuristics, not vendor requirements or measured speed/quality.
+
+After the owned backend is ready, a desktop-only guide shows the candidate, current
+model, approximate download sizes and missing prerequisites. Local/Gemini views
+explain their data paths without changing providers, downloading models, making
+inference calls or exposing keys. Only guide dismissal is remembered locally;
+AI setup reopens it with fresh readings. Skip/Continue and failed-check retry remain
+available, while saved-work UI stays mounted. A configured key is not live validation.
+
+Executed backend checks: **588 passed, 19 skipped**; frozen-backend lifecycle/setup
+checks: **10 passed**. Frontend: **175 passed**; Ruff, ESLint, TypeScript and the
+unsigned macOS build passed. Browser checks used synthetic fixtures; native launch
+showed actual hardware and offline services. Exact evidence, interaction repairs
+and limitations are in `docs/DESKTOP.md`.
+
+This implements the recommendation/guide portion of §14.1 step 3, not complete
+first-run AI setup. Next are explicit model downloads with progress/cancel/retry
+and actual model-volume disk checks (§14.1 step 4), persistent generation-model
+settings and OS-secure API-key entry (§14.1 step 5), then remaining service setup
+(§14.1 step 6). No automatic cloud fallback is permitted. Embedding changes still
+require an explicit rebuild. Final live RAG, latency and native PDF acceptance
+remain deferred to Phase 8 as requested.
+
+Avoid making desktop packaging block development of the knowledge engine.
+
+### AI management update — 2026-10-05
+
+Implemented explicit recommended-model downloads with user-confirmed model-volume
+disk checks, layer progress, cancel/retry and sanitized errors. Exact-name
+deletion protects configured generation, fixed embeddings and Noye's active
+inference. Model writes require a per-process desktop capability and loopback
+Ollama. No arbitrary shell command, remote mutation or partial-blob cleanup.
+
+Implemented native model/default-provider preferences and macOS Keychain
+entry/removal for three cloud APIs. Private stdin passes credentials to the owned
+backend with a non-secret acknowledgement; whole settings snapshots preserve
+running jobs. The settings overlay preserves workspace children. Frontend design
+skills guided three calm sections, compact service messaging, palette-matched
+progress and fixed dialog controls with responsive scrolling.
+
+Validated: backend **632 passed, 19 skipped**; frontend **182 passed**; native Rust
+**3 passed**; frozen-backend lifecycle/configuration **10 passed**. Ruff, ESLint,
+TypeScript and unsigned macOS packaging passed. Browser fixtures exercised fake
+key save, downloads, cancel and draft/focus preservation. Native non-secret save
+and secure input rendering were observed. Exact evidence is in `docs/DESKTOP.md`.
+
+At this checkpoint, Ollama/Qdrant service preparation/recovery was still pending.
+The owner clarified that native credential lifecycle, live model management and
+other real-service acceptance belong to Phase 8, not a live-test gate for Phase 6.
+The implementation update below supersedes the service limitation. Actual cloud
+authorization, RAG/quality/latency, PDF export and packaged-app E2E remain unvalidated.
+
+### Service preparation and implementation handoff — 2026-10-05
+
+Settings now explicitly starts an installed local-only Ollama and prepares pinned
+Qdrant through local Docker Desktop. It opens Docker or fixed official prerequisite
+guides on request; no package installer, automatic model download or cloud fallback.
+Custom service URLs remain externally managed. Existing healthy services are reused,
+never adopted. Occupied/unhealthy external ports or previous-session containers are
+left untouched. Retry only restarts an unhealthy child/container owned by this session.
+
+Qdrant persists in app-data `qdrant/storage`, with a stable workspace UUID, exact
+container ID, owner label, pinned image, verified mount and localhost-only REST port.
+No gRPC publishing, container/volume deletion, index reset or remote Docker context.
+Shutdown cancels app-owned preparation/model jobs and stops only owned handles;
+the native backend fallback allows 16 seconds for drain and bounded cleanup.
+New Qdrant storage does not import old vectors; Library check/rebuild stays explicit.
+
+The requested dark palette is neutral charcoal, off-white and muted blue; light
+mode is unchanged. Design skills guided semantic tokens, ownership-labelled rows,
+44px actions, quiet separators and clear confirmation/retry states.
+
+Relevant unit/API/UI checks, lint, types and macOS packaging are recorded in
+`docs/DESKTOP.md`. This finishes the requested Phase 6 macOS implementation scope
+and unblocks focused Phase 7 work, beginning with §16.3's Compose exposure fix.
+It is not MVP acceptance: real Docker/Ollama preparation and shutdown, model/key
+lifecycle, browser/native visual inspection, RAG, latency and actual exported PDFs
+remain Phase 8 checks. Windows and signed/notarized distribution are not delivered.
 
 ------------------------------------------------------------------------
-
-## 14.7 Live Qdrant verification (what branches 5–6 could only stub)
-
-Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
-`cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
-`embedding_model` empty before the run.
-
-**Deep point comparison confirmed.** The first time the branch-5 deep check actually
-read Qdrant: 24/24 match, no problems.
-
-**POINTS_MISSING confirmed.** Ten points deleted directly via Qdrant's API.
-- Shallow: `problems: none` (the cheap checks cannot see it — as designed).
-- Deep: `POINTS_MISSING searchable=True points=14/24`.
-- `searchable=True` confirmed: an incomplete index is *out of date*, not *wrong*.
-
-**Rebuild success path confirmed.** First real run of `POST /index/rebuild`
-against a live Qdrant:
-- Response: `202 queued=1 collection_recreated=false` — the collection was NOT
-  dropped, which is the decision the branch exists to make.
-- 12 seconds later: `READY chunks=24 qdrant=24`.
-- `embedding_model=embeddinggemma` written by ingestion.
-
-**Finding fixed in `fix/hash-on-reingest`.** The first live rebuild left
-`content_hash` NULL because re-ingest reads a file already on disk and does not pass
-through `_save_upload`. The common ingestion path now hashes the stored original
-after extraction proves it readable, so both a single-file retry and a whole-library
-rebuild fill the missing identity. Re-ingesting a deliberately changed source also
-records the new bytes as the integrity baseline. Unit tests cover both cases and keep
-an old file's hash unknown when extraction fails before the new step runs.
-
-## 14.8 Library integrity UI
-
-The library now makes the backend's integrity decisions visible without turning an
-expensive Qdrant scan into background traffic. Opening or refocusing the page runs
-the cheap source-hash and embedding-model check. **Check stored index** is the
-explicit deep action that also compares stored point counts with Qdrant.
-
-The status response carries `point_check_complete` separately from `deep`. This is
-important when Qdrant is unavailable: the page says that the stored index could not
-be checked and does not misreport an empty `problems` list as a healthy deep check.
-
-Remediation follows the cause rather than offering one ambiguous repair:
-
--   a changed source offers a one-file re-index;
--   an embedding-model mismatch or missing points offers a confirmed library rebuild;
--   a missing source asks the user to restore or remove the file;
--   rebuild responses show queued, skipped, and recreated-collection results, while
-    the existing ingestion polling continues to report progress.
-
-Validation for the branch covered the backend contract, API client, hook request
-sequencing, each problem presentation, rebuild confirmation and results, the full
-backend and frontend suites, Ruff, ESLint, TypeScript, and a production Webpack
-build. A browser pass against the real library confirmed the cheap healthy summary,
-the explicit deep-check action, the Qdrant-unavailable state, visible keyboard focus,
-and no console warnings or errors. No rebuild or file mutation was performed during
-that browser pass.
 
 # 15. Testing Strategy
 
@@ -2561,111 +2610,1067 @@ Export
 
 ------------------------------------------------------------------------
 
-# 16. Phase 7 --- Desktop Application
+# 16. Phase 7 --- Core Workflow Improvements
 
-Only start this once the local web version is stable.
+Implement the twelve improvements approved on 2026-10-03 after the Phase 6 Tauri
+milestones. This is an implementation phase: relevant unit/API/UI tests, lint,
+types and builds run with each change. Phase 7.5 then adds the approved folder/wiki
+and prompt-driven document workflow; Phase 8 performs broader stability/quality
+refinement and final packaged-app acceptance.
 
-Use Tauri to package the application.
+All twelve items have their implementations and measured limits recorded
+(see §§16.5–16.8). This includes actual local answer/abstention evaluation and
+native cited exports; larger quality studies and the full packaged acceptance
+flow remain Phase 8 work. Reassess current code before further changes and
+preserve all saved work.
 
-Initial target:
+## 16.1 Approved scope and expected benefit
 
-``` text
-macOS
-```
+| ID | Priority | Improvement | Expected benefit |
+| --- | --- | --- | --- |
+| 1 | High | Store retrieved excerpts and pass them to document drafting | Draft detailed documents using source examples and numbers omitted from a short answer |
+| 2 | High | Preserve the source version and excerpt behind each citation | Inspect the evidence behind old answers after originals change or disappear |
+| 3 | High | Prevent rebuilds from conflicting with active work | Avoid collection resets colliding with uploads or ingestion |
+| 4 | High | Version indexes by model, chunking and input format | Detect incompatible old vectors when processing or embedding behavior changes |
+| 5 | High | Back up and restore SQLite together with original files | Preserve conversations and user-edited documents independently of the derived index |
+| 6 | High | Persist jobs, recover after restart and cancel between batches | Make interrupted work understandable and safely resumable |
+| 7 | High | Complete desktop data/service/model integration | Make installation usable and service/model failures diagnosable |
+| 8 | High | Restrict published Qdrant ports to localhost | Keep local knowledge storage within the intended network boundary |
+| 9 | Medium | Separate query/document embedding formats and validate input length | Use task-appropriate inputs and detect truncation instead of silently losing text |
+| 10 | Medium | Establish retrieval evaluation and assess hybrid search/reranking | Measure and improve bilingual, exact-term and multi-document retrieval |
+| 11 | Medium | Support bounded conversation context and selected sources | Resolve follow-up questions and restrict answers to the user's chosen material |
+| 12 | Medium | Improve evidence inspection, cited exports and PDF extraction status | Inspect/share document provenance and identify pages with no extracted text |
 
-Then:
+Hybrid retrieval and reranking are evaluation-gated options in item 10. A measured
+finding that an option does not improve the baseline is a valid documented result;
+adding an extra model or service is not required to mark the evaluation complete.
+Item 12 includes PDF extraction coverage reporting, not mandatory OCR, layout
+models or a new document parser. Folder/topic wiki organization and prompt-driven
+source documents are now planned in Phase 7.5 (§16A); item 11 supplies source
+selection within the existing Phase 7 workflow.
 
-``` text
-Windows
-```
+## 16.2 Implementation milestones
 
-Desktop work includes:
+### 1. Retrieved excerpts in document generation
 
--   [ ] Tauri setup
--   [ ] Start/manage backend
--   [ ] Manage local data directory
--   [ ] Manage Qdrant
--   [ ] Manage Ollama detection
--   [ ] Application packaging
--   [ ] macOS build
--   [ ] Windows build
+-   [x] Persist the actual excerpts used for an answer and pass that saved material
+    with the answer and instruction to `services/documents.py`. Reuse item 2's
+    evidence storage; do not re-retrieve current chunks to reconstruct old evidence.
+- Expanded historical excerpts remain local-only: require loopback Ollama for
+  their use. Gemini/OpenAI/Anthropic drafts retain the instruction, saved answer
+  and source-name payload, with explicit UI disclosure; stored snapshots stay
+  intact. No expanded cloud payload or automatic provider fallback is added.
+- Validate captured generation requests contain source detail absent from the
+  answer, while legacy messages without snapshots are clearly identified and do
+  not acquire invented historical evidence.
 
-Avoid making desktop packaging block development of the knowledge
-engine.
+### 2. Citation evidence and source versions
+
+-   [x] Add immutable excerpt snapshots and original source identity/version to
+    stored message/document evidence using additive SQLite migrations. Preserve
+    file/page/chunk metadata and any available index identity from item 4.
+- Keep historical evidence after source re-ingestion/deletion; show changed,
+  missing and legacy-unknown originals clearly. Existing citation metadata remains
+  readable, but cannot be labelled as an exact text snapshot it never stored.
+- Validate old evidence remains identical after source edits/re-indexing/deletion
+  and conversation/document reload. Never treat the presence of citations as
+  proof that every generated or subsequently edited sentence is supported.
+
+### 3. Rebuild and ingestion coordination
+
+-   [x] Coordinate library-wide maintenance with ingestion/deletion before any
+    collection reset. Refuse or safely drain conflicting work; reserve eligible
+    work before destructive operations. Keep the ordinary non-reset rebuild path.
+- Start with the existing single-process architecture and a shared maintenance
+  guard; use versioned collections only if a concrete need justifies the change.
+- Validate a dimension-changing rebuild with a busy file cannot reset the live
+  collection before reporting the conflict. Cover upload, cancel, deletion and
+  duplicate rebuild requests, including failure cleanup.
+
+### 4. Index identity and compatibility
+
+-   [x] Persist an index fingerprint covering embedding model identity/digest,
+    vector dimension, input-format version, and extraction/chunking configuration.
+    Store source revisions separately and expose when an explicit rebuild is needed.
+- Reuse existing migrations and integrity checks. Mark legacy identity as unknown;
+  do not invent compatibility from the model name alone. Generation-model changes
+  do not invalidate embeddings; embedding-format/model changes may require rebuild.
+- Validate changes under the same model tag and changes to prefix/chunk settings
+  are detected, incompatible spaces never share rankings, and saved writing survives.
+
+### 5. Complete workspace backup and restore
+
+-   [x] Build a user-visible backup/restore workflow covering originals, SQLite
+    conversations, edited documents and evidence snapshots. Reuse SQLite's backup
+    API and the desktop import's copy-first/no-overwrite behavior, including WAL data.
+- Define a consistent snapshot boundary with active writes/jobs. Include versioned
+  metadata, exclude credentials/model weights and rebuildable vectors, and restore
+  into a new destination before an explicit switch. Correct stale "SQLite is
+  entirely rebuildable" documentation in `db/database.py` and storage helpers.
+- Validate round-trip preservation, invalid/partial backup rejection, migration,
+  missing-source reporting and no overwrites. Rebuild the restored derived index
+  without claiming original files alone can recover conversations or edited text.
+
+### 6. Durable jobs and responsive cancellation
+
+-   [x] Persist job identity, status/progress and interruption reason in SQLite;
+    recover interrupted work on startup and expose safe resume/retry. Use bounded
+    local workers rather than introducing Redis/Celery by default.
+- Check cancellation between embedding batches, bound simultaneous local inference,
+  and keep only fully committed files searchable. Resume idempotently and reconcile
+  SQLite/Qdrant after partial writes. Never automatically repeat cloud generation
+  or activate billing because an app restarted.
+- Validate restart/closed-parent behavior during queued, embedding and indexing
+  stages, batch cancellation, retry and repeated resume without duplicate vectors.
+
+### 7. Desktop data, service and model integration
+
+-   [x] Reuse Phase 6 app-data paths, owned backend lifecycle, service/model checks,
+    onboarding and persistent AI settings; complete remaining integration gaps.
+- Distinguish configuration, service availability, installed model and readiness.
+  Preserve work across app replacement, imports and provider/model changes. Bound
+  generation context/output budgets and make long-running progress/cancel states
+  understandable; model installation remains explicit and credentials OS-protected.
+- Validate missing/recovered services and models, installation failure/cancel/retry,
+  bounded startup/shutdown and data persistence. Already validated foundation work
+  stays complete; this item is not a second Tauri build.
+
+### 8. Local-only Qdrant exposure
+
+-   [x] Bind Docker-published Qdrant ports to `127.0.0.1`; remove the gRPC mapping
+    unless used. Keep app-owned backend binds local and remove documentation that
+    treats CORS as authentication or a substitute for network access control.
+- Validate Compose configuration and effective listener bindings when Docker is
+  available, and confirm local ingestion/search still connect. Do not claim a
+  network verification from static YAML inspection alone.
+
+### 9. Task-specific embedding inputs and length limits
+
+-   [x] Separate query and document embedding functions with explicit model-aware
+    input formats. For EmbeddingGemma, verify runner behavior and compare retrieval
+    task prefixes against the current baseline; record the format in item 4.
+- Detect oversized inputs, including prefixes, and request non-silent truncation
+  behavior where supported. Return usable length errors or split documents before
+  embedding; keep original excerpt text separate from model input formatting.
+- Validate captured query/document payloads, boundary/oversized inputs and bilingual
+  retrieval. Re-index explicitly when a chosen input format changes the embedding
+  space; do not compare new-format queries with an old-format document index.
+
+### 10. Retrieval evaluation and measured improvements
+
+-   [x] Create a reproducible, non-personal evaluation set with Korean/English and
+    cross-language questions, exact identifiers, negatives and multi-document cases.
+    Record the current baseline before selecting an algorithm or another model.
+- Measure Recall@K/ranking, evidence relevance, answer accuracy/abstention and
+  cold/warm latency. Compare deduplication/diversity, lexical+dense retrieval and
+  conditional local reranking only where justified; measure Korean tokenization.
+- Record adopted/declined options and reasons. Retain the current stack and avoid
+  unmeasured thresholds or always-on extra model calls. Phase 8 expands and tunes
+  this evaluation instead of rebuilding it.
+
+### 11. Conversation context and source selection
+
+-   [x] Resolve follow-ups with bounded recent context or measured question
+    rewriting; pass selected source IDs through chat/retrieval and persist the
+    conversation's scope. Only recent user questions are included; historical
+    generated answers are excluded.
+- Define unrestricted, explicitly empty and chosen-source scopes distinctly;
+  deleted/unready/incompatible files must not silently broaden a selected scope.
+  Keep history within the local model's budget and compare answer quality/latency.
+- Validate pronouns/comparisons, scope persistence/reload, empty selections and
+  deleted sources. Keep full notebook organization and long-term memory out of
+  this item unless separately requested.
+
+### 12. Evidence inspection, cited exports and PDF coverage
+
+-   [x] Show item 2's saved excerpts and original status in the source panel;
+    offer body-only and provenance-inclusive Markdown/PDF exports; report PDF pages
+    with no extracted text and the actual extraction coverage.
+- Keep exports consistent with saved/unsaved editing state and the user's chosen
+  export mode. Include portable source labels/versions rather than temporary
+  localhost links. Describe evidence as supporting the first draft, not validating
+  subsequent user edits. No-text pages are not automatically classified as scans.
+- Validate changed/missing sources, mixed text/image PDFs, pageless formats, and
+  actual native-webview export files. Evidence is retained independently of the
+  original; any future OCR or bounding-box viewer work needs separate justification.
+
+## 16.3 Dependency order and focused changes
+
+Keep the twelve IDs above stable while following actual dependencies. Begin with
+item 8's small local-exposure fix; items 3/4 protect maintenance and index identity.
+Item 2 establishes evidence storage before item 1's drafting and item 12's exports.
+Item 5 uses the resulting schema; item 6 reuses maintenance coordination. Item 7
+builds on Phase 6 rather than restarting it. Evaluate item 9 with item 10's baseline,
+then implement measured input/retrieval changes and item 11's bounded context/scope.
+
+Use focused Conventional Commits and reviewable PRs for meaningful units. Combined
+items may share schema prerequisites, but do not put all twelve into one large
+feature commit. Preserve existing user data and keep unrelated in-progress work
+out of each change. No database/framework replacement is required by this phase.
+
+## 16.4 Completion and handoff to Phase 7.5
+
+- Items 1–9, 11 and 12 are implemented and have their relevant regression/API/UI
+  checks and remaining limits recorded. Reused Phase 6 behavior counts when the
+  complete milestone is verified; incomplete required work remains open.
+- Item 10 has a working evaluation set/harness and recorded baseline/comparison
+  results. Only hybrid/reranking adoption may be declined with measured reasons;
+  that decision does not waive the evaluation implementation.
+- Changes to SQLite preserve existing work; old evidence remains honest about
+  missing snapshots. No personal data, credentials or models enter Git/test fixtures.
+- Local/cloud payload disclosure matches actual behavior; no automatic cloud
+  fallback/retry or implicit model download is introduced.
+- Relevant suites, lint, types and web/desktop builds pass for affected surfaces.
+  Record unavailable live checks rather than marking them complete.
+- Phase 7.5 builds on these integrated foundations. Phase 8 then expands
+  stability/quality evaluation and runs the full packaged workflow, including the
+  new folder/wiki and prompt-driven document path. Phase 7 completion alone does
+  not close the final MVP acceptance checklist.
 
 ------------------------------------------------------------------------
 
-# 17. V2 --- Folder Watch
+## 16.5 First ordered integration — 2026-10-05
 
-One of the first post-MVP features should be folder watching.
+The owner authorized merging Phase 6 followed by the work from #37, #38, #39
+and #40. Those four drafts were closed after their `codex/` remote heads were
+replaced by identical `feat/` heads. Their original feature commits are preserved;
+normal main refreshes and merge commits avoid rewriting published history.
 
-Example:
+Phase 6 is #43, local Qdrant exposure is #44 (replaces #37), rebuild coordination
+is #45 (replaces #38), and index identity is #46 (replaces #39). Retrieval evaluation
+is #47 on `feat/retrieval-evaluation` (replaces #40), refreshed after those merges.
+The merge guide in `docs/phase7/parallel-merge-guide.md` retains historical preview
+evidence and records fresh final-source checks and the four actual resolutions.
 
-``` text
-~/Noye/
-├── University/
-│   └── CS220/
-│       └── lecture.pdf
-├── Projects/
-│   └── BirdieBuddy/
-│       └── architecture.md
-└── Research/
-    └── paper.pdf
-```
+Final combined implementation `f1cdc8b`: backend **734 passed, 19 skipped, 8 warnings**;
+frontend **199 passed across 27 files**; native Rust **3 passed** at the unchanged
+native source; final frozen-backend checks **10 passed**. Ruff, ESLint, TypeScript,
+route type generation, web build, desktop UI export, Rust format/Clippy and unsigned
+Apple Silicon packaging passed. The app is **67.53 MiB**. The model-free lexical
+pilot reproduced Recall@5 **0.7143** and nDCG@5 **0.7656**. No personal workspace,
+model lifecycle, real cloud call or native GUI acceptance was used for these checks.
 
-Noye watches this folder.
+Items 3/4/8's implementations and relevant regressions are complete. Item 10 still
+needs generated-answer/abstention review, representative data, embedding/chunking
+comparisons and a measured reranking decision; its foundation is not completion.
+Other Phase 7 milestones and all final Phase 8 acceptance remain open. No final
+listener recreation, live dimension reset, latency or actual PDF output is claimed.
 
-When a new supported file appears:
+## 16.6 Historical evidence and document integration — 2026-10-05
 
-``` text
-Detected
-   ↓
-Extract
-   ↓
-Chunk
-   ↓
-Embed
-   ↓
-Ready
-```
+The owner authorized the work from closed #41 and #42 in the same ordered,
+history-preserving workflow. The identical feature heads remain on
+`feat/evidence-snapshots` and `feat/document-evidence`; replacement PRs target main.
+Item 2 lands before item 1. The separate active working tree is left untouched.
 
-This makes Noye feel less like an upload website and more like a
-persistent personal knowledge system.
+The evidence snapshot merge retains all four generation providers, saved identity
+failures and coordinated ingestion. Its only textual conflict was the shared
+chat passage panel: keep the desktop layout and put saved evidence across both
+grid columns. An added UI regression exercises that actual shared panel.
+
+Fresh checks: backend **743 passed, 19 skipped, 8 warnings**; frontend **207 passed
+across 28 files**; Ruff, ESLint, route type generation, TypeScript and the web build
+passed. Initial parallel UI/desktop checks timed out during environment delays;
+the unchanged desktop startup suite then passed **10 tests**, and the entire
+backend rerun passed. Frontend passed with a single thread worker and the default
+test timeouts. No timeout or production configuration change was committed.
+
+Item 2 lands as PR #48 with main merge `5ea0e57`. Item 1 is PR #49, replacing
+closed #42 and building on that merge. Normal refresh `bba3864` keeps one typed provider
+argument, local-only excerpt guards, API/service provider forwarding and both
+the provider selector and evidence disclosure in the creation form. Four real
+adapters are exercised through mock transports, and four UI regressions verify
+the selected provider/disclosure. The pending text now names OpenAI and Claude
+instead of incorrectly calling their generation local.
+
+Final implementation `5943ba7`: backend **755 passed, 19 skipped, 8 warnings**;
+frontend **211 passed across 28 files**; Ruff, ESLint, TypeScript, route type
+generation, web build and desktop static export passed. Unsigned Apple Silicon
+packaging succeeded at **67.54 MiB**; its actual frozen backend passed **10
+checks** with temporary data for readiness, private configuration, control/CORS
+boundaries and line/EOF shutdown. Native Rust source is unchanged; no new
+Rust test result is claimed for this batch. These checks do not run a native GUI,
+use real cloud credentials or validate live generation quality/context capacity.
+
+Items 1/2's implementations are complete, not the whole Phase 7 roadmap. Item
+12's cited exports/PDF coverage and all real-service/native-GUI acceptance remain
+separate work in their planned phases.
 
 ------------------------------------------------------------------------
 
-# 18. Future Ideas --- Not MVP
+## 16.7 Workspace recovery and desktop integration — 2026-10-05
 
-Possible later features:
+Items 5, 6 and 7 use the ordered integration sequence
+[workspace backup #53](https://github.com/Kouen-Park/Noye/pull/53) →
+[durable jobs #54](https://github.com/Kouen-Park/Noye/pull/54) →
+[desktop integration #55](https://github.com/Kouen-Park/Noye/pull/55).
+These replace closed draft PRs #50, #51 and #52, respectively, using matching
+feat branches. Each successor integrates main after its predecessor. Ordinary
+merges preserve the published feature history without rebase or force push.
 
--   Folder watch
--   Automatic re-index when source changes
--   Knowledge collections/workspaces
--   Tags
--   Source linking
+Backups preserve SQLite/WAL, originals, edited documents and historical evidence,
+validate checksums/schema/inventory, and restore into new folders. Native
+selection explicitly restarts into a verified restore and preserves the original
+and previous workspace. UUID-derived restored collections prevent vector reuse
+between workspaces. Preferences and Keychain credentials remain outside backups.
+
+Jobs persist attempts/progress/cancellation, settle unfinished work on startup,
+and offer an explicit retry from the original. One ingestion pipeline and one
+local inference request run at a time; cancellation is checked between embedding
+batches. Partial files stay excluded from search. There is no cloud replay.
+
+Readiness distinguishes configured/installed models and running services; saved
+keys do not prove cloud API access. Local generation has context/output bounds
+and a conservative UTF-8 input check, without silently trimming saved evidence.
+The user's local-only document-excerpt policy remains in force.
+
+Fresh integrated implementation bfc1d6d: backend 793 passed, 19 skipped,
+8 warnings; frontend 221 passed in 31 files; Ruff, ESLint, route types,
+TypeScript, explicit Webpack web build and desktop static export passed.
+Rust tests: 5 passed; fmt/Clippy passed. The newly packaged app's frozen sidecar:
+10 desktop checks passed with 7 warnings using temporary data. Unsigned macOS
+packaging: 67.65 MiB. Subsequent checkpoint changes are documentation-only.
+Integration inspection fixed previous-workspace recovery after returning to the
+original location, with a failing-then-passing UI regression. A reproducible
+backup/job test preserves unfinished 16/40 progress and saved writing/evidence
+without replaying work or changing the original workspace.
+See docs/phase7/desktop-integration.md for decisions and exact acceptance limits.
+Native GUI restart/download/export, real inference interruption/latency, large
+backups and live provider access remain Phase 8. No real user data or Keychain
+entry was changed. Items 9–12 were separate at this checkpoint; §16.8 records
+their implementation and export validation.
+
+------------------------------------------------------------------------
+
+## 16.8 Embedding, evaluation and selected-source workflows — 2026-10-05
+
+`feat/knowledge-workflow-completion` implements items 9–11 and item 12's cited
+exports/extraction coverage. During implementation main merged #48/#49 as
+`ce01d3f`; normal merge `5aa5416` reuses their versioned evidence serialization,
+local excerpt drafting, private cloud payload policy, byte-copy extraction and
+shared evidence panel. Normal merges `a94d6a6` and `f29aca4` retain main's #53/#54
+workspace backup/durable jobs and #55 desktop readiness/workspace integration.
+Released migrations 3/4 remain unchanged; migration 5 adds scope/coverage
+and has version-3/version-4 upgrade regressions. No published history was
+rewritten and no personal workspace was re-indexed.
+
+Item 9 separates query/document formatting, keeps raw excerpts, checks the entire
+formatted batch and uses `truncate=false`. Actual Ollama 0.34.2 runner checks
+confirmed 768 dimensions and an oversized Korean token-limit rejection. Prefixes
+remain optional and index-versioned: Lumen Recall@5 declines from 0.9762 to 0.9524,
+while Atlas ranking improves with unchanged Recall@5 of 1.0. Raw remains default.
+
+Item 10 now retains two invented bilingual corpora, actual answers, exact-answer
+rubric reviews and a bounded-follow-up comparison. Codex inspected 24 local
+answers: core correctness 22/24, faithfulness 21/24 and negative abstention 3/3.
+This is explicit agent review, not independent human review. The retained inference
+runs precede #55's generation context/output limits; they are historical measured
+baselines, not a fresh quality pass of the final package. Simple hybrid and
+unconditional diversity reduced recall. Conditional reranking was declined for
+this baseline because the measured factual failures already had the needed
+excerpts; no cross-encoder comparison is claimed. Real PDFs, chunking parameters,
+larger samples and independent review remain Phase 8 work.
+
+Item 11 distinguishes all/empty/chosen source scopes, saves checkbox changes and
+uses bounded recent user questions. Deleted/incompatible selections cannot broaden
+to all files. Prior generated prose was removed after an observed contamination
+failure. English comparison retrieval improves, but a Korean answer still treats
+an unrecorded count as zero; that numerical-faithfulness failure is retained.
+Historical §12.6 is superseded by this implementation, not a general quality pass.
+
+Integrated checks after `f29aca4`: backend **808 passed, 19 skipped, 8 warnings**;
+frontend **227 passed across 32 files**; Ruff, ESLint and TypeScript passed.
+Rust format, **5 tests** and Clippy passed. Native export inspection used a distinct
+**67.57-MiB** unsigned Apple Silicon QA app and synthetic workspace before #55's
+integration; the export code did not change in that merge. The packaged frozen
+backend passed **10 checks, 7 warnings** with temporary data on a standalone
+retry. An initial run alongside the web build hit the 20-second first-start limit
+(9 passed, 1 failed); no test timeout was changed. Final web/static builds and
+**67.66-MiB** unsigned integrated macOS packaging passed.
+
+Native observations verified scope reload, saved English/Korean excerpts and
+changed/missing originals. PDF exports retained all 96 repeated body sentences,
+the last section and unsaved Korean text: body-only **3 pages / 25,792 bytes**,
+provenance-inclusive **4 pages / 35,988 bytes** with both complete saved excerpts
+and no application chrome. The final appendix was also visually inspected.
+Separate provenance pagination fixed a reproduced long-export truncation.
+Current Markdown exports passed both modes (**6611 / 7377 bytes**), including
+unsaved edits; the stored document was unchanged after quitting.
+
+An earlier repeat of the same Markdown filename blocked inside WebKit's
+sandbox-extension call. The final unique-name exports passed, but repeat-name
+reliability is not established. The full packaged RAG, backup/recovery, real cloud
+and other-platform acceptance remains Phase 8 work. Final packaging results and
+commands are recorded in docs/phase7/knowledge-workflow.md.
+
+------------------------------------------------------------------------
+
+# 16A. Phase 7.5 --- Knowledge Wiki and Source-Driven Documents
+
+**Implementation updates, 2026-10-07–08:** the isolated `feat/folder-foundation`
+branch implements native folder/source/filing/job/backup integration and B's Wiki
+core. See [folder acceptance](docs/phase75/folder-foundation.md),
+[source contract](docs/phase75/source-contract.md) and
+[Wiki contract](docs/phase75/wiki-core.md) for implemented behavior, measured
+checks and limits. Stage 2 adds Wiki-first chat and prompt-driven documents in
+the combined PR #60. The owner requested a
+folder-based knowledge workspace that maintains summaries and links, and creates
+documents directly from relevant local files through a general chat prompt.
+Implement this phase after the outstanding Phase 7 work is integrated and validated, before Phase 8's
+broader stability/quality refinement and final desktop acceptance. Keep Phase 7's
+twelve IDs, completed work and recorded limits intact.
+
+**Acceptance scope update, 2026-10-08:** the owner explicitly moved remaining
+verification to Phase 8. Phase 7.5 checkboxes below track delivered implementation,
+supported by the already recorded regression checks; they do not certify native
+end-to-end behavior or live-model quality. Remaining native restore, evidence UI,
+document/edit/export, model/PDF and failure-path acceptance belongs to §17.10.
+Preserve observed quality failures and unconfirmed results. This change does not
+declare them passed, authorize a merge, or defer recovery/backup implementation.
+
+## 16A.1 Intended experience
+
+The primary desktop workflow becomes:
+
+``` text
+Choose a local knowledge folder or connect an existing source folder
+        ↓
+Add or edit supported files using Finder or the app
+        ↓
+Detect changes / catch up when the app next opens
+        ↓
+Extract and preserve source locations
+        ↓
+Classify + write source summaries + maintain related topic pages
+        ↓
+Describe a task in chat → discover and inspect relevant files → draft a document
+        ↓
+Edit and save the document → export Markdown or PDF
+```
+
+Originals remain on the user's computer. Folder-based intake becomes the primary
+Tauri workflow; existing upload and answer-to-document flows remain compatible.
+The initial supported formats remain PDF, Markdown and TXT. Folder access initially
+targets the macOS desktop app, not arbitrary client paths submitted to the web API.
+
+Example request in chat:
+
+> 지금까지의 COMPSCI 210 렉쳐노트를 기반으로 요약 정리 노트 생성해줘.
+
+The course is an example, not a required input or a special-purpose feature.
+A general request such as “compare the design decisions across my projects” or
+“create a report on this topic from my files” should cause the AI to interpret the
+purpose, discover relevant files in the user's enabled knowledge folders, inspect
+supporting sources and produce the requested document. The user need not select
+every file or first obtain an assistant answer. Explicit source/folder selections
+remain authoritative; discovery never expands an empty or restricted scope.
+
+The chat shows progress and a link to an independently saved, editable artifact;
+the document workspace supplies editing and Markdown/PDF export. Conversation
+history may clarify the task, but the transcript is not the document's evidence.
+
+## 16A.2 Storage, ownership and existing foundations
+
+A new managed knowledge folder may use this layout; exact names are configurable
+implementation details, not a migration already performed:
+
+``` text
+<user-selected knowledge folder>/
+├── sources/
+│   ├── inbox/
+│   ├── Learning/COMPSCI 210/
+│   ├── Projects/
+│   └── Unclassified/
+├── wiki/
+│   ├── sources/
+│   ├── concepts/
+│   ├── projects/
+│   └── analyses/
+└── documents/                 # authored outputs or portable exports
+```
+
+- A **managed folder** permits organization inside the area the user enabled for
+  automatic filing. A **connected existing folder** retains its originals and
+  directory structure by default; enable file organization separately per folder.
+  Removing a connection does not delete the user's external files.
+- Preserve source bytes, stable file IDs, relative paths and version hashes. A path
+  change must update the registry without breaking historical citations. Resolve
+  ambiguous rename/copy events explicitly instead of guessing from equal hashes.
+- Use Markdown for readable wiki content and SQLite for source registrations,
+  links, versions, processing and provenance. Current document bodies are stored
+  in SQLite; this proposed layout does not relocate them or `app.db` automatically.
+  Define database/workspace locations and migrate existing sources non-destructively
+  before implementing a new layout. Keep credentials and model preferences separate.
+- Reuse Next.js, Tauri, FastAPI, SQLite, Qdrant and Ollama. Qdrant may index wiki
+  content as well as original passages. A new graph database or agent framework is
+  not required. Wiki summaries are interpretations, not replacement primary evidence.
+- Retain page-aware extraction, original passage retrieval and saved evidence.
+  Long inputs still need bounded sections/batches; a wiki-first workflow does not
+  remove model context limits or the need to verify numbers and exceptions.
+- Reuse Phase 7 evidence/versioning, library coordination, durable jobs, local
+  inference limits, source scopes and evaluation. Extend backups to cover new
+  authored wiki content and connections. User edits and saved documents cannot be
+  reconstructed by rebuilding vectors.
+- Classification, wiki maintenance and source-driven document synthesis use local
+  Ollama. Preserve the owner's local-only excerpt drafting policy and existing
+  explicit cloud payload boundaries; this phase must not silently send originals,
+  saved excerpts or expanded wiki/document context to a cloud provider. Display the
+  local provider for these jobs; do not silently switch a user-selected provider.
+
+## 16A.3 Ordered implementation milestones
+
+### 7.5-1. User-selected folders and reliable change detection
+
+- [x] Add native folder selection and persistent registration for a managed root
+  and connected source folders. Keep this separate from Phase 7's backup
+  workspace switching. Limit file access to registered roots using canonical path
+  checks and native authorization; prevent traversal or links escaping those roots.
+- [x] Scan existing supported files, observe stable additions/edits/moves and run a
+  startup reconciliation scan for changes while the app was closed. Coalesce events
+  and avoid reading a half-written file or queuing the same work repeatedly.
+- [x] Exclude generated wiki/output, temporary and application data from source
+  intake. Handle permissions, disconnected drives and missing folders as visible
+  unavailable states; do not infer deletion from an inaccessible root.
+- [x] Show the real folder tree, connection and processing states, per-folder
+  processing controls and Open in Finder. Reuse durable jobs for cancellation,
+  explicit retry and interrupted work; no closed-app background daemon is assumed.
+
+### 7.5-2. Automatic filing and source-summary pages
+
+- [x] Generate structured classification and a faithful summary with local Ollama.
+  Prefer existing categories, allow new categories when justified, use one primary
+  folder plus multiple tags, and keep uncertain classifications in Unclassified.
+- [x] Create `wiki/sources` pages with stable IDs, source/version references,
+  original page or passage locators, summary, key points and uncertainties. Record
+  model/prompt version and processing time; never invent a page or citation.
+- [x] Validate AI-proposed destinations in application code before creating folders
+  or moving a file. Preserve bytes, prevent name collisions and journal path/registry
+  changes for recovery. Respect manually fixed categories and user folder names.
+- [x] Make a path-only organization change independent of re-embedding unchanged
+  content. Extend exclusion/loop detection so the app's own moves do not reprocess
+  indefinitely. Keep source indexing and summary-generation failures distinguishable.
+
+### 7.5-3. Related sources and maintained topic knowledge
+
+- [x] Find candidate related sources and wiki pages; store validated target IDs,
+  backlinks, relation type and an explanation. Distinguish shared subject,
+  supporting evidence, alternative approaches and contradictions.
+- [x] Maintain concept/project pages across sources, record tensions and update
+  history, and offer to file reusable analyses. Bound link traversal and avoid
+  duplicate concepts or a growing set of links based only on shared vocabulary.
+- [x] Refresh affected generated content when source versions change. Preserve
+  user-authored edits with revision/conflict handling; do not overwrite edited pages
+  during regeneration. Missing or superseded sources leave explicit provenance.
+
+### 7.5-4. Wiki-first questions with original evidence
+
+- [x] Resolve the selected folder/course/source scope, find relevant summaries and
+  topics, follow useful links within that scope, and consult original passages for
+  supporting detail. Compare this route with the existing retrieval baseline.
+- [x] Keep all/empty/chosen scopes distinct. Connected documents and wiki links
+  cannot broaden a selected scope. Distinguish source facts from wiki interpretation,
+  reject stale evidence for current claims and retain historical snapshots honestly.
+- [x] Implement a dedicated evidence component presenting wiki revision links beside
+  original references, lexical retrieval of details omitted from summaries, and
+  original-only factual inputs that exclude prior assistant answers. Component and
+  service regressions are recorded; actual native presentation is a Phase 8 check.
+  Markdown links retain the selected scope and captured contributor/relation
+  revisions; root/source union controls preserve remaining members when narrowed.
+
+### 7.5-5. Prompt-driven document creation with automatic source discovery
+
+- [x] Add an explicit document-generation intent to chat and a source-driven
+  generation service/API that does not require a previous assistant message ID.
+  Show an artifact card with progress, Open document and export actions; preserve
+  the existing answer-to-document option.
+- [x] Interpret the user's goal, topic, output type and language, then discover
+  candidate files through the catalog, source summaries, search and related links
+  within enabled roots and the conversation's allowed scope. Read relevant original
+  sections when summaries are insufficient. Course labels and named collections are
+  optional filters, not mandatory input; discovery is application-controlled rather
+  than arbitrary model filesystem commands.
+- [x] Show the selected sources and actual coverage; clarify only unresolved task
+  or scope ambiguity. A request for “all COMPSCI 210 lecture notes so far” must
+  enumerate that collection; a general report must find material relevant to the
+  prompt without claiming that every local file was read. Freeze source versions
+  when consumed and record the final source manifest. An all-source request freezes
+  its inventory at job start; later discoveries remain within that initial scope.
+- [x] Plan an outline and aggregate material across that set with bounded local
+  per-source/section processing and synthesis. A normal chat's top-five passages
+  cannot establish collection-wide coverage. Long documents need staged generation and
+  progress, not silent input truncation or a single over-budget prompt.
+- [x] Implement editable draft generation for study notes, project analyses,
+  comparisons and reports, with a source/coverage report, missing/no-text entries,
+  explicit partial results and insufficient-evidence handling. Unsupported final
+  synthesis falls back to labeled original quotations. Requested-language,
+  comparison, heading and semantic quality remain unaccepted Phase 8 work; this
+  checkbox records the integrated generation/editing path, not polished output.
+  New drafts now include conservative script/shape checks, bounded heading support,
+  neutral/omitted unsupported headings and explicit comparison/partial limits in the
+  document/card. Source-language descriptions cannot override clear output-language
+  directives. These controls do not prove live-model quality or replace Phase 8.
+- [x] Attach validated source locators and saved excerpt/version snapshots from the
+  actual inputs. Save the artifact independently of the chat, preserve user edits,
+  and expose cancellation/retry without duplicating or replacing saved notes.
+- [x] Implement chosen-revision Markdown export and the existing PDF print path
+  with optional provenance, preserving edit/history selection. Actual native files,
+  Unicode and long-document pagination are Phase 8 acceptance checks. A chat request
+  or successful print request does not establish an exported PDF file.
+
+Implementation and scoped data/recovery checks are recorded in
+`docs/phase75/source-documents.md` and `docs/phase75/source-document-validation.md`.
+Actual local-model collection/report runs saved explicit partial artifacts;
+requested-language and report quality acceptance remains open in Phase 8. Actual
+native PDF, Unicode and long-pagination acceptance is also deferred to Phase 8.
+These checked implementation items do not establish native workflow acceptance.
+
+### 7.5-6. Recovery, portability and evaluation support
+
+- [x] Extend backup/restore for wiki files, user edits, link/version metadata and
+  document jobs. Make external-original inclusion explicit; never describe an
+  index-only/connection-only backup as containing those original files. Restore into
+  a new destination, report unavailable roots and require explicit reconnection.
+- [x] Coordinate scans, filing, wiki refresh, deletion and rebuilds with ongoing
+  reads/jobs. Separate disconnecting, removing derived records and deleting a
+  physical original. Capture source versions consistently during synthesis.
+- [x] Provide file-backed lifecycle/scope/version/recovery regressions and committed
+  knowledge/source-document evaluators with frozen inventories, explicit retry and
+  attempt-specific reports. Preserve recorded actual-model measurements, failures
+  and hardware limits. The combined native workflow and broader quality/latency
+  evaluation are explicitly pending under §17.10, not passed by this checkbox.
+
+**Stage 2 acceptance, 2026-10-08:** [knowledge integration](docs/phase75/knowledge-integration.md)
+records implemented scoped questions, shared maintenance/coordination and portable
+restore, final regression checks and an actual five-question local-model baseline
+comparison. B's real document pipeline/chat/editor is integrated, with its
+[contract](docs/phase75/source-documents.md). The combined native restore/question/
+document/edit/Markdown/PDF workflow and broad document faithfulness are still
+unverified and, following the owner's later instruction, are tracked as open
+Phase 8 acceptance checks. Stage 1 acceptance is retained. Phase 7.5 implementation
+is delivered on the combined branch; final acceptance is not claimed.
+
+## 16A.4 Delivery order and handoff
+
+Keep folder registration, filing/summaries, topic maintenance, query orchestration
+and prompt-driven document generation in focused Conventional Commits and reviewable
+branches/PRs. Begin implementation from integrated Phase 7, not an unrelated live
+feature branch. Preserve published history and existing workspaces; use additive
+schema migrations and version new wiki indexes separately from original passages.
+Recovery and backup changes accompany the features that need them rather than
+waiting until milestone 7.5-6 to protect data.
+
+At the owner's 2026-10-08 instruction, distinguish Phase 7.5 implementation
+delivery from Phase 8 acceptance. Implement and integrate each feature with its
+data-preservation/recovery behavior and document its recorded regression evidence;
+do not hold implementation delivery for the deferred native/model/PDF checks.
+Keep all corresponding Phase 8 acceptance checkboxes open until actually verified,
+including observed quality failures. Phase 8 performs the final packaged-app
+acceptance for the folder/wiki workflow and compatible upload/answer-based flows.
+Integrate through the combined PR #60 under explicit owner merge authorization;
+retain the open Phase 8 acceptance checks after integration.
+
+------------------------------------------------------------------------
+
+# 17. Phase 8 --- Reliability and Quality
+
+Phase 8 follows Phase 6 desktop implementation, the twelve Phase 7 core workflow
+improvements and Phase 7.5's folder/wiki and prompt-driven source documents. Refine
+stability and quality using the completed features, then perform final packaged-app
+end-to-end acceptance before the desktop MVP release.
+
+**Sequence update, 2026-10-03:** the user assigned the twelve comparison-review
+improvements to Phase 7 and moved the previous reliability/quality phase to Phase 8.
+Keep already implemented migrations, logging, upload safeguards and index-integrity
+work complete. Phase 7 features are not implemented a second time here. The
+implementation notes in §§17.1–17.9 retain the original design context and measured
+results; statements about missing functionality there describe that earlier
+starting point. They are not instructions to rebuild delivered features. Remaining
+work and final acceptance are listed in §17.10.
+
+## 17.1 What the original checklist got wrong
+
+The lists below were written before Phases 2--5 existed, and several of their items
+were delivered on the way. They should be **verified and ticked, not built**:
+
+-   *Delete vectors when source is deleted* --- Phase 2. Deletion removes the
+    original, the metadata and the vectors.
+-   *File type validation* --- `FileType.from_filename` rejects an unknown
+    extension at upload with a 400, server-side. The frontend's `rejectionFor`
+    is a courtesy on top, not the enforcement.
+-   *Empty-document handling* --- upload deletes and rejects a zero-byte file
+    rather than leaving a row that can never become READY.
+-   *The whole UX group* --- empty, loading, error and processing states, source
+    display and keyboard usability were built across Phases 2--5 against
+    `DESIGN.md`'s floor, on all four surfaces.
+
+At the original baseline stage, the remaining work was narrower than the list: **size
+limits, duplicate detection, corrupt-file handling, the three kinds of index
+staleness, rebuilding on demand, and the whole of logging.**
+
+Two items carry over from earlier phases and belong here:
+
+-   **§12.6** --- the model still does not receive earlier conversation turns.
+    Phase 5 made chat the route into documents, so this is now easier to run into.
+    Phase 7 item 11 implements bounded follow-up context; Phase 8 verifies its
+    answer quality and latency across the complete conversation workflow.
+-   **§13.6** --- native body-only/cited synthetic PDF output is inspected in §16.8.
+    Phase 8 still tests broader document shapes and the full packaged workflow.
+
+## 17.2 Implemented schema migration design
+
+Before the reliability baseline, earlier phases had only **added tables**, for
+which `CREATE TABLE IF NOT EXISTS` was enough. The baseline required **adding
+columns to an existing table**: `files` needed the embedding model that produced
+its vectors and a content hash.
+
+At that starting point there was no migration mechanism: `app/db/` contained no
+`ALTER`, `user_version`, or migration runner. The failure mode was silent.
+Re-running a `CREATE TABLE IF NOT
+EXISTS` that now names a new column against a database where the table already
+exists is a **no-op**; the column does not appear. Confirmed empirically rather
+than assumed. A user with an existing `data/app.db` would therefore get code
+expecting a column that is not there, and the first query would fail at runtime
+rather than at startup.
+
+The migration runner was therefore the first reliability branch. It is now
+implemented; future Phase 8 schema changes must reuse it and preserve existing data.
+
+**Decision: `PRAGMA user_version` plus a list of numbered, idempotent steps applied
+in order at startup.** Not Alembic --- that is a second dependency, a config file
+and a migrations directory for what will be a handful of `ALTER TABLE` statements
+on a single-user local SQLite database, and Noye's claim is that it works without
+setup. Reconsider if the schema ever starts changing *shape* rather than growing.
+
+**The requirement that matters: a migration must never lose the user's data.**
+Original files are the source of truth and the vector index is rebuildable, but
+SQLite holds the things that are *not* derived --- conversations and documents,
+which are the user's own questions and writing. So migrations are additive only,
+and any step that would drop or rewrite a column takes a file copy of the database
+first.
+
+## 17.3 Four decisions to take up front
+
+**What "duplicate" means.** Not the filename: the same name in two folders is
+legitimately two files, and a renamed copy is still a duplicate. So a **sha256 of
+the bytes**, computed while the upload is being written, stored on the row.
+
+The choice to make is what a duplicate *does*. Accepting it and pointing two rows
+at one blob saves disk but makes deletion ambiguous --- deleting one file would
+have to know the other still needs the bytes. **Refuse it, with a 409 naming the
+existing file**, because the user's actual question is "do I already have this?"
+and the answer should be a name they recognise. The hash earns its place twice
+over: it also detects a source file that changed since it was indexed.
+
+**What "stale" means.** Before the integrity work, three failures were indistinguishable,
+and each needs a different remedy, so each has to be detected separately rather
+than collapsed into one flag:
+
+1.  The **source changed on disk** since it was indexed --- the stored hash no
+    longer matches the file. Remedy: re-ingest that one file.
+2.  The **embedding model changed** --- the vectors are from a different space.
+    Detectable cheaply by comparing the stored model name against the
+    configuration; no Qdrant call needed.
+3.  The **index lost points SQLite says exist** --- a dropped collection, a
+    deleted Docker volume. Needs an actual count comparison against Qdrant, so it
+    is the expensive check and should not run on every request.
+
+**What a model change should do.** Not silently re-embed: on this machine a
+re-index of a real library is minutes to hours of local inference, and the user
+should choose when to pay that. Detect it, say so plainly, and offer the rebuild.
+
+The rule that makes this a correctness issue rather than a tidiness one:
+**search and chat must never mix vectors from two embedding spaces.** A cosine
+score between them is meaningless, so the ranking would be confidently wrong ---
+which is worse than returning nothing, because nothing is visible and a bad
+ranking is not. A file whose vectors are from a superseded model therefore leaves
+the searchable set, with a stated reason, exactly as a file mid-ingestion already
+does.
+
+**What logging may and may not record.** Before the logging branch there was no
+backend logging. Its implemented design follows two rules:
+
+-   **Never log file contents, a chunk, or a question's text.** This is a private
+    knowledge base whose whole claim is that it stays on the user's machine, and a
+    log file is the one place its contents would leak *outside* the files the user
+    chose to put there. A test should assert this rather than a comment asking for
+    it.
+-   **Log the pipeline's decisions and every failure's cause.** The ingestion
+    error already reaches SQLite for the UI; the log is for whoever is debugging,
+    so it carries what the UI deliberately withholds --- timings, stack traces,
+    which model answered, how many chunks, which Qdrant call failed.
+
+Stdlib `logging` with a plain formatter, to stderr and a file under `data/logs/`.
+No new dependency, and structured enough to grep.
+
+## 17.4 Original branch and PR sequence (implemented)
+
+```text
+1. feat/schema-migrations      user_version runner; unblocks everything
+2. feat/backend-logging        independent, and makes 3-7 debuggable
+3. feat/upload-limits          size cap, content hash, corrupt files      (needs 1)
+4. feat/duplicate-detection    the 409 path and its wording               (needs 3)
+5. feat/index-integrity        the three staleness checks, /index/status   (needs 1)
+6. feat/rebuild-index          rebuild endpoint and action                (needs 5)
+7. feat/library-integrity-ui   the surface for all of it                  (needs 4,6)
+```
+
+Logging is second rather than last on purpose: every branch after it is easier to
+diagnose with it in place, and it is the one item with no dependency on the schema.
+
+`feat/rebuild-index` should reuse what already exists rather than adding a path ---
+`indexing.py` already carries a collection reset whose docstring names the
+rebuild-index command as its intended caller, and `embeddings.py` already refuses
+a vector whose dimension disagrees with the configuration.
+
+Not a branch, but Phase 8 work all the same: **threshold calibration and chunking
+parameters** need several real documents to measure against, which only now exists.
+Both were deferred from Phase 1 for exactly that reason.
+
+## 17.5 Acceptance and validation
+
+-   An existing `data/app.db` from before the schema migrations opens, gains its new columns, and
+    keeps every conversation, message and document. Tested against a real copied
+    database, not only a fresh one.
+-   Uploading the same file twice is refused the second time, naming the first ---
+    including when it has been renamed.
+-   A file edited on disk after indexing is reported as out of date, and
+    re-ingesting it makes the report go away.
+-   Changing `ollama_embedding_model` takes the affected files out of search and
+    chat with a stated reason, and never mixes their vectors with new ones.
+-   Deleting the Qdrant collection is detected and distinguished from the other two
+    staleness causes.
+-   A rebuild restores search to what it was, from `data/sources/` alone.
+-   A truncated or non-PDF-masquerading-as-PDF file fails with a reason the UI can
+    show, and leaves nothing behind.
+-   A test asserts no chunk text, file content or question reaches the log.
+-   Backend and frontend suites, lint, types and the production build pass. Record
+    any browser check that could not run under `Not validated`.
+
+## 17.6 Checklists
+
+### File handling
+
+-   [x] File type validation --- `FileType.from_filename`, server-side, Phase 2
+-   [x] Empty-document handling --- zero-byte upload rejected, Phase 2
+-   [x] File size validation
+-   [x] Duplicate detection
+-   [x] Corrupt file handling
+
+### Index integrity
+
+-   [x] Delete vectors when source is deleted --- Phase 2
+-   [x] Schema migration runner *(prerequisite; see §17.2)*
+-   [x] Detect a changed source file
+-   [x] Detect an embedding model change
+-   [x] Detect an index that lost points
+-   [x] Rebuild index on demand
+
+### UX
+
+-   [x] Empty states --- all four surfaces, Phases 2--5
+-   [x] Loading states --- all four surfaces, Phases 2--5
+-   [x] Error states --- all four surfaces, Phases 2--5
+-   [x] Processing states --- Phase 2
+-   [x] Clear source display --- Phases 3--4
+-   [x] Keyboard usability --- `DESIGN.md`'s floor, Phases 2--5
+-   [x] Surface index integrity in the library
+
+### Logging
+
+-   [x] Backend structured logging
+-   [x] Processing errors
+-   [x] Ollama errors
+-   [x] Qdrant errors
+-   [x] A test proving no user content is logged
+
+### Carried over
+
+-   [ ] Recheck Phase 7 follow-up handling (§12.6, item 11) against quality/latency targets
+-   [x] Inspect body-only and cited synthetic PDFs from a packaged QA app (§16.8)
+-   [ ] Calibrate the similarity threshold (deferred from Phase 1)
+-   [ ] Measure chunking parameters (deferred from Phase 1)
+
+------------------------------------------------------------------------
+
+## 17.7 Live Qdrant verification (what branches 5–6 could only stub)
+
+Performed after #33 merged, with Qdrant deliberately up. One file in the real library:
+`cs235_lab_07.pdf`, READY, 24 chunks, `content_hash` empty (indexed before #27),
+`embedding_model` empty before the run.
+
+**Deep point comparison confirmed.** The first time the branch-5 deep check actually
+read Qdrant: 24/24 match, no problems.
+
+**POINTS_MISSING confirmed.** Ten points deleted directly via Qdrant's API.
+- Shallow: `problems: none` (the cheap checks cannot see it — as designed).
+- Deep: `POINTS_MISSING searchable=True points=14/24`.
+- `searchable=True` confirmed: an incomplete index is *out of date*, not *wrong*.
+
+**Rebuild success path confirmed.** First real run of `POST /index/rebuild`
+against a live Qdrant:
+- Response: `202 queued=1 collection_recreated=false` — the collection was NOT
+  dropped, which is the decision the branch exists to make.
+- 12 seconds later: `READY chunks=24 qdrant=24`.
+- `embedding_model=embeddinggemma` written by ingestion.
+
+**Finding fixed in `fix/hash-on-reingest`.** The first live rebuild left
+`content_hash` NULL because re-ingest reads a file already on disk and does not pass
+through `_save_upload`. The common ingestion path now hashes the stored original
+after extraction proves it readable, so both a single-file retry and a whole-library
+rebuild fill the missing identity. Re-ingesting a deliberately changed source also
+records the new bytes as the integrity baseline. Unit tests cover both cases and keep
+an old file's hash unknown when extraction fails before the new step runs.
+
+## 17.8 Library integrity UI
+
+The library now makes the backend's integrity decisions visible without turning an
+expensive Qdrant scan into background traffic. Opening or refocusing the page runs
+the cheap source-hash and embedding-model check. **Check stored index** is the
+explicit deep action that also compares stored point counts with Qdrant.
+
+The status response carries `point_check_complete` separately from `deep`. This is
+important when Qdrant is unavailable: the page says that the stored index could not
+be checked and does not misreport an empty `problems` list as a healthy deep check.
+
+Remediation follows the cause rather than offering one ambiguous repair:
+
+-   a changed source offers a one-file re-index;
+-   an embedding-model mismatch or missing points offers a confirmed library rebuild;
+-   a missing source asks the user to restore or remove the file;
+-   rebuild responses show queued, skipped, and recreated-collection results, while
+    the existing ingestion polling continues to report progress.
+
+Validation for the branch covered the backend contract, API client, hook request
+sequencing, each problem presentation, rebuild confirmation and results, the full
+backend and frontend suites, Ruff, ESLint, TypeScript, and a production Webpack
+build. A browser pass against the real library confirmed the cheap healthy summary,
+the explicit deep-check action, the Qdrant-unavailable state, visible keyboard focus,
+and no console warnings or errors. No rebuild or file mutation was performed during
+that browser pass.
+
+## 17.9 Optional Gemini generation
+
+Implemented on `feat/optional-gemini`: local Ollama remains the default and
+`provider: "gemini"` selects Google generation for `/chat` or
+`/documents/generate`. `/ai/providers` returns model names and configuration
+availability only. The shared selector explains the cloud payload and free-tier
+data policy. Gemini keys stay in the backend environment; errors omit raw provider
+bodies and credentials. Quota errors never trigger automatic fallback or retries.
+The existing citation mapping and local embedding/index pipeline are unchanged.
+
+Validation (2026-10-03): backend suite **534 passed, 19 skipped**; Gemini transport
+and routing tests **28 passed** using mocked responses; frontend **137 passed**;
+Ruff, ESLint, TypeScript and the production Webpack build passed. No live Gemini
+request or cloud latency measurement was performed. Remaining live end-to-end and
+PDF checks are deferred to Phase 8 at the user's request.
+
+## 17.10 Stability/quality refinement and final acceptance
+
+The earlier web-MVP end-to-end record remains in
+[`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Its historical
+observations do not establish acceptance of the current packaged application.
+
+Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
+implementation milestones are delivered. The owner's 2026-10-08 instruction moves
+remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite
+for that implementation handoff. Reassess remaining defects
+rather than repeating the completed reliability branches or Phase 7 implementations. Prioritize data
+preservation, index/rebuild correctness and source provenance, then measure
+retrieval, answer quality and inference latency.
+
+**Desktop design update, 2026-10-12:** the owner selected the work-centered
+direction. Shared compact navigation/headers, left document/Wiki lists,
+above-body save/exports, focus reading, readable text roles and quiet intake/
+evidence metadata are implemented in `fix/desktop-design`. The record in
+`docs/phase8/desktop-design.md` separates automated tests, fixture geometry and
+native observations. Native Markdown retained unsaved Korean text; PDF contents
+and the OS original-link destination remain unconfirmed in this pass. Keep the
+broader acceptance checks below open.
+
+-   [ ] Resolve remaining reliability and quality defects found in the packaged app.
+-   [ ] Recheck Phase 7 follow-up handling (§12.6) against quality and latency targets.
+-   [ ] Expand the Phase 7 retrieval evaluation and refine thresholds/chunking on
+    representative documents; do not rebuild its evaluation harness.
+-   [ ] Verify first-run setup, model download failure/cancel/retry and persistent
+    provider/model settings, including OS-protected cloud credentials.
+-   [ ] Verify provider/model changes preserve saved conversations and documents;
+    cloud payload disclosure precedes use and local mode sends no content to Google.
+-   [ ] Verify the packaged app owns its backend lifecycle without stopping
+    unrelated services, and preserves data across shutdown/relaunch.
+-   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
+    reload → document generation → edit/save → Markdown/PDF export → clean deletion
+    in the packaged macOS app. Inspect actual exported files from the native webview.
+-   [ ] Complete the unconfirmed native ZIP chooser/restore flow: diagnose the
+    accessibility timeout separately from an application failure, restore into a
+    new destination, reconnect external roots and confirm actual workspace state.
+    Keep the recorded enabled Open button and service restore distinct from native
+    restore completion.
+-   [ ] Run folder selection → detected files → ingestion → classification/filing →
+    summaries/links → original-grounded question with Wiki links → prompt document →
+    edit/save → actual Markdown/PDF files in the packaged macOS app. Verify restart
+    catch-up, unstable writes, cancellation/retry, rename/move byte and ID retention,
+    unavailable/physically disconnected roots, user-edit preservation, link updates,
+    disconnect versus derived removal versus original deletion and portable restore.
+-   [ ] Recheck all/empty/chosen scopes, outside-scope links, changed/missing/stale
+    sources, historical versions, exact numbers/terms/exceptions omitted from Wiki,
+    insufficient evidence and exclusion of previous assistant answers as evidence.
+-   [ ] Verify general chat prompts discover relevant files and create independently
+    saved documents without a previous assistant answer. Measure requested-source
+    coverage and faithfulness; inspect long Korean/English Markdown/PDF outputs.
+    Resolve and remeasure the recorded requested-language failures, unsuitable
+    comparison headings and unresolved translated/literal partial outputs. Include
+    whole collections, long/image-only PDFs, no-text/missing inputs and source edits
+    or cancel/restart during actual inference; citation hashes alone do not certify
+    every generated claim. Record model/hardware limits and run memory-intensive
+    local-model evaluations sequentially on the measured 8 GiB machine.
+    Measure v5 heading-verifier latency and conservative script-guard false rejections;
+    verifier approval or multiple source references do not prove reasoning quality.
+-   [ ] Compare original retrieval and wiki-assisted discovery on exact details and
+    cross-source questions. Record summary omissions, wrong links and stale claims.
+-   [ ] Measure local and cloud latency separately. Mocked responses do not establish
+    live speed or answer quality; record checks that require unavailable services/keys.
+-   [ ] Record final acceptance evidence and close the MVP checklist only for
+    behavior actually verified. Folder/topic grouping and prompt-driven documents
+    are Phase 7.5 scope; advanced notebook organization and reusable template systems
+    beyond those milestones follow the completed MVP.
+
+------------------------------------------------------------------------
+
+# 18. Folder Watch --- Promoted to Phase 7.5
+
+The earlier post-MVP folder-watch proposal is now approved Phase 7.5 work (§16A).
+Native folder selection, change detection, startup reconciliation and folder-based
+knowledge maintenance are implemented on the Phase 7.5 branches described in §16A.
+Remaining native/model/PDF acceptance belongs to Phase 8. The combined PR #60
+is the main integration surface; do not reapply the document-only shared patches.
+Do not schedule or build a second folder-watch pipeline after MVP acceptance.
+
+------------------------------------------------------------------------
+
+# 19. Future Ideas --- Not MVP
+
+Possible later features. Phase 6 desktop/model management, Phase 7 source selection
+and evaluation, and Phase 7.5 folder intake, tags, source links, maintained wiki and
+prompt-driven documents are explicitly in scope. Do not defer those approved
+milestones to this list; advanced versions beyond them remain future work.
+
+-   Advanced notebook/collection management beyond Phase 7.5 folders and topics
 -   OCR for scanned PDFs
 -   DOCX support
 -   PPTX support
 -   Better semantic chunking
--   Hybrid keyword + vector search
--   Reranking
 -   Knowledge graph experiments
--   Local model management UI
 -   Multiple embedding models
--   Source filters
--   Conversation-to-document workflows
--   Document templates
--   Automatic study guides
+-   Reusable document template systems beyond prompt-directed output
 -   Flashcard generation
--   Offline-first desktop packaging
--   Optional cloud model providers
+-   Additional cloud model providers beyond the requested optional providers
 -   Optional sync
 
 Do not build these until the basic workflow is reliable.
 
 ------------------------------------------------------------------------
 
-# 19. What Noye Should Avoid Becoming
+# 20. What Noye Should Avoid Becoming
 
 Avoid feature creep toward:
 
@@ -2684,7 +3689,7 @@ The core identity should remain:
 
 ------------------------------------------------------------------------
 
-# 20. Memex Inspiration --- Without Becoming a Fork
+# 21. Memex Inspiration --- Without Becoming a Fork
 
 Memex was reviewed as a useful architectural/product reference.
 
@@ -3074,7 +4079,7 @@ order, but changes should remain deliberate.
 
 ------------------------------------------------------------------------
 
-# 21. Recommended Development Order
+# 22. Recommended Development Order
 
 Do not jump randomly between frontend and AI features.
 
@@ -3111,16 +4116,18 @@ Follow this order:
         ↓
 15. Markdown/PDF export
         ↓
-16. Tests + reliability
+16. Tauri desktop implementation (Phase 6)
         ↓
-17. Tauri desktop packaging
+17. Twelve core workflow improvements (Phase 7)
         ↓
-18. Folder Watch
+18. Folder intake + knowledge wiki + prompt-driven documents (Phase 7.5)
+        ↓
+19. Reliability + quality + final desktop acceptance (Phase 8)
 ```
 
 ------------------------------------------------------------------------
 
-# 22. Suggested Timeline
+# 23. Suggested Timeline
 
 ## Week 1 --- Core Setup
 
@@ -3165,27 +4172,47 @@ Follow this order:
 
 **Target: usable MVP by the end of Week 5.**
 
-## Week 6 --- Quality
+## Week 6 --- Desktop (Phase 6)
 
--   tests
--   error handling
--   duplicate detection
--   deletion cleanup
--   UX polish
--   README/demo improvements
+-   Tauri and macOS packaging
+-   local application lifecycle and persistent storage
+-   chat-focused layout
+-   first-run setup, model installation and persistent AI settings
+-   relevant automated checks for each implementation milestone
 
-## Week 7 --- Desktop
+## Week 7 --- Core Workflow Improvements (Phase 7)
 
--   Tauri
--   macOS packaging
--   local application lifecycle
--   initial desktop release
+-   implement the twelve approved milestones in §16
+-   evidence/document generation, index safety and backup/job recovery
+-   desktop/service integration and local exposure
+-   embedding/retrieval evaluation, follow-up context and source selection
+-   evidence inspection, cited exports and PDF coverage
+-   validate each focused change before moving on
 
-The timeline is directional, not a deadline.
+## After Week 7 --- Knowledge Wiki and Source Documents (Phase 7.5)
+
+-   user-selected folders, change detection and restart catch-up
+-   automatic filing, source summaries, related links and maintained topic pages
+-   wiki-first questions with original evidence and preserved source scopes
+-   general chat prompts that discover sources and create editable documents
+-   compatible migrations, recovery, backups and Markdown/PDF output
+-   validate each focused milestone in §16A; no fixed one-week estimate
+
+## Week 8 --- Reliability and Quality (Phase 8)
+
+-   remaining error handling and data/index safety fixes
+-   retrieval and answer-quality measurement
+-   inference latency and chunking/threshold calibration
+-   final packaged-app acceptance, including folder/wiki and source-document exports
+-   README/demo evidence and initial desktop release
+
+The timeline is directional, not a deadline. Phase 7 contains twelve milestones;
+Phase 7.5 adds the planned knowledge workflow. Both may span multiple weeks, and
+Phase 8 starts after them; week labels describe order, not effort estimates.
 
 ------------------------------------------------------------------------
 
-# 23. Portfolio Goals
+# 24. Portfolio Goals
 
 Noye should demonstrate skills beyond a standard CRUD web application.
 
@@ -3220,30 +4247,28 @@ A recruiter should be able to understand the project quickly:
 
 ------------------------------------------------------------------------
 
-# 24. Demo Goal
+# 25. Demo Goal
 
-The eventual portfolio demo should show one continuous workflow:
+The eventual portfolio demo should show Phase 7.5's primary desktop workflow.
+Keep the existing upload and answer-to-document route as a compatibility demo.
+The new flow is planned, not verified:
 
 ``` text
-Drag PDF into Noye
+Choose a local knowledge folder
        ↓
-Processing stages appear
+Add supported files in Finder
        ↓
-File becomes Ready
+Noye detects, classifies, summarizes and links them
        ↓
-Ask a question
+Ask chat to create notes, a comparison or a report
        ↓
-Noye answers
+AI discovers and reads relevant permitted sources
        ↓
-Exact source + page citation appears
+A saved editable document appears with source coverage and provenance
        ↓
-Click "Create Document"
+Open and edit the document
        ↓
-Noye creates Markdown
-       ↓
-Edit document
-       ↓
-Export PDF
+Export Markdown or PDF
 ```
 
 This should become the main demo video/GIF on the GitHub README and
@@ -3251,7 +4276,7 @@ portfolio.
 
 ------------------------------------------------------------------------
 
-# 25. Current Immediate Tasks
+# 26. Current Immediate Tasks
 
 The repository foundation now exists.
 
@@ -3281,7 +4306,7 @@ Do not move to UI work until this milestone is reliable.
 
 ------------------------------------------------------------------------
 
-# 26. Definition of MVP Complete
+# 27. Definition of MVP Complete
 
 The MVP is complete when a user can:
 
@@ -3295,6 +4320,12 @@ The MVP is complete when a user can:
 -   [ ] Start a new conversation
 -   [ ] Return to previous conversations
 -   [ ] Turn an answer into a Markdown document
+-   [ ] Choose/connect a local knowledge folder and detect files added while closed
+-   [ ] Inspect maintained source summaries, topic pages and related-document links
+-   [ ] Preserve original bytes and user edits during automatic filing/wiki updates
+-   [ ] Ask chat to discover relevant files and create a document without a prior answer
+-   [ ] Inspect actual source coverage and evidence behind a synthesized document
+-   [ ] Back up and recover connected-folder metadata, authored wiki and documents
 -   [ ] Edit the document
 -   [ ] Save it
 -   [ ] Export Markdown

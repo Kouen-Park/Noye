@@ -1,0 +1,1780 @@
+{
+  "dataset": "lumen-synthetic-v1",
+  "mode": "hybrid",
+  "diversity": false,
+  "k": [
+    1,
+    3,
+    5
+  ],
+  "vector_size": 768,
+  "input_format": "raw-v1",
+  "lexical_tokenizer": "unicode-words-preserving-ids",
+  "model": "embeddinggemma",
+  "model_digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1",
+  "generation_model": null,
+  "repeats": 2,
+  "passages": 18,
+  "indexing_ms": 371.5867909777444,
+  "documents": 9,
+  "latency": {
+    "first_query_ms": 20.749624993186444,
+    "warm_p50_ms": 22.798292004154064,
+    "warm_p95_ms": 31.3337919942569,
+    "cold_model_ms": null,
+    "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+  },
+  "summary": {
+    "1": {
+      "questions": 24,
+      "answerable": 21,
+      "negatives": 3,
+      "recall": 0.7619047619047619,
+      "precision": 0.9047619047619048,
+      "mrr": 0.9047619047619048,
+      "ndcg": 0.9047619047619048,
+      "negative_returned_context": 1,
+      "document_recall": 0.8095238095238095
+    },
+    "3": {
+      "questions": 24,
+      "answerable": 21,
+      "negatives": 3,
+      "recall": 0.8333333333333334,
+      "precision": 0.3333333333333333,
+      "mrr": 0.9285714285714286,
+      "ndcg": 0.8714223116097479,
+      "negative_returned_context": 1,
+      "document_recall": 0.8809523809523809
+    },
+    "5": {
+      "questions": 24,
+      "answerable": 21,
+      "negatives": 3,
+      "recall": 0.8571428571428571,
+      "precision": 0.20952380952380953,
+      "mrr": 0.9285714285714286,
+      "ndcg": 0.8764958226660123,
+      "negative_returned_context": 1,
+      "document_recall": 0.8809523809523809
+    }
+  },
+  "by_category": {
+    "cross-language": {
+      "1": {
+        "questions": 5,
+        "answerable": 5,
+        "negatives": 0,
+        "recall": 0.4,
+        "precision": 0.6,
+        "mrr": 0.6,
+        "ndcg": 0.6,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 5,
+        "answerable": 5,
+        "negatives": 0,
+        "recall": 0.6,
+        "precision": 0.26666666666666666,
+        "mrr": 0.7,
+        "ndcg": 0.6140623206930952,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 5,
+        "answerable": 5,
+        "negatives": 0,
+        "recall": 0.7,
+        "precision": 0.2,
+        "mrr": 0.7,
+        "ndcg": 0.6353710671294053,
+        "negative_returned_context": null
+      }
+    },
+    "english": {
+      "1": {
+        "questions": 15,
+        "answerable": 13,
+        "negatives": 2,
+        "recall": 0.7692307692307693,
+        "precision": 0.9230769230769231,
+        "mrr": 0.9230769230769231,
+        "ndcg": 0.9230769230769231,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 15,
+        "answerable": 13,
+        "negatives": 2,
+        "recall": 0.7692307692307693,
+        "precision": 0.30769230769230765,
+        "mrr": 0.9230769230769231,
+        "ndcg": 0.836827976906772,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 15,
+        "answerable": 13,
+        "negatives": 2,
+        "recall": 0.7692307692307693,
+        "precision": 0.18461538461538463,
+        "mrr": 0.9230769230769231,
+        "ndcg": 0.836827976906772,
+        "negative_returned_context": 1
+      }
+    },
+    "exact-identifier": {
+      "1": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 0.875,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 0.875,
+        "precision": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.95655866428214,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.25,
+        "mrr": 1.0,
+        "ndcg": 0.9831945973275277,
+        "negative_returned_context": 1
+      }
+    },
+    "korean": {
+      "1": {
+        "questions": 9,
+        "answerable": 8,
+        "negatives": 1,
+        "recall": 0.75,
+        "precision": 0.875,
+        "mrr": 0.875,
+        "ndcg": 0.875,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 9,
+        "answerable": 8,
+        "negatives": 1,
+        "recall": 0.9375,
+        "precision": 0.375,
+        "mrr": 0.9375,
+        "ndcg": 0.9276381055020838,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 9,
+        "answerable": 8,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.25,
+        "mrr": 0.9375,
+        "ndcg": 0.9409560720247777,
+        "negative_returned_context": 1
+      }
+    },
+    "multi-document": {
+      "1": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.6131471927654584,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 0.2,
+        "mrr": 1.0,
+        "ndcg": 0.6131471927654584,
+        "negative_returned_context": null
+      }
+    },
+    "negative": {
+      "1": {
+        "questions": 3,
+        "answerable": 0,
+        "negatives": 3,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 3,
+        "answerable": 0,
+        "negatives": 3,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 3,
+        "answerable": 0,
+        "negatives": 3,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      }
+    }
+  },
+  "answer_review": {
+    "completed": 0,
+    "accuracy": null,
+    "abstention_accuracy": null,
+    "note": "Human review against the rubric is required. Returned context is not proof of answer support."
+  },
+  "rows": [
+    {
+      "question_id": "q01",
+      "question": "What does a Lumen backup preserve and exclude?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "backup-en",
+        "restore-en",
+        "citation-en",
+        "digest-en",
+        "reset-en",
+        "unknown-en",
+        "network-en",
+        "scope-en",
+        "identifier-742",
+        "length-en",
+        "identifier-724",
+        "backup-ko",
+        "chunk-ko",
+        "writing-ko",
+        "cancel-ko",
+        "pdf-ko",
+        "speed-ko",
+        "models-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 0.5,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 0.8262346571285599,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "5": {
+          "recall": 0.5,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 0.8262346571285599,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        }
+      },
+      "first_pass_ms": 20.749624993186444,
+      "repeat_ms": [
+        20.789832982700318
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Preserves sources, SQLite, conversations and edited documents; excludes weights, credentials and vectors.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q02",
+      "question": "루멘 백업에 모델 가중치도 포함되나요?",
+      "categories": [
+        "korean"
+      ],
+      "ranking": [
+        "backup-ko",
+        "chunk-ko",
+        "backup-en",
+        "digest-en",
+        "models-ko",
+        "unknown-en",
+        "speed-ko",
+        "pdf-ko",
+        "restore-en",
+        "cancel-ko",
+        "writing-ko",
+        "length-en",
+        "citation-en",
+        "reset-en",
+        "scope-en",
+        "identifier-724",
+        "network-en",
+        "identifier-742"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 0.9639404333166532,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 0.9639404333166532,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.00737498444505,
+      "repeat_ms": [
+        31.68470799573697
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "모델 가중치는 제외한다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q03",
+      "question": "백업을 복원하면 사용 중인 작업 공간을 덮어쓰나요?",
+      "categories": [
+        "korean",
+        "cross-language"
+      ],
+      "ranking": [
+        "cancel-ko",
+        "restore-en",
+        "writing-ko",
+        "backup-en",
+        "backup-ko",
+        "unknown-en",
+        "scope-en",
+        "reset-en",
+        "citation-en",
+        "chunk-ko",
+        "pdf-ko",
+        "digest-en",
+        "identifier-742",
+        "length-en",
+        "models-ko",
+        "speed-ko",
+        "identifier-724",
+        "network-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714574,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714574,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 32.43470800225623,
+      "repeat_ms": [
+        20.129542012000456
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "새 위치에 복원하며 현재 작업 공간을 덮어쓰지 않는다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q04",
+      "question": "When is a collection reset refused?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "reset-en",
+        "scope-en",
+        "restore-en",
+        "network-en",
+        "identifier-724",
+        "unknown-en",
+        "citation-en",
+        "digest-en",
+        "length-en",
+        "identifier-742",
+        "cancel-ko",
+        "models-ko",
+        "backup-en",
+        "writing-ko",
+        "backup-ko",
+        "chunk-ko",
+        "pdf-ko",
+        "speed-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.179041999857873,
+      "repeat_ms": [
+        20.904625009279698
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "A dimension-changing reset refuses active uploads, ingestion or deletion.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q05",
+      "question": "재색인 중 이미 대기 중인 작업의 취소가 가능한가요?",
+      "categories": [
+        "korean"
+      ],
+      "ranking": [
+        "cancel-ko",
+        "reset-en",
+        "writing-ko",
+        "restore-en",
+        "digest-en",
+        "unknown-en",
+        "scope-en",
+        "length-en",
+        "identifier-724",
+        "citation-en",
+        "identifier-742",
+        "backup-en",
+        "backup-ko",
+        "chunk-ko",
+        "pdf-ko",
+        "network-en",
+        "models-ko",
+        "speed-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.90854200348258,
+      "repeat_ms": [
+        26.44799998961389
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "취소 요청은 허용되며 완전히 처리된 파일만 검색한다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q06",
+      "question": "Can replacing a model under the same tag leave an old index compatible?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "digest-en",
+        "unknown-en",
+        "reset-en",
+        "citation-en",
+        "restore-en",
+        "backup-en",
+        "scope-en",
+        "identifier-742",
+        "length-en",
+        "identifier-724",
+        "network-en",
+        "chunk-ko",
+        "models-ko",
+        "cancel-ko",
+        "backup-ko",
+        "writing-ko",
+        "speed-ko",
+        "pdf-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 0.5,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 0.8262346571285599,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 0.5,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 0.8262346571285599,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.341459010727704,
+      "repeat_ms": [
+        20.44750002096407
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "The installed digest is compared; a same-name replacement can invalidate compatibility.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q07",
+      "question": "청크 크기와 중복 길이는 색인 버전에 포함되나요?",
+      "categories": [
+        "korean"
+      ],
+      "ranking": [
+        "chunk-ko",
+        "length-en",
+        "backup-ko",
+        "reset-en",
+        "digest-en",
+        "speed-ko",
+        "scope-en",
+        "pdf-ko",
+        "cancel-ko",
+        "backup-en",
+        "writing-ko",
+        "unknown-en",
+        "restore-en",
+        "identifier-742",
+        "identifier-724",
+        "models-ko",
+        "citation-en",
+        "network-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.601583001436666,
+      "repeat_ms": [
+        20.119958004215732
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "두 설정 모두 색인 버전에 포함된다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q08",
+      "question": "Does changing only the generation model invalidate embeddings?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "digest-en",
+        "backup-en",
+        "unknown-en",
+        "reset-en",
+        "length-en",
+        "citation-en",
+        "restore-en",
+        "identifier-742",
+        "identifier-724",
+        "network-en",
+        "scope-en",
+        "chunk-ko",
+        "models-ko",
+        "backup-ko",
+        "writing-ko",
+        "speed-ko",
+        "cancel-ko",
+        "pdf-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 19.786832999670878,
+      "repeat_ms": [
+        26.76441697985865
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No; the generation model is independent of the embedding index.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q09",
+      "question": "How are legacy indexes with unknown processing versions handled?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "unknown-en",
+        "backup-en",
+        "reset-en",
+        "restore-en",
+        "digest-en",
+        "citation-en",
+        "chunk-ko",
+        "length-en",
+        "scope-en",
+        "cancel-ko",
+        "identifier-742",
+        "identifier-724",
+        "pdf-ko",
+        "backup-ko",
+        "models-ko",
+        "writing-ko",
+        "speed-ko",
+        "network-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.623332984745502,
+      "repeat_ms": [
+        23.996292002266273
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Require an explicit rebuild and preserve saved writing and conversations.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q10",
+      "question": "Which host and port expose the Lumen REST service?",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "network-en",
+        "reset-en",
+        "digest-en",
+        "unknown-en",
+        "backup-en",
+        "scope-en",
+        "citation-en",
+        "identifier-742",
+        "restore-en",
+        "length-en",
+        "identifier-724",
+        "models-ko",
+        "chunk-ko",
+        "pdf-ko",
+        "backup-ko",
+        "cancel-ko",
+        "speed-ko",
+        "writing-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 27.50450000166893,
+      "repeat_ms": [
+        31.3337919942569
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "127.0.0.1:7633; gRPC is not published.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q11",
+      "question": "브라우저 CORS가 인증을 대신하나요?",
+      "categories": [
+        "korean",
+        "cross-language"
+      ],
+      "ranking": [
+        "network-en",
+        "speed-ko",
+        "length-en",
+        "models-ko",
+        "digest-en",
+        "scope-en",
+        "cancel-ko",
+        "backup-ko",
+        "restore-en",
+        "reset-en",
+        "backup-en",
+        "identifier-742",
+        "citation-en",
+        "chunk-ko",
+        "identifier-724",
+        "pdf-ko",
+        "unknown-en",
+        "writing-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 20.573249988956377,
+      "repeat_ms": [
+        20.736417005537078
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "CORS는 브라우저 정책이며 인증이나 네트워크 방화벽이 아니다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q12",
+      "question": "Does Lumen automatically download a missing embedding model?",
+      "categories": [
+        "english",
+        "cross-language"
+      ],
+      "ranking": [
+        "digest-en",
+        "citation-en",
+        "unknown-en",
+        "reset-en",
+        "length-en",
+        "backup-en",
+        "identifier-724",
+        "restore-en",
+        "scope-en",
+        "network-en",
+        "identifier-742",
+        "models-ko",
+        "chunk-ko",
+        "backup-ko",
+        "pdf-ko",
+        "speed-ko",
+        "writing-ko",
+        "cancel-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        },
+        "3": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        },
+        "5": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        }
+      },
+      "first_pass_ms": 20.246416999725625,
+      "repeat_ms": [
+        22.667125012958422
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No; it reports the missing installation separately from service unavailability.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q13",
+      "question": "What happens to the evidence behind an old answer when its original is deleted?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "citation-en",
+        "backup-en",
+        "digest-en",
+        "unknown-en",
+        "scope-en",
+        "restore-en",
+        "identifier-724",
+        "reset-en",
+        "length-en",
+        "identifier-742",
+        "network-en",
+        "writing-ko",
+        "cancel-ko",
+        "backup-ko",
+        "chunk-ko",
+        "pdf-ko",
+        "speed-ko",
+        "models-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 24.79604198015295,
+      "repeat_ms": [
+        27.90395900956355
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Saved snapshots stay identical; the original is marked missing.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q14",
+      "question": "대화를 삭제하면 사용자가 편집한 문서도 삭제되나요?",
+      "categories": [
+        "korean"
+      ],
+      "ranking": [
+        "writing-ko",
+        "backup-ko",
+        "backup-en",
+        "citation-en",
+        "unknown-en",
+        "cancel-ko",
+        "reset-en",
+        "scope-en",
+        "restore-en",
+        "digest-en",
+        "chunk-ko",
+        "pdf-ko",
+        "speed-ko",
+        "length-en",
+        "identifier-742",
+        "identifier-724",
+        "network-en",
+        "models-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 29.70545899006538,
+      "repeat_ms": [
+        23.098709003534168
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "문서는 유지된다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q15",
+      "question": "What is the difference between unrestricted and explicitly empty source selections?",
+      "categories": [
+        "english"
+      ],
+      "ranking": [
+        "scope-en",
+        "citation-en",
+        "backup-en",
+        "restore-en",
+        "identifier-742",
+        "reset-en",
+        "identifier-724",
+        "unknown-en",
+        "digest-en",
+        "network-en",
+        "length-en",
+        "chunk-ko",
+        "backup-ko",
+        "cancel-ko",
+        "pdf-ko",
+        "writing-ko",
+        "models-ko",
+        "speed-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 22.66416698694229,
+      "repeat_ms": [
+        23.30387500114739
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Unrestricted searches eligible files; empty searches nothing; missing selections do not widen scope.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q16",
+      "question": "텍스트가 없는 PDF 페이지를 항상 스캔이라고 판단하나요?",
+      "categories": [
+        "korean"
+      ],
+      "ranking": [
+        "pdf-ko",
+        "scope-en",
+        "unknown-en",
+        "models-ko",
+        "reset-en",
+        "identifier-724",
+        "speed-ko",
+        "length-en",
+        "digest-en",
+        "identifier-742",
+        "cancel-ko",
+        "backup-en",
+        "citation-en",
+        "backup-ko",
+        "chunk-ko",
+        "writing-ko",
+        "restore-en",
+        "network-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 24.97916601714678,
+      "repeat_ms": [
+        25.688374997116625
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "그렇게 단정하지 않으며 추출되지 않은 페이지와 범위를 표시한다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q17",
+      "question": "What does NX-742 mean?",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "identifier-742",
+        "digest-en",
+        "identifier-724",
+        "length-en",
+        "scope-en",
+        "chunk-ko",
+        "models-ko",
+        "pdf-ko",
+        "network-en",
+        "unknown-en",
+        "reset-en",
+        "cancel-ko",
+        "backup-ko",
+        "speed-ko",
+        "backup-en",
+        "restore-en",
+        "citation-en",
+        "writing-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 26.108874997589737,
+      "repeat_ms": [
+        19.575082988012582
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Saved source revision differs from the current original; not a printer error.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q18",
+      "question": "NX-724 오류는 원본 버전이 바뀌었다는 뜻인가요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "identifier-724",
+        "chunk-ko",
+        "writing-ko",
+        "backup-ko",
+        "identifier-742",
+        "length-en",
+        "digest-en",
+        "unknown-en",
+        "models-ko",
+        "scope-en",
+        "citation-en",
+        "restore-en",
+        "cancel-ko",
+        "reset-en",
+        "pdf-ko",
+        "backup-en",
+        "network-en",
+        "speed-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 0.5,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 0.8262346571285599,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 0.9327783893101107,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 19.69587500207126,
+      "repeat_ms": [
+        19.253208010923117
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "NX-724는 프린터 사용 불가이며 원본 버전 변경은 NX-742이다.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q19",
+      "question": "What does EMB-2048 do to an oversized embedding input?",
+      "categories": [
+        "english",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "length-en",
+        "digest-en",
+        "scope-en",
+        "unknown-en",
+        "identifier-724",
+        "reset-en",
+        "chunk-ko",
+        "restore-en",
+        "backup-en",
+        "models-ko",
+        "identifier-742",
+        "citation-en",
+        "backup-ko",
+        "cancel-ko",
+        "speed-ko",
+        "network-en",
+        "writing-ko",
+        "pdf-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.691000001737848,
+      "repeat_ms": [
+        20.27141599683091
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Rejects it instead of silently truncating; formatting counts toward length.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q20",
+      "question": "Why must backups preserve SQLite if vectors can be rebuilt from originals?",
+      "categories": [
+        "english",
+        "multi-document",
+        "cross-language"
+      ],
+      "ranking": [
+        "backup-en",
+        "restore-en",
+        "backup-ko",
+        "digest-en",
+        "unknown-en",
+        "identifier-742",
+        "reset-en",
+        "writing-ko",
+        "citation-en",
+        "chunk-ko",
+        "scope-en",
+        "length-en",
+        "identifier-724",
+        "cancel-ko",
+        "speed-ko",
+        "models-ko",
+        "pdf-ko",
+        "network-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 0.5,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 0.6131471927654584,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "5": {
+          "recall": 0.5,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 0.6131471927654584,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        }
+      },
+      "first_pass_ms": 20.600125018972903,
+      "repeat_ms": [
+        21.029874973464757
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Vectors are derived; originals alone cannot recover conversations and user-edited writing.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q21",
+      "question": "How do index versions and saved evidence address a changed source differently?",
+      "categories": [
+        "english",
+        "multi-document"
+      ],
+      "ranking": [
+        "citation-en",
+        "unknown-en",
+        "backup-en",
+        "restore-en",
+        "digest-en",
+        "identifier-742",
+        "scope-en",
+        "reset-en",
+        "identifier-724",
+        "network-en",
+        "chunk-ko",
+        "writing-ko",
+        "speed-ko",
+        "backup-ko",
+        "length-en",
+        "cancel-ko",
+        "pdf-ko",
+        "models-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 0.5,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 0.6131471927654584,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "5": {
+          "recall": 0.5,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 0.6131471927654584,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        }
+      },
+      "first_pass_ms": 22.088541998527944,
+      "repeat_ms": [
+        22.929458995349705
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Processing fingerprint and source hash are separate; historical excerpt snapshots remain unchanged.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q22",
+      "question": "루멘의 유료 구독 가격은 얼마인가요?",
+      "categories": [
+        "korean",
+        "negative"
+      ],
+      "ranking": [
+        "backup-ko",
+        "chunk-ko",
+        "pdf-ko",
+        "speed-ko",
+        "writing-ko",
+        "network-en",
+        "models-ko",
+        "cancel-ko",
+        "backup-en",
+        "length-en",
+        "digest-en",
+        "unknown-en",
+        "restore-en",
+        "citation-en",
+        "scope-en",
+        "reset-en",
+        "identifier-742",
+        "identifier-724"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 24.7092499921564,
+      "repeat_ms": [
+        27.12424998753704
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "The excerpts contain no subscription price; decline rather than inventing one.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q23",
+      "question": "Which cloud synchronization provider does Lumen use?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "ranking": [
+        "digest-en",
+        "restore-en",
+        "backup-en",
+        "citation-en",
+        "scope-en",
+        "network-en",
+        "length-en",
+        "reset-en",
+        "identifier-742",
+        "identifier-724",
+        "unknown-en",
+        "backup-ko",
+        "chunk-ko",
+        "models-ko",
+        "pdf-ko",
+        "speed-ko",
+        "writing-ko",
+        "cancel-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 30.670667008962482,
+      "repeat_ms": [
+        20.308708015363663
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No cloud synchronization provider is described; decline.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "q24",
+      "question": "What is the meaning of error NX-999?",
+      "categories": [
+        "english",
+        "exact-identifier",
+        "negative"
+      ],
+      "ranking": [
+        "identifier-724",
+        "identifier-742",
+        "length-en",
+        "unknown-en",
+        "restore-en",
+        "scope-en",
+        "citation-en",
+        "digest-en",
+        "network-en",
+        "reset-en",
+        "backup-en",
+        "models-ko",
+        "chunk-ko",
+        "cancel-ko",
+        "pdf-ko",
+        "writing-ko",
+        "backup-ko",
+        "speed-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 21.074832999147475,
+      "repeat_ms": [
+        30.117917020106688
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "NX-999 is absent from the corpus; do not confuse it with NX-742 or NX-724.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    }
+  ],
+  "dataset_sha256": "760a60a40d73882ac541f5fbbafc342ff10e9726c45f2d377cbc618a6b9d1643",
+  "environment": {
+    "python": "3.14.7",
+    "system": "Darwin",
+    "architecture": "arm64",
+    "packages": {
+      "qdrant-client": "1.19.1",
+      "httpx": "0.28.1"
+    },
+    "git_commit": "e6b616b39218c2261684ffd2764091a77ebe2164",
+    "harness_sha256": "ad627d478b7a9624f4d4a5cd1091ba22e10e48b1afa7d176647c118283796d77",
+    "embedding_and_indexing_sha256": "3f5f5746ed38de035da557c703475da9c8be443a90b6cb448c9ed42e64803dac"
+  }
+}

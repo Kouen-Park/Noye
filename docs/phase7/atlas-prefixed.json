@@ -1,0 +1,2247 @@
+{
+  "dataset": "atlas-study-workspace-v1",
+  "mode": "dense",
+  "diversity": false,
+  "k": [
+    1,
+    3,
+    5
+  ],
+  "vector_size": 768,
+  "input_format": "embeddinggemma-v1",
+  "lexical_tokenizer": "unicode-words-preserving-ids",
+  "model": "embeddinggemma",
+  "model_digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1",
+  "generation_model": null,
+  "repeats": 2,
+  "passages": 30,
+  "indexing_ms": 652.5346249982249,
+  "documents": 10,
+  "latency": {
+    "first_query_ms": 23.67858399520628,
+    "warm_p50_ms": 26.84791650972329,
+    "warm_p95_ms": 47.427042009076104,
+    "cold_model_ms": null,
+    "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+  },
+  "summary": {
+    "1": {
+      "questions": 26,
+      "answerable": 22,
+      "negatives": 4,
+      "recall": 0.5,
+      "precision": 1.0,
+      "mrr": 1.0,
+      "ndcg": 1.0,
+      "negative_returned_context": 1,
+      "document_recall": 0.9545454545454546
+    },
+    "3": {
+      "questions": 26,
+      "answerable": 22,
+      "negatives": 4,
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0,
+      "ndcg": 0.9927018899225625,
+      "negative_returned_context": 1,
+      "document_recall": 1.0
+    },
+    "5": {
+      "questions": 26,
+      "answerable": 22,
+      "negatives": 4,
+      "recall": 1.0,
+      "precision": 0.4,
+      "mrr": 1.0,
+      "ndcg": 0.9927018899225625,
+      "negative_returned_context": 1,
+      "document_recall": 1.0
+    }
+  },
+  "by_category": {
+    "cross-language": {
+      "1": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.9959860394574094,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.9959860394574094,
+        "negative_returned_context": null
+      }
+    },
+    "english": {
+      "1": {
+        "questions": 14,
+        "answerable": 11,
+        "negatives": 3,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 14,
+        "answerable": 11,
+        "negatives": 3,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 14,
+        "answerable": 11,
+        "negatives": 3,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      }
+    },
+    "exact-identifier": {
+      "1": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.9959860394574094,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 20,
+        "answerable": 20,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.9959860394574094,
+        "negative_returned_context": null
+      }
+    },
+    "korean": {
+      "1": {
+        "questions": 12,
+        "answerable": 11,
+        "negatives": 1,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 12,
+        "answerable": 11,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.9854037798451251,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 12,
+        "answerable": 11,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.9854037798451251,
+        "negative_returned_context": 1
+      }
+    },
+    "multi-document": {
+      "1": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 0.9598603945740938,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 0.9598603945740938,
+        "negative_returned_context": null
+      }
+    },
+    "negative": {
+      "1": {
+        "questions": 4,
+        "answerable": 0,
+        "negatives": 4,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 4,
+        "answerable": 0,
+        "negatives": 4,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 4,
+        "answerable": 0,
+        "negatives": 4,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      }
+    }
+  },
+  "answer_review": {
+    "completed": 0,
+    "accuracy": null,
+    "abstention_accuracy": null,
+    "note": "Human review against the rubric is required. Returned context is not proof of answer support."
+  },
+  "rows": [
+    {
+      "question_id": "AT-201-en",
+      "question": "Which queue and latency were recorded for AT-201?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-lab-en",
+        "graph-lab-ko",
+        "graph-control-en",
+        "graph-lab-procedure",
+        "graph-control-ko",
+        "graph-control-procedure",
+        "seminar-minutes-en",
+        "database-lab-en",
+        "research-control-en",
+        "seminar-agenda-en",
+        "database-control-ko",
+        "seminar-minutes-ko",
+        "database-lab-ko",
+        "seminar-agenda-ko",
+        "database-control-en",
+        "research-control-ko",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "research-notes-ko",
+        "capture-log-procedure",
+        "research-notes-en",
+        "seminar-minutes-procedure",
+        "capture-control-procedure",
+        "research-control-procedure",
+        "seminar-agenda-procedure",
+        "research-notes-procedure",
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-ko",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.67858399520628,
+      "repeat_ms": [
+        28.026666986988857
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Binary heap; 12 milliseconds.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "AT-201-ko",
+      "question": "AT-201은 어떤 큐를 사용했고 얼마나 걸렸나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-lab-ko",
+        "graph-lab-en",
+        "graph-control-en",
+        "graph-control-ko",
+        "graph-lab-procedure",
+        "graph-control-procedure",
+        "seminar-agenda-ko",
+        "research-notes-ko",
+        "seminar-agenda-en",
+        "database-control-ko",
+        "database-lab-ko",
+        "research-notes-en",
+        "database-lab-en",
+        "seminar-minutes-ko",
+        "database-control-en",
+        "seminar-minutes-en",
+        "research-control-ko",
+        "research-control-en",
+        "database-control-procedure",
+        "capture-log-ko",
+        "database-lab-procedure",
+        "capture-log-procedure",
+        "seminar-minutes-procedure",
+        "capture-log-en",
+        "capture-control-procedure",
+        "research-control-procedure",
+        "capture-control-ko",
+        "research-notes-procedure",
+        "seminar-agenda-procedure",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.578666994581,
+      "repeat_ms": [
+        23.53045900235884
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Binary heap; 12 milliseconds.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "AT-210-en",
+      "question": "How long did the AT-210 control take?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-control-en",
+        "graph-control-ko",
+        "graph-lab-ko",
+        "graph-lab-en",
+        "graph-control-procedure",
+        "graph-lab-procedure",
+        "seminar-agenda-en",
+        "seminar-agenda-ko",
+        "research-notes-ko",
+        "database-control-procedure",
+        "research-notes-en",
+        "research-control-procedure",
+        "capture-control-procedure",
+        "database-lab-en",
+        "database-control-en",
+        "seminar-minutes-en",
+        "database-lab-ko",
+        "database-lab-procedure",
+        "seminar-minutes-ko",
+        "research-control-en",
+        "research-control-ko",
+        "seminar-minutes-procedure",
+        "database-control-ko",
+        "capture-log-procedure",
+        "seminar-agenda-procedure",
+        "capture-log-en",
+        "capture-log-ko",
+        "research-notes-procedure",
+        "capture-control-ko",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 23.260957997990772,
+      "repeat_ms": [
+        26.535292010521516
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "39 milliseconds; linear scan.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "AT-210-ko",
+      "question": "AT-210 대조군의 소요 시간은?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-control-ko",
+        "graph-control-en",
+        "graph-lab-ko",
+        "graph-lab-en",
+        "graph-control-procedure",
+        "graph-lab-procedure",
+        "research-notes-ko",
+        "seminar-agenda-ko",
+        "seminar-agenda-en",
+        "research-notes-en",
+        "seminar-minutes-ko",
+        "database-lab-ko",
+        "database-lab-en",
+        "database-control-ko",
+        "research-control-ko",
+        "database-lab-procedure",
+        "seminar-minutes-procedure",
+        "research-control-en",
+        "seminar-minutes-en",
+        "seminar-agenda-procedure",
+        "database-control-procedure",
+        "capture-control-procedure",
+        "research-control-procedure",
+        "capture-log-procedure",
+        "capture-control-ko",
+        "database-control-en",
+        "capture-log-ko",
+        "research-notes-procedure",
+        "capture-control-en",
+        "capture-log-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 20.61816700734198,
+      "repeat_ms": [
+        20.270375011023134
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "39 milliseconds; linear scan.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "DB-318-en",
+      "question": "Which saved work was copied by DB-318?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "database-lab-en",
+        "database-lab-ko",
+        "database-control-en",
+        "database-control-ko",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "seminar-minutes-en",
+        "seminar-minutes-ko",
+        "graph-control-en",
+        "capture-control-ko",
+        "graph-control-procedure",
+        "seminar-agenda-en",
+        "research-notes-en",
+        "research-notes-ko",
+        "capture-control-procedure",
+        "seminar-minutes-procedure",
+        "seminar-agenda-procedure",
+        "capture-control-en",
+        "capture-log-procedure",
+        "seminar-agenda-ko",
+        "graph-lab-en",
+        "research-control-procedure",
+        "graph-lab-procedure",
+        "graph-control-ko",
+        "graph-lab-ko",
+        "research-notes-procedure",
+        "capture-log-en",
+        "capture-log-ko",
+        "research-control-en",
+        "research-control-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 19.857749983202666,
+      "repeat_ms": [
+        20.034999994095415
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "87 conversations and 14 edited notes; committed WAL included; vectors excluded.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "DB-318-ko",
+      "question": "DB-318은 어떤 작업물을 복사했나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "database-lab-ko",
+        "database-lab-en",
+        "database-control-ko",
+        "database-control-en",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "graph-control-en",
+        "seminar-minutes-ko",
+        "graph-control-ko",
+        "graph-lab-ko",
+        "capture-control-ko",
+        "seminar-agenda-en",
+        "seminar-minutes-en",
+        "research-notes-ko",
+        "seminar-agenda-ko",
+        "graph-control-procedure",
+        "research-notes-en",
+        "capture-log-ko",
+        "graph-lab-en",
+        "capture-control-procedure",
+        "capture-control-en",
+        "capture-log-en",
+        "capture-log-procedure",
+        "graph-lab-procedure",
+        "seminar-agenda-procedure",
+        "seminar-minutes-procedure",
+        "research-control-procedure",
+        "research-control-ko",
+        "research-notes-procedure",
+        "research-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 19.489083002554253,
+      "repeat_ms": [
+        19.170208979630843
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "87 conversations and 14 edited notes; committed WAL included; vectors excluded.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "DB-381-en",
+      "question": "Did DB-381 overwrite the working database?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "database-control-en",
+        "database-control-ko",
+        "database-lab-en",
+        "database-lab-ko",
+        "database-control-procedure",
+        "database-lab-procedure",
+        "seminar-minutes-en",
+        "graph-lab-en",
+        "graph-control-en",
+        "graph-lab-ko",
+        "seminar-minutes-ko",
+        "seminar-minutes-procedure",
+        "seminar-agenda-procedure",
+        "graph-lab-procedure",
+        "graph-control-procedure",
+        "graph-control-ko",
+        "seminar-agenda-en",
+        "research-control-procedure",
+        "seminar-agenda-ko",
+        "research-notes-procedure",
+        "research-control-en",
+        "research-notes-en",
+        "capture-log-procedure",
+        "capture-control-procedure",
+        "capture-control-ko",
+        "research-notes-ko",
+        "capture-log-ko",
+        "capture-control-en",
+        "capture-log-en",
+        "research-control-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 19.616417004726827,
+      "repeat_ms": [
+        21.37666699127294
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No; 6 demonstration notes restored into a new folder.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "DB-381-ko",
+      "question": "DB-381은 기존 데이터베이스를 덮어썼나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "database-control-ko",
+        "database-control-en",
+        "database-lab-en",
+        "database-lab-ko",
+        "database-control-procedure",
+        "database-lab-procedure",
+        "graph-lab-ko",
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "graph-control-en",
+        "graph-lab-en",
+        "graph-control-ko",
+        "seminar-agenda-ko",
+        "capture-control-ko",
+        "seminar-agenda-en",
+        "capture-log-ko",
+        "seminar-minutes-procedure",
+        "seminar-agenda-procedure",
+        "research-notes-ko",
+        "graph-control-procedure",
+        "graph-lab-procedure",
+        "capture-control-en",
+        "research-notes-en",
+        "research-control-ko",
+        "capture-log-en",
+        "research-control-procedure",
+        "research-control-en",
+        "research-notes-procedure",
+        "capture-control-procedure",
+        "capture-log-procedure"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 27.774332993431017,
+      "repeat_ms": [
+        30.675249989144504
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No; 6 demonstration notes restored into a new folder.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "RS-044-en",
+      "question": "Which RS-044 coating dried faster, and what was not measured?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "research-notes-en",
+        "research-notes-ko",
+        "research-control-ko",
+        "research-control-en",
+        "research-notes-procedure",
+        "research-control-procedure",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "graph-control-en",
+        "graph-lab-ko",
+        "graph-lab-procedure",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "graph-control-procedure",
+        "capture-control-en",
+        "seminar-agenda-en",
+        "seminar-minutes-procedure",
+        "graph-lab-en",
+        "seminar-minutes-en",
+        "seminar-agenda-procedure",
+        "seminar-minutes-ko",
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-ko",
+        "seminar-agenda-ko",
+        "database-lab-en",
+        "database-control-en",
+        "graph-control-ko",
+        "database-lab-ko",
+        "database-control-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 32.21495801699348,
+      "repeat_ms": [
+        20.898499991744757
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Cedar (18 minutes vs Birch 31); durability and safety unmeasured.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "RS-044-ko",
+      "question": "RS-044에서 더 빨리 마른 코팅은 무엇이며 측정하지 않은 항목은?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "research-notes-ko",
+        "research-control-ko",
+        "research-notes-en",
+        "research-control-en",
+        "research-notes-procedure",
+        "research-control-procedure",
+        "graph-lab-ko",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "graph-control-en",
+        "graph-lab-procedure",
+        "database-lab-procedure",
+        "graph-control-procedure",
+        "database-control-procedure",
+        "capture-log-ko",
+        "seminar-minutes-procedure",
+        "capture-control-ko",
+        "graph-lab-en",
+        "capture-control-en",
+        "seminar-agenda-procedure",
+        "seminar-minutes-ko",
+        "capture-log-en",
+        "database-lab-ko",
+        "seminar-agenda-en",
+        "database-control-ko",
+        "database-lab-en",
+        "graph-control-ko",
+        "seminar-agenda-ko",
+        "seminar-minutes-en",
+        "database-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 0.9197207891481876,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 0.9197207891481876,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 20.616875000996515,
+      "repeat_ms": [
+        22.873332985909656
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Cedar (18 minutes vs Birch 31); durability and safety unmeasured.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "RS-040-en",
+      "question": "What humidity did RS-040 record?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "research-control-en",
+        "research-control-ko",
+        "research-notes-en",
+        "research-control-procedure",
+        "research-notes-ko",
+        "research-notes-procedure",
+        "database-control-procedure",
+        "capture-log-procedure",
+        "capture-control-procedure",
+        "graph-control-procedure",
+        "graph-lab-procedure",
+        "seminar-agenda-en",
+        "seminar-minutes-en",
+        "database-lab-procedure",
+        "graph-control-ko",
+        "graph-control-en",
+        "graph-lab-ko",
+        "seminar-agenda-procedure",
+        "seminar-minutes-procedure",
+        "seminar-minutes-ko",
+        "database-control-en",
+        "seminar-agenda-ko",
+        "graph-lab-en",
+        "database-control-ko",
+        "database-lab-en",
+        "capture-control-ko",
+        "capture-log-en",
+        "capture-control-en",
+        "capture-log-ko",
+        "database-lab-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 25.077124999370426,
+      "repeat_ms": [
+        25.676999997813255
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "45 percent.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "RS-040-ko",
+      "question": "RS-040에 기록된 습도는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "research-control-ko",
+        "research-control-en",
+        "research-notes-en",
+        "research-notes-ko",
+        "research-control-procedure",
+        "research-notes-procedure",
+        "seminar-minutes-ko",
+        "capture-log-procedure",
+        "database-control-procedure",
+        "capture-control-procedure",
+        "graph-lab-ko",
+        "graph-lab-procedure",
+        "database-control-ko",
+        "database-lab-procedure",
+        "graph-control-procedure",
+        "seminar-minutes-en",
+        "seminar-agenda-procedure",
+        "seminar-agenda-en",
+        "seminar-minutes-procedure",
+        "graph-control-ko",
+        "capture-control-ko",
+        "seminar-agenda-ko",
+        "database-control-en",
+        "capture-log-ko",
+        "database-lab-ko",
+        "database-lab-en",
+        "graph-control-en",
+        "capture-log-en",
+        "graph-lab-en",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 20.3643330023624,
+      "repeat_ms": [
+        21.76516701001674
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "45 percent.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "SM-812-en",
+      "question": "How much time and which room did SM-812 reserve for source inspection?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "seminar-agenda-en",
+        "seminar-agenda-ko",
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "seminar-agenda-procedure",
+        "seminar-minutes-procedure",
+        "graph-lab-ko",
+        "graph-lab-en",
+        "database-control-procedure",
+        "database-control-ko",
+        "database-lab-procedure",
+        "research-control-en",
+        "graph-control-en",
+        "database-lab-en",
+        "research-control-ko",
+        "database-control-en",
+        "research-notes-ko",
+        "research-notes-en",
+        "research-control-procedure",
+        "database-lab-ko",
+        "graph-control-procedure",
+        "research-notes-procedure",
+        "graph-lab-procedure",
+        "capture-log-procedure",
+        "graph-control-ko",
+        "capture-control-procedure",
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-ko",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 26.415957981953397,
+      "repeat_ms": [
+        30.813499994110316
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "25 minutes; Kauri 3.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "SM-812-ko",
+      "question": "SM-812 출처 확인 시간과 장소는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "seminar-agenda-ko",
+        "seminar-agenda-en",
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "seminar-agenda-procedure",
+        "seminar-minutes-procedure",
+        "graph-lab-ko",
+        "database-control-ko",
+        "database-lab-ko",
+        "graph-lab-en",
+        "database-lab-en",
+        "database-control-en",
+        "graph-control-en",
+        "database-control-procedure",
+        "capture-control-ko",
+        "graph-control-ko",
+        "database-lab-procedure",
+        "research-control-ko",
+        "research-notes-ko",
+        "graph-control-procedure",
+        "research-control-en",
+        "capture-log-procedure",
+        "graph-lab-procedure",
+        "capture-control-procedure",
+        "capture-log-en",
+        "research-control-procedure",
+        "capture-log-ko",
+        "capture-control-en",
+        "research-notes-en",
+        "research-notes-procedure"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 22.776875004637986,
+      "repeat_ms": [
+        27.160541008925065
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "25 minutes; Kauri 3.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "SM-821-en",
+      "question": "What did the SM-821 group request before the next meeting?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "seminar-agenda-en",
+        "seminar-minutes-procedure",
+        "seminar-agenda-ko",
+        "seminar-agenda-procedure",
+        "database-control-procedure",
+        "graph-lab-procedure",
+        "graph-control-procedure",
+        "database-lab-procedure",
+        "database-control-ko",
+        "capture-log-procedure",
+        "database-control-en",
+        "capture-control-procedure",
+        "research-control-procedure",
+        "research-notes-procedure",
+        "database-lab-en",
+        "graph-lab-en",
+        "graph-control-en",
+        "database-lab-ko",
+        "capture-control-en",
+        "graph-control-ko",
+        "research-control-ko",
+        "research-control-en",
+        "graph-lab-ko",
+        "capture-log-en",
+        "capture-control-ko",
+        "research-notes-en",
+        "capture-log-ko",
+        "research-notes-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 43.07079201680608,
+      "repeat_ms": [
+        36.377750016981736
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "A saved PDF sample; export demo postponed.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "SM-821-ko",
+      "question": "SM-821 모임은 다음 회의 전에 무엇을 요청했나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "seminar-agenda-ko",
+        "seminar-minutes-procedure",
+        "seminar-agenda-en",
+        "seminar-agenda-procedure",
+        "database-control-ko",
+        "database-control-procedure",
+        "graph-lab-procedure",
+        "graph-control-procedure",
+        "database-lab-procedure",
+        "capture-log-procedure",
+        "database-control-en",
+        "capture-control-procedure",
+        "research-control-procedure",
+        "research-notes-procedure",
+        "graph-control-ko",
+        "database-lab-ko",
+        "database-lab-en",
+        "capture-control-ko",
+        "graph-lab-ko",
+        "research-control-ko",
+        "graph-lab-en",
+        "graph-control-en",
+        "capture-control-en",
+        "capture-log-ko",
+        "research-control-en",
+        "capture-log-en",
+        "research-notes-ko",
+        "research-notes-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 69.99554100912064,
+      "repeat_ms": [
+        47.427042009076104
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "A saved PDF sample; export demo postponed.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "PX-606-en",
+      "question": "Which PX-606 pages lacked extracted text?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-en",
+        "capture-control-ko",
+        "capture-log-procedure",
+        "capture-control-procedure",
+        "database-control-ko",
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "database-control-en",
+        "database-lab-ko",
+        "research-notes-procedure",
+        "graph-lab-procedure",
+        "research-notes-en",
+        "database-lab-en",
+        "graph-control-procedure",
+        "seminar-minutes-procedure",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "seminar-agenda-en",
+        "seminar-agenda-procedure",
+        "research-control-procedure",
+        "seminar-agenda-ko",
+        "research-control-en",
+        "graph-control-ko",
+        "graph-lab-ko",
+        "research-control-ko",
+        "graph-control-en",
+        "research-notes-ko",
+        "graph-lab-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 35.29941599117592,
+      "repeat_ms": [
+        41.20725000393577
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Pages 3, 5, 7; no OCR or scan classification.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "PX-606-ko",
+      "question": "PX-606에서 텍스트가 추출되지 않은 페이지는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-ko",
+        "capture-control-en",
+        "capture-log-procedure",
+        "capture-control-procedure",
+        "database-control-ko",
+        "seminar-minutes-ko",
+        "database-lab-ko",
+        "graph-lab-procedure",
+        "research-notes-procedure",
+        "seminar-minutes-en",
+        "graph-control-procedure",
+        "graph-lab-ko",
+        "database-control-en",
+        "database-lab-procedure",
+        "database-lab-en",
+        "seminar-minutes-procedure",
+        "database-control-procedure",
+        "research-control-procedure",
+        "seminar-agenda-procedure",
+        "graph-control-en",
+        "research-control-ko",
+        "graph-control-ko",
+        "seminar-agenda-ko",
+        "research-notes-en",
+        "research-control-en",
+        "research-notes-ko",
+        "graph-lab-en",
+        "seminar-agenda-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 30.40404198691249,
+      "repeat_ms": [
+        20.38870900287293
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Pages 3, 5, 7; no OCR or scan classification.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "PX-660-en",
+      "question": "How many PX-660 pages had text?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "capture-control-en",
+        "capture-control-ko",
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "seminar-agenda-en",
+        "seminar-minutes-ko",
+        "research-notes-en",
+        "graph-control-ko",
+        "seminar-minutes-en",
+        "database-lab-ko",
+        "database-lab-en",
+        "seminar-agenda-ko",
+        "database-control-ko",
+        "graph-control-en",
+        "research-notes-procedure",
+        "research-control-ko",
+        "seminar-minutes-procedure",
+        "graph-control-procedure",
+        "research-notes-ko",
+        "graph-lab-ko",
+        "research-control-en",
+        "database-control-en",
+        "seminar-agenda-procedure",
+        "database-lab-procedure",
+        "graph-lab-procedure",
+        "graph-lab-en",
+        "research-control-procedure",
+        "database-control-procedure"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.2701249984093,
+      "repeat_ms": [
+        20.048375008627772
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "All four pages; Markdown has no physical pages.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "PX-660-ko",
+      "question": "PX-660에서 텍스트가 있던 페이지 수는?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "capture-control-ko",
+        "capture-control-en",
+        "capture-log-ko",
+        "capture-log-en",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "seminar-minutes-ko",
+        "graph-control-ko",
+        "database-lab-ko",
+        "seminar-agenda-en",
+        "seminar-agenda-ko",
+        "database-control-ko",
+        "graph-control-en",
+        "seminar-minutes-en",
+        "research-notes-en",
+        "research-control-ko",
+        "graph-lab-ko",
+        "database-lab-en",
+        "research-notes-ko",
+        "graph-lab-en",
+        "research-notes-procedure",
+        "research-control-en",
+        "database-control-en",
+        "graph-control-procedure",
+        "seminar-minutes-procedure",
+        "database-lab-procedure",
+        "graph-lab-procedure",
+        "seminar-agenda-procedure",
+        "database-control-procedure",
+        "research-control-procedure"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 21.43983298446983,
+      "repeat_ms": [
+        23.154583002906293
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "All four pages; Markdown has no physical pages.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "compare-graphs",
+      "question": "Compare the runtimes of AT-201 and AT-210.",
+      "categories": [
+        "english",
+        "multi-document"
+      ],
+      "ranking": [
+        "graph-control-en",
+        "graph-lab-en",
+        "graph-lab-ko",
+        "graph-control-ko",
+        "graph-control-procedure",
+        "graph-lab-procedure",
+        "research-notes-ko",
+        "research-notes-en",
+        "seminar-agenda-en",
+        "database-lab-en",
+        "research-control-en",
+        "seminar-minutes-procedure",
+        "seminar-minutes-en",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "seminar-minutes-ko",
+        "seminar-agenda-ko",
+        "database-lab-ko",
+        "database-control-ko",
+        "database-control-en",
+        "research-control-ko",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "research-control-procedure",
+        "seminar-agenda-procedure",
+        "capture-control-en",
+        "research-notes-procedure",
+        "capture-control-ko",
+        "capture-log-en",
+        "capture-log-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 26.339583011576906,
+      "repeat_ms": [
+        30.26500000851229
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "12 ms versus 39 ms; heap run is 27 ms faster.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "compare-pdf",
+      "question": "PX-606과 PX-660의 텍스트 추출 범위를 비교해 주세요.",
+      "categories": [
+        "korean",
+        "multi-document"
+      ],
+      "ranking": [
+        "capture-control-ko",
+        "capture-control-en",
+        "capture-log-ko",
+        "capture-log-en",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "research-notes-ko",
+        "research-notes-en",
+        "seminar-minutes-ko",
+        "graph-control-ko",
+        "graph-control-en",
+        "database-lab-ko",
+        "graph-lab-ko",
+        "database-control-ko",
+        "seminar-agenda-ko",
+        "database-lab-en",
+        "research-control-ko",
+        "seminar-agenda-en",
+        "seminar-minutes-en",
+        "research-notes-procedure",
+        "graph-control-procedure",
+        "research-control-en",
+        "graph-lab-procedure",
+        "graph-lab-en",
+        "seminar-minutes-procedure",
+        "database-control-en",
+        "database-lab-procedure",
+        "research-control-procedure",
+        "database-control-procedure",
+        "seminar-agenda-procedure"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 0.9197207891481876,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 0.9197207891481876,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 25.99437499884516,
+      "repeat_ms": [
+        28.311916015809402
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "5/8 pages vs 4/4; missing PX-606 pages 3,5,7.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "durability-negative",
+      "question": "Did RS-044 prove Cedar is safer and more durable?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "ranking": [
+        "research-notes-ko",
+        "research-notes-en",
+        "research-control-en",
+        "research-control-ko",
+        "research-notes-procedure",
+        "research-control-procedure",
+        "capture-control-en",
+        "capture-control-procedure",
+        "capture-control-ko",
+        "capture-log-procedure",
+        "graph-control-en",
+        "seminar-agenda-procedure",
+        "graph-lab-ko",
+        "seminar-minutes-procedure",
+        "graph-lab-en",
+        "database-lab-procedure",
+        "seminar-minutes-en",
+        "graph-lab-procedure",
+        "database-lab-en",
+        "database-control-procedure",
+        "graph-control-procedure",
+        "seminar-minutes-ko",
+        "capture-log-en",
+        "capture-log-ko",
+        "seminar-agenda-en",
+        "database-lab-ko",
+        "database-control-en",
+        "database-control-ko",
+        "graph-control-ko",
+        "seminar-agenda-ko"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 28.358207986457273,
+      "repeat_ms": [
+        27.368417009711266
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No durability or safety measurement is available; decline that conclusion.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "identifier-negative",
+      "question": "What was measured in AT-999?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "ranking": [
+        "graph-lab-procedure",
+        "graph-lab-ko",
+        "graph-control-en",
+        "graph-control-procedure",
+        "graph-lab-en",
+        "graph-control-ko",
+        "research-notes-en",
+        "capture-control-procedure",
+        "research-notes-procedure",
+        "capture-log-procedure",
+        "database-lab-procedure",
+        "seminar-agenda-en",
+        "database-control-procedure",
+        "research-control-en",
+        "research-control-procedure",
+        "research-notes-ko",
+        "seminar-minutes-procedure",
+        "research-control-ko",
+        "seminar-agenda-procedure",
+        "seminar-agenda-ko",
+        "capture-control-en",
+        "capture-log-en",
+        "capture-log-ko",
+        "capture-control-ko",
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "database-lab-en",
+        "database-lab-ko",
+        "database-control-ko",
+        "database-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 32.28562499862164,
+      "repeat_ms": [
+        40.367042005527765
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No AT-999 record; do not confuse AT-201 or AT-210.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "fees-negative",
+      "question": "SM-812 세미나 참가비는 얼마인가요?",
+      "categories": [
+        "korean",
+        "negative"
+      ],
+      "ranking": [
+        "seminar-minutes-ko",
+        "seminar-minutes-en",
+        "seminar-agenda-ko",
+        "seminar-agenda-en",
+        "seminar-agenda-procedure",
+        "seminar-minutes-procedure",
+        "database-lab-ko",
+        "graph-lab-ko",
+        "database-control-ko",
+        "database-lab-en",
+        "graph-control-ko",
+        "graph-lab-en",
+        "graph-control-en",
+        "database-control-en",
+        "capture-control-ko",
+        "database-control-procedure",
+        "capture-log-ko",
+        "database-lab-procedure",
+        "research-control-ko",
+        "capture-control-procedure",
+        "research-notes-ko",
+        "capture-log-procedure",
+        "capture-control-en",
+        "graph-control-procedure",
+        "research-control-procedure",
+        "research-notes-en",
+        "graph-lab-procedure",
+        "research-notes-procedure",
+        "capture-log-en",
+        "research-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 26.67816702160053,
+      "repeat_ms": [
+        70.72420901386067
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No attendance fee is supplied; decline rather than inventing a price.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "recovery-negative",
+      "question": "What recovery time did DB-318 guarantee?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "ranking": [
+        "database-lab-en",
+        "database-lab-ko",
+        "database-control-en",
+        "database-control-ko",
+        "database-lab-procedure",
+        "database-control-procedure",
+        "graph-control-en",
+        "graph-lab-en",
+        "research-notes-ko",
+        "graph-lab-ko",
+        "seminar-agenda-ko",
+        "seminar-agenda-en",
+        "research-notes-en",
+        "graph-control-ko",
+        "seminar-minutes-en",
+        "seminar-minutes-ko",
+        "graph-control-procedure",
+        "seminar-minutes-procedure",
+        "research-control-en",
+        "seminar-agenda-procedure",
+        "graph-lab-procedure",
+        "capture-control-procedure",
+        "capture-log-procedure",
+        "research-control-ko",
+        "research-control-procedure",
+        "research-notes-procedure",
+        "capture-control-ko",
+        "capture-log-ko",
+        "capture-log-en",
+        "capture-control-en"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 35.65691600670107,
+      "repeat_ms": [
+        40.26012498070486
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No recovery-time guarantee is supplied; counts are not a recovery-time benchmark.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    }
+  ],
+  "dataset_sha256": "1db3fa61eb06da176fb55b62054953afaa78b01d9206501d6575441e7efede52",
+  "environment": {
+    "python": "3.14.7",
+    "system": "Darwin",
+    "architecture": "arm64",
+    "packages": {
+      "qdrant-client": "1.19.1",
+      "httpx": "0.28.1"
+    },
+    "git_commit": "c7f72e1e79a1bb2a2a5f9b29fd3d1b54c56b8b84",
+    "harness_sha256": "cbb8f4bd7b12f3d19aca52b0a04819528ba3c396f4a3c0865b9e3d4c63ce5a7c",
+    "embedding_and_indexing_sha256": "2d040dc2204f73c59f8265c90a9e7b6d7152b9f0310622bdaa07e4c7c76b9ba1"
+  }
+}

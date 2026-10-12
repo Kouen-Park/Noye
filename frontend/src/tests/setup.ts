@@ -27,6 +27,11 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+// jsdom has no native modal/focus implementation. Real focus trapping and return
+// are checked in the browser; component tests only emulate the open attribute.
+HTMLDialogElement.prototype.showModal = function () { this.setAttribute("open", ""); };
+HTMLDialogElement.prototype.close = function () { this.removeAttribute("open"); };
+
 // Each test renders into a fresh document. Without this, a query in one test can
 // match an element another test left behind, which produces failures that move
 // when tests are reordered.

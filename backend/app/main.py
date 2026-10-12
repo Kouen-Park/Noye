@@ -7,16 +7,35 @@ delete the user's documents, so it must not be exposed on a network interface
 without adding authentication first.
 """
 
-from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import chat, documents, files, index, search
+from app.api import (
+    ai,
+    chat,
+    desktop_services,
+    documents,
+    files,
+    folders,
+    index,
+    jobs,
+    knowledge_jobs,
+    models,
+    runtime,
+    search,
+    source_documents,
+    wiki,
+    workspace,
+)
 from app.config import get_settings
 from app.db.database import connect, init_schema
+from app.db.jobs import recover_interrupted
 from app.logging_config import configure_logging, get_logger
+from app.services.ingestion import cancel_all_ingestion
+from app.services.knowledge_maintenance import register as register_wiki_jobs
+from app.services.source_documents.jobs import register as register_source_document_jobs
 
 # Before the routers, so anything they log during import is already captured.
 # configure_logging is idempotent, which matters here: uvicorn's reloader and the
@@ -25,17 +44,52 @@ from app.logging_config import configure_logging, get_logger
 configure_logging()
 logger = get_logger("main")
 
+register_wiki_jobs()
+
+register_source_document_jobs()
+
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    # Finish WAL and schema initialization before the browser's first parallel
-    # /files and /index/status requests can race on a brand-new database.
+async def lifespan(app: FastAPI):
+    # Complete schema setup before serving concurrent requests or announcing
+    # desktop readiness. Request-time checks remain defensive/idempotent.
     connection = connect()
     try:
         init_schema(connection)
+        recover_interrupted(connection)
+        from app.services.wiki.publication import recover_publications
+
+        recover_publications(connection)
     finally:
         connection.close()
-    yield
+    from app.services.folder_scanner import watcher
+    from app.services.knowledge_jobs import recover_interrupted as recover_knowledge
+    from app.services.knowledge_jobs import worker
+    from app.services.wiki.observer import observer
+
+    connection = connect()
+    try:
+        recover_knowledge(connection)
+    finally:
+        connection.close()
+    watcher.start()
+    worker.start()
+    observer.start()
+    desktop_services.manager.closing = False
+    try:
+        yield
+    finally:
+        watcher.stop()
+        observer.stop()
+        worker.stop()
+        cancel_all_ingestion()
+        await models.manager.cancel()
+        await desktop_services.manager.shutdown()
+        connection = connect()
+        try:
+            recover_interrupted(connection)
+        finally:
+            connection.close()
 
 
 app = FastAPI(
@@ -75,6 +129,16 @@ app.include_router(search.router)
 app.include_router(chat.router)
 app.include_router(documents.router)
 app.include_router(index.router)
+app.include_router(ai.router)
+app.include_router(runtime.router)
+app.include_router(models.router)
+app.include_router(desktop_services.router)
+app.include_router(workspace.router)
+app.include_router(jobs.router)
+app.include_router(folders.router)
+app.include_router(knowledge_jobs.router)
+app.include_router(wiki.router)
+app.include_router(source_documents.router)
 
 
 @app.get("/health")

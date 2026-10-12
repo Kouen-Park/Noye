@@ -47,7 +47,7 @@ class ExtractedPage:
         return not self.content
 
 
-def extract_pdf(path: str | Path) -> list[ExtractedPage]:
+def extract_pdf(path: str | Path, *, source_bytes: bytes | None = None) -> list[ExtractedPage]:
     """Extract every page of a PDF, preserving page numbers.
 
     Returns one :class:`ExtractedPage` per page, in document order, including
@@ -61,11 +61,12 @@ def extract_pdf(path: str | Path) -> list[ExtractedPage]:
     """
     pdf_path = Path(path)
 
-    if not pdf_path.is_file():
+    if source_bytes is None and not pdf_path.is_file():
         raise ExtractionError(f"File not found: {pdf_path}")
 
     try:
-        document = pymupdf.open(pdf_path)
+        document = (pymupdf.open(stream=source_bytes, filetype="pdf")
+                    if source_bytes is not None else pymupdf.open(pdf_path))
     except Exception as exc:  # PyMuPDF raises several unrelated types here.
         raise ExtractionError(f"Could not open PDF: {pdf_path.name}") from exc
 
@@ -91,7 +92,9 @@ def extract_pdf(path: str | Path) -> list[ExtractedPage]:
     return pages
 
 
-def extract_text_file(path: str | Path) -> list[ExtractedPage]:
+def extract_text_file(
+    path: str | Path, *, source_bytes: bytes | None = None
+) -> list[ExtractedPage]:
     """Extract a Markdown or plain-text file as a single unit.
 
     These formats have no pages, so the whole file is returned as one
@@ -112,11 +115,11 @@ def extract_text_file(path: str | Path) -> list[ExtractedPage]:
     """
     text_path = Path(path)
 
-    if not text_path.is_file():
+    if source_bytes is None and not text_path.is_file():
         raise ExtractionError(f"File not found: {text_path}")
 
     try:
-        raw = text_path.read_bytes()
+        raw = source_bytes if source_bytes is not None else text_path.read_bytes()
     except OSError as exc:
         raise ExtractionError(f"Could not read {text_path.name}: {exc}") from exc
 
@@ -134,14 +137,16 @@ def extract_text_file(path: str | Path) -> list[ExtractedPage]:
     return [ExtractedPage(page_number=1, content=normalised)]
 
 
-def extract_file(path: str | Path, file_type: FileType) -> list[ExtractedPage]:
+def extract_file(
+    path: str | Path, file_type: FileType, *, source_bytes: bytes | None = None
+) -> list[ExtractedPage]:
     """Extract any supported file, dispatching on its type.
 
     Raises:
         ExtractionError: extraction failed, or the type has no extractor.
     """
     if file_type is FileType.PDF:
-        return extract_pdf(path)
+        return extract_pdf(path, source_bytes=source_bytes)
     if file_type in (FileType.MARKDOWN, FileType.TEXT):
-        return extract_text_file(path)
+        return extract_text_file(path, source_bytes=source_bytes)
     raise ExtractionError(f"No extractor for {file_type.value} files")

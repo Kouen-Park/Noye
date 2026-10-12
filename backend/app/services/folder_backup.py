@@ -1,0 +1,176 @@
+"""Portable authored assets from authorized roots, without external originals."""
+
+import hashlib
+import os
+import sqlite3
+import stat
+import uuid
+from pathlib import Path
+
+from app.db.sources import clear_issue, record_issue
+from app.services.folders import SourceError, read_original, root_handle
+
+
+def stage_assets(connection, staged):
+    connection.row_factory = sqlite3.Row
+    missing_roots, captured = [], []
+    for row in connection.execute("SELECT * FROM source_roots ORDER BY id"):
+        root = dict(row)
+        try:
+            with root_handle(root) as root_fd:
+                paths = []
+
+                def walk(fd, prefix, paths=paths):
+                    with os.scandir(fd) as entries:
+                        for entry in entries:
+                            relative = prefix + "/" + entry.name
+                            info = entry.stat(follow_symlinks=False)
+                            if len(paths) > 100000 or entry.is_symlink():
+                                raise SourceError(
+                                    "invalid_path", "Wiki backup cannot follow links."
+                                )
+                            if stat.S_ISDIR(info.st_mode):
+                                child = os.open(
+                                    entry.name,
+                                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                                    dir_fd=fd,
+                                )
+                                try:
+                                    walk(child, relative)
+                                finally:
+                                    os.close(child)
+                            elif stat.S_ISREG(info.st_mode):
+                                paths.append(relative)
+                            else:
+                                raise SourceError(
+                                    "invalid_path", "Wiki backup cannot copy special files."
+                                )
+
+                for name in ("wiki", "documents"):
+                    try:
+                        fd = os.open(
+                            name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=root_fd
+                        )
+                    except FileNotFoundError:
+                        continue
+                    try:
+                        walk(fd, name)
+                    finally:
+                        os.close(fd)
+            for relative in paths:
+                data, digest, _ = read_original(root, relative)
+                target = staged / "knowledge" / root["id"] / relative
+                try:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    if target.exists():
+                        with target.open("rb") as previous:
+                            previous_digest = hashlib.file_digest(previous, "sha256").hexdigest()
+                        if previous_digest != digest:
+                            parts = Path(relative).parts
+                            retained = (
+                                staged
+                                / "knowledge"
+                                / root["id"]
+                                / parts[0]
+                                / "Recovered backups"
+                                / previous_digest
+                                / Path(*parts[1:])
+                            )
+                            retained.parent.mkdir(parents=True, exist_ok=True)
+                            if retained.exists():
+                                with retained.open("rb") as saved:
+                                    if (
+                                        hashlib.file_digest(saved, "sha256").hexdigest()
+                                        != previous_digest
+                                    ):
+                                        raise ValueError("A retained recovery copy is damaged.")
+                                target.unlink()
+                            else:
+                                target.rename(retained)
+                    target.write_bytes(data)
+                except OSError as exc:
+                    # A failed local staging write must not be downgraded to an
+                    # unavailable external root and published as truncated writing.
+                    raise ValueError(
+                        "Authored writing could not be copied into the backup."
+                    ) from exc
+                captured.append((root, relative, digest))
+        except (SourceError, OSError) as exc:
+            if isinstance(exc, SourceError) and exc.code in {"invalid_path", "too_large"}:
+                raise ValueError(str(exc)) from exc
+            missing_roots.append(root["id"])
+    # External writers do not share the application snapshot guard.
+    for root, relative, digest in captured:
+        try:
+            _, current, _ = read_original(root, relative)
+        except SourceError as exc:
+            raise ValueError(
+                "Authored knowledge changed or became unavailable during backup."
+            ) from exc
+        if current != digest:
+            raise ValueError("Authored knowledge changed during backup. Retry when idle.")
+    return missing_roots, captured
+
+
+def verify_assets(captured):
+    for root, relative, digest in captured:
+        try:
+            _, current, _ = read_original(root, relative)
+        except SourceError as exc:
+            raise ValueError("Authored knowledge became unavailable during backup.") from exc
+        if current != digest:
+            raise ValueError("Authored knowledge changed during backup. Retry when idle.")
+
+
+def reconnect_assets(connection, root_id, workspace):
+    """Copy recovered authored files only after native reconnection. Never overwrite edits."""
+    from app.services.filing import rename_exclusive
+    from app.services.folders import parent_handle, root_record
+
+    root = root_record(connection, root_id)
+    recovered = Path(workspace) / "knowledge" / root_id
+    if not recovered.is_dir():
+        return
+    for path in recovered.rglob("*"):
+        if path.is_symlink():
+            raise SourceError("invalid_path", "Recovered knowledge contains a link.")
+        if not path.is_file():
+            continue
+        relative = path.relative_to(recovered).as_posix()
+        if relative.split("/")[0] not in {"wiki", "documents"}:
+            raise SourceError("invalid_path", "Recovered content is not an authored asset.")
+        with parent_handle(root, relative, create=True) as (fd, name):
+            temporary = ".noye-reconnect-" + uuid.uuid4().hex
+            try:
+                output_fd = os.open(
+                    temporary,
+                    os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                    0o600,
+                    dir_fd=fd,
+                )
+                with os.fdopen(output_fd, "wb") as output:
+                    output.write(path.read_bytes())
+                    output.flush()
+                    os.fsync(output.fileno())
+                try:
+                    rename_exclusive(fd, temporary, fd, name)
+                    os.fsync(fd)
+                except FileExistsError:
+                    _, digest, _ = read_original(root, relative)
+                    if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                        record_issue(
+                            connection,
+                            root_id,
+                            "recovery",
+                            relative,
+                            "Recovered Wiki/output conflicts with the existing file. "
+                            "Both versions were preserved; the recovered copy remains "
+                            "in the restored workspace.",
+                        )
+                        continue
+                clear_issue(connection, root_id, "recovery", relative)
+            finally:
+                try:
+                    os.unlink(temporary, dir_fd=fd)
+                except FileNotFoundError:
+                    pass

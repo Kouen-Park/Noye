@@ -7,6 +7,7 @@ import { CrossIcon } from "@/components/icons";
 import { DropZone } from "@/components/library/drop-zone";
 import { FileCard } from "@/components/library/file-card";
 import { IntegrityPanel } from "@/components/library/integrity-panel";
+import { JobsPanel } from "@/components/library/jobs-panel";
 import { useLibrary } from "@/hooks/use-library";
 import { isProcessing } from "@/lib/api";
 import { GROUPS, groupOf } from "@/lib/status";
@@ -77,6 +78,11 @@ export default function LibraryPage() {
   return (
     <AppShell
       current="Library"
+      title="Library"
+      description="Search and manage the files behind your answers. Files stay on this machine."
+      workspace
+      actions={!isEmpty && <DropZone compact onFiles={(files) => void library.addFiles(files)}
+        uploading={library.uploading} disabled={library.phase === "error"} />}
       passageCount={library.phase === "ready" ? passageCount : undefined}
       fileCount={indexedFiles.length}
     >
@@ -86,30 +92,23 @@ export default function LibraryPage() {
         {library.announcement}
       </p>
 
-      <h1 className="text-[27px]">Library</h1>
-      <p className="mt-1 max-w-[60ch] text-ink-soft">
-        Anything you add here becomes searchable by meaning — and every answer points back to
-        the page it came from.
-      </p>
-      {/* The one claim that is the product's reason to exist. It was previously
-          stated only inside the backend-unreachable error, which most people
-          will never see. */}
-      <p className="mb-6 mt-1 text-[13px] text-ink-faint">
-        Everything stays on this machine. Nothing is uploaded anywhere.
-      </p>
-
-      <DropZone
+      <div className="min-h-0 flex-1 overflow-y-auto">
+      {isEmpty && <DropZone
         onFiles={(files) => void library.addFiles(files)}
         uploading={library.uploading}
         disabled={library.phase === "error"}
-      />
+      />}
+      {library.phase === "ready" && <JobsPanel
+        revision={library.files.map((file) => file.id + ":" + file.status).join(",")}
+        onChange={library.reload}
+      />}
 
       {library.rejected.length > 0 && (
         <ul className="mt-3 space-y-2">
           {library.rejected.map((rejection) => (
             <li
               key={rejection.key}
-              className="flex items-start gap-2 rounded-md border border-fail bg-fail-wash px-3 py-2 text-[13px] text-fail"
+              role="alert" className="flex items-start gap-2 rounded-md border border-fail bg-fail-wash px-3 py-2 text-[13px] text-fail"
             >
               <span className="min-w-0 flex-1">
                 <strong className="font-semibold">{rejection.name}</strong> — {rejection.message}
@@ -118,7 +117,7 @@ export default function LibraryPage() {
                 type="button"
                 onClick={() => library.dismissRejection(rejection.key)}
                 aria-label={`Dismiss the message about ${rejection.name}`}
-                className="shrink-0 rounded-sm p-1"
+                className="flex min-h-8 min-w-8 shrink-0 items-center justify-center rounded-sm hover:bg-sunken"
               >
                 <CrossIcon className="h-3.5 w-3.5" />
               </button>
@@ -163,8 +162,8 @@ export default function LibraryPage() {
       )}
 
       {isEmpty && (
-        <div className="mt-6 rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center">
-          <p className="font-display text-lg">Nothing on the shelf yet</p>
+        <div className="mt-4 text-center">
+          <p className="text-[14px] font-medium">Nothing on the shelf yet</p>
           <p className="mt-1 text-[13.5px] text-ink-soft">
             Add a lecture PDF, a page of notes, or a text file to begin.
           </p>
@@ -175,7 +174,7 @@ export default function LibraryPage() {
         <section key={group.key} aria-labelledby={`group-${group.key}`}>
           <h2
             id={`group-${group.key}`}
-            className="mb-2.5 mt-7 flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint"
+            className="mt-5 mb-1 flex items-center gap-2.5 text-[12px] font-semibold text-ink-soft"
           >
             {group.heading}
             <span aria-hidden="true" className="h-px flex-1 bg-edge" />
@@ -198,6 +197,7 @@ export default function LibraryPage() {
           </ul>
         </section>
       ))}
+      </div>
     </AppShell>
   );
 }

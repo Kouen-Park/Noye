@@ -39,9 +39,11 @@ interface DropZoneProps {
   /** Names of uploads currently in flight, reported under the prompt. */
   uploading: string[];
   disabled?: boolean;
+  /** A toolbar picker once the library already contains files. */
+  compact?: boolean;
 }
 
-export function DropZone({ onFiles, uploading, disabled = false }: DropZoneProps) {
+export function DropZone({ onFiles, uploading, disabled = false, compact = false }: DropZoneProps) {
   const inputId = useId();
   const [isDragging, setDragging] = useState(false);
 
@@ -56,7 +58,7 @@ export function DropZone({ onFiles, uploading, disabled = false }: DropZoneProps
       // The drop is handled once, at window level, by the page. This only
       // clears the highlight, so the two cannot both upload the same file.
       onDrop={() => setDragging(false)}
-      className={`rounded-lg border-[1.5px] border-dashed bg-card text-center transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand ${
+      className={`${compact ? "inline-flex min-w-0 max-w-full flex-col rounded-md border border-edge-strong" : "rounded-lg border-[1.5px] border-dashed bg-card text-center"} transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand ${
         isDragging ? "border-brand bg-brand-wash" : "border-edge-strong"
       } ${disabled ? "opacity-60" : "hover:border-brand hover:bg-brand-wash"}`}
     >
@@ -81,20 +83,20 @@ export function DropZone({ onFiles, uploading, disabled = false }: DropZoneProps
 
       <label
         htmlFor={inputId}
-        className={`flex flex-col items-center px-6 py-7 ${disabled ? "" : "cursor-pointer"}`}
+        className={`${compact ? "flex min-h-11 items-center gap-2 px-3 text-[13px] font-semibold md:min-h-8" : "flex flex-col items-center px-6 py-10"} ${disabled ? "" : "cursor-pointer"}`}
       >
-        <span className="mb-2 grid h-8 w-8 place-items-center rounded-full bg-brand text-ink-inverse">
+        <span className={compact ? "text-accent-ink" : "mb-2 grid h-8 w-8 place-items-center rounded-full bg-brand text-ink-inverse"}>
           <PlusIcon className="h-4 w-4" />
         </span>
-        <span className="font-display text-base">Drop files to add them</span>
-        <span className="mt-1 text-[13px] text-ink-soft">
+        <span className={compact ? "" : "text-base font-semibold"}>{compact ? "Add files" : "Drop files to add them"}</span>
+        {!compact && <span className="mt-1 text-[13px] text-ink-soft">
           or select them · PDF, Markdown, plain text
-        </span>
+        </span>}
       </label>
 
       {uploading.length > 0 && (
         <p
-          className="border-t border-edge px-6 py-2 text-[13px] text-ink-soft"
+          className="max-w-full border-t border-edge px-3 py-2 text-[12px] text-ink-soft [overflow-wrap:anywhere]"
           data-testid="uploading-line"
         >
           Adding {uploading.length === 1 ? uploading[0] : `${uploading.length} files`}…

@@ -32,13 +32,13 @@ export function DocumentList({
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
+        <h2 className="noye-ui-title">
           Documents
         </h2>
         <button
           type="button"
           onClick={onNew}
-          className="min-h-11 rounded-md border border-edge-strong px-2.5 text-[12.5px] font-semibold text-accent-ink hover:bg-brand-wash md:min-h-0 md:py-1"
+          className="noye-button"
         >
           New
         </button>
@@ -102,14 +102,14 @@ export function DocumentList({
                     </span>
                     {document.is_generated && (
                       <span
-                        className="shrink-0 rounded-sm bg-accent-wash px-1 text-[9.5px] font-bold tracking-wide text-accent-ink"
+                        className="shrink-0 rounded-sm bg-accent-wash px-1 text-xs font-semibold text-accent-ink"
                         title="Started as a generated draft"
                       >
                         DRAFTED
                       </span>
                     )}
                   </span>
-                  <span className="block truncate text-[11px] text-ink-faint">
+                  <span className="noye-meta block truncate">
                     {document.excerpt || "Empty"}
                   </span>
                 </button>
@@ -117,7 +117,7 @@ export function DocumentList({
                   type="button"
                   onClick={() => setConfirming(document.id)}
                   aria-label={`Delete ${document.title}`}
-                  className="rounded-md px-1.5 text-[11px] text-ink-faint hover:text-fail"
+                  className="rounded-md px-2 text-sm text-ink-soft hover:text-fail"
                 >
                   ✕
                 </button>

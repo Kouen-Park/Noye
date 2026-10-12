@@ -13,12 +13,18 @@ import pytest
 from qdrant_client import QdrantClient
 
 from app.config import get_settings
-from app.services import retrieval
+from app.services import index_identity, retrieval
 from app.services.chunking import Chunk
-from app.services.indexing import delete_file_chunks, index_chunks
+from app.services.indexing import delete_file_chunks
+from app.services.indexing import index_chunks as store_chunks
 from app.services.retrieval import SearchResult, search
 
 VECTOR_SIZE = get_settings().qdrant_vector_size
+
+
+def index_chunks(*args, **kwargs):
+    identity = index_identity.current_index_identity()
+    return store_chunks(*args, **kwargs, index_fingerprint=identity.fingerprint)
 
 
 def axis_vector(axis: int) -> list[float]:

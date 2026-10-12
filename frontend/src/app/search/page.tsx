@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { ResultCard } from "@/components/search/result-card";
@@ -24,14 +24,8 @@ import { ApiError, type SearchResponse, searchKnowledge } from "@/lib/api";
  */
 export default function SearchPage() {
   return (
-    <AppShell current="Search">
-      <h1 className="text-[27px]">Search</h1>
-      <p className="mt-1 max-w-[60ch] text-ink-soft">
-        Find a passage by what it means, not the words it happens to use. Every result
-        opens the page it came from.
-      </p>
-
-      <Suspense fallback={<p className="mt-7 text-ink-soft">Opening search…</p>}>
+    <AppShell current="Search" title="Search" description="Find passages and open their original sources.">
+      <Suspense fallback={<p className="text-ink-soft">Opening search…</p>}>
         <SearchView />
       </Suspense>
     </AppShell>
@@ -50,31 +44,26 @@ interface Outcome {
 const IDLE: Outcome = { phase: "idle", response: null, error: null, offline: false };
 
 function SearchView() {
+  const query = useSearchParams().get("q")?.trim() ?? "";
+  return <SearchResults key={query} query={query} />;
+}
+
+function SearchResults({ query }: { query: string }) {
   const router = useRouter();
-  const params = useSearchParams();
-  const query = params.get("q")?.trim() ?? "";
+  const [outcome, setOutcome] = useState<Outcome>(query ? { ...IDLE, phase: "searching" } : IDLE);
+  const [attempt, setAttempt] = useState(0);
+  const retry = useCallback(() => { setOutcome({ ...IDLE, phase: "searching" }); setAttempt(n => n + 1); }, []);
 
-  const [outcome, setOutcome] = useState<Outcome>(IDLE);
-  /** Which query the current outcome belongs to, so a stale one is ignored. */
-  const [settledFor, setSettledFor] = useState<string>("");
-
-  // Deriving from the URL during render rather than syncing in an effect: React
-  // 19 rejects a synchronous setState inside an effect body, and the query
-  // changing is a render-time fact, not an external event.
-  const stale = settledFor !== query;
-
-  const run = useCallback((next: string) => {
-    setSettledFor(next);
-    if (next === "") {
-      setOutcome(IDLE);
-      return;
-    }
-    setOutcome({ phase: "searching", response: null, error: null, offline: false });
-    searchKnowledge(next).then(
+  useEffect(() => {
+    if (!query) return;
+    const controller = new AbortController();
+    searchKnowledge(query, { signal: controller.signal }).then(
       (response) => {
+        if (controller.signal.aborted) return;
         setOutcome({ phase: "done", response, error: null, offline: false });
       },
       (cause: unknown) => {
+        if (controller.signal.aborted) return;
         setOutcome({
           phase: "error",
           response: null,
@@ -84,20 +73,16 @@ function SearchView() {
         });
       },
     );
-  }, []);
-
-  // The URL is the trigger. Kicking the search off from render-time state means
-  // no effect writes state synchronously, which is what React 19 objects to.
-  if (stale) {
-    run(query);
-  }
+    return () => controller.abort();
+  }, [query, attempt]);
 
   const submit = useCallback(
     (next: string) => {
+      if (next.trim() === query && query) { retry(); return; }
       // Navigating rather than fetching is what keeps the query in the URL.
       router.push(`/search?q=${encodeURIComponent(next)}`);
     },
-    [router],
+    [router, query, retry],
   );
 
   const { phase, response, error, offline } = outcome;
@@ -127,11 +112,10 @@ function SearchView() {
       </p>
 
       {phase === "idle" && (
-        <div className="mt-7 rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center">
-          <p className="font-display text-lg">Ask your library something</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Search your library</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
-            Noye compares meaning, so a question in your own words will find the right
-            passage even when it shares no keywords with it.
+            Use a question or describe what you want to find.
           </p>
         </div>
       )}
@@ -148,7 +132,7 @@ function SearchView() {
           </p>
           <button
             type="button"
-            onClick={() => run(query)}
+            onClick={retry}
             className="mt-3 min-h-11 rounded-md bg-fail px-4 text-[13.5px] font-semibold text-canvas md:min-h-0 md:py-2"
           >
             Try again
@@ -157,8 +141,8 @@ function SearchView() {
       )}
 
       {nothingIndexed && (
-        <div className="mt-7 rounded-lg border border-edge-strong bg-card px-6 py-10 text-center">
-          <p className="font-display text-lg">Nothing is searchable yet</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Nothing is searchable yet</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
             Search covers files that have finished indexing. Add something to your library,
             or wait for a file that is still processing.
@@ -173,8 +157,8 @@ function SearchView() {
       )}
 
       {noMatches && (
-        <div className="mt-7 rounded-lg border border-edge-strong bg-card px-6 py-10 text-center">
-          <p className="font-display text-lg">Nothing matched that</p>
+        <div className="mt-6 px-4 py-10 text-center">
+          <p className="text-lg font-semibold">Nothing matched that</p>
           <p className="mx-auto mt-1 max-w-[46ch] text-[13.5px] text-ink-soft">
             Searched {searchedFiles} {searchedFiles === 1 ? "file" : "files"}. Try
             describing what you are after differently, or in more words.
@@ -183,10 +167,10 @@ function SearchView() {
       )}
 
       {phase === "done" && results.length > 0 && (
-        <section aria-labelledby="results-heading" className="mt-7">
+        <section aria-labelledby="results-heading" className="mt-5">
           <p
             id="results-heading"
-            className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint"
+            className="mb-2 text-[12px] font-medium text-ink-soft"
           >
             {results.length} {results.length === 1 ? "passage" : "passages"} from{" "}
             {searchedFiles} {searchedFiles === 1 ? "file" : "files"}

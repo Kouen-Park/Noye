@@ -147,6 +147,10 @@ def index_chunks(
     chunks: Sequence[Chunk],
     vectors: Sequence[Sequence[float]],
     client: QdrantClient | None = None,
+    *,
+    index_fingerprint: str | None = None,
+    source_hash: str | None = None,
+    index_metadata: str | None = None,
 ) -> int:
     """Store chunk vectors with their provenance, returning the number stored.
 
@@ -154,6 +158,9 @@ def index_chunks(
     a programming error and raises rather than storing a misaligned index,
     which would attach text to the wrong vector and produce citations that
     point at unrelated pages.
+
+    ``index_fingerprint`` is observed by ingestion, never guessed here. Omitting
+    it creates legacy/unknown points that production retrieval will exclude.
 
     Raises:
         ValueError: the sequences differ in length, or a vector has the wrong
@@ -195,6 +202,9 @@ def index_chunks(
                 PAGE_NUMBER: chunk.page_number,
                 CHUNK_INDEX: chunk.chunk_index,
                 CONTENT: chunk.content,
+                "index_fingerprint": index_fingerprint,
+                "source_hash": source_hash,
+                "index_metadata": index_metadata,
             },
         )
         for chunk, vector in zip(chunks, vectors, strict=True)

@@ -11,12 +11,53 @@ truth for *values* — never hardcode a colour in a component.
 
 ## 1. Direction
 
-**A reference library, not a chat app.**
+**A source-grounded research workspace.**
+
+Direction update, 2026-10-03: both web and desktop now open into a chat-focused
+workspace: conversations on the left, readable central prose and a bottom
+composer, explicit provider selection with the configured model name, and an
+answer-specific passage inspection drawer. The drawer is a native modal dialog
+with a scrolling body, inert background and focus restoration on close. It never
+takes height from the conversation. Provider/source and document options open in
+bounded scrolling panels so short windows retain the conversation and composer.
+Below 768px navigation collapses into a menu. Library, Search and
+Documents remain accessible. Added 2026-10-05: a desktop-only first-run guide shows
+measured hardware, a conservative model candidate and local/Gemini prerequisites.
+It uses the shared semantic tokens, with a fixed header/footer and a scrolling
+body so loading and long instructions do not hide Skip/Continue. Current and
+recommended models are distinct; guide selection never changes the provider.
+The guide can be dismissed and reopened without unmounting the workspace.
+Settings now provides explicit model installation/deletion, model selection and
+Keychain-backed cloud API configuration. The Services section uses quiet rows,
+ownership labels and explicit preparation confirmation, not nested status cards.
+
+Work-centered update, 2026-10-12: all six workspaces share a compact sans-serif
+header and a 200px navigation column with distinct section icons. Navigation can
+collapse to a 60px rail, with the preference remembered locally. Documents and
+Wiki place their secondary lists on the left; focus reading hides both lists
+without unmounting the editor or changing its draft, revision or material scope.
+Save, revision selection and document exports stay above the scrolling body.
+Healthy desktop services no longer occupy a top strip. AI setup and Settings
+remain in navigation and the native application menu; Command-comma opens
+Settings, and Command-Shift-L toggles navigation. Missing service notices remain
+visible. A populated Library uses compact Add files and file rows; empty intake
+keeps the larger accessible drop zone. Optional metadata uses Details; errors,
+recovery actions and original availability stay visible.
+
+Retrieved passages are labelled **consulted**, not verified support. No fabricated
+retrieval stage or progress percentage appears while waiting for a model. Chat
+uses the existing safe Markdown renderer but does not load model-generated images
+automatically or opt into document-only printing.
+Document creation requires the explicit composer option; ordinary and negated
+questions do not select it through keyword matching. Document jobs disclose local
+Ollama independently of the provider selected for ordinary chat. Within the app
+session, drafts, source scope, document options and pending answers survive route
+navigation. This state is not replayed after restart.
 
 Noye turns a person's own files into knowledge they can search, and every answer
 points back to the page it came from. The interface is built from that: paper,
-ink, a shelf, a citation. Warm off-white ground, deep forest green for the things
-you act on, brass for the things that mark and measure.
+ink, a shelf, a citation. Light mode keeps warm off-white, forest actions and brass
+markers; the owner-requested dark mode uses charcoal, off-white and muted blue.
 
 The direction comes from a real object — a cloth-bound book with a green cover
 and a gold-stamped spine. That keeps it away from the two places AI-built
@@ -31,7 +72,7 @@ exceptions and on the one thing that makes Noye Noye: the citation.
 
 ## 2. Palette
 
-Base palette chosen by the project owner. Three tokens are derived, because the
+Base palette chosen by the project owner. Four tokens are derived, because the
 six base colours cannot cover every job — each derivation is measured, not
 guessed.
 
@@ -53,6 +94,7 @@ guessed.
 | `--leaf` | `#FBF8F2` | Card fill in light mode. Surface `#DED0B6` as a card fill turns a long list into a wall of tan. |
 | `--accent-ink` | `#7a5c28` | Brass is 2.70:1 on the background — unreadable. This is the text-safe sibling at 5.41:1. |
 | `--fail` | `#8c1d33` | Oxblood. No failure colour existed, and ingestion has real failure states (scanned PDFs, non-UTF-8 text). |
+| `--ink-on-sunken` | `#5b5349` | Sidebar secondary text. The old muted ink measured 4.03:1 on tan; this measures 4.97:1. Dark mode uses `#b3b9c4` at 9.44:1 on the sidebar. |
 
 ### Measured contrast — light
 
@@ -70,21 +112,35 @@ guessed.
 | Background → surface | 1.33:1 | elevation reads |
 | Background → leaf card | 1.08:1 | too weak alone → **border required** |
 
-### Measured contrast — dark
+### Dark palette — neutral charcoal
 
-Derived from the same palette: a very dark forest ground, brass lifted, green
-lifted enough to stay visible.
+Owner-requested update, 2026-10-05: dark mode uses neutral charcoal surfaces,
+off-white prose/headings and a muted blue action color. Green, brown and brass
+remain in light mode only. Shared semantic tokens keep both modes consistent;
+status still requires words/icons, never hue alone.
 
-| Token | Hex | On its surface |
+| Token | Hex | Purpose |
 | --- | --- | --- |
-| Canvas | `#121714` | — |
-| Card | `#27332a` | 1.38:1 vs canvas — matches light mode's 1.33:1 step |
-| Ink (cream) | `#ece7dc` | 10.69:1 AA ✓ |
-| Ink-soft | `#9ca79e` | 7.28:1 AA ✓ |
-| Accent (brass) | `#d9b478` | 6.75:1 AA ✓ |
-| Brand (green) | `#7faa8c` | 6.28:1 AA ✓ |
-| Fail | `#ef8a95` | 6.84:1 AA ✓ |
-| Card → border | 1.42:1 | edge reads |
+| Canvas | `#17191c` | Neutral charcoal workspace |
+| Card | `#22252a` | Raised panel |
+| Sunken | `#111316` | Inset/sidebar surface |
+| Ink/display | `#f0f1f3` | Off-white text without brown headings |
+| Ink-soft | `#b3b9c4` | Secondary copy |
+| Brand | `#a9b8cc` | Muted blue actions and focus |
+| Accent-ink | `#bcc5d2` | Quiet slate highlights |
+| Fail | `#eca0a7` | Restrained rose with explicit error text |
+
+This is a token-level palette change, not a claim of packaged-app visual
+acceptance. The macOS bundle must be rebuilt before judging it natively.
+Calculated dark contrast: ink/card 13.60:1, secondary/card 7.80:1,
+faint/card 5.68:1, brand/card 7.62:1, filled-button text/brand 8.75:1,
+accent text/wash 8.16:1 and failure text/wash 6.88:1. Strong control borders on
+cards measure 3.07:1. These are calculated token contrasts, not browser observations.
+
+Low-emphasis copy updated 2026-10-12: light `--ink-faint` is `#746a5e`
+(4.62:1 on canvas, 5.00:1 on card), replacing `#98907f` (2.77:1 on
+canvas). Dark uses `#959eab` (6.51:1 on canvas, 5.68:1 on card).
+Navigation copy uses `--ink-on-sunken` (4.97:1 light, 9.44:1 dark).
 
 ---
 
@@ -113,7 +169,7 @@ only reinforcement:
 | --- | --- | --- | --- |
 | Uploading / extracting / chunking / embedding | brass | spinner | "Indexing" + the step |
 | Ready | *none* | check | "Ready" |
-| Failed extraction or indexing | oxblood + 3px left border on the card | cross | "Needs attention" |
+| Failed extraction or indexing | oxblood error text | cross | "Needs attention" |
 | Stopped or interrupted | neutral border and ink | cross | "Stopped" or "Interrupted" |
 
 **Ready is deliberately colourless.** It is the resting state of almost every
@@ -133,7 +189,8 @@ Light and dark build depth differently, because they have to.
 
 **Dark:** fill steps almost vanish at low luminance (a naive brown-on-brown dark
 mode measured 1.06:1 and looked like fog). So dark mode **fills** the card to a
-real 1.38:1 step *and* keeps a lighter border. Both channels work together.
+1.15:1 charcoal fill step *and* keeps a lighter border. Both channels work together;
+controls use the strong 3.07:1 border rather than relying on the fill alone.
 
 Never use shadow as the only elevation cue; it disappears on the dark ground.
 
@@ -145,19 +202,19 @@ Three roles, three faces.
 
 | Role | Face | Used for |
 | --- | --- | --- |
-| Display | **Fraunces** (variable serif) | Wordmark, page titles, empty-state headlines. Coloured `--ink-display` (coffee brown), not black. |
-| Body | **Geist Sans** | Everything else. |
-| Data | **Geist Mono** | Page numbers, passage counts, file sizes, citation numbers. |
+| Display | **Fraunces** (variable serif) | Wordmark and explicitly styled document titles. |
+| Interface and prose | **Geist Sans** | Workspace titles, controls, labels, section headings and reading copy. |
+| Data and editing | **Geist Mono** | Markdown input, hashes and other technical identifiers. |
 
-Fraunces is used with restraint — headings only, never body copy, never a whole
-paragraph. Its job is to make the product feel like a library, in the one place
-a reader's eye lands first.
+Fraunces is an explicit display role, not a global h1/h2 rule. Utility headings
+use sans-serif so a small label never becomes an ornamental headline.
 
-Mono on numbers is not decoration: page numbers and passage counts are the
-product's evidence, and setting them as data makes them scannable in a column.
+Counts use tabular figures where comparison matters. Ordinary metadata does not
+need a separate typeface to be legible.
 
-Scale: `27px` page title, `16-18px` section headline, `14.5px` body,
-`12.5px` supporting, `11px` uppercase eyebrow (tracked `.09em`), `10.5px` data.
+Scale: `18px` workspace title, `14px` interface, `16px` reading copy,
+`12px` meaningful metadata. Document display titles may be larger. Do not put
+instructions, saved/unsaved states or evidence metadata below 12px.
 
 ---
 
@@ -170,11 +227,11 @@ Scale: `27px` page title, `16-18px` section headline, `14.5px` body,
 | `--radius-lg` | `10px` | Cards, drop zone |
 | `--radius-pill` | `999px` | Status pills |
 
-The file-type marker is the one deliberate exception: `3px 6px 6px 3px` with a
-3px coloured left edge, so it reads as a book spine.
-
-Card padding `14px 16px`. Gap between cards `9px`. Section eyebrow margin
-`26px` above, `10px` below.
+Library and evidence lists use row dividers rather than a raised card for every
+item. Keep controls and exceptional failures clear without adding another frame.
+Workspace body padding is `20px 24px`; the secondary list is `200px`, separated
+from the editor by a `20px` gap. Below 768px lists stack and navigation opens as
+an overlay. Controls remain mounted when a list is hidden.
 
 ---
 
@@ -183,13 +240,14 @@ Card padding `14px 16px`. Gap between cards `9px`. Section eyebrow margin
 **The citation is the one memorable element**, because it is the one thing Noye
 does that a folder of files does not.
 
-In this release it is a filled green numbered badge inline in the text, with
-source cards below carrying a brass top rule, the file name, and the page set in
-mono. The badge is the only place a saturated fill appears in running text.
+Inline citation numbers connect the answer to inspection. Evidence uses quiet
+rows: file name and page first, original availability and Open current next,
+then the saved excerpt. Hashes and processing metadata belong in Details. A
+matching original version does not verify every sentence of the generated text.
 
-Phase 4 (Chat) should develop this further rather than replace it — marginalia,
-or an inline expansion that shows the cited passage itself. Any future change to
-citations is a change to the product's signature and deserves that weight.
+Chat provides answer-specific inspection in a modal drawer. Any future change to
+citations must preserve the distinction between saved excerpts, the current
+original and generated interpretation.
 
 Markdown and text files have no page number by design (a chunk cannot be cited
 to a page that does not exist), so the source card reads "no pages" rather than
@@ -228,15 +286,15 @@ Non-negotiable, checked before any UI work is called done:
 - No state is communicated by colour alone (§3).
 - Every interactive element has a **visible keyboard focus ring** — 2px
   `--brand`, offset 2px. Never `outline: none` without a replacement.
-- The drop zone is reachable and operable by keyboard: it is a real `<button>`
-  wrapping the file input, not a bare `<div>` with a drag handler.
+- The drop zone is reachable and operable by keyboard: a focusable file input
+  and its sibling label open the picker; global drop handling adds files once.
 - Status changes during ingestion are announced to screen readers via a
   `role="status"` live region, because polling updates without a page change.
 - `prefers-reduced-motion: reduce` removes the spinner rotation and the progress
   pulse; the state still reads from icon and text.
 - Layout works down to 390px wide; the sidebar collapses rather than scrolling
   horizontally.
-- Touch targets ≥ 44px on small screens.
+- Desktop controls use at least 32px height; coarse-pointer targets use 44px.
 
 ---
 

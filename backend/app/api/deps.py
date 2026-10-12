@@ -11,14 +11,21 @@ from __future__ import annotations
 import sqlite3
 from collections.abc import Iterator
 
+from fastapi import HTTPException
+
 from app.db.database import connect, init_schema
+from app.services.workspace_access import WorkspaceBusy, request_access
 
 
 def get_db() -> Iterator[sqlite3.Connection]:
     """Per-request database connection."""
-    connection = connect()
     try:
-        init_schema(connection)
-        yield connection
-    finally:
-        connection.close()
+        with request_access():
+            connection = connect()
+            try:
+                init_schema(connection)
+                yield connection
+            finally:
+                connection.close()
+    except WorkspaceBusy as exc:
+        raise HTTPException(409, str(exc)) from exc

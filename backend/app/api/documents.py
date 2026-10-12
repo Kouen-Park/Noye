@@ -21,12 +21,15 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from pydantic import BaseModel, Field
 
 from app.api.deps import get_db
+from app.config import GenerationProvider
 from app.db import conversations as conversation_store
 from app.db import documents as document_store
 from app.logging_config import get_logger
 from app.models.conversations import Role
 from app.models.documents import Document
+from app.models.evidence import EvidenceSnapshot
 from app.services.documents import draft_document
+from app.services.evidence import original_status, provenance_markdown
 from app.services.generation import GenerationError
 
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -35,7 +38,7 @@ logger = get_logger("api.documents")
 
 
 class DocumentCitationOut(BaseModel):
-    """A source the document's first draft was built from, as it was then."""
+    """Historical provenance retained from the answer that created the document."""
 
     file_id: str
     file_name: str
@@ -43,6 +46,8 @@ class DocumentCitationOut(BaseModel):
     chunk_indexes: list[int]
     score: float
     label: str
+    evidence: EvidenceSnapshot | None = None
+    original_status: str = "unknown"
 
 
 class DocumentOut(BaseModel):
@@ -59,13 +64,15 @@ class DocumentOut(BaseModel):
     citations: list[DocumentCitationOut]
     created_at: str
     updated_at: str
+    provenance_markdown: str = ""
 
     @classmethod
-    def of(cls, document: Document) -> DocumentOut:
+    def of(cls, document: Document, db: sqlite3.Connection | None = None) -> DocumentOut:
         return cls(
             id=document.id,
             title=document.title,
             content=document.content,
+            provenance_markdown=provenance_markdown(document.citations),
             source_conversation_id=document.source_conversation_id,
             source_message_id=document.source_message_id,
             source_instruction=document.source_instruction,
@@ -77,6 +84,8 @@ class DocumentOut(BaseModel):
                     chunk_indexes=list(citation.chunk_indexes),
                     score=citation.best_score,
                     label=citation.label,
+                    evidence=citation.evidence,
+                    original_status=original_status(db, citation) if db is not None else "unknown",
                 )
                 for citation in document.citations
             ],
@@ -131,6 +140,7 @@ class GenerateRequest(BaseModel):
     instruction: str = Field(..., min_length=1)
     #: Overrides the title derived from the instruction.
     title: str | None = None
+    provider: GenerationProvider = "ollama"
 
 
 @router.post("", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
@@ -145,7 +155,7 @@ def create_document(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Give the document a name."
         )
     return DocumentOut.of(
-        document_store.create_document(db, content=request.content, title=title)
+        document_store.create_document(db, content=request.content, title=title), db
     )
 
 
@@ -187,7 +197,9 @@ def generate_document(
         )
 
     try:
-        content = draft_document(instruction, message.content, message.citations)
+        content = draft_document(
+            instruction, message.content, message.citations, provider=request.provider
+        )
     except GenerationError as exc:
         # The instruction and the draft are the user's; only the source
         # message id and the failure go in.
@@ -199,10 +211,7 @@ def generate_document(
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=(
-                "Could not draft the document. The local model that writes it is not "
-                f"responding: {exc}"
-            ),
+            detail=f"Could not draft the document: {exc}",
         ) from exc
 
     return DocumentOut.of(
@@ -214,7 +223,7 @@ def generate_document(
             source_conversation_id=message.conversation_id,
             source_message_id=message.id,
             citations=message.citations,
-        )
+        ), db
     )
 
 
@@ -230,7 +239,7 @@ def read_document(
 ) -> DocumentOut:
     """Read one document with its citations."""
     try:
-        return DocumentOut.of(document_store.get_document(db, document_id))
+        return DocumentOut.of(document_store.get_document(db, document_id), db)
     except document_store.DocumentNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
@@ -250,7 +259,7 @@ def update_document(
         return DocumentOut.of(
             document_store.update_document(
                 db, document_id, title=request.title, content=request.content
-            )
+            ), db
         )
     except document_store.DocumentNotFound as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
@@ -260,7 +269,7 @@ def update_document(
 
 @router.get("/{document_id}/export.md")
 def export_markdown(
-    document_id: str, db: sqlite3.Connection = Depends(get_db)
+    document_id: str, provenance: bool = False, db: sqlite3.Connection = Depends(get_db)
 ) -> Response:
     """Download the document as a `.md` file.
 
@@ -273,7 +282,8 @@ def export_markdown(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
     return Response(
-        content=document.content,
+        content=document.content + ("\n\n" + provenance_markdown(document.citations)
+                                    if provenance and document.citations else ""),
         media_type="text/markdown; charset=utf-8",
         headers={
             # RFC 5987 form, so a non-ASCII title survives the round trip.
