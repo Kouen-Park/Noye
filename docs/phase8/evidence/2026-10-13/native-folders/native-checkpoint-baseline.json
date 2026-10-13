@@ -1,0 +1,126 @@
+{
+  "native_observation": "Completed Alpha knowledge job displayed summarizing \u00b7 running \u00b7 1/1 in source Details. Current job already complete; event only records a checkpoint.",
+  "jobs": [
+    {
+      "id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "subject_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "052487ea-e541-5cce-a3b8-267f6b2dff3e"
+    },
+    {
+      "id": "0dbfa0d8-742f-4924-bee8-be3d640933a3",
+      "subject_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "020d3379-3c37-5870-aacf-4642e9f7b440"
+    },
+    {
+      "id": "e7090c19-e376-49df-b2df-224545e2a17d",
+      "subject_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "5770fabb-4f91-5b24-b89a-799b38cc17ae"
+    },
+    {
+      "id": "dc941064-6d82-4abe-aa78-dfcf2e1aa96b",
+      "subject_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "d698851b-60af-5aa3-81df-f683cc9182bb"
+    }
+  ],
+  "alpha_events": [
+    {
+      "sequence": 1,
+      "stage": "starting",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 2,
+      "stage": "classification_summary",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 3,
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 4,
+      "stage": "summarizing",
+      "state": "running",
+      "completed": 1,
+      "total": 1
+    },
+    {
+      "sequence": 5,
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 6,
+      "stage": "complete",
+      "state": "running",
+      "completed": 1,
+      "total": 1
+    },
+    {
+      "sequence": 7,
+      "stage": "classification_summary",
+      "state": "complete",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 8,
+      "stage": "filing",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 9,
+      "stage": "filing",
+      "state": "skipped",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 10,
+      "stage": "relations_topics",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 11,
+      "stage": "relations_topics",
+      "state": "complete",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 12,
+      "stage": "saving",
+      "state": "running",
+      "completed": 0,
+      "total": 0
+    },
+    {
+      "sequence": 13,
+      "stage": "saving",
+      "state": "complete",
+      "completed": 0,
+      "total": 0
+    }
+  ]
+}

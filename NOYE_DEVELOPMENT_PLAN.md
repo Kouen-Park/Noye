@@ -3572,9 +3572,13 @@ observations do not establish acceptance of the current packaged application.
 
 **Acceptance progress, 2026-10-13:** the owner's existing `feat/mvp-end-to-end`
 branch now includes focused backup, requested-language/heading, failed-read
-coverage and unknown-count follow-up fixes. The native ZIP restore completed into
-a verified new folder; uploaded bytes and saved bilingual writing match, but
-that backup contained no external roots. A reproduced macOS workspace restart
+coverage and unknown-count follow-up fixes. A later native ZIP backup/restore
+included an external root, recovered authored Wiki files after native reconnection
+and rebuilt six sources into a separate test index. IDs, original bytes and user
+writing survived; fresh loopback service configuration was manual QA setup, not
+part of the backup. Native Markdown editors preserve literal punctuation and
+Markdown/backup exports use OS save dialogs after a WebKit download stall.
+A reproduced macOS workspace restart
 without a visible window was corrected through Launch Services and rechecked in
 both directions. Native chat, original-passage inspection and conversation reload
 were observed. The record in
@@ -3613,11 +3617,12 @@ broader acceptance checks below open.
 -   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
     reload → document generation → edit/save → Markdown/PDF export → clean deletion
     in the packaged macOS app. Inspect actual exported files from the native webview.
--   [ ] Complete portable native ZIP restore with external-root reconnection.
-    The upload-only backup restored into a verified new destination and preserved
-    actual bytes/writing (§17.10 acceptance record); its chooser accessibility
-    timeout was distinct from native restore completion. Reconnect external roots
-    and verify rebuild, recovered authored files and actual workspace state.
+-   [x] Complete portable native ZIP restore with external-root reconnection.
+    Accepted for the invented corpus: native save/restore into a new destination,
+    native reconnection to relocated originals, recovered authored/user Wiki files,
+    retained IDs/bytes and explicit six-source rebuild/search. Credentials,
+    environment and vectors were excluded. Fresh QA service configuration was
+    manually supplied afterward; removable-drive/failure cases remain untested.
 -   [ ] Run folder selection → detected files → ingestion → classification/filing →
     summaries/links → original-grounded question with Wiki links → prompt document →
     edit/save → actual Markdown/PDF files in the packaged macOS app. Verify restart

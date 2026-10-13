@@ -1,0 +1,147 @@
+{
+  "sources": [
+    {
+      "file_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Reviewed/Alpha-renamed.md",
+      "device": 16777229,
+      "inode": 17629239,
+      "size": 196,
+      "mtime_ns": 1791859008579216946,
+      "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+      "availability": "available",
+      "manual_category": "Course/Reviewed",
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Beta.txt",
+      "device": 16777229,
+      "inode": 17629240,
+      "size": 121,
+      "mtime_ns": 1791859008579415654,
+      "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Orchard.txt",
+      "device": 16777229,
+      "inode": 17629241,
+      "size": 58,
+      "mtime_ns": 1791859008579502654,
+      "version": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Gamma.txt",
+      "device": 16777229,
+      "inode": 17632879,
+      "size": 88,
+      "mtime_ns": 1791859520721920842,
+      "version": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    }
+  ],
+  "filing": [
+    {
+      "id": "e4787297-d832-42e7-8b0f-127bb2b9a1fd",
+      "source_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "old_path": "Course/Gamma.txt",
+      "new_path": "Course/Unclassified/Gamma.txt",
+      "version": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd",
+      "device": 16777229,
+      "inode": 17632879,
+      "manual": 0,
+      "state": "complete",
+      "error": null,
+      "created_at": "2026-10-13T02:47:11.866881+00:00",
+      "updated_at": "2026-10-13T02:47:11.946179+00:00"
+    },
+    {
+      "id": "b0e312dc-5f85-4a08-b3d0-97de0007ed6e",
+      "source_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "old_path": "Course/Alpha.md",
+      "new_path": "Course/Reviewed/Alpha-renamed.md",
+      "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+      "device": 16777229,
+      "inode": 17629239,
+      "manual": 1,
+      "state": "complete",
+      "error": null,
+      "created_at": "2026-10-13T02:47:51.105296+00:00",
+      "updated_at": "2026-10-13T02:47:51.112749+00:00"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "subject_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+      "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Alpha.md\", \"version\": \"9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}]"
+    },
+    {
+      "id": "0dbfa0d8-742f-4924-bee8-be3d640933a3",
+      "subject_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "020d3379-3c37-5870-aacf-4642e9f7b440",
+      "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Alpha.md\", \"version\": \"9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}]"
+    },
+    {
+      "id": "e7090c19-e376-49df-b2df-224545e2a17d",
+      "subject_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "5770fabb-4f91-5b24-b89a-799b38cc17ae",
+      "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Alpha.md\", \"version\": \"9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}]"
+    },
+    {
+      "id": "dc941064-6d82-4abe-aa78-dfcf2e1aa96b",
+      "subject_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "state": "complete",
+      "stage": "complete",
+      "artifact_id": "d698851b-60af-5aa3-81df-f683cc9182bb",
+      "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Alpha.md\", \"version\": \"9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"66f8cb98-4c8c-44f2-94c5-ae3615c40df0\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Gamma.txt\", \"version\": \"0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd\", \"availability\": \"available\", \"processing_state\": \"READY\"}]"
+    }
+  ],
+  "source_count": 4,
+  "alpha_manual_move": {
+    "same_id": true,
+    "path": "Course/Reviewed/Alpha-renamed.md",
+    "manual_category": "Course/Reviewed",
+    "bytes_unchanged": true,
+    "old_path_absent": true
+  },
+  "gamma_automatic_move": {
+    "source_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+    "path": "Course/Unclassified/Gamma.txt",
+    "same_id_in_journal": true,
+    "bytes_unchanged": true,
+    "journal_manual": 0,
+    "journal_state": "complete"
+  },
+  "outside_filing_area_unchanged": true
+}

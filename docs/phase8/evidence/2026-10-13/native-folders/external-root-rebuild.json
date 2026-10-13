@@ -1,0 +1,202 @@
+{
+  "native_actions": [
+    "Resume processing on reconnected root",
+    "Retry uploaded AT-201.pdf",
+    "Rebuild from original on each of five connected sources; resume alone intentionally does not restore their deleted indexes"
+  ],
+  "sources": [
+    {
+      "file_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Reviewed/Alpha-renamed.md",
+      "device": 16777229,
+      "inode": 17680966,
+      "size": 244,
+      "mtime_ns": 1791863809494943718,
+      "version": "c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154",
+      "availability": "available",
+      "manual_category": "Course/Reviewed",
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Beta.txt",
+      "device": 16777229,
+      "inode": 17680968,
+      "size": 121,
+      "mtime_ns": 1791863809495329052,
+      "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Orchard.txt",
+      "device": 16777229,
+      "inode": 17680969,
+      "size": 58,
+      "mtime_ns": 1791863809495699636,
+      "version": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Gamma.txt",
+      "device": 16777229,
+      "inode": 17680970,
+      "size": 88,
+      "mtime_ns": 1791863809496120845,
+      "version": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    },
+    {
+      "file_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Delta.txt",
+      "device": 16777229,
+      "inode": 17680971,
+      "size": 200,
+      "mtime_ns": 1791863809496554804,
+      "version": "a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280",
+      "availability": "available",
+      "manual_category": null,
+      "error": null,
+      "status": "READY",
+      "chunk_count": 1
+    }
+  ],
+  "files": [
+    {
+      "id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+      "name": "AT-201.pdf",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    },
+    {
+      "id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "name": "Alpha-renamed.md",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/db415e88-8802-4cd6-8901-a3cc6ac11590__c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154.md",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    },
+    {
+      "id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "name": "Beta.txt",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa__f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16.txt",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    },
+    {
+      "id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "name": "Orchard.txt",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/715329a0-e737-4e6a-880a-d886b1206cda__717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf.txt",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    },
+    {
+      "id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "name": "Gamma.txt",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/66f8cb98-4c8c-44f2-94c5-ae3615c40df0__0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd.txt",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    },
+    {
+      "id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+      "name": "Delta.txt",
+      "path": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2/sources/84f43e04-ec92-45c6-9343-c566c0a9b082__a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280.txt",
+      "status": "READY",
+      "chunk_count": 1,
+      "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7"
+    }
+  ],
+  "wiki": {
+    "id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "current_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c",
+    "title": "Phase8 Alpha user writing",
+    "content": "<!-- Wiki ID: 052487ea-e541-5cce-a3b8-267f6b2dff3e; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-13T02:40:00.003422+00:00; processing seconds: 51.560 -->\n\n# Alpha.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: SQLite, 백업, 쓰기 중지, 저수지 Alpha\n\n## Summary\n\n저수지 Alpha 프로젝트는 SQLite를 사용하여 37리터의 저장 용량을 가지며, 일요일에는 쓰기를 중지하고 하루에 한 번 백업이 실행됩니다. [E1]\n\n- 저수지 Alpha 프로젝트의 저장 용량은 37리터입니다. [E1]\n\n- 저수지 Alpha는 SQLite를 사용합니다. [E1]\n\n- 저수지 Alpha는 일요일에 쓰기를 중지합니다. [E1]\n\n- 저수지 Alpha의 백업은 하루에 한 번 실행됩니다. [E1]\n\n## Original evidence\n\n### E1: Alpha.md\nSource ID: `db415e88-8802-4cd6-8901-a3cc6ac11590`; version: `9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5`\n\nPassage 0, characters 0–95\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n\n## 사용자 메모\n\nPhase8 user edit · 원문 변경 후에도 보존할 검증 메모.\n",
+    "origin": "user"
+  },
+  "qdrant_collection": {
+    "result": {
+      "status": "green",
+      "optimizer_status": "ok",
+      "indexed_vectors_count": 0,
+      "points_count": 6,
+      "segments_count": 2,
+      "config": {
+        "params": {
+          "vectors": {
+            "size": 768,
+            "distance": "Cosine"
+          },
+          "shard_number": 1,
+          "replication_factor": 1,
+          "write_consistency_factor": 1,
+          "on_disk_payload": true
+        },
+        "hnsw_config": {
+          "m": 16,
+          "ef_construct": 100,
+          "full_scan_threshold": 10000,
+          "max_indexing_threads": 0,
+          "on_disk": false
+        },
+        "optimizer_config": {
+          "deleted_threshold": 0.2,
+          "vacuum_min_vector_number": 1000,
+          "default_segment_number": 0,
+          "max_segment_size": null,
+          "memmap_threshold": null,
+          "indexing_threshold": 10000,
+          "flush_interval_sec": 5,
+          "max_optimization_threads": null,
+          "prevent_unoptimized": null
+        },
+        "wal_config": {
+          "wal_capacity_mb": 32,
+          "wal_segments_ahead": 0,
+          "wal_retain_closed": 1
+        },
+        "quantization_config": null
+      },
+      "payload_schema": {},
+      "update_queue": {
+        "length": 0
+      }
+    },
+    "status": "ok",
+    "time": 0.006924042
+  },
+  "checks": {
+    "same_five_source_ids": true,
+    "all_six_files_ready": true,
+    "external_original_bytes_preserved": true,
+    "original_external_folder_bytes_unchanged": true,
+    "user_revision_retained": true,
+    "user_body_exact": true,
+    "manual_category_retained": true,
+    "separate_collection_six_points": true
+  }
+}

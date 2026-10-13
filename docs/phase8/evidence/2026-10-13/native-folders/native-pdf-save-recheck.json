@@ -1,0 +1,14 @@
+{
+  "observation": "Native Export PDF on the restored, saved AT-201 document showed Page 1 of 1. Save as PDF remained disabled after exact Go to Folder selection and after typing a filename. Both panels were cancelled; normal Cmd-Q then exited the QA app. This later retry produced no retained PDF.",
+  "checks": {
+    "one_page_print_preview": true,
+    "saved_pdf_file": false,
+    "direct_pdf_save_accepted": false
+  },
+  "methods": [
+    "Save as PDF selected with Return",
+    "Go to Folder: /private/tmp/noye-phase8-20261012/native-folder/exports",
+    "Filename input and Tab; Save still disabled"
+  ],
+  "earlier_positive": "Open in Preview previously rendered measured values and readable Korean; does not prove direct saving."
+}

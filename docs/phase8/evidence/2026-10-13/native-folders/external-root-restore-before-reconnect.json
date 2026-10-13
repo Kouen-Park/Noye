@@ -1,0 +1,146 @@
+{
+  "native_restore_clicked_and_success_observed": true,
+  "destination": "/Users/gavinpark/Library/Application Support/noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2",
+  "roots": [
+    {
+      "id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "name": "knowledge",
+      "path": "/private/tmp/noye-phase8-20261012/native-folder/knowledge",
+      "kind": "connected",
+      "device": 16777229,
+      "inode": 17629237,
+      "connected": 0,
+      "processing": 0,
+      "organization_prefix": "Course",
+      "availability": "disconnected",
+      "error": "Restored. Reconnect natively.",
+      "created_at": "2026-10-13T02:39:02.304909+00:00",
+      "updated_at": "2026-10-13T03:22:24.235346+00:00"
+    }
+  ],
+  "sources": [
+    {
+      "file_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Reviewed/Alpha-renamed.md",
+      "device": 16777229,
+      "inode": 17629239,
+      "size": 244,
+      "mtime_ns": 1791861243995293613,
+      "version": "c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154",
+      "availability": "disconnected",
+      "manual_category": "Course/Reviewed",
+      "error": null,
+      "status": "FAILED",
+      "chunk_count": 0
+    },
+    {
+      "file_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Beta.txt",
+      "device": 16777229,
+      "inode": 17629240,
+      "size": 121,
+      "mtime_ns": 1791859008579415654,
+      "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null,
+      "status": "FAILED",
+      "chunk_count": 0
+    },
+    {
+      "file_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Orchard.txt",
+      "device": 16777229,
+      "inode": 17629241,
+      "size": 58,
+      "mtime_ns": 1791859008579502654,
+      "version": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null,
+      "status": "FAILED",
+      "chunk_count": 0
+    },
+    {
+      "file_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Gamma.txt",
+      "device": 16777229,
+      "inode": 17632879,
+      "size": 88,
+      "mtime_ns": 1791859520721920842,
+      "version": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null,
+      "status": "FAILED",
+      "chunk_count": 0
+    },
+    {
+      "file_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Delta.txt",
+      "device": 16777229,
+      "inode": 17651112,
+      "size": 200,
+      "mtime_ns": 1791861826788930180,
+      "version": "a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null,
+      "status": "FAILED",
+      "chunk_count": 0
+    }
+  ],
+  "user_wiki": {
+    "id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "current_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c",
+    "title": "Phase8 Alpha user writing",
+    "content": "<!-- Wiki ID: 052487ea-e541-5cce-a3b8-267f6b2dff3e; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-13T02:40:00.003422+00:00; processing seconds: 51.560 -->\n\n# Alpha.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: SQLite, 백업, 쓰기 중지, 저수지 Alpha\n\n## Summary\n\n저수지 Alpha 프로젝트는 SQLite를 사용하여 37리터의 저장 용량을 가지며, 일요일에는 쓰기를 중지하고 하루에 한 번 백업이 실행됩니다. [E1]\n\n- 저수지 Alpha 프로젝트의 저장 용량은 37리터입니다. [E1]\n\n- 저수지 Alpha는 SQLite를 사용합니다. [E1]\n\n- 저수지 Alpha는 일요일에 쓰기를 중지합니다. [E1]\n\n- 저수지 Alpha의 백업은 하루에 한 번 실행됩니다. [E1]\n\n## Original evidence\n\n### E1: Alpha.md\nSource ID: `db415e88-8802-4cd6-8901-a3cc6ac11590`; version: `9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5`\n\nPassage 0, characters 0–95\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n\n## 사용자 메모\n\nPhase8 user edit · 원문 변경 후에도 보존할 검증 메모.\n",
+    "origin": "user"
+  },
+  "recovered_knowledge_files": [
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/projects/27f25ea8-eb87-52a9-b0b0-b4d823df35f7.md",
+      "bytes": 1186,
+      "sha256": "a9fe7f9c7aff72a2d4bab2a4703130381f2e54296fcf0df24f19dbf7cf47172a"
+    },
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/020d3379-3c37-5870-aacf-4642e9f7b440.md",
+      "bytes": 976,
+      "sha256": "eed9543ce6f2d3c87de2e6a9edf5f0a5e4963a54d60cb7e0039b8c79c43972f9"
+    },
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/052487ea-e541-5cce-a3b8-267f6b2dff3e.md",
+      "bytes": 1331,
+      "sha256": "61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12"
+    },
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/5770fabb-4f91-5b24-b89a-799b38cc17ae.md",
+      "bytes": 833,
+      "sha256": "864b9c471a5ce96571b2533dcb1e7929f0b87ba7e1b6aa35dd17f7989b670cbd"
+    },
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/585ef39e-fd08-5ff0-908e-81dc0310aeb9.md",
+      "bytes": 1041,
+      "sha256": "d3ecea13d996096e5ac704e17a55b66cc9dee599625b328d357476332efe1928"
+    },
+    {
+      "path": "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/d698851b-60af-5aa3-81df-f683cc9182bb.md",
+      "bytes": 1051,
+      "sha256": "37865988e729551147a5278f07845e18400236fceb8c7b01b09565503f334981"
+    }
+  ],
+  "checks": {
+    "sqlite_integrity_ok": true,
+    "user_revision_retained": true,
+    "user_body_exact": true,
+    "external_root_disconnected": true,
+    "five_source_ids_retained": true,
+    "zero_rebuildable_chunks": true,
+    "no_env_copied": true
+  }
+}

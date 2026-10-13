@@ -1,0 +1,50 @@
+{
+  "native_query": "Alpha 프로젝트 토요일 읽기 전용 37리터",
+  "native_observation": "Five passages displayed; Alpha first with the current Saturday read-only condition and 37 litres. The six-file searched count is not a result-file count. No native request time was measured.",
+  "api_recheck": {
+    "query": "Alpha 프로젝트 토요일 읽기 전용 37리터",
+    "results": [
+      {
+        "content": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n\n토요일에는 읽기 전용 모드입니다.",
+        "file_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+        "file_name": "Alpha-renamed.md",
+        "page_number": null,
+        "chunk_index": 0,
+        "score": 0.68954116
+      },
+      {
+        "content": "Project Gamma has a recorded storage capacity of 41 litres. Sunday writes are disabled.",
+        "file_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+        "file_name": "Gamma.txt",
+        "page_number": null,
+        "chunk_index": 0,
+        "score": 0.5262809
+      },
+      {
+        "content": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day.",
+        "file_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+        "file_name": "Beta.txt",
+        "page_number": null,
+        "chunk_index": 0,
+        "score": 0.48254365
+      },
+      {
+        "content": "Project Delta keeps 23 archived notes. It does not record any measured execution time.\n\nBackups run every Tuesday. Readers cannot write on Sunday. Delta uses SQLite, and Saturday access is read-only.",
+        "file_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+        "file_name": "Delta.txt",
+        "page_number": null,
+        "chunk_index": 0,
+        "score": 0.38148043
+      },
+      {
+        "content": "AT-201 experiment\nAT-201 uses a binary heap. The measured runtime is 12 milliseconds. Memory\nusage is 37 megabytes. It was measured on a graph with 8,000 vertices.",
+        "file_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+        "file_name": "AT-201.pdf",
+        "page_number": 1,
+        "chunk_index": 0,
+        "score": 0.2932948
+      }
+    ],
+    "searched_files": 6
+  }
+}

@@ -30,6 +30,31 @@ historical September web validation does not certify this packaged application.
   inference. Unmeasured performance topics receive neutral headings and partial
   presentation coverage. False rejections remain possible; broad semantic proof
   is not claimed.
+- **P1, native Markdown input:** macOS text substitutions changed `-->` into
+  `—>`, breaking an existing Wiki's Markdown preview after a native edit.
+  Disable autocorrection, capitalization and spellcheck on both Markdown editors.
+  The same native whole-field edit subsequently saved the exact expected Wiki
+  body, including the comment terminator and Korean memo; a document retained
+  literal `--`, quotes and `->`. Physical typing/IME behavior remains untested.
+- **P1, native exports:** a backup Blob download left the QA app inaccessible
+  while its backend remained healthy. The one-second process sample showed the
+  main thread waiting in WebKit sandbox-extension/download-policy work; this is
+  an observation, not proof of the precise cause. macOS Markdown and backup
+  exports now use an OS save panel and staged exclusive publication. The selected
+  existing destination is preserved; cancellation/errors release the export slot.
+  Backup ZIP bytes remain in the sidecar, reached only through private IPC, not
+  an HTTP endpoint accepting a path. Web exports retain their download behavior.
+  Native cancellation followed by saving succeeded for the backup; Markdown saved
+  current unsaved text without requiring available AI services. Apple documents
+  the panel in [NSSavePanel](https://developer.apple.com/documentation/appkit/nssavepanel);
+  the command boundary follows [Tauri commands](https://v2.tauri.app/develop/calling-rust/).
+- **P2, progress and counts:** completed checkpoint events no longer display as
+  running; cancelled/interrupted checkpoints display stopped while explicit
+  verdicts and skipped reasons remain visible. Native completion showed finished
+  1/1. Disconnected roots no longer render a stray numeric `0`, confirmed in the
+  restored native folder options. Search now distinguishes matching passages
+  from the number of files searched; its targeted regression passed. The last
+  packaged build predates that wording-only Search change.
 - Source-document failure reports now retain actual passages/characters read
   before inference. Unsupported generation can report read coverage without
   claiming that those characters were successfully processed.
@@ -200,21 +225,100 @@ The original workspace collection is `noye_phase8_qa_20261012`.
   original reopened with the Chat screen and available QA services. This confirms
   the two native transitions, not every sleep/force-kill lifecycle scenario.
 
+## Native external folders and portable restore
+
+The following used only the invented Alpha/Beta/Gamma/Delta/Orchard folder and
+the earlier uploaded AT-201 PDF. The original folder and relocated copy are
+separate test fixtures; reports are retained in
+[native-folders](evidence/2026-10-13/native-folders/).
+
+- Native folder selection detected the initial files and created source Wikis.
+  Organization was enabled only inside `Course`; Beta and Gamma were filed to
+  `Course/Unclassified`, while Orchard/Delta stayed outside the enabled area.
+  A manual Alpha move/rename retained its source ID, bytes and manual category.
+- A native user Wiki edit was saved before the original changed. Adding the
+  Saturday read-only condition to Alpha produced a separate generated proposal;
+  the current user title, body and revision remained unchanged. Native Details
+  identified the older evidence as superseded, and the proposal exposed the new
+  condition and Adopt action. It was inspected, not adopted.
+- Native pause → disconnect → reselect retained the root and source IDs, Wikis
+  and paused state. After normal quit, Delta was added to the invented folder;
+  relaunch detected it but left it waiting while processing was paused. Resuming
+  reached READY and created its Wiki. This is normal restart catch-up, not a
+  sleep/wake or physically unplugged-drive test.
+- The first attempted cancellation arrived after completion and does not count
+  as a cancellation pass. A later changed Delta job was actually cancelled.
+  Native Retry created a new job at attempt 2, retained the frozen manifest and
+  completed. The cancelled record remained, the new Tuesday backup condition
+  appeared, and filing stayed skipped outside `Course`.
+- Native Save workspace backup was cancelled once, then saved after validating
+  the test folder in the OS panel. The ZIP is **53,542 bytes**, SHA-256
+  `af5065825656e12a508612778e4710c6fabc94be2b109b479579dbfd89e0ce6f`.
+  Its 16 entries passed all manifest hashes and included the external root's
+  authored assets. Credentials, `.env` and vector data were excluded.
+- The agent selected that ZIP and clicked Restore into a new folder. SQLite
+  integrity was `ok`; the five external source IDs and exact current user Wiki
+  remained, roots were disconnected, and chunks were zero. Opening destination
+  `noye-restored-d657aa45-ef26-4e86-a8c1-1263e8be83c2` created a responsive native
+  window. Settings reported the actual path and unavailable default services.
+- Native reconnection selected a relocated folder containing only the five
+  synthetic originals, with no Wiki files copied into it. The same root ID was
+  reconnected while paused; backup-authored Wiki files were recovered, including
+  the exact user body SHA-256
+  `61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12`.
+- A fresh secret-free QA `.env` was deliberately written afterward and the app
+  normally restarted, using collection `noye_phase8_qa_restore_20261013`. This is
+  manual test setup, not native service-settings acceptance or copied backup
+  configuration. Native Retry rebuilt the PDF; Rebuild from original rebuilt each
+  of the five reconnected sources. All six reached READY with one chunk each;
+  Qdrant had six points. Both external fixture copies retained identical original
+  bytes, source IDs/manual category survived, and the user Wiki revision remained
+  current. Resume alone intentionally does not restore deleted indexes.
+- Native Search displayed five passages from six searched files, with current
+  Alpha first and both 37 litres and Saturday read-only intact. The identical API
+  recheck is retained separately; native request latency was not measured. Clicking
+  the original PDF link did not expose a destination in enabled browser/app
+  inventory, so OS destination acceptance remains open.
+- With restored AI services still unavailable, native Markdown export saved the
+  current **unsaved** document text: **308 bytes**, SHA-256
+  `72bd99d8ed1f742af07fd3cec14bb468ccccb39ffca889719cf6501d771d2008`.
+  The saved notice appeared while the editor remained dirty; the database still
+  held the previous body. Native Save then persisted the draft, and ordinary
+  restart retained it. These exports are exact current-body copies, not an
+  independent semantic approval of later user edits.
+- The latest native PDF retry showed one print page. Save as PDF stayed disabled
+  even after exact Go to Folder validation and filename input. Both dialogs were
+  cancelled; no PDF file was retained. The earlier Preview rendering observation
+  remains valid, but direct PDF saving is still unaccepted. Normal Cmd-Q closed
+  the QA app/backend at the end of this pass.
+
+Portable native ZIP restore with external reconnection and explicit index rebuild
+is accepted for this synthetic case. The larger folder, generation, PDF, deletion
+and device acceptance workflows remain open.
+
 ## Automated validation
 
-- Backend `.venv/bin/pytest -q`: **1,030 passed, 19 skipped, 10 warnings**, 19.61 s.
+- Backend `.venv/bin/pytest -q`: **1,039 passed, 19 skipped, 10 warnings**, 23.15 s.
   Skips include opt-in real-service checks; live observations above are separate.
-- Backend `.venv/bin/ruff check app`: passed. The four heading/presentation change
+- Backend `.venv/bin/ruff check app desktop.py`: passed. The four heading/presentation change
   files pass `ruff format --check`; the whole-tree formatter reports 53 files
   requiring formatting, including pre-existing styles. No broad cleanup was made.
-- Frontend `npm test`: **49 files, 366 tests passed**; existing React act warnings.
-  `npm run lint`, `npx tsc --noEmit`, packaged static Next build: passed earlier
-  in this change set; no subsequent product TypeScript edits.
-- Native `cargo test`: **8 passed**; `cargo fmt` and
-  `cargo clippy --all-targets -- -D warnings`: passed after the launcher change.
-- Actual v8 frozen backend `NOYE_TEST_SIDECAR=... pytest app/tests/test_desktop.py`:
-  **10 passed, 7 warnings**, 11.22 s. The native-only launcher rebuild reused that
-  identical backend and validated static UI; final bundle **68.08 MiB**.
+- Later backup exclusive-publication/fsync refinements passed the focused
+  **37-test** service run and final frozen-sidecar rerun below. The full backend
+  suite above preceded those refinements.
+- Frontend full `npm test`: **52 files, 379 tests passed**, 10.58 s; that run had
+  no React act warnings. Later native backup-label changes passed 14 targeted
+  tests, TypeScript and lint. Search wording passed its seven targeted tests,
+  TypeScript and lint; it adds one test after that full suite.
+- Native `cargo test`: **12 passed**; `cargo fmt` and
+  `cargo clippy --all-targets -- -D warnings`: passed for native exports.
+- Actual native-export frozen backend
+  `NOYE_TEST_SIDECAR=... pytest app/tests/test_desktop.py`: the first run had
+  **11 passed, 1 failed**, 56.76 s; cold managed-service startup exceeded 20 s
+  while overlapping the static Next build. An idle rerun had **12 passed,
+  7 warnings**, 32.84 s. The failed log is retained; broader startup latency
+  acceptance remains open. PyInstaller took 31.0 s, static Next build 42 s,
+  Rust release build 19.61 s; resulting native QA bundle **68.23 MiB**.
 - `git diff --check`: passed. Coverage percentage was not measured. Signing,
   notarization and cross-platform validation were not performed.
 
@@ -223,8 +327,8 @@ The original workspace collection is `noye_phase8_qa_20261012`.
 Keep §17.10 and the MVP checklist open. Priorities are native PDF saving and
 original-link destination; complete bilingual source-document/Wiki quality;
 representative retrieval/chunk calibration; native folder ingestion, filing,
-rename/move, stale/history/scoped citations, cancellation/restart and portable
-restore with external reconnection; model download failure/cancel/retry and OS
+stale/history/scoped citations, unstable writes and interrupted inference;
+broader backup/reconnection failures and removable volumes; model download failure/cancel/retry and OS
 credential/provider persistence; cloud latency with explicit real access; long,
 image-only/missing PDFs and physical IME/disconnect/screen-reader checks.
 
