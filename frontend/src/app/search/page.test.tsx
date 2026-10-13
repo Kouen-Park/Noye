@@ -9,6 +9,11 @@ vi.mock("@/lib/api", async get => ({ ...await get<typeof import("@/lib/api")>(),
 function deferred<T>() { let resolve!: (value: T) => void; let reject!: (reason: unknown) => void; const promise = new Promise<T>((a,b) => { resolve=a; reject=b; }); return { resolve, reject, promise }; }
 function result(query: string): SearchResponse { return { query, searched_files: 1, results: [{ content: `${query} passage`, file_id: query, file_name: `${query}.txt`, chunk_index: 0, page_number: null, score: 1 }] }; }
 beforeEach(() => { vi.clearAllMocks(); nav.query="q=alpha"; });
+it("distinguishes matching passages from the number of files searched", async () => {
+  vi.mocked(searchKnowledge).mockResolvedValue({ ...result("alpha"), searched_files: 6 });
+  render(<SearchPage />);
+  expect(await screen.findByText("1 passage · 6 files searched")).toBeInTheDocument();
+});
 it.each(["resolve", "reject"] as const)("ignores an obsolete search %s after URL navigation", async settle => {
   const alpha = deferred<SearchResponse>();
   vi.mocked(searchKnowledge).mockReturnValueOnce(alpha.promise).mockResolvedValueOnce(result("beta"));

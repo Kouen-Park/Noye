@@ -172,8 +172,8 @@ function SearchResults({ query }: { query: string }) {
             id="results-heading"
             className="mb-2 text-[12px] font-medium text-ink-soft"
           >
-            {results.length} {results.length === 1 ? "passage" : "passages"} from{" "}
-            {searchedFiles} {searchedFiles === 1 ? "file" : "files"}
+            {results.length} {results.length === 1 ? "passage" : "passages"} ·{" "}
+            {searchedFiles} {searchedFiles === 1 ? "file" : "files"} searched
           </p>
           <ul>
             {results.map((hit, index) => (
