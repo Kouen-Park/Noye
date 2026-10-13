@@ -103,7 +103,9 @@ impl Backend {
                                 if let Ok(value) =
                                     serde_json::from_slice::<serde_json::Value>(&line)
                                 {
-                                    if value["event"] == "native_folder_result" {
+                                    if value["event"] == "native_folder_result"
+                                        || value["event"] == "native_export_result"
+                                    {
                                         if let Some(id) = value["id"].as_u64() {
                                             backend
                                                 .process
@@ -197,10 +199,40 @@ impl Backend {
         action: &str,
         values: serde_json::Value,
     ) -> Result<String, String> {
+        self.native_request(
+            "native_folder",
+            action,
+            values,
+            Some(Duration::from_secs(10)),
+        )
+    }
+
+    pub fn export_backup(&self, destination: &str) -> Result<(), String> {
+        // ZIP staging can outlast a folder operation. Wait for its definitive
+        // reply or backend exit; a timeout must not claim failure then save later.
+        let reply = self.native_request(
+            "native_export",
+            "backup",
+            serde_json::json!({"destination": destination}),
+            None,
+        )?;
+        if reply != "saved" {
+            return Err("Invalid backup export response".into());
+        }
+        Ok(())
+    }
+
+    fn native_request(
+        &self,
+        event: &str,
+        action: &str,
+        values: serde_json::Value,
+        timeout: Option<Duration>,
+    ) -> Result<String, String> {
         let mut process = self.process.lock().unwrap();
         let id = process.next_config;
         process.next_config += 1;
-        let frame = serde_json::json!({"event":"native_folder", "id":id,
+        let frame = serde_json::json!({"event":event, "id":id,
                                      "action":action, "values":values});
         process
             .child
@@ -208,16 +240,20 @@ impl Backend {
             .ok_or("Backend unavailable")?
             .write(format!("{frame}\n").as_bytes())
             .map_err(|_| "Backend unavailable")?;
-        let (mut process, _) = self
-            .exit
-            .wait_timeout_while(process, Duration::from_secs(10), |state| {
-                !state.exited && !state.folder_replies.contains_key(&id)
-            })
-            .unwrap();
+        let waiting =
+            |state: &mut Process| !state.exited && !state.folder_replies.contains_key(&id);
+        let mut process = if let Some(timeout) = timeout {
+            self.exit
+                .wait_timeout_while(process, timeout, waiting)
+                .unwrap()
+                .0
+        } else {
+            self.exit.wait_while(process, waiting).unwrap()
+        };
         let reply = process
             .folder_replies
             .remove(&id)
-            .ok_or("Folder action did not complete")?;
+            .ok_or("Native file operation did not complete")?;
         if let Some(error) = reply["error"].as_str() {
             return Err(error.into());
         }

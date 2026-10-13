@@ -2,12 +2,14 @@
 
 import { documentExportUrl } from "@/lib/api";
 import { useState } from "react";
+import { exportMarkdown } from "@/lib/native-export";
 
 /**
  * The two exports.
  *
- * The editor supplies its current text for a Markdown download; the API link
- * remains a fallback for stored text. The selected provenance mode is shared
+ * The editor supplies its current text for a native Markdown save on macOS or
+ * a browser download on the web. The API link remains a fallback for stored
+ * text. The selected provenance mode is shared
  * with the print preview, so both formats include the same material.
  *
  * PDF is `window.print()`, per the plan's §13.2. A server-side renderer would need
@@ -46,31 +48,37 @@ export function ExportControls({
   onProvenanceChange,
 }: ExportControlsProps) {
   const [printError, setPrintError] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
+  const [exportNotice, setExportNotice] = useState("");
   const markdownUrl = new URL(exportUrl ?? documentExportUrl(documentId, includeProvenance), "http://localhost");
   markdownUrl.searchParams.set("provenance", String(includeProvenance));
   return (
     <div aria-label="Document exports" className="flex flex-wrap items-center gap-2">
       <a
-        href={disabled ? undefined : markdownUrl.toString()}
-        onClick={(event) => {
-          if (disabled || content === undefined) return;
+        href={disabled || exporting ? undefined : markdownUrl.toString()}
+        onClick={async (event) => {
+          if (disabled || exporting) { event.preventDefault(); return; }
+          if (content === undefined) return;
           event.preventDefault();
-          const url = URL.createObjectURL(new Blob([content], { type: "text/markdown;charset=utf-8" }));
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `${title.replace(/[\\/:\x00-\x1f]/g, "").trim() || "document"}.md`;
-          link.click();
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          setExporting(true); setExportError(""); setExportNotice("");
+          try {
+            const result = await exportMarkdown(title, content);
+            setExportNotice(result === "saved" ? "Markdown saved." : result === "cancelled" ?
+              "Markdown export cancelled." : "Markdown download prepared.");
+          } catch (cause) {
+            setExportError(cause instanceof Error ? cause.message : String(cause));
+          } finally { setExporting(false); }
         }}
         download
-        aria-disabled={disabled}
+        aria-disabled={disabled || exporting}
         className={`noye-button ${
-          disabled
+          disabled || exporting
             ? "cursor-not-allowed text-ink-soft"
             : "text-accent-ink hover:bg-brand-wash"
         }`}
       >
-        Export .md
+        {exporting ? "Exporting…" : "Export .md"}
       </a>
 
       <button
@@ -105,6 +113,8 @@ export function ExportControls({
       </div>
       </details>
       {printError && <p role="alert" className="w-full text-xs text-danger">Could not open the print dialog. Try again, or export Markdown.</p>}
+      {exportError && <p role="alert" className="w-full text-xs text-fail">{exportError} Your editor text is preserved.</p>}
+      {exportNotice && <p role="status" className="w-full text-xs text-ink-soft">{exportNotice}</p>}
     </div>
   );
 }

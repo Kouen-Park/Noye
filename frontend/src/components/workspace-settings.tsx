@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 
 import type { AiSettings } from "@/lib/ai-settings";
+import { isDesktopRuntime } from "@/lib/runtime";
 import { openWorkspace, readWorkspaceLocations, type WorkspaceLocations } from "@/lib/native-workspace";
 import { downloadBackup, readWorkspace, restoreWorkspace, type RestoredWorkspace, type WorkspaceInfo } from "@/lib/workspace";
 
@@ -36,8 +37,10 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
     setBusy(kind); setError(""); setNotice("");
     try {
       if (kind === "backup") {
-        await downloadBackup(settings);
-        setNotice("Backup download prepared. Keep the archive in a safe place.");
+        const result = await downloadBackup(settings);
+        setNotice(result === "saved" ? "Backup saved. Keep the archive in a safe place." :
+          result === "cancelled" ? "Backup export cancelled. Your workspace is unchanged." :
+          "Backup download prepared. Keep the archive in a safe place.");
       } else if (file) {
         setRestored(await restoreWorkspace(settings, file));
         setNotice("Backup verified and restored into a new folder. Your current workspace is unchanged.");
@@ -66,7 +69,7 @@ export function WorkspaceSettings({ settings }: { settings: AiSettings }) {
     <div className="border-t border-edge-strong pt-5"><h3 className="text-lg text-ink-display">Back up saved work</h3>
       <p className="mt-2 text-sm text-ink-soft">Includes uploaded originals, internal folder-version byte snapshots, conversations, edited documents and saved excerpts. Authored Wiki/output files from accessible connected roots are included. External folder originals are excluded; unavailable roots are recorded in the manifest. API keys, models and the rebuildable vector index are excluded.</p>
       <p className="mt-2 text-sm text-ink-soft">Finish processing and save your document edits first. Unsaved text is not included.</p>
-      <button className={button + " mt-3"} disabled={busy !== null || !workspace} onClick={() => void act("backup")}>{busy === "backup" ? "Preparing backup…" : "Download workspace backup"}</button>
+      <button className={button + " mt-3"} disabled={busy !== null || !workspace} onClick={() => void act("backup")}>{busy === "backup" ? "Preparing backup…" : isDesktopRuntime() ? "Save workspace backup" : "Download workspace backup"}</button>
     </div>
     <div className="border-t border-edge-strong pt-5"><h3 className="text-lg text-ink-display">Restore a backup</h3>
       <p className="mt-2 text-sm text-ink-soft">Restores into a new folder after checking every file and the database. Existing folders are never overwritten. Search needs an explicit index rebuild. Connected roots require native reconnection; recovered Wiki/output files stay in the restored workspace until reconnected.</p>

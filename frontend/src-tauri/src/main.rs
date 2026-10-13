@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backend;
+mod exports;
 mod folders;
 mod menu;
 mod originals;
@@ -29,6 +30,7 @@ fn main() {
         }))
         .plugin(tauri_plugin_shell::init())
         .manage(backend)
+        .manage(exports::Exports::default())
         .setup(move |app| {
             menu::install(app.handle())?;
             #[cfg(target_os = "macos")]
@@ -45,7 +47,9 @@ fn main() {
             workspaces::select_workspace,
             folders::choose_source_folder,
             folders::reveal_source_folder,
-            originals::open_original
+            originals::open_original,
+            exports::save_markdown,
+            exports::save_workspace_backup
         ])
         .build(tauri::generate_context!())
         .expect("could not build Noye desktop")
