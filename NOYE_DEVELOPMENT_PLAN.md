@@ -3570,6 +3570,19 @@ The earlier web-MVP end-to-end record remains in
 [`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Its historical
 observations do not establish acceptance of the current packaged application.
 
+**Acceptance progress, 2026-10-13:** the owner's existing `feat/mvp-end-to-end`
+branch now includes focused backup, requested-language/heading, failed-read
+coverage and unknown-count follow-up fixes. The native ZIP restore completed into
+a verified new folder; uploaded bytes and saved bilingual writing match, but
+that backup contained no external roots. A reproduced macOS workspace restart
+without a visible window was corrected through Launch Services and rechecked in
+both directions. Native chat, original-passage inspection and conversation reload
+were observed. The record in
+[`docs/phase8/acceptance-2026-10-13.md`](docs/phase8/acceptance-2026-10-13.md)
+retains actual model failures and measured component latency. Multi-source English
+comparison quality, native PDF contents and the broader workflows below remain
+unaccepted; this is not Phase 8 or MVP completion.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite
@@ -3600,11 +3613,11 @@ broader acceptance checks below open.
 -   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
     reload → document generation → edit/save → Markdown/PDF export → clean deletion
     in the packaged macOS app. Inspect actual exported files from the native webview.
--   [ ] Complete the unconfirmed native ZIP chooser/restore flow: diagnose the
-    accessibility timeout separately from an application failure, restore into a
-    new destination, reconnect external roots and confirm actual workspace state.
-    Keep the recorded enabled Open button and service restore distinct from native
-    restore completion.
+-   [ ] Complete portable native ZIP restore with external-root reconnection.
+    The upload-only backup restored into a verified new destination and preserved
+    actual bytes/writing (§17.10 acceptance record); its chooser accessibility
+    timeout was distinct from native restore completion. Reconnect external roots
+    and verify rebuild, recovered authored files and actual workspace state.
 -   [ ] Run folder selection → detected files → ingestion → classification/filing →
     summaries/links → original-grounded question with Wiki links → prompt document →
     edit/save → actual Markdown/PDF files in the packaged macOS app. Verify restart

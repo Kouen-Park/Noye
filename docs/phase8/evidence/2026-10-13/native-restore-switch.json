@@ -1,0 +1,39 @@
+{
+  "restored_api": "http://127.0.0.1:51314",
+  "previous_api_closed": true,
+  "health": {
+    "status": "ok"
+  },
+  "files": [
+    {
+      "id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+      "name": "AT-201.pdf",
+      "file_type": "pdf",
+      "size": 1121,
+      "status": "FAILED",
+      "error": "Restored original. Rebuild the index before searching.",
+      "page_count": 1,
+      "chunk_count": 0,
+      "no_text_pages": [],
+      "extracted_page_count": 1,
+      "created_at": "2026-10-12T08:47:46.474723+00:00",
+      "updated_at": "2026-10-12T08:47:48.606294+00:00",
+      "folder_root_id": null
+    }
+  ],
+  "documents": [
+    {
+      "id": "1de643e0-d99f-48dc-b7c1-39efd1e72bbe",
+      "title": "Phase8 20261013 bilingual export",
+      "excerpt": "# Phase 8 bilingual export 검증용 문서입니다. 원문 수치는 12 milliseconds, 37 megabytes입니다. ## Section 1 · 검증 항목 AT-201 used a binary heap and completed in **12 milliseconds",
+      "is_generated": false,
+      "created_at": "2026-10-12T21:41:22.736662+00:00",
+      "updated_at": "2026-10-12T21:46:30.172498+00:00"
+    }
+  ],
+  "selection": {
+    "version": 1,
+    "current": "/Users/gavinpark/Library/Application Support/noye-restored-3265c255-c2f2-43d7-8714-0ba4eaecccd0",
+    "previous": "/Users/gavinpark/Library/Application Support/com.noye.desktopphase8qa20261012"
+  }
+}

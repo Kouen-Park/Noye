@@ -1,0 +1,1339 @@
+{
+  "scenario": "comparison",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "model": "qwen3.5:4b",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "prompt_version": "source-document-v6",
+  "pipeline_sha256": "a0a9d494fffdfd5c9b4d4b93d4cad5e1bd49347a63d4d8e32c3c1eb0a268e73f",
+  "original_hashes": {
+    "Course/01-한국어.md": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+    "Course/02-English.txt": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+    "Unrelated.txt": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf"
+  },
+  "measurement": "Evaluation-only model responses; synthetic originals. Durations are Ollama nanoseconds; wall_seconds includes transport/preflight. Body hashes bind the exact saved revision, not a quality verdict.",
+  "retry_of": "a0f52d2b-3745-454d-88da-331d2558645c",
+  "seconds": 261.306,
+  "job": {
+    "id": "37362810-ea4f-4e7b-8b12-920307d31769",
+    "kind": "source_document",
+    "subject_id": "12a5f515-c563-4728-a2e2-c5a37f19197f",
+    "dedupe_key": "source_document:12a5f515-c563-4728-a2e2-c5a37f19197f",
+    "state": "complete",
+    "stage": "complete",
+    "completed": 0,
+    "total": 0,
+    "attempt": 3,
+    "cancel_requested": 0,
+    "artifact_id": "939e0f21-b103-51fd-b885-883985ddd0b7",
+    "error": null,
+    "created_at": "2026-10-12T21:55:08.570895+00:00",
+    "updated_at": "2026-10-12T21:59:29.870134+00:00",
+    "payload": {
+      "request_id": "12a5f515-c563-4728-a2e2-c5a37f19197f"
+    },
+    "scope": {
+      "mode": "chosen",
+      "root_ids": [],
+      "source_ids": [
+        "04e582da-7bb6-406c-9114-a8c842f91201",
+        "7ba353bd-81d5-4990-b460-493303ef0079"
+      ]
+    },
+    "manifest": [
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/02-English.txt",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/01-한국어.md",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+        "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      }
+    ],
+    "events": [
+      {
+        "sequence": 20,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "starting",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:55:08.593101+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 21,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "outline",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:55:08.594122+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 22,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "reading originals",
+        "state": "running",
+        "completed": 0,
+        "total": 2,
+        "created_at": "2026-10-12T21:55:08.596409+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 23,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "process_original_sections",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:55:08.598398+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 24,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_support",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:55:08.599186+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 25,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "processing original sections",
+        "state": "running",
+        "completed": 1,
+        "total": 1,
+        "created_at": "2026-10-12T21:55:08.599483+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 26,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "reading originals",
+        "state": "running",
+        "completed": 1,
+        "total": 2,
+        "created_at": "2026-10-12T21:55:08.599682+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 27,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "process_original_sections",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:55:08.601134+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 28,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_support",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:56:06.897257+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 29,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "processing original sections",
+        "state": "running",
+        "completed": 1,
+        "total": 1,
+        "created_at": "2026-10-12T21:56:19.934657+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 30,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_heading",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:56:20.000862+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 31,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "cross_source_synthesis",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:56:45.177435+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 32,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_support",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:57:03.682679+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 33,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "synthesis:sec-01-storage-mechanisms:0",
+        "state": "failed",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:57:31.763249+00:00",
+        "detail": {
+          "stage": "synthesis:sec-01-storage-mechanisms:0",
+          "claims": [
+            {
+              "text": "Project Alpha utilizes a storage capacity of 37 liters, whereas Project Beta employs append-only log files and stores 92 liters.",
+              "quotes": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다.",
+                "Beta uses append-only log files.",
+                "Project Beta stores 92 litres."
+              ],
+              "original_passages": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+                "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day.",
+                "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+              ]
+            }
+          ],
+          "supported": [
+            false
+          ]
+        }
+      },
+      {
+        "sequence": 34,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_heading",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:57:31.835998+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 35,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "cross_source_synthesis",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:57:57.545378+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 36,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_support",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:58:22.865169+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 37,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "synthesis:sec-02-sunday-write-policies:0",
+        "state": "failed",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:58:41.319621+00:00",
+        "detail": {
+          "stage": "synthesis:sec-02-sunday-write-policies:0",
+          "claims": [
+            {
+              "text": "Project Alpha halts all write operations on Sundays.",
+              "quotes": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다."
+              ],
+              "original_passages": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+              ]
+            },
+            {
+              "text": "Project Beta allows write operations on Sundays.",
+              "quotes": [
+                "Beta permits writes on Sundays."
+              ],
+              "original_passages": [
+                "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+              ]
+            }
+          ],
+          "supported": [
+            false,
+            true
+          ]
+        }
+      },
+      {
+        "sequence": 38,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_heading",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:58:41.380040+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 39,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "cross_source_synthesis",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:58:49.922162+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 40,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verify_support",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:59:10.672573+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 41,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "synthesis:sec-03-backup-strategies:0",
+        "state": "failed",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:59:29.086716+00:00",
+        "detail": {
+          "stage": "synthesis:sec-03-backup-strategies:0",
+          "claims": [
+            {
+              "text": "Project Alpha performs backups once per day.",
+              "quotes": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+              ],
+              "original_passages": [
+                "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+              ]
+            },
+            {
+              "text": "Project Beta executes its backup protocol twice daily.",
+              "quotes": [
+                "Backups run twice a day."
+              ],
+              "original_passages": [
+                "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+              ]
+            }
+          ],
+          "supported": [
+            false,
+            true
+          ]
+        }
+      },
+      {
+        "sequence": 42,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "verifying frozen originals",
+        "state": "running",
+        "completed": 2,
+        "total": 2,
+        "created_at": "2026-10-12T21:59:29.194212+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 43,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "saving document",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:59:29.196726+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 44,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "saving",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:59:29.869880+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 45,
+        "job_id": "37362810-ea4f-4e7b-8b12-920307d31769",
+        "stage": "saving",
+        "state": "complete",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-12T21:59:29.870038+00:00",
+        "detail": {}
+      }
+    ]
+  },
+  "request": {
+    "id": "12a5f515-c563-4728-a2e2-c5a37f19197f",
+    "artifact_id": "939e0f21-b103-51fd-b885-883985ddd0b7",
+    "clarification": null,
+    "created_at": "2026-10-12T21:42:47.307240+00:00",
+    "updated_at": "2026-10-12T21:59:29.833637+00:00",
+    "request": {
+      "conversation_id": "0e3d2be3-85df-474f-8f75-b93656ab9567",
+      "instruction": "Write an English design comparison of Project Alpha and Project Beta. Explain storage, Sunday writes and backups with source evidence.",
+      "intent_context": [],
+      "inventory_mode": "relevant",
+      "request_id": "12a5f515-c563-4728-a2e2-c5a37f19197f",
+      "scope": {
+        "mode": "chosen",
+        "root_ids": [],
+        "source_ids": [
+          "04e582da-7bb6-406c-9114-a8c842f91201",
+          "7ba353bd-81d5-4990-b460-493303ef0079"
+        ]
+      },
+      "submitted_scope": {
+        "mode": "chosen",
+        "root_ids": [],
+        "source_ids": [
+          "04e582da-7bb6-406c-9114-a8c842f91201",
+          "7ba353bd-81d5-4990-b460-493303ef0079"
+        ]
+      }
+    },
+    "manifest": [
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/02-English.txt",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/01-한국어.md",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+        "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      }
+    ],
+    "plan": {
+      "intent": {
+        "clarification": null,
+        "collection_query": "",
+        "document_type": "design_comparison",
+        "inventory_mode": "relevant",
+        "language": "en",
+        "purpose": "Compare Project Alpha and Project Beta regarding storage, Sunday writes, and backups.",
+        "topic": "Design comparison of Project Alpha and Project Beta"
+      },
+      "selected_ids": [
+        "04e582da-7bb6-406c-9114-a8c842f91201",
+        "7ba353bd-81d5-4990-b460-493303ef0079"
+      ],
+      "selected_manifest": [
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/02-English.txt",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+        },
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/01-한국어.md",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+          "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+        }
+      ],
+      "wiki_hints": {
+        "04e582da-7bb6-406c-9114-a8c842f91201": [],
+        "7ba353bd-81d5-4990-b460-493303ef0079": []
+      }
+    },
+    "report": {
+      "inventory_count": 2,
+      "inventory_mode": "relevant",
+      "partial": true,
+      "presentation_limits": [
+        {
+          "code": "comparison_unresolved",
+          "reason": "The requested comparison has no verified synthesis supported by multiple sources; separate source notes are not a completed comparison."
+        }
+      ],
+      "sources": [
+        {
+          "availability": "available",
+          "characters_processed": 120,
+          "characters_read": 120,
+          "fragments_processed": 1,
+          "no_text_pages": [],
+          "passages_read": 1,
+          "processing_state": "READY",
+          "reason": null,
+          "relative_path": "Course/02-English.txt",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "state": "processed",
+          "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+        },
+        {
+          "availability": "available",
+          "characters_processed": 95,
+          "characters_read": 95,
+          "fragments_processed": 1,
+          "no_text_pages": [],
+          "passages_read": 1,
+          "processing_state": "READY",
+          "reason": null,
+          "relative_path": "Course/01-한국어.md",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+          "state": "processed",
+          "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+        }
+      ],
+      "synthesis_limits": [
+        {
+          "claim_ids": [
+            "C1",
+            "C6",
+            "C7"
+          ],
+          "reason": "Unverified synthesis replaced with verbatim originals.",
+          "section_id": "sec-01-storage-mechanisms"
+        },
+        {
+          "claim_ids": [
+            "C2"
+          ],
+          "reason": "Unverified synthesis replaced with verbatim originals.",
+          "section_id": "sec-02-sunday-write-policies"
+        },
+        {
+          "claim_ids": [
+            "C3"
+          ],
+          "reason": "Unverified synthesis replaced with verbatim originals.",
+          "section_id": "sec-03-backup-strategies"
+        }
+      ]
+    }
+  },
+  "model_calls": [
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.008091,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "process_original_sections",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:56:04.979066Z\",\"response\":\"{\\n  \\\"claims\\\": [\\n    {\\n      \\\"section_id\\\": \\\"sec-02-sunday-write-policies\\\",\\n      \\\"text\\\": \\\"Project Beta permits writes on Sundays.\\\",\\n      \\\"supports\\\": [\\n        {\\n          \\\"evidence_id\\\": \\\"a7945181f99890db1b48aa5e:0:120\\\",\\n          \\\"quote\\\": \\\"Beta permits writes on Sundays.\\\"\\n        }\\n      ]\\n    },\\n    {\\n      \\\"section_id\\\": \\\"sec-03-backup-strategies\\\",\\n      \\\"text\\\": \\\"Project Beta executes its backup protocol twice daily.\\\",\\n      \\\"supports\\\": [\\n        {\\n          \\\"evidence_id\\\": \\\"a7945181f99890db1b48aa5e:0:120\\\",\\n          \\\"quote\\\": \\\"Backups run twice a day.\\\"\\n        }\\n      ]\\n    },\\n    {\\n      \\\"section_id\\\": \\\"sec-01-storage-mechanisms\\\",\\n      \\\"text\\\": \\\"Project Beta uses append-only log files.\\\",\\n      \\\"supports\\\": [\\n        {\\n          \\\"evidence_id\\\": \\\"a7945181f99890db1b48aa5e:0:120\\\",\\n          \\\"quote\\\": \\\"Beta uses append-only log files.\\\"\\n        }\\n      ]\\n    },\\n    {\\n      \\\"section_id\\\": \\\"sec-01-storage-mechanisms\\\",\\n      \\\"text\\\": \\\"Project Beta stores 92 litres.\\\",\\n      \\\"supports\\\": [\\n        {\\n          \\\"evidence_id\\\": \\\"a7945181f99890db1b48aa5e:0:120\\\",\\n          \\\"quote\\\": \\\"Project Beta stores 92 litres.\\\"\\n        }\\n      ]\\n    }\\n  ],\\n  \\\"gaps\\\": [\\n    \\\"The original text states Project Beta stores 92 litres but does not specify whether this represents maximum capacity or current volume; therefore, claims regarding total or maximum storage capacity are unsupported.\\\",\\n    \\\"No evidence is provided comparing the storage mechanisms of Project Alpha and Project Beta.\\\"\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,4480,38247,57475,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,2911,28074,763,328,21874,487,328,42664,763,5046,2034,763,328,19846,41040,25,5606,23930,5972,13,5606,33109,487,328,23884,763,59670,306,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,328,2034,763,328,5612,36593,321,38778,9268,13933,5046,306,763,328,4863,12,15,17,1284,6467,59970,2195,40648,487,328,2034,763,328,34871,9357,326,42884,321,20025,13933,5046,306,763,328,4863,12,15,18,15007,446,40252,67038,487,328,2034,763,328,54356,11371,21340,321,32790,8261,8934,63893,328,6184,1098,763,59670,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,69983,328,21299,763,328,7734,3591,2700,303,2468,28074,11,64034,57879,58655,948,4221,13,13262,11222,59487,2652,52907,303,279,83784,3992,26,635,524,14260,16687,13,22116,1132,9468,7021,7929,11,9501,449,20454,3644,816,11,321,15043,4581,2652,52907,16687,13,21539,7929,513,5252,364,38400,1414,13,1061,1562,5435,799,59056,6937,494,23287,2450,13,6728,3955,7916,321,9376,43303,513,1301,24358,26,635,524,3591,781,513,26334,466,6639,5721,13,22116,411,2450,579,12688,11,524,5144,29768,29256,13,34094,61485,22980,8900,303,31092,11,524,57879,7929,13,3054,524,3165,6602,466,42902,8928,13,78503,4947,321,18987,10152,328,11932,56186,763,5046,19100,6581,24858,763,59670,1272,763,328,7601,33109,57762,264,5638,17120,3018,383,8472,14934,1433,3425,440,264,8390,314,220,24,17,84887,10152,328,17675,763,867,2069,5046,1272,763,328,7601,33109,5954,3165,7289,310,11822,383,59023,10152,328,17675,763,804,2069,5046,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,328,17675,763,804,69983,328,21299,763,328,31995,279,17030,57879,58196,1518,16876,264,491,9665,13,48743,2683,9476,7867,1503,524,32396,6966,8390,26,5471,7594,2702,11,6966,11,34475,466,15766,4530,26334,494,279,82634,13,78503,2450,59933,321,4581,22513,58196,13,3054,524,49325,2610,7916,1149,3307,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,46944,763,498,198,262,313,198,406,328,2720,816,763,328,4863,12,15,17,1284,6467,59970,2195,40648,487,198,406,328,1272,763,328,7601,33109,27751,13514,383,59023,10152,198,406,328,75051,763,498,198,285,313,198,670,328,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,198,670,328,2855,763,328,62618,27751,13514,383,59023,1149,198,285,333,198,406,2205,198,262,2390,198,262,313,198,406,328,2720,816,763,328,4863,12,15,18,15007,446,40252,67038,487,198,406,328,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,198,406,328,75051,763,498,198,285,313,198,670,328,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,198,670,328,2855,763,328,3581,8339,1542,10598,264,1834,1149,198,285,333,198,406,2205,198,262,2390,198,262,313,198,406,328,2720,816,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,198,406,328,1272,763,328,7601,33109,5533,8472,14934,1433,3425,10152,198,406,328,75051,763,498,198,285,313,198,670,328,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,198,670,328,2855,763,328,62618,5533,8472,14934,1433,3425,1149,198,285,333,198,406,2205,198,262,2390,198,262,313,198,406,328,2720,816,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,198,406,328,1272,763,328,7601,33109,10220,220,24,17,84887,10152,198,406,328,75051,763,498,198,285,313,198,670,328,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,198,670,328,2855,763,328,7601,33109,10220,220,24,17,84887,1149,198,285,333,198,406,2205,198,262,333,198,220,10339,198,220,328,70,2538,763,498,198,262,328,760,3889,1414,5134,5606,33109,10220,220,24,17,84887,694,1503,524,13441,3315,411,10551,6966,8390,466,1428,7867,26,8646,11,7929,8559,2702,466,6966,5638,8390,513,39072,10152,198,262,328,2665,5721,369,3766,25456,279,5638,23038,314,5606,23930,321,5606,33109,1149,198,220,2205,198,92],\"total_duration\":56371957333,\"load_duration\":13525670333,\"prompt_eval_count\":657,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":5184281000,\"eval_count\":488,\"eval_duration\":36003757000}",
+      "response": "{\n  \"claims\": [\n    {\n      \"section_id\": \"sec-02-sunday-write-policies\",\n      \"text\": \"Project Beta permits writes on Sundays.\",\n      \"supports\": [\n        {\n          \"evidence_id\": \"a7945181f99890db1b48aa5e:0:120\",\n          \"quote\": \"Beta permits writes on Sundays.\"\n        }\n      ]\n    },\n    {\n      \"section_id\": \"sec-03-backup-strategies\",\n      \"text\": \"Project Beta executes its backup protocol twice daily.\",\n      \"supports\": [\n        {\n          \"evidence_id\": \"a7945181f99890db1b48aa5e:0:120\",\n          \"quote\": \"Backups run twice a day.\"\n        }\n      ]\n    },\n    {\n      \"section_id\": \"sec-01-storage-mechanisms\",\n      \"text\": \"Project Beta uses append-only log files.\",\n      \"supports\": [\n        {\n          \"evidence_id\": \"a7945181f99890db1b48aa5e:0:120\",\n          \"quote\": \"Beta uses append-only log files.\"\n        }\n      ]\n    },\n    {\n      \"section_id\": \"sec-01-storage-mechanisms\",\n      \"text\": \"Project Beta stores 92 litres.\",\n      \"supports\": [\n        {\n          \"evidence_id\": \"a7945181f99890db1b48aa5e:0:120\",\n          \"quote\": \"Project Beta stores 92 litres.\"\n        }\n      ]\n    }\n  ],\n  \"gaps\": [\n    \"The original text states Project Beta stores 92 litres but does not specify whether this represents maximum capacity or current volume; therefore, claims regarding total or maximum storage capacity are unsupported.\",\n    \"No evidence is provided comparing the storage mechanisms of Project Alpha and Project Beta.\"\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 56371957333,
+      "load_duration": 13525670333,
+      "prompt_eval_count": 657,
+      "prompt_eval_duration": 5184281000,
+      "eval_count": 488,
+      "eval_duration": 36003757000,
+      "wall_seconds": 57.999892
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.441658,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:56:18.723583Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    true,\\n    true,\\n    true,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,33109,27751,13514,383,59023,10152,328,51492,763,4241,62618,27751,13514,383,59023,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,63893,5046,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,328,51492,763,4241,3581,8339,1542,10598,264,1834,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,63893,5046,1272,763,328,7601,33109,5533,8472,14934,1433,3425,10152,328,51492,763,4241,62618,5533,8472,14934,1433,3425,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,63893,5046,1272,763,328,7601,33109,10220,220,24,17,84887,10152,328,51492,763,4241,7601,33109,10220,220,24,17,84887,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,804,11,198,262,804,11,198,262,804,11,198,262,804,198,220,2205,198,92],\"total_duration\":11347612375,\"load_duration\":137191291,\"prompt_eval_count\":463,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":6049426000,\"eval_count\":29,\"eval_duration\":2644519000}",
+      "response": "{\n  \"supported\": [\n    true,\n    true,\n    true,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 11347612375,
+      "load_duration": 137191291,
+      "prompt_eval_count": 463,
+      "prompt_eval_duration": 6049426000,
+      "eval_count": 29,
+      "eval_duration": 2644519000,
+      "wall_seconds": 12.405481
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.176633,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_heading",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:56:30.367261Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,45666,487,328,11084,763,328,19846,41040,25,5606,23930,5972,13,5606,33109,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,6184,1098,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,1272,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,2069,5046,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,69983,328,21299,763,328,2381,91153,3889,20438,11,1910,3315,424,11222,411,14081,430,264,63072,2306,13,357,2192,1189,7276,279,10897,2128,1304,11,694,4021,884,12688,11,14246,12960,11,31591,11,34475,11,466,7929,314,7167,1928,524,9272,539,279,82634,13,3301,799,2623,791,20438,13,8483,1414,369,632,80946,5721,11,524,10895,13,357,791,29768,18682,369,524,264,4281,8996,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":10155371958,\"load_duration\":123806916,\"prompt_eval_count\":478,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":5020707000,\"eval_count\":22,\"eval_duration\":2681507000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 10155371958,
+      "load_duration": 123806916,
+      "prompt_eval_count": 478,
+      "prompt_eval_duration": 5020707000,
+      "eval_count": 22,
+      "eval_duration": 2681507000,
+      "wall_seconds": 11.064429
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.073002,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_heading",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:56:43.704257Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,45666,487,328,11084,763,328,5612,36593,321,38778,9268,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,6184,1098,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,1272,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,2069,5046,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,69983,328,21299,763,328,2381,91153,3889,20438,11,1910,3315,424,11222,411,14081,430,264,63072,2306,13,357,2192,1189,7276,279,10897,2128,1304,11,694,4021,884,12688,11,14246,12960,11,31591,11,34475,11,466,7929,314,7167,1928,524,9272,539,279,82634,13,3301,799,2623,791,20438,13,8483,1414,369,632,80946,5721,11,524,10895,13,357,791,29768,18682,369,524,264,4281,8996,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":12116651083,\"load_duration\":109608917,\"prompt_eval_count\":474,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":6227245000,\"eval_count\":22,\"eval_duration\":2737364000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 12116651083,
+      "load_duration": 109608917,
+      "prompt_eval_count": 474,
+      "prompt_eval_duration": 6227245000,
+      "eval_count": 22,
+      "eval_duration": 2737364000,
+      "wall_seconds": 13.312579
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.06014,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "cross_source_synthesis",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:57:02.445886Z\",\"response\":\"{\\n  \\\"claims\\\": [\\n    {\\n      \\\"text\\\": \\\"Project Alpha utilizes a storage capacity of 37 liters, whereas Project Beta employs append-only log files and stores 92 liters.\\\",\\n      \\\"claim_ids\\\": [\\\"C1\\\", \\\"C6\\\", \\\"C7\\\"]\\n    }\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,27900,10039,49663,12807,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,2911,28074,763,328,21874,487,328,11084,763,328,5612,36593,321,38778,9268,487,328,46944,763,59670,2720,816,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,328,1272,763,328,7601,23930,57762,264,5638,8390,314,220,18,22,89668,10152,328,75051,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,2855,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,1149,69983,328,306,763,328,34,16,487,328,2348,816,763,328,15,19,68,20,23,17,3131,12,22,5876,21,12,19,15,21,66,12,24,16,16,19,7174,23,66,23,19,17,69,24,16,17,15,16,13933,5046,2720,816,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,328,1272,763,328,7601,33109,5533,8472,14934,1433,3425,10152,328,75051,763,59670,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,2855,763,328,62618,5533,8472,14934,1433,3425,1149,69983,328,306,763,328,34,21,487,328,2348,816,763,328,22,4494,18,20,18,8670,12,23,16,67,20,12,19,24,24,15,1402,19,21,15,12,19,24,18,18,15,18,797,15,15,22,24,13933,5046,2720,816,763,328,4863,12,15,16,60681,1395,4584,276,13271,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,10152,328,75051,763,59670,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,2855,763,328,7601,33109,10220,220,24,17,84887,1149,69983,328,306,763,328,34,22,487,328,2348,816,763,328,22,4494,18,20,18,8670,12,23,16,67,20,12,19,24,24,15,1402,19,21,15,12,19,24,18,18,15,18,797,15,15,22,24,8934,1089,328,21299,763,328,7734,61446,36171,41228,466,11960,3387,364,411,3644,303,279,10897,3992,13,351,614,16713,3591,7824,12250,43380,2029,13,63074,11461,1132,413,5721,11222,28092,4530,26,874,491,29256,466,12688,13,3054,524,16525,42902,8928,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,46944,763,498,198,262,313,198,406,328,1272,763,328,7601,23930,57762,264,5638,8390,314,220,18,22,89668,11,19248,5606,33109,48456,8472,14934,1433,3425,321,10220,220,24,17,89668,10152,198,406,328,7611,7824,763,4241,34,16,487,328,34,21,487,328,34,22,1293,198,262,333,198,220,2205,198,92],\"total_duration\":17183588708,\"load_duration\":117458708,\"prompt_eval_count\":685,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":8931719000,\"eval_count\":72,\"eval_duration\":5854024000}",
+      "response": "{\n  \"claims\": [\n    {\n      \"text\": \"Project Alpha utilizes a storage capacity of 37 liters, whereas Project Beta employs append-only log files and stores 92 liters.\",\n      \"claim_ids\": [\"C1\", \"C6\", \"C7\"]\n    }\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 17183588708,
+      "load_duration": 117458708,
+      "prompt_eval_count": 685,
+      "prompt_eval_duration": 8931719000,
+      "eval_count": 72,
+      "eval_duration": 5854024000,
+      "wall_seconds": 18.233415
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.038194,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:57:30.555658Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,57762,264,5638,8390,314,220,18,22,89668,11,19248,5606,33109,48456,8472,14934,1433,3425,321,10220,220,24,17,89668,10152,328,51492,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,10152,328,62618,5533,8472,14934,1433,3425,10152,328,7601,33109,10220,220,24,17,84887,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,10152,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,10152,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,198,220,2205,198,92],\"total_duration\":26773860458,\"load_duration\":66755125,\"prompt_eval_count\":409,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":10150636000,\"eval_count\":17,\"eval_duration\":1459132000}",
+      "response": "{\n  \"supported\": [\n    false\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 26773860458,
+      "load_duration": 66755125,
+      "prompt_eval_count": 409,
+      "prompt_eval_duration": 10150636000,
+      "eval_count": 17,
+      "eval_duration": 1459132000,
+      "wall_seconds": 27.812735
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.045363,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_heading",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:57:56.443268Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,45666,487,328,11084,763,328,34871,9357,326,42884,321,20025,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,6184,1098,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,1272,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,2069,5046,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,69983,328,21299,763,328,2381,91153,3889,20438,11,1910,3315,424,11222,411,14081,430,264,63072,2306,13,357,2192,1189,7276,279,10897,2128,1304,11,694,4021,884,12688,11,14246,12960,11,31591,11,34475,11,466,7929,314,7167,1928,524,9272,539,279,82634,13,3301,799,2623,791,20438,13,8483,1414,369,632,80946,5721,11,524,10895,13,357,791,29768,18682,369,524,264,4281,8996,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":24537295667,\"load_duration\":47351792,\"prompt_eval_count\":475,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":9633147000,\"eval_count\":22,\"eval_duration\":2691597000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 24537295667,
+      "load_duration": 47351792,
+      "prompt_eval_count": 475,
+      "prompt_eval_duration": 9633147000,
+      "eval_count": 22,
+      "eval_duration": 2691597000,
+      "wall_seconds": 25.464761
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.046871,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "cross_source_synthesis",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:58:21.460651Z\",\"response\":\"{\\n  \\\"claims\\\": [\\n    {\\n      \\\"text\\\": \\\"Project Alpha halts all write operations on Sundays.\\\",\\n      \\\"claim_ids\\\": [\\\"C2\\\"]\\n    },\\n    {\\n      \\\"text\\\": \\\"Project Beta allows write operations on Sundays.\\\",\\n      \\\"claim_ids\\\": [\\\"C4\\\"]\\n    }\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,27900,10039,49663,12807,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,2911,28074,763,328,21874,487,328,11084,763,328,34871,9357,326,42884,321,20025,487,328,46944,763,59670,2720,816,763,328,4863,12,15,17,1284,6467,59970,2195,40648,487,328,1272,763,328,7601,23930,17397,4237,383,59023,10152,328,75051,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,2855,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,1149,69983,328,306,763,328,34,17,487,328,2348,816,763,328,15,19,68,20,23,17,3131,12,22,5876,21,12,19,15,21,66,12,24,16,16,19,7174,23,66,23,19,17,69,24,16,17,15,16,13933,5046,2720,816,763,328,4863,12,15,17,1284,6467,59970,2195,40648,487,328,1272,763,328,7601,33109,27751,13514,383,59023,10152,328,75051,763,59670,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,2855,763,328,62618,27751,13514,383,59023,1149,69983,328,306,763,328,34,19,487,328,2348,816,763,328,22,4494,18,20,18,8670,12,23,16,67,20,12,19,24,24,15,1402,19,21,15,12,19,24,18,18,15,18,797,15,15,22,24,8934,1089,328,21299,763,328,7734,61446,36171,41228,466,11960,3387,364,411,3644,303,279,10897,3992,13,351,614,16713,3591,7824,12250,43380,2029,13,63074,11461,1132,413,5721,11222,28092,4530,26,874,491,29256,466,12688,13,3054,524,16525,42902,8928,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,46944,763,498,198,262,313,198,406,328,1272,763,328,7601,23930,14333,2491,660,3165,7289,383,59023,10152,198,406,328,7611,7824,763,4241,34,17,1293,198,262,2390,198,262,313,198,406,328,1272,763,328,7601,33109,5954,3165,7289,383,59023,10152,198,406,328,7611,7824,763,4241,34,19,1293,198,262,333,198,220,2205,198,92],\"total_duration\":23845624708,\"load_duration\":69578875,\"prompt_eval_count\":570,\"prompt_eval_cached_count\":173,\"prompt_eval_duration\":11717196000,\"eval_count\":78,\"eval_duration\":4442928000}",
+      "response": "{\n  \"claims\": [\n    {\n      \"text\": \"Project Alpha halts all write operations on Sundays.\",\n      \"claim_ids\": [\"C2\"]\n    },\n    {\n      \"text\": \"Project Beta allows write operations on Sundays.\",\n      \"claim_ids\": [\"C4\"]\n    }\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 23845624708,
+      "load_duration": 69578875,
+      "prompt_eval_count": 570,
+      "prompt_eval_duration": 11717196000,
+      "eval_count": 78,
+      "eval_duration": 4442928000,
+      "wall_seconds": 25.024531
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.117218,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:58:40.663851Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,14333,2491,660,3165,7289,383,59023,10152,328,51492,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,63893,5046,1272,763,328,7601,33109,5954,3165,7289,383,59023,10152,328,51492,763,4241,62618,27751,13514,383,59023,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":16600385042,\"load_duration\":123840709,\"prompt_eval_count\":389,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":6001430000,\"eval_count\":21,\"eval_duration\":1297927000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 16600385042,
+      "load_duration": 123840709,
+      "prompt_eval_count": 389,
+      "prompt_eval_duration": 6001430000,
+      "eval_count": 21,
+      "eval_duration": 1297927000,
+      "wall_seconds": 17.165901
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.091341,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_heading",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:58:49.363274Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,45666,487,328,11084,763,328,54356,11371,21340,321,32790,8261,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,6184,1098,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,1272,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,2069,5046,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,1272,763,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,69983,328,21299,763,328,2381,91153,3889,20438,11,1910,3315,424,11222,411,14081,430,264,63072,2306,13,357,2192,1189,7276,279,10897,2128,1304,11,694,4021,884,12688,11,14246,12960,11,31591,11,34475,11,466,7929,314,7167,1928,524,9272,539,279,82634,13,3301,799,2623,791,20438,13,8483,1414,369,632,80946,5721,11,524,10895,13,357,791,29768,18682,369,524,264,4281,8996,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":7860974500,\"load_duration\":45409750,\"prompt_eval_count\":475,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":3608305000,\"eval_count\":22,\"eval_duration\":1738087000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 7860974500,
+      "load_duration": 45409750,
+      "prompt_eval_count": 475,
+      "prompt_eval_duration": 3608305000,
+      "eval_count": 22,
+      "eval_duration": 1738087000,
+      "wall_seconds": 8.309418
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.054991,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "cross_source_synthesis",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:59:09.224425Z\",\"response\":\"{\\n  \\\"claims\\\": [\\n    {\\n      \\\"text\\\": \\\"Project Alpha performs backups once per day.\\\",\\n      \\\"claim_ids\\\": [\\\"C3\\\"]\\n    },\\n    {\\n      \\\"text\\\": \\\"Project Beta executes its backup protocol twice daily.\\\",\\n      \\\"claim_ids\\\": [\\\"C5\\\"]\\n    }\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,27900,10039,49663,12807,487,328,54537,763,5046,12453,2325,763,819,11,328,13034,5560,763,7111,328,5872,1756,763,328,24065,87672,487,328,30075,7075,763,328,94205,487,328,11197,763,328,21874,487,328,74041,763,328,26487,5606,23930,321,5606,33109,8559,5638,11,7043,13514,11,321,57650,10152,328,15930,763,328,19846,11960,314,5606,23930,321,5606,33109,13933,328,2911,28074,763,328,21874,487,328,11084,763,328,54356,11371,21340,321,32790,8261,487,328,46944,763,59670,2720,816,763,328,4863,12,15,18,15007,446,40252,67038,487,328,1272,763,328,7601,23930,25822,57650,2957,791,1834,10152,328,75051,763,59670,68,26590,816,763,328,20,24,21,66,20,21,18,19,68,22,20,23,19,18,21,22,22,66,19,66,20,64,19,21,25,15,25,24,20,487,328,2855,763,5687,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,69983,328,306,763,328,34,18,487,328,2348,816,763,328,15,19,68,20,23,17,3131,12,22,5876,21,12,19,15,21,66,12,24,16,16,19,7174,23,66,23,19,17,69,24,16,17,15,16,13933,5046,2720,816,763,328,4863,12,15,18,15007,446,40252,67038,487,328,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,328,75051,763,59670,68,26590,816,763,328,64,22,24,19,20,16,23,16,69,24,24,23,24,15,1932,16,65,19,23,5137,20,68,25,15,25,16,17,15,487,328,2855,763,328,3581,8339,1542,10598,264,1834,1149,69983,328,306,763,328,34,20,487,328,2348,816,763,328,22,4494,18,20,18,8670,12,23,16,67,20,12,19,24,24,15,1402,19,21,15,12,19,24,18,18,15,18,797,15,15,22,24,8934,1089,328,21299,763,328,7734,61446,36171,41228,466,11960,3387,364,411,3644,303,279,10897,3992,13,351,614,16713,3591,7824,12250,43380,2029,13,63074,11461,1132,413,5721,11222,28092,4530,26,874,491,29256,466,12688,13,3054,524,16525,42902,8928,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,46944,763,498,198,262,313,198,406,328,1272,763,328,7601,23930,25822,57650,2957,791,1834,10152,198,406,328,7611,7824,763,4241,34,18,1293,198,262,2390,198,262,313,198,406,328,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,198,406,328,7611,7824,763,4241,34,20,1293,198,262,333,198,220,2205,198,92],\"total_duration\":19210409583,\"load_duration\":25153166,\"prompt_eval_count\":584,\"prompt_eval_cached_count\":173,\"prompt_eval_duration\":10744379000,\"eval_count\":79,\"eval_duration\":4724128000}",
+      "response": "{\n  \"claims\": [\n    {\n      \"text\": \"Project Alpha performs backups once per day.\",\n      \"claim_ids\": [\"C3\"]\n    },\n    {\n      \"text\": \"Project Beta executes its backup protocol twice daily.\",\n      \"claim_ids\": [\"C5\"]\n    }\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 19210409583,
+      "load_duration": 25153166,
+      "prompt_eval_count": 584,
+      "prompt_eval_duration": 10744379000,
+      "eval_count": 79,
+      "eval_duration": 4724128000,
+      "wall_seconds": 20.263418
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.171686,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-12T21:59:27.734613Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false,\\n    true\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,25822,57650,2957,791,1834,10152,328,51492,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,63893,5046,1272,763,328,7601,33109,49703,1141,15264,11176,10598,7071,10152,328,51492,763,4241,3581,8339,1542,10598,264,1834,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,11,198,262,804,198,220,2205,198,92],\"total_duration\":16845901292,\"load_duration\":182757542,\"prompt_eval_count\":401,\"prompt_eval_cached_count\":145,\"prompt_eval_duration\":8300638000,\"eval_count\":21,\"eval_duration\":1204663000}",
+      "response": "{\n  \"supported\": [\n    false,\n    true\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 16845901292,
+      "load_duration": 182757542,
+      "prompt_eval_count": 401,
+      "prompt_eval_duration": 8300638000,
+      "eval_count": 21,
+      "eval_duration": 1204663000,
+      "wall_seconds": 17.936033
+    }
+  ],
+  "revision": {
+    "id": "4a8cb0f1-b19c-45d0-b628-536134e0af8f",
+    "document_id": "939e0f21-b103-51fd-b885-883985ddd0b7",
+    "parent_id": null,
+    "origin": "generated",
+    "title": "Design Comparison: Project Alpha vs. Project Beta",
+    "content": "# Design Comparison: Project Alpha vs. Project Beta\n\n## Storage Architecture and Capacity Management\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다. [E1]\n\n> Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day. [E2, E3]\n\n## Sunday Write Scheduling and Performance\n\nProject Beta allows write operations on Sundays. [E5]\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다. [E4]\n\n## Backup Protocols and Recovery Times\n\nProject Beta executes its backup protocol twice daily. [E7]\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다. [E6]\n\n## Source and coverage report\n\nPartial result.\n\nRelevant sources discovered within the initial scope; the whole library was not reviewed.\n\nInitial inventory: 2; selected: 2; processed: 2.\n\n- Course/02-English.txt: processed; 1 passages, 120/120 extracted characters processed. \n\n- Course/01-한국어.md: processed; 1 passages, 95/95 extracted characters processed. \n\nCoverage describes extracted text supplied to the model, not comprehension or proof that every fact was included. Scanned images and extraction omissions may remain.\n\nSome cross-source wording did not pass evidence verification. Verbatim original passages were retained in their original language; comparative conclusions for those items remain unresolved.\n\nDocument presentation remains partial:\n\n- The requested comparison has no verified synthesis supported by multiple sources; separate source notes are not a completed comparison.",
+    "created_at": "2026-10-12T21:59:29.833637+00:00",
+    "metadata": {
+      "citations": [
+        {
+          "end": 95,
+          "id": "596c5634e75843677c4c5a46:0:95",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다.",
+          "quote_end": 39,
+          "quote_start": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "01-한국어.md",
+            "relative_path": "Course/01-한국어.md",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+            "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+            "source_version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+          },
+          "start": 0,
+          "text": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        },
+        {
+          "end": 120,
+          "id": "a7945181f99890db1b48aa5e:0:120",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "Beta uses append-only log files.",
+          "quote_end": 63,
+          "quote_start": 31,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "02-English.txt",
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "source_version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          "start": 0,
+          "text": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        },
+        {
+          "end": 120,
+          "id": "a7945181f99890db1b48aa5e:0:120",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "Project Beta stores 92 litres.",
+          "quote_end": 30,
+          "quote_start": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "02-English.txt",
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "source_version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          "start": 0,
+          "text": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        },
+        {
+          "end": 95,
+          "id": "596c5634e75843677c4c5a46:0:95",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다.",
+          "quote_end": 76,
+          "quote_start": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "01-한국어.md",
+            "relative_path": "Course/01-한국어.md",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+            "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+            "source_version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+          },
+          "start": 0,
+          "text": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        },
+        {
+          "end": 120,
+          "id": "a7945181f99890db1b48aa5e:0:120",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "Beta permits writes on Sundays.",
+          "quote_end": 95,
+          "quote_start": 64,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "02-English.txt",
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "source_version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          "start": 0,
+          "text": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        },
+        {
+          "end": 95,
+          "id": "596c5634e75843677c4c5a46:0:95",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+          "quote_end": 95,
+          "quote_start": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "01-한국어.md",
+            "relative_path": "Course/01-한국어.md",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+            "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+            "source_version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+          },
+          "start": 0,
+          "text": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        },
+        {
+          "end": 120,
+          "id": "a7945181f99890db1b48aa5e:0:120",
+          "page_number": null,
+          "passage_index": 0,
+          "quote": "Backups run twice a day.",
+          "quote_end": 120,
+          "quote_start": 96,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "02-English.txt",
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "source_version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          "start": 0,
+          "text": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        }
+      ],
+      "coverage": {
+        "inventory_count": 2,
+        "inventory_mode": "relevant",
+        "partial": true,
+        "presentation_limits": [
+          {
+            "code": "comparison_unresolved",
+            "reason": "The requested comparison has no verified synthesis supported by multiple sources; separate source notes are not a completed comparison."
+          }
+        ],
+        "sources": [
+          {
+            "availability": "available",
+            "characters_processed": 120,
+            "characters_read": 120,
+            "fragments_processed": 1,
+            "no_text_pages": [],
+            "passages_read": 1,
+            "processing_state": "READY",
+            "reason": null,
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "state": "processed",
+            "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          {
+            "availability": "available",
+            "characters_processed": 95,
+            "characters_read": 95,
+            "fragments_processed": 1,
+            "no_text_pages": [],
+            "passages_read": 1,
+            "processing_state": "READY",
+            "reason": null,
+            "relative_path": "Course/01-한국어.md",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+            "state": "processed",
+            "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+          }
+        ],
+        "synthesis_limits": [
+          {
+            "claim_ids": [
+              "C1",
+              "C6",
+              "C7"
+            ],
+            "reason": "Unverified synthesis replaced with verbatim originals.",
+            "section_id": "sec-01-storage-mechanisms"
+          },
+          {
+            "claim_ids": [
+              "C2"
+            ],
+            "reason": "Unverified synthesis replaced with verbatim originals.",
+            "section_id": "sec-02-sunday-write-policies"
+          },
+          {
+            "claim_ids": [
+              "C3"
+            ],
+            "reason": "Unverified synthesis replaced with verbatim originals.",
+            "section_id": "sec-03-backup-strategies"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "end": 95,
+          "id": "596c5634e75843677c4c5a46:0:95",
+          "page_number": null,
+          "passage_index": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "01-한국어.md",
+            "relative_path": "Course/01-한국어.md",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+            "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+            "source_version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+          },
+          "start": 0,
+          "text": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        },
+        {
+          "end": 120,
+          "id": "a7945181f99890db1b48aa5e:0:120",
+          "page_number": null,
+          "passage_index": 0,
+          "source": {
+            "availability": "available",
+            "indexing_status": "READY",
+            "name": "02-English.txt",
+            "relative_path": "Course/02-English.txt",
+            "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+            "source_hash": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+            "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+            "source_version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+          },
+          "start": 0,
+          "text": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        }
+      ],
+      "initial_manifest": [
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/02-English.txt",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+        },
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/01-한국어.md",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+          "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+        }
+      ],
+      "intent": {
+        "clarification": null,
+        "collection_query": "",
+        "document_type": "design_comparison",
+        "inventory_mode": "relevant",
+        "language": "English",
+        "purpose": "Compare Project Alpha and Project Beta regarding storage, Sunday writes, and backups.",
+        "topic": "Design comparison of Project Alpha and Project Beta"
+      },
+      "model": "qwen3.5:4b",
+      "output_contract": {
+        "comparison_check": "multiple-source references, not proof of reasoning quality",
+        "language_check": "script_only",
+        "requested_language": "English"
+      },
+      "parameters": {
+        "context_tokens": 8192,
+        "output_tokens": 2048,
+        "thinking": false
+      },
+      "processing_seconds": 260.584,
+      "prompt_version": "source-document-v6",
+      "render_version": "source-document-markdown-v3",
+      "request_id": "12a5f515-c563-4728-a2e2-c5a37f19197f",
+      "schema_version": 1,
+      "scope": {
+        "mode": "chosen",
+        "root_ids": [],
+        "source_ids": [
+          "04e582da-7bb6-406c-9114-a8c842f91201",
+          "7ba353bd-81d5-4990-b460-493303ef0079"
+        ]
+      },
+      "selected_manifest": [
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/02-English.txt",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+        },
+        {
+          "availability": "available",
+          "processing_state": "READY",
+          "relative_path": "Course/01-한국어.md",
+          "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+          "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+          "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+        }
+      ],
+      "uncertainties": [
+        {
+          "batch_number": 0,
+          "evidence_ids": [
+            "a7945181f99890db1b48aa5e:0:120"
+          ],
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "text": "The original text states Project Beta stores 92 litres but does not specify whether this represents maximum capacity or current volume; therefore, claims regarding total or maximum storage capacity are unsupported.",
+          "verified": false
+        },
+        {
+          "batch_number": 0,
+          "evidence_ids": [
+            "a7945181f99890db1b48aa5e:0:120"
+          ],
+          "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+          "text": "No evidence is provided comparing the storage mechanisms of Project Alpha and Project Beta.",
+          "verified": false
+        }
+      ],
+      "validation": "exact ID/quote/locator/number checks, model citation-label rejection plus script/structure guards and bounded local-model entailment/heading checks",
+      "wiki_hints": {
+        "04e582da-7bb6-406c-9114-a8c842f91201": [],
+        "7ba353bd-81d5-4990-b460-493303ef0079": []
+      }
+    }
+  },
+  "revision_body_sha256": "62b293fffac1d4baa891e21289e364dd32b1c232fb92ede86a4eb6db32bcb863",
+  "publication": {
+    "original_path": "/private/tmp/noye-phase8-20261012/source-comparison/comparison-12a5f515-c563-4728-a2e2-c5a37f19197f-retry-3.json",
+    "original_sha256": "5a96f58f6f72b5ed10a38340e18451cb9ca16bf90cf7faaefe13eb13dc6b07d3",
+    "note": "Derived copy: only successful /api/show raw responses (duplicated model metadata/license) are omitted and hashed. All generated responses, failures, timing and verdicts are unchanged. Full originals retained at original_path."
+  }
+}

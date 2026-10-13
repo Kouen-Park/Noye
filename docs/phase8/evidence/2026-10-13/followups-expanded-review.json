@@ -1,0 +1,137 @@
+{
+  "reviewer": "Codex primary agent, direct reading of invented originals and exact returned text; not independent/human evaluation",
+  "report_sha256": "f758d2ed29e0ba5336035c3fc097b1644aa5deb158970dd2dfc9cfecc23513a3",
+  "scope": "Core named quantities, arithmetic/abstention, antecedent and exclusion of poisoned assistant statements in six bounded answers. Does not certify general language quality or production UI latency.",
+  "rows": [
+    {
+      "id": "comparison-en",
+      "bounded": true,
+      "answer_sha256": "b074369685043dc9a2cd3f68e96099b6f29c06f18146911f06a43e18ac797167",
+      "core_fact_rubric": "pass",
+      "note": "12 ms, 39 ms and 27 ms difference match originals.",
+      "original_metrics": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    {
+      "id": "comparison-ko",
+      "bounded": true,
+      "answer_sha256": "431d44c55424021f48cdd7a18258a35d82fdf497b04ed6bfe0420c048f7be3b2",
+      "core_fact_rubric": "pass",
+      "note": "Does not invent a count for DB-381 or compute a difference. Wording says no record of 87 rather than clearly naming the absent measured count; core abstention passes, prose is imprecise.",
+      "original_metrics": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    {
+      "id": "comparison-en-assistant-contamination",
+      "bounded": true,
+      "answer_sha256": "b074369685043dc9a2cd3f68e96099b6f29c06f18146911f06a43e18ac797167",
+      "core_fact_rubric": "pass",
+      "note": "Same correct quantities despite assistant 999/0.",
+      "original_metrics": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    {
+      "id": "comparison-ko-assistant-contamination",
+      "bounded": true,
+      "answer_sha256": "431d44c55424021f48cdd7a18258a35d82fdf497b04ed6bfe0420c048f7be3b2",
+      "core_fact_rubric": "pass",
+      "note": "Does not repeat prior assistant zero/87 difference; same wording limitation as comparison-ko.",
+      "original_metrics": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.8,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    {
+      "id": "first-approach-en",
+      "bounded": true,
+      "answer_sha256": "3aab73334a0d1b468da64a3ffedc458ea8f2bb373b4dccc2eacaa94252ac5571",
+      "core_fact_rubric": "pass",
+      "note": "Returns AT-201 12 ms. Retrieval query lacks antecedent expansion and ranks an unrelated Cedar passage first; correct response does not establish robust retrieval.",
+      "original_metrics": {
+        "recall": 0.75,
+        "precision": 0.6,
+        "mrr": 0.5,
+        "ndcg": 0.6096199500078984,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 0.5,
+        "ndcg": 0.6509209298071326,
+        "negative_returned_context": null
+      }
+    },
+    {
+      "id": "independent-backup-en",
+      "bounded": true,
+      "answer_sha256": "71b92fcb68b4a0465f249c185b48e539b76b92d9824362bdcad9dfe89b2e0ef7",
+      "core_fact_rubric": "pass",
+      "note": "87 conversations, 14 edited notes, and excluded vector files match DB-318.",
+      "original_metrics": {
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "metrics_with_corrected_gold": {
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    }
+  ],
+  "gold_correction": {
+    "case": "first-approach-en",
+    "reason": "The question asks only AT-201 runtime; AT-210 passages are unnecessary. Original measured input and reported metrics are retained unchanged. Rescored metrics below reuse the same ranking without new inference."
+  }
+}

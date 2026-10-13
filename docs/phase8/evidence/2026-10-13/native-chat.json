@@ -1,0 +1,68 @@
+{
+  "base_url": "http://127.0.0.1:52099",
+  "conversation_id": "d649a89f-2d2c-47c3-8d4c-54fa59f8111d",
+  "native_question_submitted": true,
+  "native_answer_visible": "The AT-201 experiment took 12 milliseconds and used 37 megabytes of memory.",
+  "native_passage_inspection": {
+    "file": "AT-201.pdf",
+    "page": 1,
+    "status": "Original: unchanged",
+    "saved_excerpt_seen": true
+  },
+  "native_new_chat_and_reopen": true,
+  "desktop_latency": "not measured",
+  "conversation": {
+    "id": "d649a89f-2d2c-47c3-8d4c-54fa59f8111d",
+    "title": "According to AT-201, how long did the experiment take and…",
+    "created_at": "2026-10-12T22:50:53.191218+00:00",
+    "updated_at": "2026-10-12T22:51:15.569751+00:00",
+    "messages": [
+      {
+        "id": "6aa173cb-e2fd-4efd-a3ca-1102345e2fbc",
+        "role": "user",
+        "content": "According to AT-201, how long did the experiment take and how much memory did it use?",
+        "error": null,
+        "citations": [],
+        "created_at": "2026-10-12T22:50:53.192851+00:00",
+        "knowledge": null
+      },
+      {
+        "id": "124e85ca-2eb0-4290-ada2-b0d193ec488b",
+        "role": "assistant",
+        "content": "The AT-201 experiment took 12 milliseconds and used 37 megabytes of memory.",
+        "error": null,
+        "citations": [
+          {
+            "file_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+            "file_name": "AT-201.pdf",
+            "page_number": 1,
+            "chunk_indexes": [
+              0
+            ],
+            "score": 0.72996247,
+            "label": "AT-201.pdf — page 1",
+            "evidence": {
+              "captured_at": "2026-10-12T22:51:15.486811+00:00",
+              "excerpts": [
+                {
+                  "content": "AT-201 experiment\nAT-201 uses a binary heap. The measured runtime is 12 milliseconds. Memory\nusage is 37 megabytes. It was measured on a graph with 8,000 vertices.",
+                  "chunk_index": 0,
+                  "retrieval_rank": 1,
+                  "score": 0.72996247,
+                  "source_hash": "66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af",
+                  "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7",
+                  "index_metadata": "{\"chunk_overlap\":150,\"chunk_size\":1000,\"chunker_version\":\"page-boundary-v1\",\"embedding_model\":\"embeddinggemma:latest\",\"extractor_version\":\"pdf-text-utf8-v1\",\"input_format\":\"raw-v1\",\"model_digest\":\"85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1\",\"pymupdf_version\":\"1.28.2\",\"vector_size\":768,\"version\":1}"
+                }
+              ],
+              "version": 1
+            },
+            "original_status": "unchanged"
+          }
+        ],
+        "created_at": "2026-10-12T22:51:15.545956+00:00",
+        "knowledge": null
+      }
+    ],
+    "source_scope": null
+  }
+}
