@@ -16,6 +16,13 @@ import sys
 import threading
 from pathlib import Path
 
+_protocol_lock = threading.Lock()
+
+
+def protocol_message(value):
+    with _protocol_lock:
+        print(json.dumps(value), flush=True)
+
 
 def configure_data_directory(directory: Path) -> Path:
     root = directory.expanduser().resolve()
@@ -25,6 +32,34 @@ def configure_data_directory(directory: Path) -> Path:
     # the web database accidentally. Explicitly using the legacy dir is allowed.
     os.environ["DATABASE_URL"] = f"sqlite:///{root / 'app.db'}"
     return root
+
+
+def native_reply(frame):
+    """Private parent-only actions; never print configuration or input frames."""
+    event = frame["event"]
+    try:
+        if event == "native_export":
+            from app.services.native_exports import dispatch
+        else:
+            from app.services.native_folders import dispatch
+        reply = {
+            "event": event + "_result",
+            "id": frame["id"],
+            "result": dispatch(frame["action"], frame["values"]),
+        }
+    except (ValueError, OSError, RuntimeError, KeyError, TypeError, AttributeError) as error:
+        message = "Folder action failed. Check permissions."
+        if event == "native_export":
+            message = (
+                str(error)
+                if isinstance(error, ValueError)
+                else (
+                    "Could not save the backup. Finish processing, choose a new filename "
+                    "and check folder permissions."
+                )
+            )
+        reply = {"event": event + "_result", "id": frame["id"], "error": message}
+    protocol_message(reply)
 
 
 async def serve() -> None:
@@ -64,31 +99,23 @@ async def serve() -> None:
                         break
                     try:
                         frame = json.loads(line)
+                        if frame.get("event") == "native_export":
+                            # Disk-heavy export must not block settings or the
+                            # parent shutdown protocol. Rust permits one export.
+                            threading.Thread(
+                                target=native_reply, args=(frame,), daemon=True
+                            ).start()
+                            continue
                         if frame.get("event") == "native_folder":
-                            from app.services.native_folders import dispatch
-
-                            try:
-                                result = dispatch(frame["action"], frame["values"])
-                                reply = {
-                                    "event": "native_folder_result",
-                                    "id": frame["id"],
-                                    "result": result,
-                                }
-                            except (ValueError, OSError, RuntimeError):
-                                reply = {
-                                    "event": "native_folder_result",
-                                    "id": frame["id"],
-                                    "error": "Folder action failed. Check permissions.",
-                                }
-                            print(json.dumps(reply), flush=True)
+                            native_reply(frame)
                             continue
                         if frame.get("event") != "configure":
                             continue
                         apply_desktop_configuration(frame["values"])
-                        print(json.dumps({"event": "configured", "id": frame["id"]}), flush=True)
+                        protocol_message({"event": "configured", "id": frame["id"]})
                     except (ValueError, KeyError, TypeError, AttributeError):
                         # Never log stdin or validation errors: they contain keys.
-                        print(json.dumps({"event": "configuration_failed"}), flush=True)
+                        protocol_message({"event": "configuration_failed"})
             finally:
                 if not loop.is_closed():
                     loop.call_soon_threadsafe(request_shutdown)
@@ -98,7 +125,7 @@ async def serve() -> None:
         while not server.started and not task.done():
             await asyncio.sleep(0.05)
         if server.started and not server.should_exit:
-            print(json.dumps({"event": "ready", "url": f"http://127.0.0.1:{port}"}), flush=True)
+            protocol_message({"event": "ready", "url": f"http://127.0.0.1:{port}"})
         await task
 
 

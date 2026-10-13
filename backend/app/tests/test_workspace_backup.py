@@ -19,11 +19,104 @@ from app.db.migrations import LATEST_VERSION
 from app.main import app
 from app.models.conversations import Role
 from app.models.files import FileStatus, FileType
-from app.services import ingestion, workspace_backup
+from app.services import ingestion, native_exports, workspace_backup
 from app.services.evidence import capture_citations
 from app.services.retrieval import SearchResult
 from app.services.workspace_access import WorkspaceBusy, request_access, snapshot_access
 from app.services.workspace_backup import create_backup, restore_backup
+
+
+def configure_native_export(monkeypatch, saved_workspace):
+    root, *_ = saved_workspace
+    monkeypatch.setattr(native_exports, "data_directory", lambda: root)
+    monkeypatch.setattr(native_exports, "database_path", lambda: root / "app.db")
+
+
+def test_native_backup_saves_a_restorable_archive_without_webview_bytes(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "native.noye.zip"
+    assert native_exports.dispatch("backup", {"destination": str(destination)}) == "saved"
+    restored = tmp_path / "native-restored"
+    assert restore_backup(destination, restored)["rebuild_required"]
+    assert (restored / "sources/source.md").read_text() == "한국어 원문 742 units"
+    with connect(restored / "app.db") as db:
+        document = saved_workspace[-1]
+        assert documents_db.get_document(db, document.id).content == "# User edited writing\n한국어"
+    assert not list(tmp_path.glob(".noye-export-*"))
+
+
+@pytest.mark.parametrize("kind", ["file", "directory", "broken_symlink"])
+def test_native_backup_preserves_existing_destinations(
+    saved_workspace, tmp_path, monkeypatch, kind
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "existing.noye.zip"
+    if kind == "file":
+        destination.write_bytes(b"existing authored bytes")
+    elif kind == "directory":
+        destination.mkdir()
+    else:
+        destination.symlink_to(tmp_path / "missing")
+    with pytest.raises(ValueError, match="Existing files are preserved"):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert destination.is_symlink() if kind == "broken_symlink" else destination.exists()
+    if kind == "file":
+        assert destination.read_bytes() == b"existing authored bytes"
+
+
+def test_native_backup_rejects_workspace_and_relative_destinations(saved_workspace, monkeypatch):
+    configure_native_export(monkeypatch, saved_workspace)
+    for destination in ("relative.zip", str(saved_workspace[0] / "inside.zip")):
+        with pytest.raises(ValueError):
+            native_exports.dispatch("backup", {"destination": destination})
+    assert not (saved_workspace[0] / "inside.zip").exists()
+
+
+def test_native_backup_never_publishes_a_partial_archive(saved_workspace, tmp_path, monkeypatch):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "partial.zip"
+
+    def interrupted(root, database, archive):
+        archive.write_bytes(b"partial archive")
+        raise OSError("synthetic disk failure")
+
+    monkeypatch.setattr(native_exports, "create_backup", interrupted)
+    with pytest.raises(OSError, match="synthetic disk failure"):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert not destination.exists()
+    assert not list(tmp_path.glob(".noye-export-*"))
+    assert (saved_workspace[0] / "sources/source.md").read_text() == "한국어 원문 742 units"
+
+
+def test_native_backup_preserves_a_destination_created_during_staging(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "raced.zip"
+    original_rename = native_exports.rename_exclusive
+
+    def racing_rename(*args):
+        destination.write_bytes(b"another saved file")
+        original_rename(*args)
+
+    monkeypatch.setattr(native_exports, "rename_exclusive", racing_rename)
+    with pytest.raises(FileExistsError):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert destination.read_bytes() == b"another saved file"
+    assert not list(tmp_path.glob(".noye-export-*"))
+
+
+def test_native_backup_reports_busy_workspace_without_creating_an_export(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "busy.zip"
+    with request_access(), pytest.raises(WorkspaceBusy):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert not destination.exists()
+    assert not list(tmp_path.glob(".noye-export-*"))
 
 
 @pytest.fixture
