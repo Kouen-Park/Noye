@@ -198,7 +198,7 @@ function SourceRow({ entry, root, busy, act }: {
     <div id={detailsId} hidden={!detailsOpen} className="mt-2 border-l-2 border-edge pl-3 text-[12px] text-ink-soft">
       <p className="break-all">{entry.relative_path}</p>
       {source?.manual_category && <p className="mt-1">Manually fixed: {source.manual_category}</p>}
-      {knowledge && <KnowledgeJobStages events={knowledge.events} />}
+      {knowledge && <KnowledgeJobStages events={knowledge.events} jobState={knowledge.state} currentStage={knowledge.stage} />}
       {source && <div className="mt-1 flex flex-wrap gap-1">
         {!root.processing && <button className={actionClass} disabled={busy} onClick={() => void act(() => folderRequest(`/${root.id}/sources/${source.source_id}/remove-derived`, "POST"))}>Remove derived indexes</button>}
         {root.organization_prefix && <button className={actionClass} disabled={busy || source.availability !== "available"} onClick={() => setFiling(!filing)}>File manually</button>}
