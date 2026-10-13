@@ -115,7 +115,7 @@ function RootCard({ tree, onChange }: { tree: FolderTree; onChange: () => void }
       <div className="mt-2 border-l-2 border-edge pl-3">
         <div className="mb-2 flex flex-wrap gap-1">
           <button className={actionClass} disabled={busy || !root.connected} onClick={() => void act(() => folderRequest(`/${root.id}/reconcile`, "POST"))}>Reconcile & recover</button>
-          {root.connected && <button className={actionClass} disabled={busy} onClick={() => void act(() => update({ disconnect: true }))}>Disconnect</button>}
+          {!!root.connected && <button className={actionClass} disabled={busy} onClick={() => void act(() => update({ disconnect: true }))}>Disconnect</button>}
         </div>
         <label className="flex min-h-8 items-center gap-2">
           <input type="checkbox" disabled={busy || !root.connected || (!root.organization_prefix && !area)}
