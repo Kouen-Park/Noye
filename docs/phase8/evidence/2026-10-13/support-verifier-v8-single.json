@@ -1,0 +1,620 @@
+{
+  "prompt_version": "source-document-v8",
+  "system_sha256": "ff1216ea5d3cedab7976eae05c86e9be829c25a3f6570d1bcfa6ccab6c802b81",
+  "pipeline_sha256": "3d8f968845bae2c4806b86948827a8e3512b31059353e6088a40cf7518d00e95",
+  "model": "qwen3.5:4b",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "corpus": {
+    "alpha": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+    "beta": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+  },
+  "cases": [
+    {
+      "id": "translated-capacity",
+      "expected": true,
+      "input": {
+        "text": "Project Alpha has a storage capacity of 37 litres.",
+        "quotes": [
+          "Alpha 프로젝트의 저장 용량은 37리터입니다."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        ]
+      }
+    },
+    {
+      "id": "translated-sunday",
+      "expected": true,
+      "input": {
+        "text": "Project Alpha stops writes on Sundays.",
+        "quotes": [
+          "Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        ]
+      }
+    },
+    {
+      "id": "translated-backup",
+      "expected": true,
+      "input": {
+        "text": "Project Alpha performs backups once per day.",
+        "quotes": [
+          "백업은 하루에 한 번 실행됩니다."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        ]
+      }
+    },
+    {
+      "id": "recorded-volume",
+      "expected": true,
+      "input": {
+        "text": "Project Beta stores 92 litres.",
+        "quotes": [
+          "Project Beta stores 92 litres."
+        ],
+        "original_passages": [
+          "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        ]
+      }
+    },
+    {
+      "id": "capacity-strengthening",
+      "expected": false,
+      "input": {
+        "text": "Project Beta has a maximum storage capacity of 92 litres.",
+        "quotes": [
+          "Project Beta stores 92 litres."
+        ],
+        "original_passages": [
+          "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        ]
+      }
+    },
+    {
+      "id": "invented-condition",
+      "expected": false,
+      "input": {
+        "text": "Project Alpha is read-only on Saturdays.",
+        "quotes": [
+          "Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        ]
+      }
+    },
+    {
+      "id": "cross-language-comparison",
+      "expected": true,
+      "input": {
+        "text": "Alpha runs backups once per day, whereas Beta runs them twice per day.",
+        "quotes": [
+          "백업은 하루에 한 번 실행됩니다.",
+          "Backups run twice a day."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+          "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+        ]
+      }
+    },
+    {
+      "id": "wrong-frequency",
+      "expected": false,
+      "input": {
+        "text": "Project Alpha performs backups twice per day.",
+        "quotes": [
+          "백업은 하루에 한 번 실행됩니다."
+        ],
+        "original_passages": [
+          "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+        ]
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.031942,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:17.170247Z\",\"response\":\"{\\n  \\\"supported\\\": [true]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,682,264,5638,8390,314,220,18,22,84887,10152,328,51492,763,4241,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,1802,60,198,92],\"total_duration\":13522071875,\"load_duration\":10557033041,\"prompt_eval_count\":313,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2081951000,\"eval_count\":13,\"eval_duration\":647895000}",
+      "response": "{\n  \"supported\": [true]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 13522071875,
+      "load_duration": 10557033041,
+      "prompt_eval_count": 313,
+      "prompt_eval_duration": 2081951000,
+      "eval_count": 13,
+      "eval_duration": 647895000,
+      "wall_seconds": 13.677106
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.050756,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:20.754905Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,17397,13514,383,59023,10152,328,51492,763,4241,18796,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,198,220,2205,198,92],\"total_duration\":3154598208,\"load_duration\":23572333,\"prompt_eval_count\":309,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2180592000,\"eval_count\":17,\"eval_duration\":885203000}",
+      "response": "{\n  \"supported\": [\n    false\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3154598208,
+      "load_duration": 23572333,
+      "prompt_eval_count": 309,
+      "prompt_eval_duration": 2180592000,
+      "eval_count": 17,
+      "eval_duration": 885203000,
+      "wall_seconds": 3.282384
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.020402,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:24.26513Z\",\"response\":\"{\\n  \\\"supported\\\": [false]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,25822,57650,2957,791,1834,10152,328,51492,763,4241,154862,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,3721,60,198,92],\"total_duration\":3337719500,\"load_duration\":20137375,\"prompt_eval_count\":308,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2589841000,\"eval_count\":13,\"eval_duration\":594846000}",
+      "response": "{\n  \"supported\": [false]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3337719500,
+      "load_duration": 20137375,
+      "prompt_eval_count": 308,
+      "prompt_eval_duration": 2589841000,
+      "eval_count": 13,
+      "eval_duration": 594846000,
+      "wall_seconds": 3.363281
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.012853,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:26.921578Z\",\"response\":\"{\\n  \\\"supported\\\": [false]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,33109,10220,220,24,17,84887,10152,328,51492,763,4241,7601,33109,10220,220,24,17,84887,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,3721,60,198,92],\"total_duration\":2600318083,\"load_duration\":2936333,\"prompt_eval_count\":287,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":1940518000,\"eval_count\":13,\"eval_duration\":624344000}",
+      "response": "{\n  \"supported\": [false]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2600318083,
+      "load_duration": 2936333,
+      "prompt_eval_count": 287,
+      "prompt_eval_duration": 1940518000,
+      "eval_count": 13,
+      "eval_duration": 624344000,
+      "wall_seconds": 2.681767
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.006218,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:29.464889Z\",\"response\":\"{\\n  \\\"supported\\\": [false]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,33109,682,264,6966,5638,8390,314,220,24,17,84887,10152,328,51492,763,4241,7601,33109,10220,220,24,17,84887,1149,1089,328,9596,15010,1098,763,4241,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,3721,60,198,92],\"total_duration\":2437386209,\"load_duration\":7015584,\"prompt_eval_count\":292,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":1794087000,\"eval_count\":13,\"eval_duration\":623239000}",
+      "response": "{\n  \"supported\": [false]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2437386209,
+      "load_duration": 7015584,
+      "prompt_eval_count": 292,
+      "prompt_eval_duration": 1794087000,
+      "eval_count": 13,
+      "eval_duration": 623239000,
+      "wall_seconds": 2.52009
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.012511,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:32.304126Z\",\"response\":\"{\\n  \\\"supported\\\": [false]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,369,1301,14934,383,72653,10152,328,51492,763,4241,18796,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,3721,60,198,92],\"total_duration\":2719517292,\"load_duration\":6088958,\"prompt_eval_count\":310,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2087426000,\"eval_count\":13,\"eval_duration\":605685000}",
+      "response": "{\n  \"supported\": [false]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2719517292,
+      "load_duration": 6088958,
+      "prompt_eval_count": 310,
+      "prompt_eval_duration": 2087426000,
+      "eval_count": 13,
+      "eval_duration": 605685000,
+      "wall_seconds": 2.779634
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.013455,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:35.631979Z\",\"response\":\"{\\n  \\\"supported\\\": [\\n    false\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,18796,8213,57650,2957,791,1834,11,19248,33109,8213,1070,10598,791,1834,10152,328,51492,763,4241,154862,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,10152,328,3581,8339,1542,10598,264,1834,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,10152,328,7601,33109,10220,220,24,17,84887,13,33109,5533,8472,14934,1433,3425,13,33109,27751,13514,383,59023,13,6627,8339,1542,10598,264,1834,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,198,262,867,198,220,2205,198,92],\"total_duration\":3219942417,\"load_duration\":8636417,\"prompt_eval_count\":352,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2321551000,\"eval_count\":17,\"eval_duration\":804472000}",
+      "response": "{\n  \"supported\": [\n    false\n  ]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3219942417,
+      "load_duration": 8636417,
+      "prompt_eval_count": 352,
+      "prompt_eval_duration": 2321551000,
+      "eval_count": 17,
+      "eval_duration": 804472000,
+      "wall_seconds": 3.282984
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": null,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.013779,
+      "raw_response_sha256": "5d13aeef4b65e3d35d8847c002f1bc55c1e6c9e5d587a5203c26ee9d76530bac"
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-13T09:29:39.388283Z\",\"response\":\"{\\n  \\\"supported\\\": [false]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,2233,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,7601,23930,25822,57650,10598,791,1834,10152,328,51492,763,4241,154862,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,1089,328,9596,15010,1098,763,4241,2,149516,22535,20673,23930,1639,18796,181649,19779,179246,171463,217718,220,18,22,27096,32742,151396,13,23930,16072,27413,17862,39376,159247,80674,161271,152166,152557,153275,231038,149635,13,159612,148546,32587,176054,18803,59228,81700,27985,43198,49551,153249,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,17675,763,498,3721,60,198,92],\"total_duration\":3657026583,\"load_duration\":16761625,\"prompt_eval_count\":308,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2040121000,\"eval_count\":13,\"eval_duration\":601141000}",
+      "response": "{\n  \"supported\": [false]\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3657026583,
+      "load_duration": 16761625,
+      "prompt_eval_count": 308,
+      "prompt_eval_duration": 2040121000,
+      "eval_count": 13,
+      "eval_duration": 601141000,
+      "wall_seconds": 3.709267
+    }
+  ],
+  "note": "Eight synthetic bilingual support judgments using production verify and its exact input; isolated in-memory request/cache. This is not full document quality or a semantic guarantee.",
+  "rows": [
+    {
+      "id": "translated-capacity",
+      "expected": true,
+      "supported": true,
+      "matches_rubric": true,
+      "seconds": 13.833
+    },
+    {
+      "id": "translated-sunday",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "seconds": 3.431
+    },
+    {
+      "id": "translated-backup",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "seconds": 3.391
+    },
+    {
+      "id": "recorded-volume",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "seconds": 2.716
+    },
+    {
+      "id": "capacity-strengthening",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "seconds": 2.544
+    },
+    {
+      "id": "invented-condition",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "seconds": 2.817
+    },
+    {
+      "id": "cross-language-comparison",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "seconds": 3.32
+    },
+    {
+      "id": "wrong-frequency",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "seconds": 3.745
+    }
+  ],
+  "seconds": 35.847,
+  "events": [
+    {
+      "stage": "phase8-support-clinic:translated-sunday",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:translated-sunday",
+        "claims": [
+          {
+            "text": "Project Alpha stops writes on Sundays.",
+            "quotes": [
+              "Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다."
+            ],
+            "original_passages": [
+              "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:translated-backup",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:translated-backup",
+        "claims": [
+          {
+            "text": "Project Alpha performs backups once per day.",
+            "quotes": [
+              "백업은 하루에 한 번 실행됩니다."
+            ],
+            "original_passages": [
+              "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:recorded-volume",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:recorded-volume",
+        "claims": [
+          {
+            "text": "Project Beta stores 92 litres.",
+            "quotes": [
+              "Project Beta stores 92 litres."
+            ],
+            "original_passages": [
+              "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:capacity-strengthening",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:capacity-strengthening",
+        "claims": [
+          {
+            "text": "Project Beta has a maximum storage capacity of 92 litres.",
+            "quotes": [
+              "Project Beta stores 92 litres."
+            ],
+            "original_passages": [
+              "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:invented-condition",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:invented-condition",
+        "claims": [
+          {
+            "text": "Project Alpha is read-only on Saturdays.",
+            "quotes": [
+              "Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다."
+            ],
+            "original_passages": [
+              "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:cross-language-comparison",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:cross-language-comparison",
+        "claims": [
+          {
+            "text": "Alpha runs backups once per day, whereas Beta runs them twice per day.",
+            "quotes": [
+              "백업은 하루에 한 번 실행됩니다.",
+              "Backups run twice a day."
+            ],
+            "original_passages": [
+              "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+              "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "phase8-support-clinic:wrong-frequency",
+      "state": "failed",
+      "detail": {
+        "stage": "phase8-support-clinic:wrong-frequency",
+        "claims": [
+          {
+            "text": "Project Alpha performs backups twice per day.",
+            "quotes": [
+              "백업은 하루에 한 번 실행됩니다."
+            ],
+            "original_passages": [
+              "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    }
+  ],
+  "publication": {
+    "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/support-verifier-v8-single.json",
+    "sha256": "1a9fa741d91a3e9e3f2362291de5e2aa7886e32f5ce56f13c3a382d9480e4870",
+    "omitted": "Successful duplicate model-preflight metadata only"
+  }
+}

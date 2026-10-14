@@ -1,0 +1,10 @@
+npm notice run noye-frontend@0.1.0 npx
+npm notice run 'vitest' run src/components/documents/document-preview.test.tsx src/components/documents/export-controls.test.tsx src/lib/native-export.test.ts
+
+ RUN  v5.0.1 /Users/gavinpark/Projects/Noye/frontend
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  21:46:23
+   Duration  1.17s (environment 64%, setup 12%, tests 11%, import 6%, transform 6%)

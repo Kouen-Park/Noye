@@ -1,0 +1,427 @@
+{
+  "observed_at": "2026-10-14",
+  "native_saved_notice": true,
+  "export_buttons_reenabled": true,
+  "path": "/private/tmp/noye-phase8-20261012/native-folder/exports/final/Phase8 20261013 bilingual export.pdf",
+  "bytes": 35363,
+  "sha256": "c4d27d7aa899f5e0b00b8543c7008f843d3085c19a58bcabc55492694c6b9f52",
+  "pages": 3,
+  "page_texts": [
+    "Phase 8 bilingual export\n검증용 문서입니다. 원문 수치는 12 milliseconds, 37 megabytes입니다.\nSection 1 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 2 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 3 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 4 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 5 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 6 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 7 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\n",
+    "Section 8 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 9 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 10 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 11 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 12 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 13 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 14 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 15 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\n",
+    "Section 16 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 17 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 18 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 19 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nSection 20 · 검증 항목\nAT-201 used a binary heap and completed in 12 milliseconds. 메모리 사용량은 37\nmegabytes입니다. This is invented acceptance content, not a production measurement.\nOriginal passage\nAT-201 uses a binary heap. The measured runtime is 12 milliseconds.\nUnsaved Phase8 marker · 미저장 검증 문장.\n"
+  ],
+  "section_pages": {
+    "1": [
+      1
+    ],
+    "2": [
+      1
+    ],
+    "3": [
+      1
+    ],
+    "4": [
+      1
+    ],
+    "5": [
+      1
+    ],
+    "6": [
+      1
+    ],
+    "7": [
+      1
+    ],
+    "8": [
+      2
+    ],
+    "9": [
+      2
+    ],
+    "10": [
+      2
+    ],
+    "11": [
+      2
+    ],
+    "12": [
+      2
+    ],
+    "13": [
+      2
+    ],
+    "14": [
+      2
+    ],
+    "15": [
+      2
+    ],
+    "16": [
+      3
+    ],
+    "17": [
+      3
+    ],
+    "18": [
+      3
+    ],
+    "19": [
+      3
+    ],
+    "20": [
+      3
+    ]
+  },
+  "page_heading_fonts": [
+    {
+      "page": 1,
+      "headings": [
+        {
+          "text": "Phase 8 bilingual export",
+          "sizes_pt": [
+            16.608
+          ],
+          "bbox": [
+            51.02362060546875,
+            70.11629486083984,
+            235.65367126464844,
+            90.59384155273438
+          ]
+        },
+        {
+          "text": "Section 1 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            144.03048706054688,
+            173.12281799316406,
+            161.64089965820312
+          ]
+        },
+        {
+          "text": "Section 2 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            231.22195434570312,
+            175.1381072998047,
+            248.83236694335938
+          ]
+        },
+        {
+          "text": "Section 3 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            318.4134521484375,
+            174.4069061279297,
+            336.02386474609375
+          ]
+        },
+        {
+          "text": "Section 4 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            405.6049499511719,
+            175.21676635742188,
+            423.2153625488281
+          ]
+        },
+        {
+          "text": "Section 5 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            492.79644775390625,
+            174.7356719970703,
+            510.4068603515625
+          ]
+        },
+        {
+          "text": "Section 6 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            579.9879150390625,
+            175.13145446777344,
+            597.5983276367188
+          ]
+        },
+        {
+          "text": "Section 7 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            667.179443359375,
+            173.9261016845703,
+            684.7898559570312
+          ]
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "headings": [
+        {
+          "text": "Section 8 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            69.67232513427734,
+            175.04222106933594,
+            87.28274536132812
+          ]
+        },
+        {
+          "text": "Section 9 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            156.86386108398438,
+            175.182861328125,
+            174.47427368164062
+          ]
+        },
+        {
+          "text": "Section 10 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            244.05538940429688,
+            181.96290588378906,
+            261.6658020019531
+          ]
+        },
+        {
+          "text": "Section 11 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            331.2468566894531,
+            179.1879425048828,
+            348.8572692871094
+          ]
+        },
+        {
+          "text": "Section 12 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            418.4383544921875,
+            181.20323181152344,
+            436.04876708984375
+          ]
+        },
+        {
+          "text": "Section 13 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            505.6298522949219,
+            180.47195434570312,
+            523.240234375
+          ]
+        },
+        {
+          "text": "Section 14 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            592.8213500976562,
+            181.2818145751953,
+            610.4317626953125
+          ]
+        },
+        {
+          "text": "Section 15 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            680.0128173828125,
+            180.8007049560547,
+            697.6232299804688
+          ]
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "headings": [
+        {
+          "text": "Section 16 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            69.67232513427734,
+            181.19651794433594,
+            87.28274536132812
+          ]
+        },
+        {
+          "text": "Section 17 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            156.86386108398438,
+            179.99122619628906,
+            174.47427368164062
+          ]
+        },
+        {
+          "text": "Section 18 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            244.05538940429688,
+            181.10728454589844,
+            261.6658020019531
+          ]
+        },
+        {
+          "text": "Section 19 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            331.2468566894531,
+            181.2480010986328,
+            348.8572692871094
+          ]
+        },
+        {
+          "text": "Section 20 · 검증 항목",
+          "sizes_pt": [
+            13.588,
+            13.588,
+            13.588,
+            13.588
+          ],
+          "bbox": [
+            51.02362060546875,
+            418.4383544921875,
+            183.9781951904297,
+            436.04876708984375
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "all_twenty_numbered_sections": true,
+    "runtime_mentions": 22,
+    "memory_mentions": 21,
+    "korean_text": true,
+    "no_app_navigation": true,
+    "no_leftover_staging": true
+  },
+  "rendering": {
+    "engine": "PyMuPDF 1.28.2",
+    "all_pages_rendered": true,
+    "visual_review": "All three rendered pages directly inspected. Korean and English are readable; all 20 sections are present. Section 8 and its first paragraph share page 2, Section 16 and its first paragraph share page 3. The 22/18 px heading style is restored via literal Tailwind classes. No orphan heading, clipped paragraph, app navigation or missing measured value was observed in this fixture."
+  },
+  "product_source_sha256": {
+    "frontend/src-tauri/src/pdf.rs": "9e856da12fc81a42e2f2ee7efbcf4b32b1990f0c8c39f034c40da435e243a04e",
+    "frontend/src-tauri/src/exports.rs": "9f4112cd47c27d15ae6d0b39ef8b7de434a71f38f09bbd197c69dc6a613462e0",
+    "frontend/src/lib/print-headings.ts": "5af76dc25c10e8ac8e616a369df566cb32161c41d57821db40d54d05a0454fe2",
+    "frontend/src/components/documents/document-preview.tsx": "ef42cf78fe596605aa230b6576c3828326724820e8c992eabcd6b506387e79e3",
+    "frontend/src/app/globals.css": "dd8c1d1ad8d88871313ec0160f997544ea89ac0145b96178e122eb5e3d8da133"
+  },
+  "native_cancel_and_retry": "After completion, another export opened normally and Cancel returned PDF export cancelled with both export controls available. A subsequent one-page export completed in the same app process.",
+  "scope": "Synthetic three-page manual document only; not arbitrary tables, large lists, images or very long documents."
+}

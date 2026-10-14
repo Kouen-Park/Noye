@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-14",
+  "scope": "Results from recorded prior tool executions plus the final class-token regression/lint rerun; not a new full-suite run after every cosmetic change.",
+  "frontend_full": {
+    "command": "npm test",
+    "files": 52,
+    "passed": 385,
+    "duration_s": 9.28,
+    "timing": "Before the final literal heading-class correction; the final static UI build and focused rerun follow it."
+  },
+  "frontend_final_targeted": {
+    "command": "npx vitest run src/components/documents/document-preview.test.tsx src/components/documents/export-controls.test.tsx src/lib/native-export.test.ts",
+    "files": 3,
+    "passed": 18,
+    "duration_s": 1.17
+  },
+  "frontend_final_lint": {
+    "command": "npm run lint",
+    "passed": true
+  },
+  "frontend_types": {
+    "command": "npx tsc --noEmit",
+    "passed": true,
+    "timing": "Prior type check; final Next build also completed TypeScript."
+  },
+  "native": {
+    "cargo_test_passed": 14,
+    "cargo_fmt_passed": true,
+    "strict_clippy_passed": true,
+    "timing": "After all-pages, callback lifetime and UTF-8 filename changes."
+  },
+  "frozen_sidecar": {
+    "desktop_tests": {
+      "passed": 10,
+      "warnings": 7,
+      "duration_s": 23.74
+    },
+    "native_folder_protocol_tests": {
+      "passed": 2,
+      "warnings": 5,
+      "duration_s": 24.21
+    }
+  },
+  "build": {
+    "pyinstaller_s": 31.1,
+    "next_compile_s": 30.6,
+    "next_types_s": 2.4,
+    "rust_release_s": 21.78,
+    "app_mib": 68.3
+  },
+  "normal_quit": {
+    "action": "Native Cmd-Q after both final exports",
+    "cua_result": "App quit",
+    "owned_backend_pid": 98914,
+    "owned_backend_port": 54758,
+    "post_quit_pid_absent": true,
+    "post_quit_port_not_listening": true,
+    "qa_service_ports_11439_6339_not_listening_before_and_after": true,
+    "services_restarted_for_this_pdf_pass": false
+  },
+  "limitations": [
+    "Coverage percentage not measured.",
+    "No CI checks reported by PR at inspection; not a CI pass.",
+    "No signing/notarization or other-platform acceptance."
+  ]
+}

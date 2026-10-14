@@ -1,0 +1,105 @@
+....F.......                                                             [100%]
+=================================== FAILURES ===================================
+_________ test_managed_backend_starts_and_stops_without_services[line] _________
+
+tmp_path = PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-47/test_managed_backend_starts_an0')
+shutdown = 'line'
+
+    @pytest.mark.parametrize("shutdown", ["line", "eof"])
+    def test_managed_backend_starts_and_stops_without_services(tmp_path, shutdown):
+        env = {
+            **os.environ,
+            "LOG_TO_FILE": "false",
+            "FRONTEND_ORIGINS": "tauri://localhost",
+            "NOYE_CONTROL_TOKEN": "[REDACTED QA CONTROL TOKEN]",
+        }
+        root = tmp_path / "workspace"
+        executable = os.environ.get("NOYE_TEST_SIDECAR")
+        command = (
+            [executable]
+            if executable
+            else [
+                sys.executable,
+                str(PROJECT_ROOT / "backend/desktop.py"),
+            ]
+        )
+        with subprocess.Popen(
+            [*command, "--data-dir", str(root)],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env,
+        ) as child:
+            try:
+                lines = queue.Queue()
+                threading.Thread(target=lambda: lines.put(child.stdout.readline()), daemon=True).start()
+>               line = lines.get(timeout=20)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+app/tests/test_desktop.py:103:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <queue.Queue object at 0x115e49950>, block = True, timeout = 20
+
+    def get(self, block=True, timeout=None):
+        '''Remove and return an item from the queue.
+
+        If optional args 'block' is true and 'timeout' is None (the default),
+        block if necessary until an item is available. If 'timeout' is
+        a non-negative number, it blocks at most 'timeout' seconds and raises
+        the Empty exception if no item was available within that time.
+        Otherwise ('block' is false), return an item if one is immediately
+        available, else raise the Empty exception ('timeout' is ignored
+        in that case).
+
+        Raises ShutDown if the queue has been shut down and is empty,
+        or if the queue has been shut down immediately.
+        '''
+        with self.not_empty:
+            if self.is_shutdown and not self._qsize():
+                raise ShutDown
+            if not block:
+                if not self._qsize():
+                    raise Empty
+            elif timeout is None:
+                while not self._qsize():
+                    self.not_empty.wait()
+                    if self.is_shutdown and not self._qsize():
+                        raise ShutDown
+            elif timeout < 0:
+                raise ValueError("'timeout' must be a non-negative number")
+            else:
+                endtime = time() + timeout
+                while not self._qsize():
+                    remaining = endtime - time()
+                    if remaining <= 0.0:
+>                       raise Empty
+E                       _queue.Empty
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/queue.py:209: Empty
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_desktop.py::test_managed_backend_starts_and_stops_without_services[line]
+1 failed, 11 passed, 7 warnings in 56.76s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

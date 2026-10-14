@@ -2180,6 +2180,13 @@ print dialog. Mitigated with a print stylesheet so the exported page is the
 document rather than the application around it. Revisit only if the output proves
 unusable, and say so in the PR if it does.
 
+**Phase 8 update, 2026-10-14:** web mode retains that print dialog. The native
+macOS dialog could not save in the acceptance run, so the packaged app now selects
+a destination with `NSSavePanel` and uses asynchronous WebKit/AppKit print
+completion to publish the staged PDF. It retains the existing print engine and
+stylesheet, stays offline and adds no server renderer. See §17.10 and its evidence
+record for accepted synthetic outputs and remaining limits.
+
 ### Markdown preview uses `react-markdown`, not a string-to-HTML renderer
 
 The content is model-generated and then user-edited, and it is derived from the
@@ -3570,7 +3577,7 @@ The earlier web-MVP end-to-end record remains in
 [`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Its historical
 observations do not establish acceptance of the current packaged application.
 
-**Acceptance progress, 2026-10-13:** the owner's existing `feat/mvp-end-to-end`
+**Acceptance progress, 2026-10-13–14:** the owner's existing `feat/mvp-end-to-end`
 branch now includes focused backup, requested-language/heading, failed-read
 coverage and unknown-count follow-up fixes. A later native ZIP backup/restore
 included an external root, recovered authored Wiki files after native reconnection
@@ -3583,9 +3590,14 @@ without a visible window was corrected through Launch Services and rechecked in
 both directions. Native chat, original-passage inspection and conversation reload
 were observed. The record in
 [`docs/phase8/acceptance-2026-10-13.md`](docs/phase8/acceptance-2026-10-13.md)
-retains actual model failures and measured component latency. Multi-source English
-comparison quality, native PDF contents and the broader workflows below remain
-unaccepted; this is not Phase 8 or MVP completion.
+retains actual model failures and measured component latency. Native PDF saving
+now uses asynchronous WebKit/AppKit completion and an OS-selected destination.
+Actual one-page and three-page exports retained Korean, measured values and all
+20 long-document sections; heading/paragraph grouping corrected orphan headings.
+Failed synchronous prototypes remain recorded. Save-panel first-open activation,
+broader PDF layouts, the OS Original-link destination and multi-source English
+comparison quality remain open. The v10 comparison retry is still partial despite
+improved translated-claim support. This is not Phase 8 or MVP completion.
 
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves

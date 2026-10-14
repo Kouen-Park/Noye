@@ -1,0 +1,16 @@
+{
+  "method": "Direct primary-agent reading of the saved revision and original fixtures; no independent semantic score.",
+  "request_id": "1a156b1e-0576-447d-95a1-6a14186f5dec",
+  "retry_job_id": "d989e2ca-1fff-4c3a-a896-1e4f30b3574c",
+  "revision_body_sha256": "c630873d6a37cfec7ea8a78b3e6096c0a3a5e88f04cff94bfe7a60bed257b2e6",
+  "observations": [
+    "Both sources read/processed: 215 of 215 extracted characters.",
+    "Rejected fresh v10 Beta storage-capacity strengthening, no artifact at 156.466 seconds.",
+    "Explicit attempt 2 corrected Beta to stored volume; 162.528 seconds, completed with partial report.",
+    "English Sunday and backup prose now passed support verification; storage synthesis still rejected and retained Korean/English verbatim originals.",
+    "Storage and backup/recovery headings replaced with neutral labels; there is no verified cross-source comparison.",
+    "Alpha SQLite does not appear in generated English prose; it remains only in the literal source fallback.",
+    "Full requested English comparison quality is not accepted."
+  ],
+  "clinic": "v8 4/8 expected outcomes in 35.847 seconds; v9 7/8 in 51.944; v10 7/8 in 69.298. Exact Beta stored-volume statement falsely rejected in single-claim clinic, while the explicit retry accepted its stored-volume paraphrase in a four-claim batch. Three unsupported controls rejected in all three complete clinics. Grouping effects and false rejections remain."
+}

@@ -1,4 +1,4 @@
-# Phase 8 acceptance progress — 2026-10-13
+# Phase 8 acceptance progress — 2026-10-13–14
 
 This is an incomplete acceptance record, not MVP release approval. Work is on
 `feat/mvp-end-to-end`, as requested. The existing published history is preserved;
@@ -48,13 +48,25 @@ historical September web validation does not certify this packaged application.
   current unsaved text without requiring available AI services. Apple documents
   the panel in [NSSavePanel](https://developer.apple.com/documentation/appkit/nssavepanel);
   the command boundary follows [Tauri commands](https://v2.tauri.app/develop/calling-rust/).
+- **P1, native PDF saving:** replace the unsuccessful native print-dialog saving
+  path with an OS-selected destination and asynchronous WebKit/AppKit print
+  completion. Keep the print operation/delegate alive until its callback, use
+  positive A4 metrics and all pages, then validate and exclusively publish the
+  staged PDF. The final bundle saved one-page and three-page synthetic PDFs,
+  cancelled/reopened exports and released its staging folders. Two failed
+  synchronous prototypes are retained below; they are not the final implementation.
+- **P2, PDF pagination:** paragraph avoidance alone left headings on the previous
+  page. Group document headings with their first paragraph/list/quote in the safe
+  Markdown tree, preserving every node and the existing screen layout. The final
+  three-page export keeps headings 8 and 16 with their first paragraphs. This is
+  a fixture result, not acceptance of arbitrary oversized groups or tables.
 - **P2, progress and counts:** completed checkpoint events no longer display as
   running; cancelled/interrupted checkpoints display stopped while explicit
   verdicts and skipped reasons remain visible. Native completion showed finished
   1/1. Disconnected roots no longer render a stray numeric `0`, confirmed in the
   restored native folder options. Search now distinguishes matching passages
-  from the number of files searched; its targeted regression passed. The last
-  packaged build predates that wording-only Search change.
+  from the number of files searched; its targeted regression passed and native
+  Search subsequently displayed “5 passages · 6 files searched.”
 - Source-document failure reports now retain actual passages/characters read
   before inference. Unsupported generation can report read coverage without
   claiming that those characters were successfully processed.
@@ -91,6 +103,10 @@ with `SHA256SUMS`. Source/heading report copies omit only duplicated successful
 fields identify the unchanged full originals retained under
 `/private/tmp/noye-phase8-20261012`. Every generated response, failure and timing
 is retained. A body hash identifies a revision; it does not certify its quality.
+Published build/test logs normalize line endings and trailing whitespace, with
+full-original and published hashes in `logs-publication.json`. The retained
+failed frozen-sidecar log additionally redacts its ephemeral QA control token;
+its earlier publication record and unchanged full local original are retained.
 
 ## Actual local-model results
 
@@ -130,12 +146,33 @@ has **not passed** document quality acceptance:
 | Explicit retry 2 | 168.401 | “stores 92 litres” became “capacity 92”; rejected, no artifact |
 | Explicit retry 3 | 261.306 | Job completed with a partial document; unresolved cross-source synthesis, repeated Korean literal fallback and unsuitable headings |
 | Fresh v8 request | 148.277 | Same unsupported capacity strengthening caught; no artifact |
+| Fresh v10 request | 156.466 | Beta stored amount became capacity; rejected, no artifact |
+| Explicit v10 retry 2 | 162.528 | Stored-volume wording corrected; partial result, English Sunday/backup prose accepted but storage synthesis still unresolved |
 
 The completed partial revision read/processed both sources (215/215 characters),
 but does not satisfy the requested complete English comparison. Its exact body
 and limits are retained. The failed fresh v8 run retained Beta's 120 characters
 read and Alpha's 95 characters processed. No automatic retry or cloud fallback
 was used.
+
+The v10 support check uses an entailment-specific system instruction rather than
+the prose-generation instruction, with matching context-budget accounting. Eight
+synthetic single-claim judgments improved from **4/8** expected outcomes in v8
+(35.847 s) to **7/8** in v9 (51.944 s) and v10 (69.298 s). All three unsupported
+controls stayed rejected. The exact Beta stored-volume statement still received
+a false rejection; the full request's explicit retry accepted a stored-volume
+paraphrase in a four-claim batch. Grouping effects and conservative false
+rejections remain. The first eight-claim diagnostic failed verdict count and its
+temporary script initially failed to retain that response; that missing
+measurement is explicitly recorded rather than reconstructed.
+
+The v10 retry processed 215/215 extracted characters and preserved numeric/quote
+checks, but did not complete the requested comparison. Storage synthesis remained
+unverified and used Korean/English literal fallbacks; two unsupported headings
+became neutral labels. SQLite appeared only in the original fallback, not generated
+English prose. The saved result is partial, with exact responses and the direct
+primary-agent review retained in `source-document-v10-review.json`. No semantic
+pass or automatic retry is claimed.
 
 Six topical-heading checks using the production verifier gave 5/6 expected
 results in v7; the false approval was the combined policy/performance heading.
@@ -196,7 +233,8 @@ The original workspace collection is `noye_phase8_qa_20261012`.
   panel stayed disabled even after choosing the QA output folder and typing a
   filename. Both save failures were retained and cancelled. No standalone PDF
   copy, byte hash or long-document pagination pass is claimed. PDF rendering has
-  this narrow positive observation; direct native PDF saving remains unaccepted.
+  this narrow positive observation; direct native PDF saving remained unaccepted
+  until the correction recorded below.
 - Relaunch retained the source bytes and saved body, with a new healthy backend
   port. Normal Cmd-Q stopped the QA app/backend and kept external Ollama/Qdrant
   running. SIGTERM recovery tests are recorded separately from normal quit.
@@ -286,15 +324,76 @@ separate test fixtures; reports are retained in
   held the previous body. Native Save then persisted the draft, and ordinary
   restart retained it. These exports are exact current-body copies, not an
   independent semantic approval of later user edits.
-- The latest native PDF retry showed one print page. Save as PDF stayed disabled
+- The earlier print-dialog PDF retry showed one print page. Save as PDF stayed disabled
   even after exact Go to Folder validation and filename input. Both dialogs were
   cancelled; no PDF file was retained. The earlier Preview rendering observation
-  remains valid, but direct PDF saving is still unaccepted. Normal Cmd-Q closed
+  remained valid, but direct PDF saving was unaccepted at that point. Normal Cmd-Q closed
   the QA app/backend at the end of this pass.
 
 Portable native ZIP restore with external reconnection and explicit index rebuild
 is accepted for this synthetic case. The larger folder, generation, PDF, deletion
 and device acceptance workflows remain open.
+
+## Native PDF correction — 2026-10-14
+
+The final packaged bundle uses the existing WebKit print engine and print CSS;
+it adds no server renderer. A native save panel supplies the destination, not a
+JavaScript path. AppKit's asynchronous completion callback permits WebKit page
+preparation to use the main event loop; see Apple's
+[asynchronous print completion](https://developer.apple.com/documentation/appkit/nsprintoperation/runmodal(for:delegate:didrun:contextinfo:)).
+Publication happens only after successful completion and a PDF header check.
+Existing destination files are preserved by
+exclusive publication, shared with Markdown exports. Long Korean/emoji filenames
+are limited by UTF-8 bytes as well as character count.
+
+- Two synchronous development candidates failed. The first unpublished staging
+  file reached **702,255,104 bytes** before stopping only the QA app; the second
+  explicit-A4 candidate was stopped by a test-only watchdog at **10,932,224 bytes**.
+  Neither published a destination. Hashes, observations and the first process
+  sample's retained-original hash are recorded; only these failed assistant-created
+  staging directories were removed. The watchdog is not product code. A4 metrics
+  alone did not fix synchronous printing, so no exact paper-metric cause is claimed.
+- The asynchronous candidate saved the short document. Initial long exports
+  retained all text but orphaned headings; paragraph-only avoidance did not fix
+  that. Heading grouping fixed the breaks, and a subsequent static-class correction
+  restored the original 22/18 px heading sizes. Earlier candidates remain retained.
+- The **final bundle** saved the generated, edited short document as a standalone
+  **one-page, 21,946-byte** PDF, SHA-256
+  `024d19d2e5b135bcc1103833558f08953407dfdc9f3321b989a328aead4c043e`.
+  The actual rendered page retains 12 milliseconds, 37 megabytes and readable
+  Korean markers without application navigation or clipping. Plain-prose font
+  ligatures display the comment terminator as an arrow; PDF extraction is not
+  Markdown byte-fidelity validation.
+- The manual bilingual document saved as a **three-page, 35,363-byte** PDF,
+  SHA-256 `c4d27d7aa899f5e0b00b8543c7008f843d3085c19a58bcabc55492694c6b9f52`.
+  Direct inspection of all three rendered pages found all 20 sections, the
+  original-passage block and Korean marker intact. Sections 8 and 16 begin on pages
+  2 and 3 with their paragraphs, rather than leaving an orphan heading. Normalized
+  extracted text contains 22 runtime and 21 memory mentions, as expected.
+- Native “PDF saved” appeared after each save, the export controls became
+  available, and no staging directory remained. Another export opened, Cancel
+  returned “PDF export cancelled,” and the short save subsequently completed in
+  the same process. Its first save-panel accessibility capture showed Save
+  disabled; confirming the same existing folder through Go to Folder enabled it.
+  This does not distinguish initial validation delay from a persistent first-open
+  activation problem; universal save-panel activation is not accepted.
+- Bundled Poppler could not resolve its Adobe-Korea1 CMap and omitted Korean in
+  its rasterization. PyMuPDF rendered the same PDFs correctly; every final page
+  was inspected with that renderer. This is a test-renderer limitation, not an
+  observed missing-glyph defect in the exported PDF.
+- Native Search in the rebuilt workspace displayed the revised passage/file
+  counts. The synthetic Original link was clicked, but its OS browser destination
+  remains unconfirmed; no unrelated browser page or login was operated.
+- PDF exports worked with both QA AI services unavailable. Normal Cmd-Q then
+  closed the app and its backend: PID 98914 disappeared and port 54758 stopped
+  listening. No service restart or personal service shutdown was needed for this
+  final PDF pass.
+
+Actual PDFs, final page images, hashes, failure observations and build/test logs
+are in [native-pdf evidence](evidence/2026-10-13/native-pdf/). Standalone native PDF
+saving and pagination are accepted for these two synthetic cases. Oversized
+lists/tables, image-heavy output, very long documents, physical printers and other
+platforms remain untested. Complete document generation quality is still open.
 
 ## Automated validation
 
@@ -306,27 +405,38 @@ and device acceptance workflows remain open.
 - Later backup exclusive-publication/fsync refinements passed the focused
   **37-test** service run and final frozen-sidecar rerun below. The full backend
   suite above preceded those refinements.
-- Frontend full `npm test`: **52 files, 379 tests passed**, 10.58 s; that run had
-  no React act warnings. Later native backup-label changes passed 14 targeted
-  tests, TypeScript and lint. Search wording passed its seven targeted tests,
-  TypeScript and lint; it adds one test after that full suite.
-- Native `cargo test`: **12 passed**; `cargo fmt` and
-  `cargo clippy --all-targets -- -D warnings`: passed for native exports.
+- Final v10 document generation, presentation and evaluation regressions:
+  **71 passed, 8 warnings**, 2.05 s; both changed Python files pass Ruff and format
+  checks. Real-model observations above are separate from these test doubles.
+- Frontend full `npm test`: **52 files, 385 tests passed**, 9.28 s; TypeScript and
+  ESLint passed. This full run preceded the final literal heading-class correction;
+  the final static build completed TypeScript after it. A final focused rerun of
+  preview/export controls/native helpers passed **18 tests in three files**,
+  1.17 s, and final `npm run lint` passed. Earlier 379-test/full and 14-test/backup
+  and seven-test/Search checks remain historical validation.
+- Native `cargo test`: **14 passed**; `cargo fmt` and
+  `cargo clippy --all-targets -- -D warnings`: passed after the final callback
+  lifetime, all-pages and UTF-8 filename changes. Tests include binary publication
+  without collision replacement and a filesystem-creatable multibyte title.
 - Actual native-export frozen backend
-  `NOYE_TEST_SIDECAR=... pytest app/tests/test_desktop.py`: the first run had
+  `NOYE_TEST_SIDECAR=... pytest app/tests/test_desktop.py app/tests/test_native_folder_protocol.py`:
+  the first run had
   **11 passed, 1 failed**, 56.76 s; cold managed-service startup exceeded 20 s
   while overlapping the static Next build. An idle rerun had **12 passed,
   7 warnings**, 32.84 s. The failed log is retained; broader startup latency
-  acceptance remains open. PyInstaller took 31.0 s, static Next build 42 s,
-  Rust release build 19.61 s; resulting native QA bundle **68.23 MiB**.
+  acceptance remains open. The later v10 frozen sidecar passed the **10 desktop
+  tests**, 7 warnings, 23.74 s, and separately the **two native-folder/private-backup
+  protocol tests**, 5 warnings, 24.21 s. Final preparation: PyInstaller 31.1 s,
+  Next compile 30.6 s plus TypeScript 2.4 s; final Rust release 21.78 s and
+  resulting native QA bundle **68.30 MiB**.
 - `git diff --check`: passed. Coverage percentage was not measured. Signing,
   notarization and cross-platform validation were not performed.
 
 ## Remaining acceptance
 
-Keep §17.10 and the MVP checklist open. Priorities are native PDF saving and
-original-link destination; complete bilingual source-document/Wiki quality;
-representative retrieval/chunk calibration; native folder ingestion, filing,
+Keep §17.10 and the MVP checklist open. Priorities are original-link destination;
+complete bilingual source-document/Wiki quality; broader PDF layouts and save-panel
+activation; representative retrieval/chunk calibration; native folder ingestion, filing,
 stale/history/scoped citations, unstable writes and interrupted inference;
 broader backup/reconnection failures and removable volumes; model download failure/cancel/retry and OS
 credential/provider persistence; cloud latency with explicit real access; long,
