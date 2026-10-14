@@ -21,7 +21,12 @@ export function groupPrintHeadings() {
       const following = children[next];
       if (heading.type === "element" && /^h[123]$/.test(heading.tagName ?? "")
         && following?.type === "element" && /^(p|ul|ol|blockquote)$/.test(following.tagName ?? "")) {
-        grouped.push({ type: "element", tagName: "div", properties: { className: ["noye-heading-block"] },
+        const imageOnly = following.tagName === "p"
+          && following.children?.some(child => child.type === "element" && child.tagName === "img")
+          && following.children.every(child => child.type === "text" ? !child.value?.trim() : child.tagName === "img");
+        grouped.push({ type: "element", tagName: "div", properties: {
+          className: ["noye-heading-block", ...(imageOnly ? ["noye-image-heading"] : [])],
+        },
           children: children.slice(i, next + 1) });
         i = next;
       } else grouped.push(heading);

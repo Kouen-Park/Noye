@@ -200,6 +200,22 @@ progress::-moz-progress-bar { background: var(--brand); }
     page-break-inside: avoid;
   }
 
+  /* WebKit can split a heading from a replaced image despite break-inside.
+     Bound standalone figures and keep that small group in one atomic box. */
+  [data-print="document"] img {
+    max-width: 100%;
+    max-height: 150mm;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  [data-print="document"] .noye-image-heading {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+  }
+
   /* Links print as text, so the destination has to be readable on paper. */
   [data-print="document"] a::after {
     content: " (" attr(href) ")";

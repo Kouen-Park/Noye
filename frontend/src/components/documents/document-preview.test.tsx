@@ -17,6 +17,19 @@ describe("DocumentPreview", () => {
     expect(screen.getByRole("columnheader", { name: "a" })).toBeInTheDocument();
   });
 
+  it("retains a standalone image, its heading and following caption in print content", () => {
+    render(<DocumentPreview content={
+      "## Figure / 그림\n\n![Local diagram](/file.svg)\n\nExact caption 37.\n\n" +
+      "## Next section\n\nText and ![Inline diagram](/globe.svg) remain together."
+    } />);
+    expect(screen.getAllByRole("heading").map(h => h.textContent)).toEqual(
+      ["Figure / 그림", "Next section"]);
+    expect(screen.getByRole("img", { name: "Local diagram" })).toHaveAttribute("src", "/file.svg");
+    expect(screen.getByRole("img", { name: "Inline diagram" })).toHaveAttribute("src", "/globe.svg");
+    expect(screen.getByText("Exact caption 37.")).toBeInTheDocument();
+    expect(screen.getByText(/remain together/)).toBeInTheDocument();
+  });
+
   it("does NOT render raw HTML", () => {
     // The whole reason for react-markdown over a string-to-HTML renderer: the
     // content is model-generated, user-edited, and derived from the user's own
