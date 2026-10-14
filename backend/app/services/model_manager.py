@@ -71,6 +71,7 @@ class ModelManager:
                 httpx.AsyncClient(
                     timeout=httpx.Timeout(30, connect=5),
                     follow_redirects=False,
+                    trust_env=False,
                 ) as client,
             ):
                 async with client.stream(
@@ -141,7 +142,9 @@ class ModelManager:
                 if model not in {m.name for m in snapshot.installed_models}:
                     raise HTTPException(404, "The model is not installed.")
                 try:
-                    async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+                    async with httpx.AsyncClient(
+                        timeout=30, follow_redirects=False, trust_env=False
+                    ) as client:
                         response = await client.request(
                             "DELETE",
                             f"{settings.ollama_base_url.rstrip('/')}/api/delete",

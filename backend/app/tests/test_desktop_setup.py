@@ -65,7 +65,7 @@ def test_setup_contains_inventory_and_preserves_config_without_mutation(monkeypa
     assert list(directory.iterdir()) == []
     assert settings.ollama_model == "qwen3.5:4b"
     assert len(requests) == 2 and all(request.method == "GET" for request in requests)
-    assert options == [{"timeout": 1.5, "follow_redirects": False}]
+    assert options == [{"timeout": 1.5, "follow_redirects": False, "trust_env": False}]
 
 
 @pytest.mark.parametrize("models", [None, "not a list", [{"name": 123}], [{}], [None],
