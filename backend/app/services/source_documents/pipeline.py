@@ -308,9 +308,17 @@ def check_numbers(context, req, text, originals):
     reject_model_citation_labels(text)
     try:
         verify_numbers(text, " ".join(originals))
+        presentation.check_volume_properties(text, originals)
     except local.DocumentError:
         report = store.request(context.connection, req["id"])["report"]
         report["rejected_numeric_claim"] = {"text": text, "originals": originals}
+        store.save_request(context.connection, req["id"], report=report)
+        raise
+    try:
+        presentation.check_absence_claim(text, originals)
+    except local.DocumentError:
+        report = store.request(context.connection, req["id"])["report"]
+        report["rejected_scope_claim"] = {"text": text, "originals": originals}
         store.save_request(context.connection, req["id"], report=report)
         raise
 
@@ -394,7 +402,10 @@ def heading_supported(context, req, key, title, claims, evidence, intent, settin
             "intent": intent,
             "passages": group,
             "rules": "For EACH original passage, say whether it supports this heading as a "
-            "topical label. EVERY substantive topic in a combined heading must be supported; "
+            "topical label, using the other supplied passages as context. Different selected "
+            "subjects can appear in different originals; a requested comparison/report form "
+            "does not add a fact. EVERY substantive topic in a combined heading must be "
+            "supported across the supplied group; "
             "matching only one part is not enough. Return false when another part introduces "
             "unmentioned measurements, performance, safety, recovery timing or guarantees. "
             "A title may describe the requested document form, but cannot add "
@@ -768,13 +779,31 @@ def generate(context, *, settings=None, client=None):
             return {
                 "task": "cross_source_synthesis",
                 "intent": intent,
+                "comparison_requested": presentation.is_comparison(
+                    req["request"]["instruction"], intent
+                ),
                 "output_language": intent["language"],
                 "heading": heading_title,
                 "claims": group,
                 "rules": "Write concise editable paragraphs or comparison "
                 "points for this section in the requested language. Cite supplied claim_ids "
                 "supporting EVERY fact. Discuss differences only if evidence supports comparable "
-                "conditions; no new conclusions or facts. Do not invent citation labels.",
+                "conditions; no new conclusions or facts. Use plain factual wording, not "
+                "stronger verbs or broader architecture claims. Capacity and amount stored "
+                "are different properties: name each precisely, never infer a capacity "
+                "difference from them. Include the relevant facts from every supplied source "
+                "before comparing; do not drop a recorded condition or requested detail. "
+                "If comparison_requested is true and this batch contains multiple sources, "
+                "include an explicit source-attributed contrast in one statement with the "
+                "claim_ids from every compared source. Separate one-source statements alone "
+                "do not complete a comparison. Compare recorded schedules or permissions "
+                "under the same condition; do not infer a numerical difference between "
+                "different quantity properties. "
+                "Join independently stated facts with 'and' or separate clauses; do not "
+                "introduce 'using', 'because', a purpose or causation that the originals "
+                "did not state. For example, 'stores 8 litres and uses log files' does not "
+                "establish 'stores 8 litres using log files'. "
+                "Do not invent citation labels.",
             }
 
         paragraphs, original_quotes = [], {}

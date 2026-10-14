@@ -96,6 +96,52 @@ def check_shape(text, *, heading=False):
         )
 
 
+def check_volume_properties(text, originals):
+    """Reject explicit capacity/stored-amount swaps for numeric litre values.
+
+    This narrow guard complements entailment; it does not establish subjects or
+    classify all units. Unknown wording still goes through the local verifier.
+    """
+
+    def properties(value):
+        found = {}
+        for quantity in re.finditer(
+            r"(\d+(?:[.,]\d+)*)\s*(?:litres?|liters?|리터|L)(?![A-Za-z])", value, re.I
+        ):
+            prefix = re.split(r"[.!?。\n]", value[: quantity.start()])[-1][-100:]
+            anchors = list(
+                re.finditer(r"capacity|용량|stores?|stored|storing|저장량|저장|보관", prefix, re.I)
+            )
+            category = None
+            if anchors:
+                category = (
+                    "capacity" if re.search(r"capacity|용량", anchors[-1][0], re.I) else "stored"
+                )
+            elif re.match(r"\s*(?:를|가)?\s*(?:저장|보관)", value[quantity.end() :]):
+                category = "stored"
+            if category:
+                found.setdefault(quantity[1], set()).add(category)
+        return found
+
+    observed = properties("\n".join(originals))
+    for value, categories in properties(text).items():
+        if value in observed and not categories <= observed[value]:
+            raise DocumentError(
+                "A generated claim changes capacity into an amount stored, or vice versa. "
+                "No document was saved."
+            )
+
+
+def check_absence_claim(text, originals):
+    # Model batches cannot certify collection-wide missing information. The
+    # application owns that coverage report; literal original statements remain.
+    if is_absence_heading(text) and not any(text.strip() in original for original in originals):
+        raise DocumentError(
+            "A generated claim makes an unverified missing-evidence assertion. "
+            "Missing material belongs in the coverage report. No document was saved."
+        )
+
+
 def is_comparison(instruction, intent):
     return bool(
         re.search(

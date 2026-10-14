@@ -11,6 +11,74 @@ from app.tests.test_source_documents import enqueue, model, run, workspace
 
 
 @pytest.mark.parametrize(
+    "text,original",
+    [
+        ("It stores 37 litres.", "Its capacity is 37 litres."),
+        ("Capacity is 92 litres.", "It stores 92 litres."),
+        ("Alpha stores 37 litres.", "Alpha의 저장 용량은 37리터입니다."),
+        ("용량은 92리터입니다.", "It stores 92 litres."),
+    ],
+)
+def test_volume_property_swaps_are_rejected_even_when_the_number_matches(text, original):
+    with pytest.raises(local.DocumentError, match="capacity into an amount stored"):
+        presentation.check_volume_properties(text, [original])
+
+
+@pytest.mark.parametrize(
+    "text,originals",
+    [
+        ("Alpha has a capacity of 37 litres.", ["Alpha의 저장 용량은 37리터입니다."]),
+        ("Beta stores 92 litres.", ["Project Beta stores 92 litres."]),
+        ("37리터를 저장합니다.", ["It stores 37 litres."]),
+        (
+            "Capacity is 37 litres; Beta stores 92 litres.",
+            ["Capacity: 37 litres.", "Beta stores 92 litres."],
+        ),
+        ("It stores 37 litres.", ["Capacity is 37 litres. It stores 37 litres."]),
+    ],
+)
+def test_recorded_and_translated_volume_properties_remain_available(text, originals):
+    presentation.check_volume_properties(text, originals)
+
+
+def test_model_absence_assertion_cannot_replace_actual_coverage():
+    with pytest.raises(local.DocumentError, match="missing-evidence"):
+        presentation.check_absence_claim(
+            "No evidence is supplied regarding Alpha's storage method.",
+            ["Beta uses log files."],
+        )
+    presentation.check_absence_claim("No evidence was recorded.", ["No evidence was recorded."])
+
+
+@pytest.mark.parametrize("stage", ["process_original_sections", "cross_source_synthesis"])
+@pytest.mark.parametrize(
+    "text,error,report_key",
+    [
+        ("Cedar stores 18 litres.", "capacity into an amount stored", "rejected_numeric_claim"),
+        (
+            "No evidence was supplied for Cedar's storage method.",
+            "missing-evidence",
+            "rejected_scope_claim",
+        ),
+    ],
+)
+def test_unsafe_claim_cannot_publish_even_when_model_verifier_approves(
+    workspace, stage, text, error, report_key
+):
+    db, *_ = workspace
+    discover(workspace, content="Cedar has a capacity of 18 litres. Cedar uses SQLite.")
+
+    def unsafe(payload, result):
+        if payload["task"] == stage:
+            result["claims"][0]["text"] = text
+
+    with pytest.raises(local.DocumentError, match=error):
+        run(db, enqueue(db), model(transform=unsafe)[0])
+    assert documents.count_documents(db) == 0
+    assert store.request(db, "request")["report"][report_key]["text"] == text
+
+
+@pytest.mark.parametrize(
     "stage", ["outline", "process_original_sections", "cross_source_synthesis"]
 )
 def test_wrong_output_language_fails_before_any_artifact(workspace, stage):

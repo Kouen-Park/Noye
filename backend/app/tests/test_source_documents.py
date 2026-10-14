@@ -16,7 +16,7 @@ from app.config import Settings
 from app.db import conversations, documents
 from app.db import source_documents as store
 from app.models.conversations import Role
-from app.models.source_documents import GenerateRequest, Selection
+from app.models.source_documents import GenerateRequest, Selection, Verification
 from app.models.wiki import WikiScope
 from app.services import knowledge_jobs
 from app.services.source_documents import jobs, local, pipeline
@@ -545,6 +545,40 @@ def test_local_only_and_array_schema_constraints():
     with pytest.raises(Exception, match="local loopback"):
         local.structured({"task": "interpret_intent"}, Selection, settings=settings, client=client)
     assert calls == []
+
+
+@pytest.mark.parametrize(
+    "task,field", [("verify_support", "claims"), ("verify_heading", "passages")]
+)
+def test_verification_transport_bounds_the_verdict_count(task, field):
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "qwen3"}})
+        sent.append(json.loads(request.content))
+        return httpx.Response(200, json={"done": True, "response": '{"supported":[true,false]}'})
+
+    payload = {"task": task, field: [{"text": "A recorded fact"}, {"text": "Another fact"}]}
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        result = local.structured(payload, Verification, client=client)
+    assert result.supported == [True, False]
+    counts = sent[0]["format"]["properties"]["supported"]
+    assert counts["minItems"] == counts["maxItems"] == 2
+    assert counts["items"]["type"] == "boolean"
+
+
+def test_endpoint_ignoring_verdict_count_cannot_publish_a_document(workspace):
+    db, *_ = workspace
+    discover(workspace)
+
+    def ignore_schema(payload, result):
+        if payload["task"] == "verify_support":
+            result["supported"] = []
+
+    with pytest.raises(local.DocumentError, match="invalid verdict count"):
+        run(db, enqueue(db), model(transform=ignore_schema)[0])
+    assert documents.count_documents(db) == 0
 
 
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
