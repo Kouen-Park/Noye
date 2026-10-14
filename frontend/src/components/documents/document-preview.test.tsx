@@ -54,4 +54,20 @@ describe("DocumentPreview", () => {
     expect(link).toHaveAttribute("target", "_blank");
     expect(link.getAttribute("rel")).toContain("noopener");
   });
+
+  it("preserves consecutive headings, paragraphs, lists, code and quoted originals when grouping for print", () => {
+    render(<DocumentPreview content={
+      "# Title\n\nIntro 한국어.\n\n## Conditions\n\nSaturday is **read-only**.\n\n" +
+      "## Counts\n\n- 37 litres capacity\n- 92 litres stored\n\n" +
+      "### Original\n\n> Exact original -- quote.\n\n## Next\n\n## Last\n\n```\nliteral ->\n```"
+    } />);
+    expect(screen.getAllByRole("heading").map(h => h.textContent)).toEqual(
+      ["Title", "Conditions", "Counts", "Original", "Next", "Last"]);
+    expect(screen.getByText("Intro 한국어.")).toBeInTheDocument();
+    expect(screen.getByText("read-only")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem").map(li => li.textContent)).toEqual(
+      ["37 litres capacity", "92 litres stored"]);
+    expect(screen.getByText("Exact original -- quote.")).toBeInTheDocument();
+    expect(screen.getByText("literal ->")).toBeInTheDocument();
+  });
 });

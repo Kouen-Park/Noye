@@ -1,6 +1,7 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { OriginalLink, isOriginalHref } from "@/components/original-link";
+import { groupPrintHeadings } from "@/lib/print-headings";
 
 /**
  * The rendered document.
@@ -33,29 +34,31 @@ export function DocumentPreview({ content, provenance = "" }: { content: string;
 
   return (
     <div data-print="document" className="noye-prose max-w-[72ch]">
-      <MarkdownContent content={content} />
+      <MarkdownContent content={content} printable />
       {provenance && <section data-print-provenance>
-        <MarkdownContent content={provenance} />
+        <MarkdownContent content={provenance} printable />
       </section>}
     </div>
   );
 }
 
 /** Safe shared prose renderer. Chat never opts into document-only printing. */
-export function MarkdownContent({ content, allowImages = true, rewriteLink }: {
+export function MarkdownContent({ content, allowImages = true, rewriteLink, printable = false }: {
   content: string; allowImages?: boolean; rewriteLink?: (href: string) => string | undefined;
+  printable?: boolean;
 }) {
   return (
-    <div className="noye-prose [overflow-wrap:anywhere]">
+    <div className={`noye-prose [overflow-wrap:anywhere]${printable ? " noye-print-prose" : ""}`}>
       <Markdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={printable ? [groupPrintHeadings] : []}
         components={{
           ...(!allowImages ? { img: ({ alt }: { alt?: string }) => <span>{alt ? `[Image: ${alt}]` : "[Image omitted]"}</span> } : {}),
           h1: (props) => (
-            <h1 className="mb-3 mt-5 font-display text-[22px] first:mt-0" {...props} />
+            <h1 className={printable ? "mb-3 mt-5 font-display text-[22px]" : "mb-3 mt-5 font-display text-[22px] first:mt-0"} {...props} />
           ),
           h2: (props) => (
-            <h2 className="mb-2 mt-5 font-display text-[18px] first:mt-0" {...props} />
+            <h2 className={printable ? "mb-2 mt-5 font-display text-[18px]" : "mb-2 mt-5 font-display text-[18px] first:mt-0"} {...props} />
           ),
           h3: (props) => (
             <h3 className="mb-1.5 mt-4 text-[15px] font-semibold text-ink" {...props} />

@@ -114,6 +114,10 @@ progress::-moz-progress-bar { background: var(--brand); }
    Elements opt in with data-print="document"; everything else is hidden. That way
    a new control added later is hidden by default rather than silently appearing
    in people's exports. */
+.noye-heading-block { display: contents; }
+.noye-print-prose > .noye-heading-block:first-child > :is(h1, h2),
+.noye-print-prose > :is(h1, h2):first-child { margin-top: 0; }
+
 @media print {
   /* Ink on white. The canvas tint is a screen choice and would either waste toner
      or be dropped by the driver, inconsistently. */
@@ -182,6 +186,18 @@ progress::-moz-progress-bar { background: var(--brand); }
   /* Keep headings with their text; allow evidence to flow across pages. */
   [data-print="document"] :is(h1, h2, h3) {
     break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  [data-print="document"] :is(p, li, blockquote) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  [data-print="document"] .noye-heading-block {
+    display: block;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   /* Links print as text, so the destination has to be readable on paper. */
