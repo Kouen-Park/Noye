@@ -3,6 +3,16 @@ import { isDesktopRuntime } from "./runtime";
 
 export type ExportResult = "saved" | "download" | "cancelled";
 
+export async function exportPdf(title: string): Promise<ExportResult> {
+  if (isDesktopRuntime()) {
+    return await invoke<boolean>("save_pdf", { title }) ? "saved" : "cancelled";
+  }
+  try { await window.print(); } catch {
+    throw new Error("Could not open the print dialog. Try again, or export Markdown.");
+  }
+  return "download";
+}
+
 export async function exportMarkdown(title: string, content: string): Promise<ExportResult> {
   if (isDesktopRuntime()) {
     return await invoke<boolean>("save_markdown", { title, content }) ? "saved" : "cancelled";

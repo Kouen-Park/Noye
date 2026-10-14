@@ -5,6 +5,8 @@ mod exports;
 mod folders;
 mod menu;
 mod originals;
+#[cfg(target_os = "macos")]
+mod pdf;
 mod preferences;
 #[cfg(target_os = "macos")]
 mod relaunch;
@@ -49,6 +51,7 @@ fn main() {
             folders::reveal_source_folder,
             originals::open_original,
             exports::save_markdown,
+            exports::save_pdf,
             exports::save_workspace_backup
         ])
         .build(tauri::generate_context!())

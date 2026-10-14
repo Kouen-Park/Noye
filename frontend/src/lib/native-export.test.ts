@@ -1,7 +1,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import { invoke } from "@tauri-apps/api/core";
 import { isDesktopRuntime } from "./runtime";
-import { exportMarkdown } from "./native-export";
+import { exportMarkdown, exportPdf } from "./native-export";
 import { downloadBackup } from "./workspace";
 import type { AiSettings } from "./ai-settings";
 
@@ -14,6 +14,22 @@ it("saves exact editor text through native selection without a destination or we
   const text = '<!-- comment -->\n한국어 -- "quoted"\n';
   expect(await exportMarkdown("User writing", text)).toBe("saved");
   expect(invoke).toHaveBeenCalledWith("save_markdown", { title: "User writing", content: text });
+});
+
+it("saves a native PDF from the current webview without granting a JavaScript destination", async () => {
+  vi.mocked(invoke).mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+  expect(await exportPdf("한국어 preview")).toBe("saved");
+  expect(invoke).toHaveBeenCalledWith("save_pdf", { title: "한국어 preview" });
+  expect(await exportPdf("한국어 preview")).toBe("cancelled");
+});
+
+it("keeps web PDF export on the browser print engine", async () => {
+  vi.mocked(isDesktopRuntime).mockReturnValue(false);
+  const print = vi.spyOn(window, "print").mockImplementation(() => {});
+  expect(await exportPdf("Preview")).toBe("download");
+  expect(print).toHaveBeenCalledOnce();
+  expect(invoke).not.toHaveBeenCalled();
+  print.mockRestore();
 });
 
 it("does not report a cancelled Markdown dialog as saved", async () => {

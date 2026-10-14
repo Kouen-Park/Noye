@@ -2,7 +2,8 @@
 
 import { documentExportUrl } from "@/lib/api";
 import { useState } from "react";
-import { exportMarkdown } from "@/lib/native-export";
+import { exportMarkdown, exportPdf } from "@/lib/native-export";
+import { isDesktopRuntime } from "@/lib/runtime";
 
 /**
  * The two exports.
@@ -12,10 +13,9 @@ import { exportMarkdown } from "@/lib/native-export";
  * text. The selected provenance mode is shared
  * with the print preview, so both formats include the same material.
  *
- * PDF is `window.print()`, per the plan's §13.2. A server-side renderer would need
- * system libraries a user must install before Noye worked at all, which is a real
- * cost for something claiming to run on your machine without setup. The browser
- * already has a PDF engine and it is offline.
+ * PDF uses the existing browser/WebKit print engine and print stylesheet.
+ * macOS chooses a file in the native save panel, then prints directly to a staged
+ * PDF. Web mode uses window.print(). Both remain offline.
  *
  * What the print stylesheet in globals.css does is the other half of that
  * decision: everything not marked `data-print="document"` is hidden, so the page
@@ -47,7 +47,6 @@ export function ExportControls({
   includeProvenance = false,
   onProvenanceChange,
 }: ExportControlsProps) {
-  const [printError, setPrintError] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState("");
   const [exportNotice, setExportNotice] = useState("");
@@ -84,13 +83,20 @@ export function ExportControls({
       <button
         type="button"
         onClick={async () => {
-          setPrintError(false);
-          try { await window.print(); } catch { setPrintError(true); }
+          if (disabled || exporting || !previewVisible) return;
+          setExporting(true); setExportError(""); setExportNotice("");
+          try {
+            const result = await exportPdf(title);
+            setExportNotice(result === "saved" ? "PDF saved." : result === "cancelled" ?
+              "PDF export cancelled." : "PDF print dialog opened.");
+          } catch (cause) {
+            setExportError(cause instanceof Error ? cause.message : String(cause));
+          } finally { setExporting(false); }
         }}
-        disabled={disabled || !previewVisible}
+        disabled={disabled || exporting || !previewVisible}
         title={
           previewVisible
-            ? "Uses your browser's print dialog — choose Save as PDF"
+            ? isDesktopRuntime() ? "Save the preview as a PDF" : "Uses your browser's print dialog — choose Save as PDF"
             : "Switch to Preview first, so the PDF is the document rather than its Markdown"
         }
         className="noye-button font-semibold text-accent-ink hover:bg-brand-wash disabled:cursor-not-allowed disabled:text-ink-soft"
@@ -106,13 +112,12 @@ export function ExportControls({
       </label>}
       <p className="noye-meta">
         {previewVisible
-          ? "PDF uses your browser's print dialog."
+          ? isDesktopRuntime() ? "PDF saves the current preview." : "PDF uses your browser's print dialog."
           : "Switch to Preview to export a PDF."}
       </p>
       {content !== undefined && <p className="mt-2 text-xs">Exports include the current editor text, including unsaved edits.</p>}
       </div>
       </details>
-      {printError && <p role="alert" className="w-full text-xs text-danger">Could not open the print dialog. Try again, or export Markdown.</p>}
       {exportError && <p role="alert" className="w-full text-xs text-fail">{exportError} Your editor text is preserved.</p>}
       {exportNotice && <p role="status" className="w-full text-xs text-ink-soft">{exportNotice}</p>}
     </div>

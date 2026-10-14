@@ -23,13 +23,29 @@ impl Exports {
 }
 
 fn markdown_filename(title: &str) -> String {
-    let cleaned: String = title
+    export_filename(title, "md")
+}
+
+fn export_filename(title: &str, extension: &str) -> String {
+    let mut cleaned = String::new();
+    for c in title
         .chars()
         .filter(|c| !c.is_control() && !matches!(c, '/' | '\\' | ':'))
         .take(120)
-        .collect();
+    {
+        // Filesystem filename limits count UTF-8 bytes. Keep room for the
+        // extension even when a title consists entirely of Korean or emoji.
+        if cleaned.len() + c.len_utf8() > 220 {
+            break;
+        }
+        cleaned.push(c);
+    }
     let name = cleaned.trim();
-    format!("{}.md", if name.is_empty() { "document" } else { name })
+    format!(
+        "{}.{}",
+        if name.is_empty() { "document" } else { name },
+        extension
+    )
 }
 
 fn choose_save(filename: &str) -> Result<Option<PathBuf>, String> {
@@ -92,6 +108,10 @@ fn write_markdown(path: &Path, content: &str) -> std::io::Result<()> {
     let staged = Staged(temporary);
     file.write_all(content.as_bytes())?;
     file.sync_all()?;
+    publish_file(&staged.0, path)
+}
+
+pub(crate) fn publish_file(staged: &Path, path: &Path) -> std::io::Result<()> {
     #[cfg(target_os = "macos")]
     {
         use std::ffi::CString;
@@ -103,7 +123,7 @@ fn write_markdown(path: &Path, content: &str) -> std::io::Result<()> {
                 flags: u32,
             ) -> i32;
         }
-        let from = CString::new(staged.0.as_os_str().as_bytes())?;
+        let from = CString::new(staged.as_os_str().as_bytes())?;
         let to = CString::new(path.as_os_str().as_bytes())?;
         // Public macOS no-replacement rename. Unlike hard links, this also
         // supports removable volumes that cannot create file hard links.
@@ -115,8 +135,48 @@ fn write_markdown(path: &Path, content: &str) -> std::io::Result<()> {
         }
     }
     #[cfg(not(target_os = "macos"))]
-    std::fs::hard_link(&staged.0, path)?;
+    std::fs::hard_link(staged, path)?;
     Ok(())
+}
+
+#[tauri::command]
+pub async fn save_pdf(
+    app: tauri::AppHandle,
+    exports: tauri::State<'_, Exports>,
+    title: String,
+) -> Result<bool, String> {
+    let _guard = exports.begin()?;
+    let Some(path) = destination(app.clone(), export_filename(&title, "pdf")).await? else {
+        return Ok(false);
+    };
+    #[cfg(target_os = "macos")]
+    {
+        use tauri::Manager;
+        let window = app
+            .get_webview_window("main")
+            .ok_or("The document window is closed")?;
+        let (sender, receiver) = std::sync::mpsc::sync_channel(1);
+        window
+            .with_webview(move |webview| {
+                let failure = sender.clone();
+                if let Err(error) =
+                    crate::pdf::begin(webview.inner(), webview.ns_window(), path, sender)
+                {
+                    let _ = failure.send(Err(error));
+                }
+            })
+            .map_err(|_| "Could not print the document")?;
+        tauri::async_runtime::spawn_blocking(move || receiver.recv())
+            .await
+            .map_err(|e| e.to_string())?
+            .map_err(|_| "The document window was closed")??;
+        Ok(true)
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = path;
+        Err("Native PDF export currently targets macOS.".into())
+    }
 }
 
 #[tauri::command]
@@ -209,5 +269,33 @@ mod tests {
         assert_eq!(markdown_filename("한국어 / notes: "), "한국어  notes.md");
         assert_eq!(markdown_filename("/\\:\n"), "document.md");
         assert!(!markdown_filename("../nested/../../name").contains('/'));
+        assert_eq!(
+            export_filename("한국어 / notes", "pdf"),
+            "한국어  notes.pdf"
+        );
+    }
+
+    #[test]
+    fn publishes_staged_binary_bytes_without_replacing_a_collision() {
+        let root = directory();
+        let staged = root.0.join("staged.pdf");
+        let output = root.0.join("document.pdf");
+        let bytes = b"%PDF-1.7\n\0\xff\n%%EOF";
+        std::fs::write(&staged, bytes).unwrap();
+        publish_file(&staged, &output).unwrap();
+        assert_eq!(std::fs::read(&output).unwrap(), bytes);
+        std::fs::write(&staged, b"replacement").unwrap();
+        assert!(publish_file(&staged, &output).is_err());
+        assert_eq!(std::fs::read(&output).unwrap(), bytes);
+    }
+
+    #[test]
+    fn long_multibyte_titles_suggest_a_filename_the_filesystem_can_create() {
+        let root = directory();
+        let filename = export_filename(&"한국어📝".repeat(100), "pdf");
+        let path = root.0.join(&filename);
+        std::fs::write(&path, b"synthetic").unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), b"synthetic");
+        assert!(filename.ends_with(".pdf"));
     }
 }
