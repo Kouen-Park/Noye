@@ -24,7 +24,11 @@ uses every source in the selected scope. A named collection resolves to a unique
 registered root or relative folder and enumerates every frozen member; missing or
 ambiguous collections require a scope clarification. Relevant reports inspect all
 catalog descriptors in bounded batches, using scoped Wiki/relationship hints and
-lexical search over frozen extracted text. These hints select candidate IDs; they
+lexical search over frozen extracted text. Each scoped descriptor also includes a
+preview of at most 360 extracted characters: the first matching passage, or the
+first nonempty passage when no query terms match. A lack of shared words is not
+proof of irrelevance across languages. Previews use the frozen source version and
+remain untrusted discovery context. These hints select candidate IDs; they
 do not establish consumption coverage or document facts. New sources discovered
 later cannot join the request. Empty scope does not broaden to all.
 
@@ -57,7 +61,7 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v17` prefers one to four topical sections for small source
+Prompt `source-document-v18` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. The constrained schema is included in
 the actual model prompt as well as Ollama's decoder format, with both using the
 same allowed identifiers and cardinality. The byte budget measures that actual

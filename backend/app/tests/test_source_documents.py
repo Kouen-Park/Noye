@@ -269,6 +269,40 @@ def test_empty_scope_requires_sources_without_model_call(workspace):
     assert calls == [] and documents.count_documents(db) == 0
 
 
+def test_discovery_sees_scoped_bounded_originals_without_shared_query_words(workspace):
+    db, *_ = workspace
+    korean = discover(workspace, "first.txt", "저수지 Alpha의 용량은 37리터입니다. " * 30)
+    english = discover(workspace, "second.txt", "Reservoir Beta stores 92 litres.")
+    excluded = discover(workspace, "private.txt", "OUTSIDE_SCOPE_PRIVATE_CONTEXT")
+    job = enqueue(db, WikiScope(mode="chosen", source_ids=[korean.id, english.id]), mode="relevant")
+    previews = {}
+
+    def choose_from_originals(payload, result):
+        if payload["task"] == "discover_sources":
+            for item in payload["inventory"]:
+                previews[item["source_id"]] = item["text_search"]
+            result["source_ids"] = [
+                item["source_id"]
+                for item in payload["inventory"]
+                if any(word in item["text_search"]["preview"] for word in ("저수지", "Reservoir"))
+            ]
+
+    client, calls = model(transform=choose_from_originals)
+    plan = pipeline.discover(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        Settings(_env_file=None),
+        client,
+    )
+    assert set(plan["selected_ids"]) == {korean.id, english.id}
+    assert previews[korean.id]["matching_passages"] == 0
+    assert len(previews[korean.id]["preview"]) == 360
+    assert previews[korean.id]["preview"].startswith("저수지 Alpha")
+    assert excluded.id not in previews
+    assert "OUTSIDE_SCOPE_PRIVATE_CONTEXT" not in json.dumps(calls)
+    assert documents.count_documents(db) == 0  # Discovery is not publication/coverage.
+
+
 def test_owned_local_client_bypasses_environment_proxy_for_original_context(monkeypatch):
     received = []
 
