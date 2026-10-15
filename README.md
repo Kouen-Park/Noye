@@ -273,6 +273,11 @@ the folder/wiki and prompt-driven source-document workflow. Phase 8 then refines
 stability/quality and validates the packaged workflow before MVP release. Relevant
 tests, lint, types and builds run throughout implementation.
 
+Current packaged-app observations and remaining failures are recorded in
+[`docs/phase8/acceptance-2026-10-15.md`](docs/phase8/acceptance-2026-10-15.md).
+The native PDF/first-run/model checks and automated suites do not close Phase 8:
+complete bilingual source-document quality and the remaining acceptance are open.
+
 ## Privacy Philosophy
 
 **Local by default.** Personal knowledge should not require cloud storage.

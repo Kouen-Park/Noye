@@ -1,0 +1,5 @@
+AT-201 used a binary heap. The shortest-path run visited 48 vertices in 12 milliseconds; negative edges were excluded.
+
+AT-201은 이진 힙을 사용했다. 최단 경로 실행은 정점 48개를 방문했고 12밀리초가 걸렸다. 음수 간선은 실험에서 제외했다.
+
+Graph experiment procedure: record the run identifier AT-201 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

@@ -1,0 +1,6 @@
+Compiling noye-desktop v0.1.0 (/Users/gavinpark/Projects/Noye/frontend/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.68s
+     Running `target/debug/examples/phase8_keychain_qa`
+service=com.noye.phase8-keychain-qa.4ca7421e-3449-4d4a-9deb-f51f8da2c01a
+cross_process_read=true
+qa_item_removed=true

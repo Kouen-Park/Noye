@@ -1,0 +1,14 @@
+npm notice run noye-frontend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v5.0.1 /Users/gavinpark/Projects/Noye/frontend
+
+
+ Test Files  52 passed (52)
+      Tests  386 passed (386)
+   Start at  11:27:35
+   Duration  9.25s (environment 45%, tests 34%, setup 11%, import 5%, transform 5%, worker 1%)
+
+Environment  jsdom was created 52 times · 26.06s total, 45% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments

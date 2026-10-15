@@ -1,0 +1,26 @@
+{
+  "document_id": "2b5622bc-5acd-4f84-bc57-e30748c7a3f6",
+  "method": "Invented Markdown seeded with POST /documents in the separate restored QA workspace. Opened in latest packaged Noye Phase8 QA through native UI, Preview, Export PDF, macOS save panel. No programmatic PDF authoring substituted for export.",
+  "source_utf8_bytes": 9635,
+  "source_sha256": "a558d9a83942a6d02b5713846ff10bd8c985e111c32a619802c8248e8295bc5c",
+  "source_unchanged_after_exports": true,
+  "before": {
+    "pages": 7,
+    "bytes": 57817,
+    "sha256": "59fb543360e6fea38b3261b62e63cfe3b0bcf118c2e86e1b086514b248e4c483",
+    "finding": "Image heading alone on page 5; figure starts on page 6. All 40 table rows and 40 code lines retained."
+  },
+  "fixed": {
+    "pages": 7,
+    "bytes": 57833,
+    "sha256": "1a2c8b5ce9ff89f557c8d16688626e70de778533d2488b4fd2b5e743d4ed7b64",
+    "visual_review": "All seven full-page renders inspected. Image heading, whole vector image and caption on page 6; no app chrome, missing rows, clipped text or unreadable Korean observed. All table row/end markers, code begin/end markers, list items and final sentinel retained after diagnostic whitespace normalization.",
+    "limitations": "Continuation table header is not repeated. Long code can wrap and split across pages. This does not certify arbitrary wide tables, external images, every printer or other OS."
+  },
+  "save_panel": {
+    "first_before": "Initial default Save disabled; filename edit + Tab enabled it. Cause was not isolated.",
+    "repeat_before": "Save enabled with default name without filename edits; cancelled and observed PDF export cancelled.",
+    "fresh_fixed_app": "First PDF panel after relaunch had Save enabled immediately; saved default filename without editing or changing its remembered QA directory. Earlier failure retained; one success does not certify every remembered location."
+  },
+  "inspection_method": "MuPDF text + per-page PNG, reviewed all pages. Direct substring initially misclassified every code end as missing because it wrapped as END newline -C001; whitespace-normalized checks and visual review confirmed retained text. Literal Markdown hash is separate from normalized PDF diagnostics."
+}

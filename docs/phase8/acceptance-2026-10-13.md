@@ -1,5 +1,9 @@
 # Phase 8 acceptance progress — 2026-10-13–14
 
+Later results are recorded in [the October 15–16 supplement](acceptance-2026-10-15.md).
+It supersedes only explicitly rechecked cases; the failures and historical
+measurements below remain intact.
+
 This is an incomplete acceptance record, not MVP release approval. Work is on
 `feat/mvp-end-to-end`, as requested. The existing published history is preserved;
 `06d2296` merges the current implementation into the old end-to-end branch. The

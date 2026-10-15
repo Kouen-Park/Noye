@@ -1,0 +1,172 @@
+{
+  "seconds": 79.428,
+  "job": {
+    "id": "714ccc10-6435-403b-a348-e95504210e34",
+    "kind": "source_document",
+    "subject_id": "8b8c7478-2049-4987-8d3e-5123dd258d95",
+    "dedupe_key": "source_document:8b8c7478-2049-4987-8d3e-5123dd258d95",
+    "state": "cancelled",
+    "stage": "interpret_intent",
+    "completed": 0,
+    "total": 0,
+    "attempt": 1,
+    "cancel_requested": 1,
+    "artifact_id": null,
+    "error": "Knowledge processing was cancelled.",
+    "created_at": "2026-10-14T21:57:54.159988+00:00",
+    "updated_at": "2026-10-14T21:59:13.620615+00:00",
+    "payload": {
+      "request_id": "8b8c7478-2049-4987-8d3e-5123dd258d95"
+    },
+    "scope": {
+      "mode": "chosen",
+      "root_ids": [],
+      "source_ids": [
+        "7ba353bd-81d5-4990-b460-493303ef0079"
+      ]
+    },
+    "manifest": [
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/02-English.txt",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      }
+    ],
+    "events": [
+      {
+        "sequence": 200,
+        "job_id": "714ccc10-6435-403b-a348-e95504210e34",
+        "stage": "starting",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-14T21:57:54.234644+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 201,
+        "job_id": "714ccc10-6435-403b-a348-e95504210e34",
+        "stage": "interpret_intent",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-14T21:57:54.234969+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 202,
+        "job_id": "714ccc10-6435-403b-a348-e95504210e34",
+        "stage": "interpret_intent",
+        "state": "cancelled",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-14T21:59:13.616580+00:00",
+        "detail": {
+          "error": "Knowledge processing was cancelled."
+        }
+      }
+    ]
+  },
+  "request": {
+    "id": "8b8c7478-2049-4987-8d3e-5123dd258d95",
+    "artifact_id": null,
+    "clarification": null,
+    "created_at": "2026-10-14T21:57:54.159785+00:00",
+    "updated_at": "2026-10-14T21:57:54.159785+00:00",
+    "request": {
+      "conversation_id": "5074b9b0-90a9-48fe-9edd-fe5b708ae9fd",
+      "instruction": "Write a short English note about Project Beta. Preserve the exact storage amount, write permissions and backup schedule.",
+      "intent_context": [],
+      "inventory_mode": "collection",
+      "request_id": "8b8c7478-2049-4987-8d3e-5123dd258d95",
+      "scope": {
+        "mode": "chosen",
+        "root_ids": [],
+        "source_ids": [
+          "7ba353bd-81d5-4990-b460-493303ef0079"
+        ]
+      },
+      "submitted_scope": {
+        "mode": "chosen",
+        "root_ids": [],
+        "source_ids": [
+          "7ba353bd-81d5-4990-b460-493303ef0079"
+        ]
+      }
+    },
+    "manifest": [
+      {
+        "availability": "available",
+        "processing_state": "READY",
+        "relative_path": "Course/02-English.txt",
+        "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+        "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      }
+    ],
+    "plan": null,
+    "report": {}
+  },
+  "model_calls": [
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.101326,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/actual-inference-cancel-5adb0d39-b8a8-45e0-82e6-6dfd2d1d641e/report.json"
+      }
+    },
+    {
+      "task": "interpret_intent",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T21:59:09.883664Z\",\"response\":\"{\\n  \\\"purpose\\\": \\\"Create a short English note about Project Beta.\\\",\\n  \\\"topic\\\": \\\"Project Beta\\\",\\n  \\\"document_type\\\": \\\"Note\\\",\\n  \\\"language\\\": \\\"en\\\",\\n  \\\"inventory_mode\\\": \\\"collection\\\",\\n  \\\"collection_query\\\": \\\"\\\",\\n  \\\"clarification\\\": null\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,2523,1791,36171,443,2181,68,9017,1608,1132,16713,3889,5721,13,198,5423,279,10897,4566,13,8483,1414,321,28272,14865,513,632,80946,795,11,2496,10966,13,198,58278,2193,1132,61161,1156,7151,321,369,2496,5721,13,4506,1155,279,10897,198,2911,28074,364,7658,14865,321,58655,11,15029,314,279,3889,579,3992,13,198,7081,1761,16687,4565,2652,52907,303,279,3889,3992,13,14271,16525,12688,11,198,49927,11,50100,11,45640,11,6602,11,4947,466,198,59669,13,14122,1761,16687,6681,303,836,3889,3992,13,28272,369,17789,198,2078,11,524,5839,5721,13,1942,57879,58655,1902,599,16713,12250,5721,13,198,13955,5671,7167,5721,321,25969,13,5272,13983,57879,59761,321,20480,279,198,2348,579,3234,25,328,42032,220,23,84887,1,3254,10220,220,23,84887,11,524,8390,466,264,3798,13,198,2014,11135,328,36151,314,220,23,84887,1,3254,8390,11,524,421,660,220,23,84887,513,1429,13,198,2381,3010,11,15659,328,25846,217718,220,23,27096,32742,1,3254,328,36151,369,220,23,84887,487,524,328,42032,220,23,84887,3158,198,5236,524,19080,328,4623,1433,3425,1,1083,264,3591,883,279,4220,1785,17120,13,198,5236,524,884,264,7193,466,56485,4864,1881,24358,10661,12688,13,198,44773,32112,10220,220,23,84887,13,54753,5533,1433,3425,1,628,3512,328,34,32112,10220,220,23,84887,198,429,5533,1433,3425,487,524,328,34,32112,10220,220,23,84887,1608,1433,3425,3158,198,5236,524,3591,421,2361,2450,35538,1928,13,34094,29768,66854,9888,198,78106,310,279,3638,579,9888,1830,11,524,7658,57879,58655,13,198,2665,37115,10966,466,5224,6526,13,248046,198,248045,846,198,4754,7945,763,328,16403,90996,487,328,53125,763,328,7734,264,2716,6163,5020,883,5606,33109,13,78503,279,4581,5638,3202,11,3165,8279,321,15264,9412,10152,328,54537,8207,7663,2135,26590,763,9774,328,21299,763,328,54909,7193,11,8282,11,2128,913,321,2468,3992,13,2233,3199,2306,369,2483,13,21513,4281,1132,364,7154,310,3286,449,4307,6725,14,4377,4281,13,4281,5560,369,4147,364,660,3955,7009,13,29097,1386,1132,34032,77397,7154,466,4281,69330,26,635,524,2466,364,9801,35358,18738,1149,92,248046,198,248045,74455,198,248068,271,248069,271,90,198,220,328,74041,763,328,3886,264,2716,6163,5020,883,5606,33109,10152,198,220,328,15930,763,328,7601,33109,487,198,220,328,5872,1756,763,328,8839,487,198,220,328,11197,763,328,268,487,198,220,328,30075,7075,763,328,13034,487,198,220,328,13034,5560,763,7111,198,220,328,12453,2325,763,819,198,92],\"total_duration\":75552330417,\"load_duration\":40966025542,\"prompt_eval_count\":438,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":10712272000,\"eval_count\":74,\"eval_duration\":18234908000}",
+      "response": "{\n  \"purpose\": \"Create a short English note about Project Beta.\",\n  \"topic\": \"Project Beta\",\n  \"document_type\": \"Note\",\n  \"language\": \"en\",\n  \"inventory_mode\": \"collection\",\n  \"collection_query\": \"\",\n  \"clarification\": null\n}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 75552330417,
+      "load_duration": 40966025542,
+      "prompt_eval_count": 438,
+      "prompt_eval_duration": 10712272000,
+      "eval_count": 74,
+      "eval_duration": 18234908000,
+      "wall_seconds": 78.913765
+    }
+  ],
+  "revision": null,
+  "revision_body_sha256": null,
+  "case": "cancel",
+  "prompt_version": "source-document-v14",
+  "action": {
+    "task": "interpret_intent",
+    "post_started": 102350.335722041,
+    "at": 102350.739922041,
+    "state": "cancelling",
+    "post_finished": 102429.260118958
+  },
+  "previous_writing_preserved": {
+    "documents": true,
+    "messages": true,
+    "conversations": true
+  },
+  "changed_original_read_rejection": null,
+  "method": "Copied invented corpus; actual production handler, durable jobs, HTTP model responses. Not a native UI, physical power-loss or OS force-quit test."
+}

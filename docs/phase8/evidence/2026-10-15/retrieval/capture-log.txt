@@ -1,0 +1,5 @@
+PX-606 contained 8 physical PDF pages. Text extraction found text on pages 1, 2, 4, 6 and 8. Pages 3, 5 and 7 had no extracted text; no OCR or scan classification was performed.
+
+PX-606 PDF는 8쪽이었다. 1, 2, 4, 6, 8쪽에서 텍스트를 추출했고 3, 5, 7쪽은 텍스트가 없었다. OCR이나 스캔 분류는 수행하지 않았다.
+
+PDF capture log procedure: record the run identifier PX-606 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

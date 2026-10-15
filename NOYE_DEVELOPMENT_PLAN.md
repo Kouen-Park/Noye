@@ -3599,6 +3599,32 @@ broader PDF layouts, the OS Original-link destination and multi-source English
 comparison quality remain open. The v10 comparison retry is still partial despite
 improved translated-claim support. This is not Phase 8 or MVP completion.
 
+**Acceptance progress, 2026-10-15–16:**
+[`docs/phase8/acceptance-2026-10-15.md`](docs/phase8/acceptance-2026-10-15.md)
+records later focused proxy-routing, quantity-property and print-image fixes.
+A seven-page native PDF retained Korean, 40 table rows, 40 code lines, a complete
+local image and all list/sentinel content; its orphan image heading was corrected.
+A fresh QA identifier exercised first-run local setup, saved model selection,
+download failure/cancel/explicit retry and shutdown during a real download.
+Saved writing and model preferences survived relaunch, with no observed automatic
+pull. Service-level real-inference cancellation, source edits and worker recovery
+also preserved existing writing. The first worker kill occurred during model
+loading; a later explicitly instrumented streaming request confirmed an output
+token before worker termination and repeated recovery/preservation. Neither is a
+native OS force-quit test. A narrow real-PDF/production-chunker comparison retained
+the default 1,000/150 after measuring three sizes; no sampled score cutoff both
+refused all negatives and kept every answerable question's gold evidence.
+Representative calibration remains open. A synthetic cross-process Keychain check and
+local ad-hoc envelope check do not establish protected provider authorization or
+trusted distribution. Full backend 1,058/19 skipped, frontend 386 and Rust 14 tests
+passed; the same frozen sidecar failed its busy 20-second startup bound and passed
+an idle rerun. Coverage methods and both outcomes are retained. Complete v14
+English comparison, Korean collection and relevant report attempts still failed
+the capacity-versus-stored guard. The holdout verifier falsely approved one
+unsupported relationship and rejected two faithful statements. These are open
+P1 quality failures; successful guard refusal is not successful generation.
+Keep Phase 8/MVP and conditional final merge open.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite

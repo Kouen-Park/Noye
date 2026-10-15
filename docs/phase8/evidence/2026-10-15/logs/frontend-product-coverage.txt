@@ -1,0 +1,96 @@
+npm notice run noye-frontend@0.1.0 npx
+npm notice run 'vitest' run --coverage --coverage.include=src/**/*.{ts,tsx} --coverage.exclude=src/**/*.test.{ts,tsx} --coverage.exclude=src/tests/** --coverage.reporter=json-summary --coverage.reporter=text --coverage.reportsDirectory=/private/tmp/noye-phase8-20261014/frontend-product-coverage
+
+ RUN  v5.0.1 /Users/gavinpark/Projects/Noye/frontend
+      Coverage enabled with v8
+
+
+ Test Files  52 passed (52)
+      Tests  385 passed (385)
+   Start at  11:10:56
+   Duration  14.99s (environment 43%, tests 37%, setup 9%, import 4%, worker 3%, transform 3%)
+
+Environment  jsdom was created 52 times · 39.29s total, 43% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   79.58 |    77.75 |   73.51 |   82.77 |
+ app               |   45.45 |      100 |   66.66 |      40 |
+  layout.tsx       |       0 |      100 |       0 |       0 | 6-39
+ app/chat          |   89.18 |    75.92 |   90.32 |   94.26 |
+  page.tsx         |   89.18 |    75.92 |   90.32 |   94.26 | ...-72,82,233,316
+ app/documents     |   77.31 |       80 |   61.53 |   81.81 |
+  page.tsx         |   77.31 |       80 |   61.53 |   81.81 | ...06-112,144-149
+ app/folders       |       0 |      100 |       0 |       0 |
+  page.tsx         |       0 |      100 |       0 |       0 | 5
+ app/library       |      88 |     86.2 |   77.77 |   88.09 |
+  page.tsx         |      88 |     86.2 |   77.77 |   88.09 | 97,118,187-189
+ app/search        |   94.59 |    81.48 |     100 |   96.42 |
+  page.tsx         |   94.59 |    81.48 |     100 |   96.42 | 83
+ app/wiki          |       0 |      100 |       0 |       0 |
+  page.tsx         |       0 |      100 |       0 |       0 | 6
+ components        |   86.23 |    77.74 |   77.11 |   90.77 |
+  ai-settings.tsx  |   78.06 |    73.52 |   66.66 |   86.02 | ...49,162,169-172
+  app-shell.tsx    |    88.7 |    83.33 |   78.26 |   95.34 | 78,99
+  ...p-runtime.tsx |   85.18 |    77.77 |      75 |   87.17 | ...22,139,163-166
+  ...top-setup.tsx |   97.53 |    83.13 |   96.66 |     100 | ...43,168,201-208
+  ...workspace.tsx |   74.57 |    68.27 |      60 |   80.76 | ...78,180,193-203
+  ...ob-stages.tsx |     100 |    95.65 |     100 |     100 | 29
+  ...inal-link.tsx |   92.85 |      100 |     100 |    92.3 | 15
+  ...-selector.tsx |   89.74 |    75.55 |   86.66 |      92 | 38,83
+  ...readiness.tsx |     100 |       70 |     100 |     100 | 9-10,15
+  ...-evidence.tsx |   94.73 |      100 |     100 |   94.44 | 31
+  ...-settings.tsx |   95.58 |    79.38 |     100 |   98.03 | 37
+  ...-settings.tsx |   87.93 |    79.16 |   77.77 |   89.13 | 28,58-59,85,117
+ components/chat   |   95.14 |    89.14 |   91.11 |   97.72 |
+  ...tion-list.tsx |     100 |    93.33 |     100 |     100 | 132,164
+  ...-evidence.tsx |     100 |    83.33 |     100 |     100 | 26,33
+  ...ge-bubble.tsx |     100 |    89.47 |     100 |     100 | 50,56
+  ...-selector.tsx |   81.48 |    69.23 |      75 |   88.88 | 16,38
+ ...ents/documents |   85.05 |    84.89 |   79.01 |   88.83 |
+  ...nt-action.tsx |   85.36 |    81.81 |   83.33 |   88.88 | 70-71,112-134
+  ...nt-editor.tsx |   95.04 |    93.85 |   94.73 |   98.75 | 133
+  ...ment-list.tsx |      50 |       75 |   33.33 |      50 | 53-75,90-118
+  ...t-preview.tsx |   88.46 |    89.65 |   89.47 |   91.66 | 68,96
+  ...ent-tasks.tsx |   68.42 |    65.57 |   58.33 |   71.42 | ...33-34,46,57-58
+  ...-controls.tsx |    87.5 |    89.83 |     100 |     100 | ...1,69,86,99,115
+  ...t-details.tsx |   72.72 |     82.6 |   66.66 |   72.72 | 23-27,33
+ ...onents/library |   90.64 |    86.89 |   89.36 |   93.49 |
+  drop-zone.tsx    |   53.33 |    86.66 |      50 |   61.53 | 53-60
+  file-card.tsx    |     100 |    91.22 |     100 |     100 | 32,50,61,63-64
+  ...ity-panel.tsx |   97.43 |     82.5 |     100 |   97.29 | 44
+  jobs-panel.tsx   |    87.5 |    83.33 |   83.33 |   93.54 | 23,52
+ components/search |   91.66 |       90 |     100 |     100 |
+  search-form.tsx  |      90 |    83.33 |     100 |     100 | 41
+ components/wiki   |   89.96 |    86.77 |   90.24 |   93.02 |
+  wiki-editor.tsx  |   90.56 |    84.93 |    90.9 |   91.02 | ...8,50,85,98,102
+  wiki-view.tsx    |   89.54 |     87.5 |      90 |   94.68 | 49-51,93,135
+ hooks             |   38.49 |    20.51 |   26.02 |   45.93 |
+  use-library.ts   |   38.49 |    20.51 |   26.02 |   45.93 | ...13-425,432-436
+ lib               |   70.75 |       71 |   59.72 |   71.11 |
+  ai-settings.ts   |   77.77 |       50 |   57.14 |    82.6 | 46-53
+  api.ts           |   44.57 |    53.33 |   44.11 |      45 | ...09-510,585-623
+  chat-session.ts  |   93.18 |    92.85 |   85.71 |     100 | 51
+  ...ment-draft.ts |     100 |    85.71 |     100 |     100 | 15
+  folders.ts       |       0 |        0 |       0 |       0 | 28-46
+  jobs.ts          |      10 |        0 |      25 |    12.5 | 21-31
+  native-export.ts |   93.75 |       90 |   66.66 |     100 | 23
+  ...-workspace.ts |       0 |      100 |       0 |       0 | 9-12
+  ...t-headings.ts |     100 |    85.71 |     100 |     100 | 22-23
+  ...-documents.ts |      40 |       44 |   36.36 |   47.61 | 33-42,48,51,53,55
+  status.ts        |   98.46 |       96 |     100 |     100 | 53,147
+  wiki.ts          |   83.52 |    83.92 |      64 |    87.5 | ...24,126,128,130
+  ...references.ts |      92 |    66.66 |   88.88 |   94.44 | 10
+  workspace.ts     |    8.33 |    33.33 |   16.66 |    9.09 | 22-32,38-53
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 79.58% ( 2124/2669 )
+Branches     : 77.75% ( 1902/2446 )
+Functions    : 73.51% ( 655/891 )
+Lines        : 82.77% ( 1691/2043 )
+================================================================================
