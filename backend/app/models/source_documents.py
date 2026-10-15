@@ -44,22 +44,17 @@ class Outline(Strict):
     sections: list[Heading] = Field(min_length=1, max_length=8)
 
 
-class Support(Strict):
-    evidence_id: str
-    quote: str = Field(
-        min_length=1,
-        max_length=1200,
-        description="Copy exact original evidence before writing the supported statement.",
-    )
-
-
 class Claim(Strict):
     section_id: str
-    supports: list[Support] = Field(min_length=1, max_length=4)
+    evidence_ids: list[str] = Field(
+        min_length=1,
+        max_length=4,
+        description="Select supplied evidence IDs before writing one supported assertion.",
+    )
     text: str = Field(
         min_length=1,
         max_length=1500,
-        description="A source-grounded statement in output_language. Preserve the subject, "
+        description="One source-grounded assertion in output_language. Preserve the subject, "
         "measured property, units, relationships, conditions and exceptions.",
     )
 
@@ -90,10 +85,9 @@ class Verification(Strict):
 
 class SupportAudit(Strict):
     claim_index: int = Field(ge=0, description="Copy the claim_index from the input claim.")
-    original_quotes: list[Annotated[str, Field(min_length=1, max_length=1200)]] = Field(
+    original_indexes: list[Annotated[int, Field(ge=0)]] = Field(
         max_length=4,
-        description="Relevant exact substrings of this claim's original_passages, "
-        "never translated.",
+        description="Select relevant original_index values from this claim's original_passages.",
     )
     unestablished: list[Annotated[str, Field(min_length=1, max_length=1800)]] = Field(
         max_length=6,

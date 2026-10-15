@@ -328,15 +328,30 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
     def payload(group):
         return {
             "task": "verify_support",
-            "claims": [{**claim, "claim_index": i} for i, claim in enumerate(group)],
-            "rules": "For EACH claim copy its index and relevant original quotes, identify "
+            "claims": [
+                {
+                    "claim_index": i,
+                    "original_passages": [
+                        {"original_index": n, "text": text}
+                        for n, text in enumerate(claim["original_passages"])
+                    ],
+                    "text": claim["text"],
+                }
+                for i, claim in enumerate(group)
+            ],
+            "rules": "For EACH claim select its index and relevant original indexes, identify "
             "unestablished claim text, then decide whether every assertion follows from "
             "its own original_passages. Read adjoining sentences for subjects and conditions. "
             "Faithful translations are allowed. No outside knowledge.",
         }
 
     def constraints(group):
-        return {"claim_index": list(range(len(group)))}
+        return {
+            "claim_index": list(range(len(group))),
+            "original_indexes": list(
+                range(max(len(claim["original_passages"]) for claim in group))
+            ),
+        }
 
     groups = list(batches(claims, payload, SupportVerification, settings, constraints))
     verdicts = []
@@ -358,16 +373,12 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
             raise local.DocumentError("The local evidence check returned invalid claim indexes.")
         audits = [by_index[i] for i in range(len(group))]
         for audit, claim in zip(audits, group, strict=True):
-            if any(
-                not quote.strip()
-                or not any(quote in original for original in claim["original_passages"])
-                for quote in audit.original_quotes
-            ):
-                raise local.DocumentError("The local evidence check invented an original quote.")
+            if any(index >= len(claim["original_passages"]) for index in audit.original_indexes):
+                raise local.DocumentError("The local evidence check selected an unknown original.")
             if any(not text.strip() or text not in claim["text"] for text in audit.unestablished):
                 raise local.DocumentError("The local evidence check invented a claim fragment.")
             if audit.supported != (not audit.unestablished) or (
-                audit.supported and not audit.original_quotes
+                audit.supported and not audit.original_indexes
             ):
                 raise local.DocumentError(
                     "The local evidence check returned an inconsistent audit."
@@ -380,7 +391,15 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
                 "stage": key,
                 "claims": group,
                 "supported": supported,
-                "audits": [audit.model_dump() for audit in audits],
+                "audits": [
+                    {
+                        **audit.model_dump(),
+                        "original_quotes": [
+                            claim["original_passages"][index] for index in audit.original_indexes
+                        ],
+                    }
+                    for audit, claim in zip(audits, group, strict=True)
+                ],
             }
             store.save_request(context.connection, req["id"], report=report)
             context.report(key, "failed", detail=report["rejected_support_check"])
@@ -646,11 +665,12 @@ def generate(context, *, settings=None, client=None):
                 "output_language": intent["language"],
                 "outline": outline.model_dump(),
                 "passages": [{"evidence_id": p.id, "text": p.text} for p in group],
-                "rules": "First select supports with exact original quotes, then write "
-                "claim.text from those quotes in output_language, translating factual prose "
-                "when needed. Keep supports.quote verbatim in the ORIGINAL language; do not "
-                "translate quotes. Extract only relevant supported claims, assign an outline "
-                "section_id, and attach exact verbatim quotes. Empty claims are allowed for "
+                "rules": "First select supplied evidence_ids, then write one assertion per "
+                "claim.text in output_language, translating factual prose when needed. "
+                "Keep independent source facts as separate claims. The application copies "
+                "the selected original passages; do not generate quotes or text positions. "
+                "Extract only relevant supported claims and assign an outline section_id. "
+                "Empty claims are allowed for "
                 "irrelevant text. "
                 "Preserve each quantity's recorded property and unit: report an explicit "
                 "capacity as capacity and an amount stored as an amount stored, never "
@@ -674,7 +694,7 @@ def generate(context, *, settings=None, client=None):
                 payload,
                 Extraction,
                 settings,
-                lambda group: {"evidence_id": [p.id for p in group], "section_id": section_ids},
+                lambda group: {"evidence_ids": [p.id for p in group], "section_id": section_ids},
             )
         )
         for batch_number, group in enumerate(inputs):
@@ -686,30 +706,34 @@ def generate(context, *, settings=None, client=None):
                 Extraction,
                 settings,
                 client,
-                {"evidence_id": [p.id for p in group], "section_id": section_ids},
+                {"evidence_ids": [p.id for p in group], "section_id": section_ids},
             )
             known = {p.id: p for p in group}
-            claims = []
+            claims, grounded = [], []
             for claim in result.claims:
                 if claim.section_id not in section_ids:
                     raise local.DocumentError("The model invented an outline section.")
-                for support in claim.supports:
-                    if (
-                        support.evidence_id not in known
-                        or support.quote not in known[support.evidence_id].text
-                    ):
-                        raise local.DocumentError("The model invented an excerpt or evidence ID.")
-                check_numbers(
-                    context, req, claim.text, [known[s.evidence_id].text for s in claim.supports]
-                )
+                if not set(claim.evidence_ids) <= known.keys():
+                    raise local.DocumentError("The model selected unknown original evidence.")
+                # Models select metadata only. Passage text and character spans
+                # come from bounded SourceSession reads, never generated quotes.
+                supports = [
+                    {"evidence_id": identifier, "quote": known[identifier].text}
+                    for identifier in dict.fromkeys(claim.evidence_ids)
+                ]
+                originals = [support["quote"] for support in supports]
+                check_numbers(context, req, claim.text, originals)
                 presentation.check_shape(claim.text)
                 presentation.check_language(claim.text, intent["language"])
                 claims.append(
                     {
                         "text": claim.text,
-                        "quotes": [s.quote for s in claim.supports],
-                        "original_passages": [known[s.evidence_id].text for s in claim.supports],
+                        "quotes": originals,
+                        "original_passages": originals,
                     }
+                )
+                grounded.append(
+                    {"section_id": claim.section_id, "supports": supports, "text": claim.text}
                 )
             verify(context, req, f"source:{source_id}:{batch_number}", claims, settings, client)
             # These are model observations about this batch, not verified findings
@@ -724,9 +748,9 @@ def generate(context, *, settings=None, client=None):
                 }
                 for gap in result.gaps
             )
-            for claim in result.claims:
+            for claim in grounded:
                 all_claims.append(
-                    {**claim.model_dump(), "id": f"C{len(all_claims) + 1}", "source_id": source_id}
+                    {**claim, "id": f"C{len(all_claims) + 1}", "source_id": source_id}
                 )
             evidence.update({p.id: p.model_dump() for p in group})
             entry["fragments_processed"] += len(group)

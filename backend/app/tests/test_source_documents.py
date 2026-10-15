@@ -89,17 +89,14 @@ def model(
                     {
                         "section_id": "design",
                         "text": p["text"][:100],
-                        "supports": [
-                            {
-                                "evidence_id": "invented" if invalid == "id" else p["evidence_id"],
-                                "quote": "made up" if invalid == "quote" else p["text"][:100],
-                            }
-                        ],
+                        "evidence_ids": ["invented" if invalid == "id" else p["evidence_id"]],
                     }
                     for p in payload["passages"]
                 ],
                 "gaps": ["The other project does not exist."] if invalid == "gap" else [],
             }
+            if invalid == "quote":
+                result["claims"][0]["quote"] = "made up"
             if invalid == "number":
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
             if invalid == "label":
@@ -107,7 +104,6 @@ def model(
             if invalid == "synthesis_support":
                 result["claims"][0]["text"] = "An earlier overconfident paraphrase."
                 other = json.loads(json.dumps(result["claims"][0]))
-                other["supports"][0]["quote"] = other["supports"][0]["quote"][1:]
                 result["claims"].append(other)
         elif task == "cross_source_synthesis":
             synthesized[0] = True
@@ -128,7 +124,7 @@ def model(
                 "audits": [
                     {
                         "claim_index": claim["claim_index"],
-                        "original_quotes": claim["quotes"],
+                        "original_indexes": [0],
                         "unestablished": [] if supported else [claim["text"]],
                         "supported": supported,
                     }
@@ -182,7 +178,10 @@ def run(db, job, client=None, settings=None):
 def test_real_originals_full_collection_bilingual_evidence_and_legacy_editor(workspace):
     db, root, *_ = workspace
     first = discover(
-        workspace, "Course/lecture1.txt", "Reservoir Alpha stores 37 litres except on Sundays."
+        workspace,
+        "Course/lecture1.txt",
+        "Reservoir Alpha stores 37 litres except on Sundays. "
+        + "Preserve this exact original context even beyond the model's assertion. " * 3,
     )
     second = discover(
         workspace, "Course/lecture2.md", "저수지 Beta는 92리터를 저장하고 일요일에도 작동합니다."
@@ -207,7 +206,9 @@ def test_real_originals_full_collection_bilingual_evidence_and_legacy_editor(wor
     assert "37" in head["content"] and "92" in head["content"]
     for citation in head["metadata"]["citations"]:
         passage = next(p for p in head["metadata"]["evidence"] if p["id"] == citation["id"])
-        assert citation["quote"] in passage["text"]
+        assert citation["quote"] == passage["text"]
+        assert citation["quote_start"] == passage["start"]
+        assert citation["quote_end"] == passage["end"]
         assert citation["page_number"] is None
         assert citation["source"]["source_version"] in {first.content_hash, second.content_hash}
     documents.update_document(db, identifier, content="# 사용자 편집\nKeep my changes.")
@@ -613,9 +614,12 @@ def test_grounding_schema_in_prompt_matches_wire_format_and_budget():
     "change,error",
     [
         ({"claim_index": 99}, "invalid claim indexes"),
-        ({"original_quotes": ["invented evidence"]}, "invented an original quote"),
+        ({"original_indexes": [99]}, "selected an unknown original"),
+        ({"original_indexes": [-1]}, "Invalid local model JSON"),
+        ({"original_indexes": ["0"]}, "Invalid local model JSON"),
+        ({"original_quotes": ["invented evidence"]}, "Invalid local model JSON"),
         ({"unestablished": ["invented fragment"], "supported": False}, "invented a claim fragment"),
-        ({"original_quotes": []}, "inconsistent audit"),
+        ({"original_indexes": []}, "inconsistent audit"),
         ({"unestablished": ["Reservoir"], "supported": True}, "inconsistent audit"),
         ({"unestablished": [], "supported": False}, "inconsistent audit"),
     ],
@@ -662,6 +666,36 @@ def test_audit_indexes_preserve_identity_when_response_order_changes(workspace):
     assert "Backups run daily." in store.current(db, artifact)["content"]
 
 
+def test_audit_original_index_is_bounded_to_its_own_claim(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {"text": "First fact", "quotes": ["First fact"], "original_passages": ["First fact"]},
+        {
+            "text": "Second fact",
+            "quotes": ["Second fact"],
+            "original_passages": ["Second fact", "Other context"],
+        },
+    ]
+
+    def cross_claim(payload, result):
+        if payload["task"] == "verify_support":
+            # 1 is allowed by the batch union, but belongs only to the other claim.
+            result["audits"][0]["original_indexes"] = [1]
+
+    with pytest.raises(local.DocumentError, match="selected an unknown original"):
+        pipeline.verify(
+            knowledge_jobs.WorkContext(db, job),
+            store.request(db, job["subject_id"]),
+            "test",
+            claims,
+            Settings(_env_file=None),
+            model(transform=cross_claim)[0],
+        )
+    assert documents.count_documents(db) == 0
+
+
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
     pipeline.verify_numbers("백업은 하루 2번 실행됩니다.", "Backups run twice a day.")
     pipeline.verify_numbers("Backups run 1 time daily.", "백업은 하루에 한 번 실행됩니다.")
@@ -694,6 +728,9 @@ def test_loopback_cloud_alias_is_rejected_before_source_context_is_sent():
 def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(workspace):
     db, *_ = workspace
     discover(workspace)
+    # Distinct source IDs with the same original bytes must share retained prose
+    # while preserving both citations. Models no longer supply subquote text.
+    discover(workspace, "duplicate.txt")
     artifact = run(db, enqueue(db), model(invalid="synthesis_support")[0])
     revision = store.current(db, artifact)
     assert "unsupported universal guarantee" not in revision["content"]

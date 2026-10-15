@@ -51,18 +51,22 @@ redirect following or automatic fallback. Responses must satisfy strict schemas.
 Owned document clients ignore proxy environment variables, keeping preflight and
 source context on direct loopback transport. Model-written inline citation labels
 are rejected in headings and claims; only verified application labels are attached.
-Unknown source, evidence, section or synthesis IDs, non-verbatim quotes, invented
+Unknown source, evidence, section or synthesis IDs, model-supplied quote fields, invented
 numerals, unfinished model output and failed original-processing entailment checks
 block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v16` prefers one to four topical sections for small source
+Prompt `source-document-v17` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. The constrained schema is included in
 the actual model prompt as well as Ollama's decoder format, with both using the
 same allowed identifiers and cardinality. The byte budget measures that actual
-system/prompt input. Extraction selects exact support quotes before drafting text;
-synthesis selects supporting claim IDs before drafting its prose. This ordering
+system/prompt input. Extraction selects supplied evidence IDs before drafting one
+assertion per claim; synthesis selects supporting claim IDs before drafting prose.
+The application attaches the complete bounded original passages and their character
+spans from SourceSession metadata. The model cannot replace or translate that
+quoted text. Citations therefore cover a bounded original passage rather than a
+model-selected subquote. This ordering
 guides generation; it is not evidence that the resulting prose is faithful.
 Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
@@ -87,13 +91,15 @@ to extraction and synthesis even if the model would approve the claim, and fail
 without a new document. This conservative policy can reject faithful paraphrases
 of an original absence statement. Original quotations and saved user edits remain
 intact. The support verifier returns an evidence audit per input claim: its input
-index, exact original quotes, exact claim fragments it finds unestablished, and a
-boolean verdict. Runtime checks reject missing/duplicate/unknown indexes, quotes
-outside that claim's originals, invented claim fragments and inconsistent verdicts.
-A supported claim requires an original quote and no unestablished fragment.
+index, selected indexes into that claim's original passages, exact claim fragments
+it finds unestablished, and a boolean verdict. The application copies the selected
+original text into a rejected audit's metadata. Runtime checks reject missing/
+duplicate/unknown claim indexes, passage indexes outside that claim's own originals,
+invented claim fragments and inconsistent verdicts. A supported claim requires an
+original reference and no unestablished fragment.
 Response order cannot silently change claim identity. The model still decides
 semantic entailment; valid quotes and a consistent audit do not prove that decision
-correct. Rejected audits remain in request metadata. Heading checks retain their
+correct. Semantically rejected audits remain in request metadata. Heading checks retain their
 separate boolean schema, topical-label instructions and supplied group context.
 
 Actual v11–v14 model attempts still produced incorrect or incomplete comparisons.
