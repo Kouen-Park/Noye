@@ -16,7 +16,12 @@ from app.config import Settings
 from app.db import conversations, documents
 from app.db import source_documents as store
 from app.models.conversations import Role
-from app.models.source_documents import GenerateRequest, Selection, Verification
+from app.models.source_documents import (
+    GenerateRequest,
+    Selection,
+    SupportVerification,
+    Verification,
+)
 from app.models.wiki import WikiScope
 from app.services import knowledge_jobs
 from app.services.source_documents import jobs, local, pipeline
@@ -116,12 +121,19 @@ def model(
         elif task == "verify_heading":
             result = {"supported": [True] * len(payload["passages"])}
         elif task == "verify_support":
+            supported = invalid != "unsupported" and not (
+                invalid == "synthesis_support" and synthesized[0]
+            )
             result = {
-                "supported": [
-                    invalid != "unsupported"
-                    and not (invalid == "synthesis_support" and synthesized[0])
+                "audits": [
+                    {
+                        "claim_index": claim["claim_index"],
+                        "original_quotes": claim["quotes"],
+                        "unestablished": [] if supported else [claim["text"]],
+                        "supported": supported,
+                    }
+                    for claim in payload["claims"]
                 ]
-                * len(payload["claims"])
             }
         else:
             raise AssertionError(task)
@@ -574,11 +586,80 @@ def test_endpoint_ignoring_verdict_count_cannot_publish_a_document(workspace):
 
     def ignore_schema(payload, result):
         if payload["task"] == "verify_support":
-            result["supported"] = []
+            result["audits"] = []
 
     with pytest.raises(local.DocumentError, match="invalid verdict count"):
         run(db, enqueue(db), model(transform=ignore_schema)[0])
     assert documents.count_documents(db) == 0
+
+
+def test_grounding_schema_in_prompt_matches_wire_format_and_budget():
+    payload = {"task": "verify_support", "claims": [{"text": "A recorded fact"}]}
+    constraint = {"claim_index": [0]}
+    text = local.prompt(payload, SupportVerification, constraint)
+    body = json.loads(text)
+    schema = local.output_schema(SupportVerification, constraint, payload=payload)
+    assert body["output_schema"] == schema
+    assert body["task"] == "verify_support"
+    assert schema["properties"]["audits"]["minItems"] == 1
+    assert schema["properties"]["audits"]["maxItems"] == 1
+    assert schema["$defs"]["SupportAudit"]["properties"]["claim_index"]["enum"] == [0]
+    assert local.size(payload, SupportVerification, constraint) == len(
+        (local.system(payload) + text).encode("utf-8")
+    )
+
+
+@pytest.mark.parametrize(
+    "change,error",
+    [
+        ({"claim_index": 99}, "invalid claim indexes"),
+        ({"original_quotes": ["invented evidence"]}, "invented an original quote"),
+        ({"unestablished": ["invented fragment"], "supported": False}, "invented a claim fragment"),
+        ({"original_quotes": []}, "inconsistent audit"),
+        ({"unestablished": ["Reservoir"], "supported": True}, "inconsistent audit"),
+        ({"unestablished": [], "supported": False}, "inconsistent audit"),
+    ],
+)
+def test_invalid_evidence_audit_cannot_publish(workspace, change, error):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres.")
+
+    def invalid_audit(payload, result):
+        if payload["task"] == "verify_support":
+            result["audits"][0].update(change)
+
+    with pytest.raises(local.DocumentError, match=error):
+        run(db, enqueue(db), model(transform=invalid_audit)[0])
+    assert documents.count_documents(db) == 0
+
+
+def test_duplicate_audit_indexes_cannot_attest_another_claim(workspace):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres. Backups run daily.")
+
+    def duplicate(payload, result):
+        if payload["task"] == "process_original_sections":
+            result["claims"].append({**result["claims"][0], "text": "Backups run daily."})
+        elif payload["task"] == "verify_support":
+            result["audits"][1]["claim_index"] = 0
+
+    with pytest.raises(local.DocumentError, match="invalid claim indexes"):
+        run(db, enqueue(db), model(transform=duplicate)[0])
+    assert documents.count_documents(db) == 0
+
+
+def test_audit_indexes_preserve_identity_when_response_order_changes(workspace):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres. Backups run daily.")
+
+    def reordered(payload, result):
+        if payload["task"] == "process_original_sections":
+            result["claims"].append({**result["claims"][0], "text": "Backups run daily."})
+        elif payload["task"] == "verify_support":
+            result["audits"].reverse()
+
+    artifact = run(db, enqueue(db), model(transform=reordered)[0])
+    assert "Backups run daily." in store.current(db, artifact)["content"]
 
 
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():

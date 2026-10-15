@@ -57,8 +57,14 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v14` prefers one to four topical sections for small source
-sets and avoids assuming textbook topics. Retained original paragraphs are
+Prompt `source-document-v16` prefers one to four topical sections for small source
+sets and avoids assuming textbook topics. The constrained schema is included in
+the actual model prompt as well as Ollama's decoder format, with both using the
+same allowed identifiers and cardinality. The byte budget measures that actual
+system/prompt input. Extraction selects exact support quotes before drafting text;
+synthesis selects supporting claim IDs before drafting its prose. This ordering
+guides generation; it is not evidence that the resulting prose is faithful.
+Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
 Each original-processing call sees only one source batch; it must not draw
 collection-wide conclusions about other sources being absent. Unverified model
@@ -80,13 +86,20 @@ absence. Actual read failures belong to application coverage. These checks apply
 to extraction and synthesis even if the model would approve the claim, and fail
 without a new document. This conservative policy can reject faithful paraphrases
 of an original absence statement. Original quotations and saved user edits remain
-intact. The verifier schema requires one boolean per input, with independent
-runtime cardinality validation if an endpoint ignores the schema. Heading checks
-use their own topical-label instructions and the supplied group as context.
+intact. The support verifier returns an evidence audit per input claim: its input
+index, exact original quotes, exact claim fragments it finds unestablished, and a
+boolean verdict. Runtime checks reject missing/duplicate/unknown indexes, quotes
+outside that claim's originals, invented claim fragments and inconsistent verdicts.
+A supported claim requires an original quote and no unestablished fragment.
+Response order cannot silently change claim identity. The model still decides
+semantic entailment; valid quotes and a consistent audit do not prove that decision
+correct. Rejected audits remain in request metadata. Heading checks retain their
+separate boolean schema, topical-label instructions and supplied group context.
 
 Actual v11–v14 model attempts still produced incorrect or incomplete comparisons.
-The v14 English comparison and Korean collection were blocked after changing a
-capacity into an amount stored. A guard rejection is data protection, not successful
+The v14 English comparison and Korean collection, and a later v15 comparison,
+were blocked after changing a capacity into an amount stored. A guard rejection is
+data protection, not successful
 document generation or a general faithfulness guarantee. Phase 8 quality acceptance
 therefore remains open.
 

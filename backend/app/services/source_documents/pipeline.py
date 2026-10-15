@@ -17,6 +17,7 @@ from app.models.source_documents import (
     Intent,
     Outline,
     Selection,
+    SupportVerification,
     Synthesis,
     Verification,
 )
@@ -324,38 +325,62 @@ def check_numbers(context, req, text, originals):
 
 
 def verify(context, req, key, claims, settings, client, *, strict=True):
-    payload = {
-        "task": "verify_support",
-        "claims": claims,
-        "rules": "For EACH claim return whether the supplied original passages and exact quotes "
-        "support every fact, comparison, number, condition and exception in the text. "
-        "Use adjoining original sentences to resolve the subject of a quote. No outside knowledge. "
-        "False for unsupported conclusions or contradictory evidence. "
-        "Return one boolean per claim.",
-    }
-    groups = list(
-        batches(claims, lambda group: {**payload, "claims": group}, Verification, settings)
-    )
+    def payload(group):
+        return {
+            "task": "verify_support",
+            "claims": [{**claim, "claim_index": i} for i, claim in enumerate(group)],
+            "rules": "For EACH claim copy its index and relevant original quotes, identify "
+            "unestablished claim text, then decide whether every assertion follows from "
+            "its own original_passages. Read adjoining sentences for subjects and conditions. "
+            "Faithful translations are allowed. No outside knowledge.",
+        }
+
+    def constraints(group):
+        return {"claim_index": list(range(len(group)))}
+
+    groups = list(batches(claims, payload, SupportVerification, settings, constraints))
     verdicts = []
     for position, group in enumerate(groups):
         result = _call(
             context,
             req,
             f"verify:{key}:{position}",
-            {**payload, "claims": group},
-            Verification,
+            payload(group),
+            SupportVerification,
             settings,
             client,
+            constraints(group),
         )
-        if len(result.supported) != len(group):
+        if len(result.audits) != len(group):
             raise local.DocumentError("The local evidence check returned an invalid verdict count.")
-        verdicts.extend(result.supported)
-        if not all(result.supported):
+        by_index = {audit.claim_index: audit for audit in result.audits}
+        if len(by_index) != len(group) or set(by_index) != set(range(len(group))):
+            raise local.DocumentError("The local evidence check returned invalid claim indexes.")
+        audits = [by_index[i] for i in range(len(group))]
+        for audit, claim in zip(audits, group, strict=True):
+            if any(
+                not quote.strip()
+                or not any(quote in original for original in claim["original_passages"])
+                for quote in audit.original_quotes
+            ):
+                raise local.DocumentError("The local evidence check invented an original quote.")
+            if any(not text.strip() or text not in claim["text"] for text in audit.unestablished):
+                raise local.DocumentError("The local evidence check invented a claim fragment.")
+            if audit.supported != (not audit.unestablished) or (
+                audit.supported and not audit.original_quotes
+            ):
+                raise local.DocumentError(
+                    "The local evidence check returned an inconsistent audit."
+                )
+        supported = [audit.supported for audit in audits]
+        verdicts.extend(supported)
+        if not all(supported):
             report = store.request(context.connection, req["id"])["report"]
             report["rejected_support_check"] = {
                 "stage": key,
                 "claims": group,
-                "supported": result.supported,
+                "supported": supported,
+                "audits": [audit.model_dump() for audit in audits],
             }
             store.save_request(context.connection, req["id"], report=report)
             context.report(key, "failed", detail=report["rejected_support_check"])
@@ -621,8 +646,9 @@ def generate(context, *, settings=None, client=None):
                 "output_language": intent["language"],
                 "outline": outline.model_dump(),
                 "passages": [{"evidence_id": p.id, "text": p.text} for p in group],
-                "rules": "Write claim.text in output_language, translating factual prose when "
-                "needed. Keep supports.quote verbatim in the ORIGINAL language; do not "
+                "rules": "First select supports with exact original quotes, then write "
+                "claim.text from those quotes in output_language, translating factual prose "
+                "when needed. Keep supports.quote verbatim in the ORIGINAL language; do not "
                 "translate quotes. Extract only relevant supported claims, assign an outline "
                 "section_id, and attach exact verbatim quotes. Empty claims are allowed for "
                 "irrelevant text. "
@@ -785,12 +811,13 @@ def generate(context, *, settings=None, client=None):
                 "output_language": intent["language"],
                 "heading": heading_title,
                 "claims": group,
-                "rules": "Write concise editable paragraphs or comparison "
-                "points for this section in the requested language. Cite supplied claim_ids "
-                "supporting EVERY fact. Discuss differences only if evidence supports comparable "
-                "conditions; no new conclusions or facts. Use plain factual wording, not "
-                "stronger verbs or broader architecture claims. Capacity and amount stored "
-                "are different properties: name each precisely, never infer a capacity "
+                "rules": "First select supplied claim_ids that support EVERY fact, then "
+                "write concise editable paragraphs or comparison points for this section "
+                "in the requested language. Discuss differences only if evidence supports "
+                "comparable conditions; no new conclusions or facts. Use plain factual wording. "
+                "Do not use stronger verbs or broader architecture claims. "
+                "Capacity and amount stored are different properties: "
+                "name each precisely, never infer a capacity "
                 "difference from them. Include the relevant facts from every supplied source "
                 "before comparing; do not drop a recorded condition or requested detail. "
                 "If comparison_requested is true and this batch contains multiple sources, "
@@ -801,8 +828,7 @@ def generate(context, *, settings=None, client=None):
                 "different quantity properties. "
                 "Join independently stated facts with 'and' or separate clauses; do not "
                 "introduce 'using', 'because', a purpose or causation that the originals "
-                "did not state. For example, 'stores 8 litres and uses log files' does not "
-                "establish 'stores 8 litres using log files'. "
+                "did not state. "
                 "Do not invent citation labels.",
             }
 

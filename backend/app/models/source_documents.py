@@ -1,6 +1,6 @@
 """Source-driven requests: conversation context is intent, never evidence."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -46,13 +46,22 @@ class Outline(Strict):
 
 class Support(Strict):
     evidence_id: str
-    quote: str = Field(min_length=1, max_length=1200)
+    quote: str = Field(
+        min_length=1,
+        max_length=1200,
+        description="Copy exact original evidence before writing the supported statement.",
+    )
 
 
 class Claim(Strict):
     section_id: str
-    text: str = Field(min_length=1, max_length=1500)
     supports: list[Support] = Field(min_length=1, max_length=4)
+    text: str = Field(
+        min_length=1,
+        max_length=1500,
+        description="A source-grounded statement in output_language. Preserve the subject, "
+        "measured property, units, relationships, conditions and exceptions.",
+    )
 
 
 class Extraction(Strict):
@@ -61,8 +70,14 @@ class Extraction(Strict):
 
 
 class SynthesizedClaim(Strict):
-    text: str = Field(min_length=1, max_length=1800)
     claim_ids: list[str] = Field(min_length=1, max_length=12)
+    text: str = Field(
+        min_length=1,
+        max_length=1800,
+        description="Source-grounded prose in output_language. Combine sources only where "
+        "they establish the relationship; keep independent facts independent. Preserve each "
+        "subject, measured property, unit, condition and exception.",
+    )
 
 
 class Synthesis(Strict):
@@ -71,6 +86,25 @@ class Synthesis(Strict):
 
 class Verification(Strict):
     supported: list[bool]
+
+
+class SupportAudit(Strict):
+    claim_index: int = Field(ge=0, description="Copy the claim_index from the input claim.")
+    original_quotes: list[Annotated[str, Field(min_length=1, max_length=1200)]] = Field(
+        max_length=4,
+        description="Relevant exact substrings of this claim's original_passages, "
+        "never translated.",
+    )
+    unestablished: list[Annotated[str, Field(min_length=1, max_length=1800)]] = Field(
+        max_length=6,
+        description="Exact claim substrings with unsupported assertions or lost conditions. "
+        "Empty when fully entailed.",
+    )
+    supported: bool
+
+
+class SupportVerification(Strict):
+    audits: list[SupportAudit] = Field(max_length=12)
 
 
 class EditRequest(Strict):
