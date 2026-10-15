@@ -57,7 +57,7 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v5` prefers one to four topical sections for small source
+Prompt `source-document-v14` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
 Each original-processing call sees only one source batch; it must not draw
@@ -70,6 +70,25 @@ The entailment pass is a model check, not independent proof; source review remai
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
 English/Korean counts such as “twice” or “두 번” rendered as 2. Other unstated
 numerals remain rejected; arithmetic-derived quantities are not automatically proven.
+
+The Phase 8 quantity check additionally rejects explicit capacity/stored-amount
+swaps for numeric litre quantities, including Korean wording. It is deliberately
+narrow: it does not establish subject attribution or cover every unit and phrasing.
+Generated missing-evidence assertions are also refused unless the exact statement
+occurs in an original; a bounded model batch cannot establish collection-wide
+absence. Actual read failures belong to application coverage. These checks apply
+to extraction and synthesis even if the model would approve the claim, and fail
+without a new document. This conservative policy can reject faithful paraphrases
+of an original absence statement. Original quotations and saved user edits remain
+intact. The verifier schema requires one boolean per input, with independent
+runtime cardinality validation if an endpoint ignores the schema. Heading checks
+use their own topical-label instructions and the supplied group as context.
+
+Actual v11–v14 model attempts still produced incorrect or incomplete comparisons.
+The v14 English comparison and Korean collection were blocked after changing a
+capacity into an amount stored. A guard rejection is data protection, not successful
+document generation or a general faithfulness guarantee. Phase 8 quality acceptance
+therefore remains open.
 
 ### Output language and document structure
 
