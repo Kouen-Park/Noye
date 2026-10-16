@@ -168,6 +168,8 @@ progress::-moz-progress-bar { background: var(--brand); }
     max-width: none;
     border: none;
     box-shadow: none;
+    /* Keep literal text recoverable from WebKit's PDF glyph mapping too. */
+    font-variant-ligatures: none;
   }
 
   [data-print="document"] * {
