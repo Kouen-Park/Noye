@@ -1,0 +1,34 @@
+{
+  "method": "Native QA Preview -> Export PDF -> macOS Save; invented API-seeded source-link document. Read-only MuPDF extraction/rendering and API content hash checks. Rect objects are represented as strings.",
+  "path": "/private/tmp/noye-phase8-20261016/exports/Phase 8 original command print QA.pdf",
+  "bytes": 17856,
+  "sha256": "7c33cd4619a866f683b0a62fe3c0daf62b408a7d1ac06e7ed6b8ab22bd25b8a6",
+  "pages": 1,
+  "checks": {
+    "one_page": true,
+    "korean": true,
+    "measured_values": true,
+    "label": true,
+    "destination_text": false,
+    "sent_status_hidden": true,
+    "pending_status_hidden": true,
+    "sentinel": true,
+    "markdown_unchanged": true,
+    "destination_annotation": true
+  },
+  "links": [
+    {
+      "kind": 2,
+      "xref": 12,
+      "from": "Rect(51.02362060546875, 167.20440673828125, 345.41290283203125, 204.0413818359375)",
+      "uri": "http://127.0.0.1:58115/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+      "id": ""
+    }
+  ],
+  "text": "Original command print QA\n한국어 원문 링크 인쇄 검증.\nMeasured runtime: 12 milliseconds. Memory usage: 37 megabytes.\nOpen AT-201 original (h!p://127.0.0.1:58115/ﬁles/151d52e3-\n3c5a-44aa-963d-4afbde8ee0fb/source#page=1)\nFINAL-ORIGINAL-PRINT-20261016\n",
+  "visual_accepted": true,
+  "first_panel_qualification": "Initial Save appeared disabled; selecting the QA output directory enabled it. This does not prove first-open default-folder activation.",
+  "qa_inspector_correction": "Initial JSON serialization rejected a MuPDF Rect after extraction/rendering; inspector serialization was corrected without changing the PDF or product.",
+  "visual_observation": "One-page render retained Korean, values, source label, readable wrapped destination and final sentinel, with no overlapping/clipped content. URI annotation is exact; extracted display text maps tt to ! and fi to a ligature, so literal text extraction fails.",
+  "prior_default_directory_exists": true
+}

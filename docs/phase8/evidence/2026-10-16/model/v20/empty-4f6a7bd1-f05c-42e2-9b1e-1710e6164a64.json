@@ -1,0 +1,98 @@
+{
+  "scenario": "empty",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "model": "qwen3.5:4b",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "prompt_version": "source-document-v20",
+  "pipeline_sha256": "1f5d004441e757c43353ac96d22643dea40fc662b0e6dd6855b0677f4dd366d0",
+  "original_hashes": {
+    "Course/01-한국어.md": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+    "Course/02-English.txt": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+    "Unrelated.txt": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf"
+  },
+  "measurement": "Evaluation-only model responses; synthetic originals. Durations are Ollama nanoseconds; wall_seconds includes transport/preflight. Body hashes bind the exact saved revision, not a quality verdict.",
+  "retry_of": null,
+  "seconds": 0.001,
+  "job": {
+    "id": "696ac446-5806-4adc-be59-c6e2f2230ee8",
+    "kind": "source_document",
+    "subject_id": "4f6a7bd1-f05c-42e2-9b1e-1710e6164a64",
+    "dedupe_key": "source_document:4f6a7bd1-f05c-42e2-9b1e-1710e6164a64",
+    "state": "failed",
+    "stage": "starting",
+    "completed": 0,
+    "total": 0,
+    "attempt": 1,
+    "cancel_requested": 0,
+    "artifact_id": null,
+    "error": "No sources are allowed. Choose files or a collection to create a document.",
+    "created_at": "2026-10-16T04:12:53.402413+00:00",
+    "updated_at": "2026-10-16T04:12:53.450491+00:00",
+    "payload": {
+      "request_id": "4f6a7bd1-f05c-42e2-9b1e-1710e6164a64"
+    },
+    "scope": {
+      "mode": "empty",
+      "root_ids": [],
+      "source_ids": []
+    },
+    "manifest": [],
+    "events": [
+      {
+        "sequence": 102,
+        "job_id": "696ac446-5806-4adc-be59-c6e2f2230ee8",
+        "stage": "starting",
+        "state": "running",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-16T04:12:53.449829+00:00",
+        "detail": {}
+      },
+      {
+        "sequence": 103,
+        "job_id": "696ac446-5806-4adc-be59-c6e2f2230ee8",
+        "stage": "starting",
+        "state": "failed",
+        "completed": 0,
+        "total": 0,
+        "created_at": "2026-10-16T04:12:53.450332+00:00",
+        "detail": {
+          "error": "No sources are allowed. Choose files or a collection to create a document."
+        }
+      }
+    ]
+  },
+  "request": {
+    "id": "4f6a7bd1-f05c-42e2-9b1e-1710e6164a64",
+    "artifact_id": null,
+    "clarification": "No sources are allowed. Choose files or a collection to create a document.",
+    "created_at": "2026-10-16T04:12:53.402238+00:00",
+    "updated_at": "2026-10-16T04:12:53.450215+00:00",
+    "request": {
+      "conversation_id": "17880cb9-7188-4619-96f7-cbab02f4e06e",
+      "instruction": "Write an English report using the selected materials.",
+      "intent_context": [],
+      "inventory_mode": "relevant",
+      "request_id": "4f6a7bd1-f05c-42e2-9b1e-1710e6164a64",
+      "scope": {
+        "mode": "empty",
+        "root_ids": [],
+        "source_ids": []
+      },
+      "submitted_scope": {
+        "mode": "empty",
+        "root_ids": [],
+        "source_ids": []
+      }
+    },
+    "manifest": [],
+    "plan": null,
+    "report": {}
+  },
+  "model_calls": [],
+  "revision": null,
+  "revision_body_sha256": null
+}

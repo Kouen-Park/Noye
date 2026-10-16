@@ -1,0 +1,21 @@
+Compiling noye-desktop v0.1.0 (/Users/gavinpark/Projects/Noye/frontend/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.58s
+     Running unittests src/main.rs (target/debug/deps/noye_desktop-006b5cafd5f29cac)
+
+running 14 tests
+test exports::tests::only_one_native_export_can_be_open ... ok
+test preferences::tests::keeps_released_credentials_and_isolates_qa_bundles ... ok
+test backend::tests::only_accepts_our_loopback_readiness_protocol ... ok
+test exports::tests::suggestions_cannot_supply_destination_directories ... ok
+test preferences::tests::preference_file_has_no_credentials ... ok
+test preferences::tests::validates_known_providers_and_identifiers_only ... ok
+test relaunch::tests::relaunch_only_derives_the_executables_own_application_bundle ... ok
+test originals::tests::accepts_only_active_workspace_originals_and_real_page_numbers ... ok
+test exports::tests::long_multibyte_titles_suggest_a_filename_the_filesystem_can_create ... ok
+test exports::tests::publishes_staged_binary_bytes_without_replacing_a_collision ... ok
+test exports::tests::never_follows_a_destination_symlink ... ok
+test workspaces::tests::reject_unverified_or_linked_destinations_without_changing_selection ... ok
+test exports::tests::writes_exact_utf8_without_overwriting_existing_content ... ok
+test workspaces::tests::selection_survives_restart_and_original_recovery ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s

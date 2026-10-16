@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.505" timestamp="2026-10-16T22:26:43.428802+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_retrieval" name="test_real_search_ranks_the_unrelated_passage_last" time="0.164" /></testsuite></testsuites>

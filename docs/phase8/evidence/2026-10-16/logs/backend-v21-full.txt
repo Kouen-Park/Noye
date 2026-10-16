@@ -1,0 +1,45 @@
+...................................s.................................... [  6%]
+..........s............................................................. [ 13%]
+........................................................................ [ 19%]
+........................................................................ [ 26%]
+...............s........................................................ [ 32%]
+...................ssss................................................. [ 39%]
+...........................s............................................ [ 45%]
+.................................................................sss.... [ 52%]
+..................................................................ss.... [ 58%]
+..................s..................................................... [ 65%]
+........................................................................ [ 71%]
+.......................................................ssss............. [ 78%]
+.......................s................................................ [ 84%]
+........................................................................ [ 91%]
+........................................................................ [ 97%]
+........................                                                 [100%]
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+app/tests/test_folder_foundation.py::test_resume_and_reconnected_ready_events_do_not_reembed
+app/tests/test_logging.py::TestReadability::test_a_pageless_format_logs_no_page_count
+app/tests/test_source_documents.py::test_missing_and_indexing_failure_are_partial_coverage
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1085 passed, 19 skipped, 10 warnings in 21.66s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

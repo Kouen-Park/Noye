@@ -1,0 +1,34 @@
+{
+  "method": "Primary-agent manual comparison of the completed partial Korean collection with its fixed originals; no independent review is claimed. Awkward/ambiguous wording is not automatically classified as a proved numerical contradiction.",
+  "report_sha256": "72fbd3bec7629bcb2789f7ba7cc375b99cf4243582ba20f9992bbf1ecb3e29d6",
+  "revision_body_sha256": "35c57f66d33ca8c80d8dcef38c1bd15be28e39cd005f6bb3843461febde4db93",
+  "artifact_id": "08e8765e-89e2-54fe-9085-60e7180d9f79",
+  "job_state": "complete",
+  "partial": true,
+  "complete_quality_accepted": false,
+  "findings": [
+    {
+      "priority": "P1",
+      "issue": "Faithful Beta backup wording falsely rejected",
+      "candidate": "Project Beta 는 92 리터를 저장하며 append-only 로그 파일을 사용하고, 일요일에도 쓰기를 허용합니다. 또한 백업은 하루에 두 번 실행됩니다.",
+      "observation": "The supplied Beta original establishes the included facts, but the verifier marked 하루에 두 번 unestablished. The fallback repeats the English original."
+    },
+    {
+      "priority": "P2",
+      "issue": "Ambiguous and awkward volume wording",
+      "text": "프로젝트 베타는 92 리터의 용량을 저장하며",
+      "observation": "The source says it stores 92 litres. The generated postposed 용량 wording is awkward and can suggest capacity; its storage verb makes a definite capacity-change judgment uncertain. It remains a manual quality finding, without adding a fixture-specific regex."
+    },
+    {
+      "priority": "P2",
+      "issue": "Repeated neutral headings and omitted planned section",
+      "observation": "Title and two headings were replaced with neutral labels; an empty third planned section was omitted, and an English original repeats already included Beta facts."
+    }
+  ],
+  "preserved_correct_facts": [
+    "Alpha capacity 37 litres, SQLite use, Sunday write pause and daily backup are present.",
+    "Beta stored amount 92 litres, log-file use, Sunday permission and twice-daily backups are present, with the volume-wording qualification.",
+    "Both scoped source originals are completely processed and cited from exact SourceSession metadata."
+  ],
+  "seconds": 387.773
+}

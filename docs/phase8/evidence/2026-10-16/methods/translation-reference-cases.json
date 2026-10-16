@@ -1,0 +1,79 @@
+{
+  "method": "Fixed novel cross-language extraction controls, authored before the explicit-language prompt correction. Expected facts and case IDs are evaluator-only; no exact translated wording is required. Component diagnostics do not establish whole-document acceptance.",
+  "cases": [
+    {
+      "id": "magpie",
+      "output_language": "English",
+      "original": "Magpie의 저장 용량은 29리터입니다. 현재 8리터가 저장되어 있습니다.",
+      "expected_facts": [
+        "capacity 29 litres",
+        "amount currently stored 8 litres"
+      ]
+    },
+    {
+      "id": "heron",
+      "output_language": "Korean",
+      "original": "Heron has a rated temperature limit of 80 degrees Celsius. The observed temperature was 23 degrees Celsius.",
+      "expected_facts": [
+        "rated limit 80 Celsius",
+        "observed temperature 23 Celsius"
+      ]
+    },
+    {
+      "id": "cormorant",
+      "output_language": "English",
+      "original": "Cormorant는 유지보수 모드가 아닐 때 화요일에만 내보내기를 허용합니다.",
+      "expected_facts": [
+        "exports only Tuesdays",
+        "exception maintenance mode"
+      ]
+    },
+    {
+      "id": "robin",
+      "output_language": "Korean",
+      "original": "The Robin change is proposed and has not been approved. The separate Falcon change was approved.",
+      "expected_facts": [
+        "Robin proposed, not approved",
+        "Falcon approved"
+      ]
+    },
+    {
+      "id": "swift",
+      "output_language": "English",
+      "original": "Swift는 큐를 사용합니다. 첫 작업의 측정 실행 시간은 17밀리초였습니다.",
+      "expected_facts": [
+        "uses queue",
+        "measured first-job runtime 17 milliseconds",
+        "no asserted cause"
+      ]
+    },
+    {
+      "id": "wren",
+      "output_language": "Korean",
+      "original": "Wren retained 2 failed messages and 11 successful messages.",
+      "expected_facts": [
+        "2 failed messages",
+        "11 successful messages"
+      ]
+    },
+    {
+      "id": "finch",
+      "output_language": "English",
+      "original": "Finch는 암호화된 보고서를 저장합니다. Finch는 B-tree 색인을 사용합니다.",
+      "expected_facts": [
+        "stores encrypted reports",
+        "uses B-tree index",
+        "no asserted encryption instrument"
+      ]
+    },
+    {
+      "id": "tern",
+      "output_language": "Korean",
+      "original": "Tern runs backups three times a day. Writes are paused on Fridays.",
+      "expected_facts": [
+        "backups three times daily",
+        "writes paused Fridays"
+      ]
+    }
+  ]
+}

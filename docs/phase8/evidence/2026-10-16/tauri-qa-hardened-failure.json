@@ -1,0 +1,24 @@
+{
+  "productName": "Noye Phase8 QA",
+  "identifier": "com.noye.desktopphase8qa20261012",
+  "build": {
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Noye Phase8 QA",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 760,
+        "minHeight": 560
+      }
+    ]
+  },
+  "bundle": {
+    "macOS": {
+      "signingIdentity": "-"
+    }
+  }
+}

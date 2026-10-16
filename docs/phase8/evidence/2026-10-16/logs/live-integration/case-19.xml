@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.576" timestamp="2026-10-16T22:28:06.347461+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_generation" name="test_real_answer_replies_in_korean_to_a_korean_question" time="0.154"><failure message="IndexError: list index out of range">indexed_corpus = &lt;qdrant_client.qdrant_client.QdrantClient object at 0x10b537b60&gt;
+
+    @requires_services
+    def test_real_answer_replies_in_korean_to_a_korean_question(indexed_corpus) -&gt; None:
+        answer = answer_question(
+            "다익스트라는 다음 정점을 어떻게 선택하는가?",
+            file_ids=[INTEGRATION_FILE],
+            qdrant_client=indexed_corpus,
+        )
+
+&gt;       assert answer.sources[0].page_number == 34
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+app/tests/test_generation.py:339: IndexError</failure></testcase></testsuite></testsuites>

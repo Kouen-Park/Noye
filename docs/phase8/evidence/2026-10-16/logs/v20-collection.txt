@@ -1,0 +1,2 @@
+{"scenario": "collection", "job_id": "a74e2978-0df4-44cf-8cdd-f403a276b3b7", "request_id": "e69ebb80-0db3-46e2-977e-19eaf56687a4", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "complete", "artifact_id": "08e8765e-89e2-54fe-9085-60e7180d9f79", "error": null, "seconds": 387.773, "report": "/private/tmp/noye-phase8-20261016/v20-documents/collection-e69ebb80-0db3-46e2-977e-19eaf56687a4.json"}

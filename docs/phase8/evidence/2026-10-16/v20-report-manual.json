@@ -1,0 +1,30 @@
+{
+  "method": "Primary-agent manual source comparison. Factual acceptance of inspected prose and expected partial-scope behavior is separate from complete presentation/quality acceptance. No independent review is claimed.",
+  "scenario": "report",
+  "report_sha256": "fc8b2abb7b74a7378d47115f221bbe428527a55965afb5f2c5c3f300ac51d54f",
+  "revision_body_sha256": "bd8305f5b619037b7e930d6918e015d44ccabd546b81df49f99027985b114b9a",
+  "artifact_id": "a0d32d90-2b5d-5d08-b896-e789faa68a2a",
+  "job_state": "complete",
+  "partial": true,
+  "inspected_factual_prose_accepted": true,
+  "complete_presentation_accepted": false,
+  "seconds": 465.976,
+  "findings": [
+    {
+      "priority": "P1",
+      "issue": "Faithful Beta sentence falsely rejected",
+      "candidate": "Project Beta permits writes on Sundays.",
+      "observation": "The supplied Beta original contains this fact, but the auditor marked Project Beta unestablished in a multi-claim audit."
+    },
+    {
+      "priority": "P2",
+      "issue": "Repeated neutral headings and content",
+      "observation": "Two headings became Source notes; Alpha/Beta facts and a Beta original repeat across sections."
+    }
+  ],
+  "preserved": [
+    "All eight principal Alpha/Beta facts appear with correct quantities, properties, conditions and backup frequencies.",
+    "Both relevant bilingual sources selected and fully processed; unrelated orchard excluded.",
+    "Stored amount and independent log-file use remain joined with and, without an invented instrumental relationship."
+  ]
+}

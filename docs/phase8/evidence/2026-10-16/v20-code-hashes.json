@@ -1,0 +1,10 @@
+{
+  "commit": "940928b8d5ed61d32f3897c53d0f7fa304df7c28",
+  "files": {
+    "backend/app/models/source_documents.py": "f0f1d78cc970e765a58c146dcf917e49d09c3cb4f6f369b511d4ec6c9236f070",
+    "backend/app/services/source_documents/local.py": "007f80cee66bc44107cbf7f1e267e3dcd17b104109ae6677173941b98303ef1f",
+    "backend/app/services/source_documents/pipeline.py": "1f5d004441e757c43353ac96d22643dea40fc662b0e6dd6855b0677f4dd366d0",
+    "backend/app/services/source_documents/discovery.py": "a8bdc2849f6ce6e73f7ddba68f147d8a2275dd4c08b7d528af69e142cc88cf01",
+    "backend/app/services/source_documents/presentation.py": "31ce99be5407ba5b81e46614ebba90ac3f9712b1b0ab1b976e8093d86f1934b9"
+  }
+}

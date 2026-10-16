@@ -1,0 +1,7 @@
+{"id": "separate-positive", "expected": [true, true], "actual": [true, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 26.487}
+{"id": "separate-negative", "expected": [false, false], "actual": [false, false], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 43.903}
+{"id": "translated-positive", "expected": [true, true], "actual": [true, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 25.36}
+{"id": "separate-relationship", "expected": [false, true], "actual": [true, true], "valid_semantic_decision": true, "matches_rubric": [false, true], "seconds": 38.573}
+{"id": "separate-properties", "expected": [false, true], "actual": [false, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 49.404}
+{"id": "shared-duplicate", "expected": [true, true], "actual": [true, false], "valid_semantic_decision": true, "matches_rubric": [true, false], "seconds": 57.91}
+{"batches": 6, "matches": 10, "claims": 12, "seconds": 242.503}

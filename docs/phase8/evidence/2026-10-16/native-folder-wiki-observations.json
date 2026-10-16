@@ -1,0 +1,35 @@
+{
+  "method": "Direct native CUA observations in the latest v22 QA bundle, restored invented workspace. No new model generation, proposal adoption or saved-content edit during these checks. This is a focused flow observation, not complete native Wiki/folder acceptance.",
+  "app_id": "com.noye.desktopphase8qa20261012",
+  "bundle_backend_sha256": "9e19ddb96a7e8c3e00d6570c621aafa5bd448a639f71ebcaff2f996bf41f29eb",
+  "checks": {
+    "folder_available_and_ready": true,
+    "manual_category_preserved": "Course/Reviewed, filing skipped because manually fixed",
+    "folder_wiki_link_scope_root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+    "wiki_id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "current_user_memo": "Phase8 user edit · 원문 변경 후에도 보존할 검증 메모.",
+    "four_revisions_visible": true,
+    "historical_revision": "9d57719c-7a77-4899-87ef-fc86b5e8fc2e",
+    "historical_read_only": "Historical snapshot banner; no Edit Markdown or Save controls; Return to current available",
+    "return_to_current_preserves_user_memo": true,
+    "old_evidence_status": "Alpha.md · superseded; saved source version and characters 0–95 shown, no live Original control for that passage",
+    "empty_scope": "No pages; all Summarize locally buttons disabled; prior body absent; No Wiki pages are readable in an empty material scope.",
+    "other_original_only_scope": "AT-201 selected alone; prior Alpha body absent; This Wiki page is outside the selected material scope.",
+    "scope_popup_note": "Native menu item selection required Return to commit before route/state changed. No pre-commit state was counted as scope acceptance."
+  },
+  "quality_findings": [
+    {
+      "classification": "Unaccepted historical relation classification, not a fresh current-model run",
+      "stored_relation": "Beta permits Sunday writes versus Alpha stops Sunday writes, classified contradiction",
+      "assessment": "Different subjects policies can coexist; the supplied reason does not establish a logical contradiction."
+    },
+    {
+      "classification": "Unaccepted historical relation classification, not a fresh current-model run",
+      "stored_relation": "Gamma not mentioning Alpha versus Alpha capacity fact, classified contradiction",
+      "assessment": "Per-source absence does not contradict another source containing that fact."
+    }
+  ],
+  "ui_copy_fix": "Native AX and screenshot verified on 2026-10-17 Pacific/Auckland: Suggested relations & backlinks, Suggested contradiction and the original-comparison guidance are readable. Saved reason texts/revision links and user memo remain intact. This clarifies model interpretation without validating relation inference or rewriting history.",
+  "ui_copy_native_verified": true,
+  "copy_verification_date": "2026-10-17"
+}

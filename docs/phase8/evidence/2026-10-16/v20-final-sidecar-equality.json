@@ -1,0 +1,5 @@
+{
+  "method": "Compare final UI-rebundled backend against the exact binary that passed 12 bundled lifecycle/folder tests.",
+  "sha256": "468466d516521c44b9ef156c6d8c4c52d7a2eb4b7289dee09d570efc1198ef8b",
+  "same_as_tested_binary": true
+}

@@ -1,0 +1,30 @@
+npm notice run noye-frontend@0.1.0 desktop:ui
+npm notice run NOYE_DESKTOP=1 next build --webpack
+▲ Next.js 16.3.8 (webpack)
+✓ Running next.config.ts took 95ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 32.8s
+  Running TypeScript ...
+  Finished TypeScript in 2.1s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/10) ...
+  Generating static pages using 7 workers (2/10)
+  Generating static pages using 7 workers (4/10)
+  Generating static pages using 7 workers (7/10)
+✓ Generating static pages using 7 workers (10/10) in 215ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /chat
+├ ○ /documents
+├ ○ /folders
+├ ○ /library
+├ ○ /search
+└ ○ /wiki
+
+
+○  (Static)  prerendered as static content

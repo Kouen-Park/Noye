@@ -1,0 +1,15 @@
+{"id": "capacity-translation", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 19.894}
+{"id": "capacity-is-not-content", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "mechanical", "reason": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.", "model_calls": 0, "seconds": 0.023}
+{"id": "content-is-not-capacity", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "mechanical", "reason": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.", "model_calls": 0, "seconds": 0.003}
+{"id": "direct-storage", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 14.094}
+{"id": "swapped-subject", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 13.956}
+{"id": "wrong-unit", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.008}
+{"id": "unsupported-purpose", "expected": false, "supported": true, "matches_rubric": false, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.635}
+{"id": "independent-conjunction", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 10.221}
+{"id": "lost-exception", "expected": false, "supported": true, "matches_rubric": false, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 20.064}
+{"id": "preserved-exception", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 11.972}
+{"id": "wrong-day", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 14.408}
+{"id": "unverified-absence", "expected": false, "supported": false, "matches_rubric": true, "decision_stage": "mechanical", "reason": "A generated claim makes an unverified missing-evidence assertion. Missing material belongs in the coverage report. No document was saved.", "model_calls": 0, "seconds": 0.015}
+{"id": "faithful-korean", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 16.427}
+{"id": "recorded-condition", "expected": true, "supported": true, "matches_rubric": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 26.203}
+{"matches": 12, "count": 14, "seconds": 161.63, "error": null}

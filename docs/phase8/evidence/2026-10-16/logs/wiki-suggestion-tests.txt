@@ -1,0 +1,10 @@
+npm notice run noye-frontend@0.1.0 npx
+npm notice run 'vitest' run src/components/wiki/wiki-view.test.tsx
+
+ RUN  v5.0.1 /Users/gavinpark/Projects/Noye/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  22 passed (22)
+   Start at  22:36:11
+   Duration  2.04s (tests 45%, environment 34%, import 9%, setup 7%, transform 5%)

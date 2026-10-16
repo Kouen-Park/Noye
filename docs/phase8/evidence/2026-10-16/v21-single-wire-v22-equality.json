@@ -1,0 +1,121 @@
+{
+  "method": "No-inference replay to compare recorded v21 single-claim wire bodies with v22.\n\nRecorded HTTP responses are supplied by an in-process MockTransport. This proves\nwire equality and runtime audit/guard behavior on those responses, not a fresh\nmodel result. Prior semantic failures therefore remain applicable to this path.\n",
+  "source_sha256": "2c4112a633beac2d2e3b00ac4f0b210c7afe696c78116b6f4b54664ab36c1023",
+  "current_prompt_version": "source-document-v22",
+  "calls": [
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "model_preflight",
+      "exact_wire_body_equal": true
+    },
+    {
+      "task": "verify_support",
+      "exact_wire_body_equal": true
+    }
+  ],
+  "recorded_verdicts_reproduced": true,
+  "fresh_model_run": false
+}

@@ -1,0 +1,302 @@
+{
+  "method": "Read-only observation of connections on the known QA original-source port while CUA activates its native link; no browser navigation is performed by this probe.",
+  "rows": [
+    {
+      "seconds": 0.022,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4de9fc22de717494      0t0  TCP 127.0.0.1:56229->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x1336bedb6af69d60      0t0  TCP 127.0.0.1:56166->127.0.0.1:56229 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 0.569,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4de9fc22de717494      0t0  TCP 127.0.0.1:56229->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x1336bedb6af69d60      0t0  TCP 127.0.0.1:56166->127.0.0.1:56229 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 1.109,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4de9fc22de717494      0t0  TCP 127.0.0.1:56229->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x1336bedb6af69d60      0t0  TCP 127.0.0.1:56166->127.0.0.1:56229 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 1.655,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4de9fc22de717494      0t0  TCP 127.0.0.1:56229->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x1336bedb6af69d60      0t0  TCP 127.0.0.1:56166->127.0.0.1:56229 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 2.201,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 2.744,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 3.287,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 3.828,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 4.352,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 4.881,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 5.427,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 5.972,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 6.513,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 7.057,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 7.6,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 8.144,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 8.688,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 9.23,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 9.755,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 10.299,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 10.843,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 11.383,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56236->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0xe746603720d58294      0t0  TCP 127.0.0.1:56166->127.0.0.1:56236 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 11.927,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 12.472,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 13.015,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 13.558,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 14.1,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 14.647,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 15.187,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 15.732,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 16.275,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 16.82,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 17.361,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4502fda370d37c4e      0t0  TCP 127.0.0.1:56253->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56166->127.0.0.1:56253 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 17.905,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4502fda370d37c4e      0t0  TCP 127.0.0.1:56253->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56166->127.0.0.1:56253 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 18.453,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4502fda370d37c4e      0t0  TCP 127.0.0.1:56253->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56166->127.0.0.1:56253 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 18.996,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4502fda370d37c4e      0t0  TCP 127.0.0.1:56253->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56166->127.0.0.1:56253 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    },
+    {
+      "seconds": 19.539,
+      "lines": [
+        "COMMAND    PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+        "com.apple 8270 gavinpark   16u  IPv4 0x4502fda370d37c4e      0t0  TCP 127.0.0.1:56253->127.0.0.1:56166 (ESTABLISHED)",
+        "noye-back 8274 gavinpark    7u  IPv4 0x76f0f3ecb5cb3744      0t0  TCP 127.0.0.1:56166->127.0.0.1:56253 (ESTABLISHED)",
+        "noye-back 8274 gavinpark   10u  IPv4 0x92e271dca91ec0a1      0t0  TCP 127.0.0.1:56166 (LISTEN)"
+      ]
+    }
+  ]
+}

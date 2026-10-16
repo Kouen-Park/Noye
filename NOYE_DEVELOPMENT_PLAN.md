@@ -3625,6 +3625,39 @@ unsupported relationship and rejected two faithful statements. These are open
 P1 quality failures; successful guard refusal is not successful generation.
 Keep Phase 8/MVP and conditional final merge open.
 
+**Further acceptance progress, 2026-10-16–17:**
+[`docs/phase8/acceptance-2026-10-16.md`](docs/phase8/acceptance-2026-10-16.md)
+retains the v15/v16 failures and subsequent evidence-reference corrections. Models
+now select original IDs/indexes; the application copies frozen passage bytes and
+spans. Bounded original previews improve multilingual discovery without counting
+as original reads. A fresh 16-case production-verifier suite matched 15/16 valid
+semantic judgments, including all eight negatives, with one faithful claim falsely
+rejected. This small sample does not establish complete generated-document quality.
+The v21 audit protocol uses stable shared original indexes while enforcing each
+claim's own allowed evidence set. v22 also separates calls when claims have
+different original sets, preventing exposure to another claim's originals.
+The earlier v21 fourteen-case multi-original controls
+matched 12/14, with a rated/observed-temperature false approval and a faithful
+translation false rejection. The fresh v22 isolation controls matched 7/8;
+a known multi-claim rerun improved from 10/12 to 11/12 while increasing calls
+and latency. Single-claim failures remain applicable to its unchanged wire
+format; complete generation quality remains open. Full backend
+1,086/19 skipped and frontend 387 tests passed; the actual v22 bundled backend
+passed all 12 desktop/folder checks. Native literal-prose and URL printing now
+preserve extracted text; one-page and seven-page mixed-language exports were
+visually inspected, with all table/code/list content retained. Nineteen distinct
+actual Ollama/Qdrant integration tests passed after correcting legacy test fixtures;
+the initial failures and formerly vacuous refusal check are preserved in the ledger.
+Native scope/history/superseded-evidence observations passed on the restored QA
+corpus. Retained relation classifications still overstate contradictions; the UI
+now labels them AI suggestions, without claiming semantic resolution. A QA
+ad-hoc/hardened signing failure exposed compressed Python library validation;
+the temporary development QA profile was corrected, while product hardened runtime
+is unchanged. The builder now forwards a real distribution identity to PyInstaller;
+actual certificate signing/notarization remains unvalidated. Native Original-button
+keyboard execution received OS handoff acknowledgment, but browser loading remains
+unconfirmed. Keep the final acceptance and merge conditions open.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite

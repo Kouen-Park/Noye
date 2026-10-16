@@ -1,0 +1,39 @@
+{
+  "method": "Primary-agent manual comparison of the saved synthetic report with the fixed bilingual originals. No independent review is claimed. A completed job or body hash is not a quality verdict.",
+  "report": "/private/tmp/noye-phase8-20261016/v16-documents/report-3d5721d3-8a39-4a3d-963f-11efd87e135a.json",
+  "report_sha256": "a13241b1b27791409157db265f92e27ce5627d1c5d585ce3e8de1103194ca50c",
+  "revision_body_sha256": "63f812bed6a91ed5a8b6f9d71baa461da9fa8897abdf2198d7e6fd011e60ca20",
+  "accepted": false,
+  "job_state": "complete",
+  "artifact_partial": true,
+  "findings": [
+    {
+      "priority": "P1",
+      "issue": "Unsupported instrumental relationship was saved",
+      "text": "Project Beta stores an amount stored of 92 litres using append-only log files",
+      "evidence": "Project Beta stores 92 litres. Beta uses append-only log files.",
+      "reason": "The independent facts do not establish that the log files are the instrument for this stored amount."
+    },
+    {
+      "priority": "P1",
+      "issue": "Relevant bilingual material omitted",
+      "selected": [
+        "Course/02-English.txt"
+      ],
+      "omitted_relevant": "Course/01-한국어.md",
+      "observation": "Discovery received filenames and lexical term counts but no original preview. The Korean reservoir description shares no English topic words."
+    },
+    {
+      "priority": "P2",
+      "issue": "Repeated neutral sections and awkward prose",
+      "observation": "The title and all three headings were replaced by neutral labels. The same short Beta facts repeat in all three sections."
+    }
+  ],
+  "preserved_correct_facts": [
+    "Beta amount stored is 92 litres, not a measured capacity",
+    "Beta permits Sunday writes",
+    "Beta backups run twice daily",
+    "Unrelated orchard material was excluded"
+  ],
+  "scope_note": "This is one synthetic partial artifact, not representative quality acceptance."
+}

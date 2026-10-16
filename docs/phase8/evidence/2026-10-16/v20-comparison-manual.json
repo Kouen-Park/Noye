@@ -1,0 +1,40 @@
+{
+  "method": "Primary-agent manual comparison against the fixed bilingual originals. Completed/partial job state is not a quality verdict; no independent review is claimed.",
+  "scenario": "comparison",
+  "report_sha256": "7a9035ae8c2ebaf596dca3f29b3f3a93825efa9ba08e8883a2d95a099c71be13",
+  "revision_body_sha256": "00c95344694a3e40452a39373c152598d77fc30d0c2bea2650fe6adceca14169",
+  "artifact_id": "c6ff3500-d931-5434-8b50-b67927aaeceb",
+  "accepted": false,
+  "job_state": "complete",
+  "partial": true,
+  "findings": [
+    {
+      "priority": "P1",
+      "issue": "Complete requested English comparison remains unresolved",
+      "observation": "Storage and Sunday sections repeat complete bilingual original passages rather than delivering verified English comparative conclusions. The explicit partial warning correctly discloses this."
+    },
+    {
+      "priority": "P1",
+      "issue": "Faithful Sunday comparison falsely rejected",
+      "candidate": "Project Alpha stops writing on Sundays, whereas Project Beta permits writes on Sundays.",
+      "observation": "Both facts are in the supplied originals, but the auditor marked the Beta phrase unestablished and selected only original index 0."
+    },
+    {
+      "priority": "P2",
+      "issue": "Evidence audit underselects originals",
+      "observation": "The faithful accepted backup comparison also selected only original index 0 despite relying on two originals. Final displayed citations are still E1/E2 from application-owned metadata; this finding concerns the auditor explanation, not a missing final citation."
+    }
+  ],
+  "correct_refusal": {
+    "candidate": "Project Alpha has a storage capacity of 37 liters and uses SQLite, whereas Project Beta stores 92 litres using append-only log files.",
+    "reason": "The source states the Beta amount and log-file use independently, without establishing that instrumental relationship."
+  },
+  "correct_saved_comparison": "Project Alpha performs backups once per day, whereas Project Beta runs backups twice a day.",
+  "preserved": [
+    "Both selected sources processed completely: 120/120 and 95/95 extracted characters.",
+    "Exact bounded original passages and spans retained from SourceSession.",
+    "Requested English title and topical headings retained.",
+    "Unsupported storage synthesis replaced with literal originals, with an explicit partial warning."
+  ],
+  "seconds": 343.299
+}
