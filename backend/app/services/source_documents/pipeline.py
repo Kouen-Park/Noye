@@ -33,12 +33,14 @@ class ClarificationRequired(local.DocumentError):
     pass
 
 
-def batches(items, payload, schema, settings, constraints=lambda items: None):
+def batches(items, payload, schema, settings, constraints=lambda items: None, *, max_items=None):
     """Every input item is visited; an oversized indivisible item fails visibly."""
     group = []
     for item in items:
         candidate = [*group, item]
-        if local.size(payload(candidate), schema, constraints(candidate)) > local.budget(settings):
+        if (max_items is not None and len(candidate) > max_items) or local.size(
+            payload(candidate), schema, constraints(candidate)
+        ) > local.budget(settings):
             if not group:
                 raise local.DocumentError(
                     "An item exceeds the document stage budget. No input was cut."
@@ -351,8 +353,8 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
                 }
                 for i, claim in enumerate(group)
             ],
-            "rules": "For EACH claim select its index and relevant original indexes, identify "
-            "unestablished claim text, then decide whether every assertion follows from "
+            "rules": "For EACH claim select its index and relevant original indexes, compare "
+            "each assertion with its evidence in analysis, then decide whether it follows from "
             "the UNION of its allowed originals. Read every allowed passage and adjoining "
             "sentences for subjects and conditions. Do not borrow evidence from other claims. "
             "Faithful translations are allowed. No outside knowledge.",
@@ -371,7 +373,15 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
     groups = [
         batch
         for _, related in groupby(claims, key=lambda c: frozenset(c["original_passages"]))
-        for batch in batches(list(related), payload, SupportVerification, settings, constraints)
+        for batch in batches(
+            list(related),
+            payload,
+            SupportVerification,
+            settings,
+            constraints,
+            # Reserve output space for evidence comparisons as well as verdicts.
+            max_items=max(1, settings.generation_output_tokens // 1024),
+        )
     ]
     verdicts = []
     for position, group in enumerate(groups):
@@ -397,11 +407,7 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
             allowed = {indexes[text] for text in claim["original_passages"]}
             if not set(audit.original_indexes) <= allowed:
                 raise local.DocumentError("The local evidence check selected an unknown original.")
-            if any(not text.strip() or text not in claim["text"] for text in audit.unestablished):
-                raise local.DocumentError("The local evidence check invented a claim fragment.")
-            if audit.supported != (not audit.unestablished) or (
-                audit.supported and not audit.original_indexes
-            ):
+            if not audit.analysis.strip() or (audit.supported and not audit.original_indexes):
                 raise local.DocumentError(
                     "The local evidence check returned an inconsistent audit."
                 )
@@ -416,6 +422,9 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
                 "audits": [
                     {
                         **audit.model_dump(),
+                        # Exact rejected text is application-owned, like original
+                        # quotations. Diagnostic model analysis is not evidence.
+                        "unestablished": [] if audit.supported else [claim["text"]],
                         "original_quotes": [passages[index] for index in audit.original_indexes],
                     }
                     for audit, claim in zip(audits, group, strict=True)

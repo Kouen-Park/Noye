@@ -103,11 +103,14 @@ to extraction and synthesis even if the model would approve the claim, and fail
 without a new document. This conservative policy can reject faithful paraphrases
 of an original absence statement. Original quotations and saved user edits remain
 intact. The support verifier returns an evidence audit per input claim: its input
-index, selected original indexes from that claim's allowed list, exact claim fragments
-it finds unestablished, and a boolean verdict. The application copies the selected
-original text into a rejected audit's metadata. Runtime checks reject missing/
+index, selected original indexes from that claim's allowed list, a bounded evidence
+comparison before its boolean verdict. With protocol v23 the application copies the
+entire rejected claim and selected originals into metadata, rather than asking the model
+to reproduce unsupported substrings. The analysis is diagnostic model output, not original
+evidence or independent proof. Runtime checks reject missing/
 duplicate/unknown claim indexes, passage indexes outside that claim's own originals,
-invented claim fragments and inconsistent verdicts. Audit inputs use one deduplicated
+empty/non-string analysis and supported verdicts without references. Unknown output
+fields (including model-written rejected fragments) are refused. Audit inputs use one deduplicated
 original-text table:
 an index identifies the same bytes throughout a batch, and each claim lists its
 own allowed indexes. The verifier must consider those originals together when
@@ -115,11 +118,13 @@ different assertions rely on different passages. Claims with different original
 sets are verified in separate calls: an allowed-index list alone cannot prevent
 the model from reasoning from another claim's visible evidence. Adjacent claims
 with identical evidence sets can share a bounded call, preserving input/verdict
-order. This can increase inference calls for mixed-source synthesis. Repeated text is sent once;
+order. Each call also reserves output space for analysis: at most one claim per
+1,024 configured output tokens, with a minimum of one. This can increase inference
+calls and latency. Repeated text is sent once;
 distinct source identities and final citations are preserved separately in the
 application's evidence metadata. These instructions do not prove model reasoning.
 A supported claim requires an
-original reference and no unestablished fragment.
+original reference and a nonempty analysis.
 Response order cannot silently change claim identity. The model still decides
 semantic entailment; valid quotes and a consistent audit do not prove that decision
 correct. Semantically rejected audits remain in request metadata. Heading checks retain their

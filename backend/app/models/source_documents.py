@@ -90,10 +90,12 @@ class SupportAudit(Strict):
         description="Select all relevant original indexes from this claim's allowed list. "
         "Different assertions may rely on different originals.",
     )
-    unestablished: list[Annotated[str, Field(min_length=1, max_length=1800)]] = Field(
-        max_length=6,
-        description="Exact claim substrings with unsupported assertions or lost conditions. "
-        "Empty when fully entailed.",
+    analysis: str = Field(
+        min_length=1,
+        max_length=1000,
+        description="Briefly compare each assertion with the allowed originals before deciding. "
+        "Identify its subject, property or relationship and any conditions. "
+        "Explain whether those same assertions are established in the originals.",
     )
     supported: bool
 

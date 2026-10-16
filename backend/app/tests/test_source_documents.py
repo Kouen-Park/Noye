@@ -128,7 +128,7 @@ def model(
                     {
                         "claim_index": claim["claim_index"],
                         "original_indexes": claim["original_indexes"][:1],
-                        "unestablished": [] if supported else [claim["text"]],
+                        "analysis": "Synthetic evidence comparison for this assertion.",
                         "supported": supported,
                     }
                     for claim in payload["claims"]
@@ -694,10 +694,11 @@ def test_language_binding_does_not_change_literal_evidence_audits():
         ({"original_indexes": [-1]}, "Invalid local model JSON"),
         ({"original_indexes": ["0"]}, "Invalid local model JSON"),
         ({"original_quotes": ["invented evidence"]}, "Invalid local model JSON"),
-        ({"unestablished": ["invented fragment"], "supported": False}, "invented a claim fragment"),
+        ({"unestablished": ["invented fragment"], "supported": False}, "Invalid local model JSON"),
         ({"original_indexes": []}, "inconsistent audit"),
-        ({"unestablished": ["Reservoir"], "supported": True}, "inconsistent audit"),
-        ({"unestablished": [], "supported": False}, "inconsistent audit"),
+        ({"analysis": ""}, "Invalid local model JSON"),
+        ({"analysis": " "}, "inconsistent audit"),
+        ({"analysis": 42}, "Invalid local model JSON"),
     ],
 )
 def test_invalid_evidence_audit_cannot_publish(workspace, change, error):
@@ -836,7 +837,6 @@ def test_other_claim_evidence_cannot_influence_support_and_verdicts_keep_order(w
         for claim, audit in zip(payload["claims"], result["audits"], strict=True):
             day = "Thursdays" if "Thursdays" in claim["text"] else "Mondays"
             audit["supported"] = day in visible
-            audit["unestablished"] = [] if audit["supported"] else [claim["text"]]
 
     client, calls = model(transform=borrows_visible_fact)
     assert pipeline.verify(
@@ -856,6 +856,52 @@ def test_other_claim_evidence_cannot_influence_support_and_verdicts_keep_order(w
             original = next(c for c in claims if c["text"] == claim["text"])
             assert visible == set(original["original_passages"])
     assert claims[0]["original_passages"] == ["Gull permits exports on Mondays."]
+
+
+def test_evidence_analysis_reserves_output_space_without_dropping_claims(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {"text": f"Fact {n}", "original_passages": ["One shared original."]} for n in range(5)
+    ]
+    client, calls = model()
+    assert (
+        pipeline.verify(
+            knowledge_jobs.WorkContext(db, job),
+            store.request(db, job["subject_id"]),
+            "output-budget",
+            claims,
+            Settings(_env_file=None, generation_output_tokens=2048),
+            client,
+        )
+        == [True] * 5
+    )
+    batches = [p["claims"] for p in calls if p["task"] == "verify_support"]
+    assert [len(batch) for batch in batches] == [2, 2, 1]
+    assert [c["text"] for batch in batches for c in batch] == [c["text"] for c in claims]
+
+
+def test_rejected_audit_records_exact_application_owned_claim_and_original(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claim = "Both projects were approved."
+    original = "One project was approved; the other is only proposed."
+    req = store.request(db, job["subject_id"])
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        req,
+        "rejection",
+        [{"text": claim, "original_passages": [original]}],
+        Settings(_env_file=None),
+        model(invalid="unsupported")[0],
+        strict=False,
+    ) == [False]
+    audit = store.request(db, job["subject_id"])["report"]["rejected_support_check"]["audits"][0]
+    assert audit["unestablished"] == [claim]
+    assert audit["original_quotes"] == [original]
+    assert audit["analysis"] == "Synthetic evidence comparison for this assertion."
 
 
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
