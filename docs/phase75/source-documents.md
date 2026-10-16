@@ -61,11 +61,16 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v18` prefers one to four topical sections for small source
+Prompt `source-document-v19` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. The constrained schema is included in
 the actual model prompt as well as Ollama's decoder format, with both using the
 same allowed identifiers and cardinality. The byte budget measures that actual
-system/prompt input. Extraction selects supplied evidence IDs before drafting one
+system/prompt input. Generation also names the concrete requested language in the
+system instruction and descriptions of generated prose fields. Literal evidence
+references and audit fragments receive no language transformation. This addresses
+observed source-language copying; publication still refuses wrong-language prose,
+and the prompt does not establish successful translation quality.
+Extraction selects supplied evidence IDs before drafting one
 assertion per claim; synthesis selects supporting claim IDs before drafting prose.
 The application attaches the complete bounded original passages and their character
 spans from SourceSession metadata. The model cannot replace or translate that

@@ -17,9 +17,12 @@ from app.db import conversations, documents
 from app.db import source_documents as store
 from app.models.conversations import Role
 from app.models.source_documents import (
+    Extraction,
     GenerateRequest,
+    Outline,
     Selection,
     SupportVerification,
+    Synthesis,
     Verification,
 )
 from app.models.wiki import WikiScope
@@ -642,6 +645,45 @@ def test_grounding_schema_in_prompt_matches_wire_format_and_budget():
     assert local.size(payload, SupportVerification, constraint) == len(
         (local.system(payload) + text).encode("utf-8")
     )
+
+
+@pytest.mark.parametrize("language", ["English", "Korean"])
+@pytest.mark.parametrize(
+    "task,schema,definition,field",
+    [
+        ("outline", Outline, "Heading", "title"),
+        ("process_original_sections", Extraction, "Claim", "text"),
+        ("cross_source_synthesis", Synthesis, "SynthesizedClaim", "text"),
+    ],
+)
+def test_generation_binds_the_concrete_language_without_translating_references(
+    language, task, schema, definition, field
+):
+    payload = {"task": task, "output_language": language}
+    constraints = {"evidence_ids": ["original-한국어"], "claim_ids": ["claim-한국어"]}
+    body = json.loads(local.prompt(payload, schema, constraints))
+    output = local.output_schema(schema, constraints, payload=payload)
+    assert body["output_schema"] == output
+    assert f'"{language}"' in local.system(payload)
+    properties = output["$defs"][definition]["properties"]
+    assert f'"{language}"' in properties[field]["description"]
+    for name in ("evidence_ids", "claim_ids"):
+        if name in properties:
+            assert properties[name]["items"]["enum"] == constraints[name]
+    assert local.size(payload, schema, constraints) == len(
+        (local.system(payload) + local.prompt(payload, schema, constraints)).encode("utf-8")
+    )
+    # Generating a schema for another language must not mutate the prior request.
+    local.output_schema(schema, payload={**payload, "output_language": "French"})
+    assert '"French"' not in properties[field]["description"]
+
+
+def test_language_binding_does_not_change_literal_evidence_audits():
+    payload = {"task": "verify_support", "claims": [{"text": "원문"}]}
+    assert local.system({**payload, "output_language": "English"}) == local.SUPPORT_SYSTEM
+    assert local.output_schema(
+        SupportVerification, payload={**payload, "output_language": "English"}
+    ) == local.output_schema(SupportVerification, payload=payload)
 
 
 @pytest.mark.parametrize(
