@@ -223,6 +223,10 @@ progress::-moz-progress-bar { background: var(--brand); }
   /* Links print as text, so the destination has to be readable on paper. */
   [data-print="document"] a::after {
     content: " (" attr(href) ")";
+    /* A printed URL must also copy as its literal bytes. WebKit's PDF text
+       mapping can replace ligatures in the proportional interface face. */
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-ligatures: none;
     font-size: 0.85em;
     color: #555;
   }
