@@ -63,7 +63,7 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v3` explicitly requests reusable subject tags, source-language
+Prompt `wiki-grounded-v4` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
@@ -77,6 +77,13 @@ shortlists them. Local inference must confirm one of `shared_subject`,
 `supporting_evidence`, `alternative` or `contradiction`, with a reason, known target ID
 and verified evidence IDs on both sides. There are at most eight candidates, four claim
 comparisons per candidate and six accepted links. Confidence below 0.8 creates no link.
+Each comparison now receives both complete bounded original fragments and their source
+identities, rather than summary text and a short quote alone. It explicitly distinguishes
+different subjects/conditions and missing information from contradiction. Missing or
+non-verbatim evidence fails before inference. A pair exceeding the input budget is skipped
+without trimming conditions or aborting the source summary; no relation is inferred for
+that pair. Existing saved relations and user revisions are not rewritten. These are
+model suggestions; reference validation and confidence do not prove semantic correctness.
 Backlinks are queried from published edges; historical target revisions remain immutable.
 The API supplies `target_revision` and `target_current_revision`; the UI identifies earlier
 targets. Traversal stops at two levels and twenty eligible pages. Stale edges do not drive discovery.

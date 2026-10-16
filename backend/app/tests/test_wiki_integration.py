@@ -13,7 +13,7 @@ from app.services.source_catalog import SourceCatalog, SourceError
 from app.services.wiki import publication, relations, service, sources
 from app.services.wiki.local import WikiError
 from app.tests.test_folder_foundation import discover, folder, ingest
-from app.tests.test_wiki_pipeline import summary
+from app.tests.test_wiki_pipeline import passage, summary
 
 
 @pytest.fixture
@@ -121,6 +121,61 @@ def test_invented_relation_target_does_not_publish(workspace):
     with pytest.raises(WikiError, match="unverified"):
         generate(db, second.id, model(bad_target=True))
     assert not store.find(db, f"source:{second.id}")["current_revision"]
+
+
+def test_relation_reads_original_context_beyond_summary_and_quote(workspace):
+    db, *_ = workspace
+    first_text = "Reservoir capacity is 37 litres. That limit applies only during maintenance."
+    second_text = "A separate reservoir has a measured volume of 92 litres, not a capacity limit."
+    first = discover(workspace, "one.txt", first_text)
+    second = discover(workspace, "two.txt", second_text)
+    generate(db, first.id)
+    prompts = []
+    generate(db, second.id, model(callback=prompts.append))
+    relation = next(p for p in prompts if p["task"] == "verify_relation")
+    assert relation["origin_original"]["text"] == second_text
+    assert relation["target_original"]["text"] == first_text
+    assert relation["origin_original"]["source"]["source_id"] == second.id
+    assert relation["target_original"]["source"]["source_id"] == first.id
+    assert relation["target"]["quote"] != first_text
+
+
+def test_oversized_relation_pair_is_skipped_without_trimming_or_failing_summary(
+    workspace, monkeypatch
+):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    generate(db, first.id)
+    monkeypatch.setattr(relations, "input_budget", lambda settings: 1)
+    prompts = []
+    result = generate(db, second.id, model(callback=prompts.append))
+    assert result["revision_id"]
+    assert not store.relations(db, result["wiki_id"])
+    assert all(p["task"] != "verify_relation" for p in prompts)
+
+
+@pytest.mark.parametrize("side", ["origin", "target"])
+@pytest.mark.parametrize("invalid", ["missing", "nonverbatim"])
+def test_relation_rejects_invalid_original_before_inference(monkeypatch, side, invalid):
+    original = passage("Reservoir capacity is 37 litres.")
+    origin = summary(quote=original.text)
+    target = summary(quote=original.text)
+    bad = origin if side == "origin" else target
+    bad["summary"]["evidence_id" if invalid == "missing" else "quote"] = "invented"
+    revision = {
+        "id": "revision",
+        "metadata": {"sections": [target]},
+        "evidence": [original.model_dump()],
+    }
+    monkeypatch.setattr(relations, "candidates", lambda *args: [(1, {"id": "target"}, revision)])
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("Invalid original evidence reached the model")
+
+    monkeypatch.setattr(relations, "structured", unexpected)
+    with pytest.raises(WikiError, match="original evidence"):
+        relations.infer(None, "origin", {"sections": [origin]}, [original], WikiScope(), [], None)
 
 
 def test_topic_reuse_hints_do_not_cross_selected_sources(workspace):

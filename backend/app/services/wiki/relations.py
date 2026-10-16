@@ -6,7 +6,7 @@ import re
 from app.db import wiki as store
 from app.models.wiki import RelationsOutput
 from app.services.wiki import sources
-from app.services.wiki.local import WikiError, structured
+from app.services.wiki.local import WikiError, input_budget, request_size, structured
 
 MAX_CANDIDATES, MAX_RELATIONS, MAX_COMPARISONS = 8, 6, 4
 MAX_DEPTH, MAX_NODES = 2, 20
@@ -53,11 +53,11 @@ def infer(
     checkpoint=lambda: None,
 ):
     verified = []
-    origin_ids = {p.id for p in evidence}
+    origin_passages = {p.id: p.model_dump() for p in evidence}
     for _, page, revision in candidates(connection, identifier, result, scope, manifest):
         if len(verified) >= MAX_RELATIONS:
             break
-        target_ids = {p["id"] for p in revision["evidence"]}
+        target_passages = {p["id"]: p for p in revision["evidence"]}
         comparisons, accepted = 0, None
         for origin in claims(result):
             for target in claims(revision["metadata"]):
@@ -65,6 +65,22 @@ def infer(
                     break
                 checkpoint()
                 comparisons += 1
+                original = origin_passages.get(origin["evidence_id"])
+                target_original = target_passages.get(target["evidence_id"])
+                if (
+                    original is None
+                    or target_original is None
+                    or origin["quote"] not in original["text"]
+                    or target["quote"] not in target_original["text"]
+                ):
+                    raise WikiError(
+                        "A relation claim has missing or non-verbatim original evidence."
+                    )
+                constraints = {
+                    "target_id": [page["id"]],
+                    "origin_evidence_id": [origin["evidence_id"]],
+                    "target_evidence_id": [target["evidence_id"]],
+                }
                 prompt = json.dumps(
                     {
                         "task": "verify_relation",
@@ -72,25 +88,42 @@ def infer(
                         "target_id": page["id"],
                         "origin": origin,
                         "target": target,
+                        "origin_original": {
+                            "source": original["source"],
+                            "text": original["text"],
+                        },
+                        "target_original": {
+                            "source": target_original["source"],
+                            "text": target_original["text"],
+                        },
+                        "rules": "Decide using the original text on BOTH sides. Summary text "
+                        "is an interpretation, not evidence. Contradiction requires mutually "
+                        "incompatible assertions about the SAME subject, property and "
+                        "conditions. Different projects can have different rules without "
+                        "contradicting each other. A passage omitting a fact does not deny "
+                        "that fact. Shared vocabulary alone establishes no relation. "
+                        "Do not infer a causal, instrumental or supporting relationship "
+                        "from independent facts. Return no relations if uncertain.",
                     },
                     ensure_ascii=False,
                 )
+                # These are optional discovery edges. A pair that does not fit
+                # must not lose its conditions through truncation or abort the
+                # independently valid source summary.
+                if request_size(prompt, RelationsOutput, constraints) > input_budget(settings):
+                    continue
                 response = structured(
                     prompt,
                     RelationsOutput,
                     settings=settings,
                     client=client,
-                    constraints={
-                        "target_id": [page["id"]],
-                        "origin_evidence_id": [origin["evidence_id"]],
-                        "target_evidence_id": [target["evidence_id"]],
-                    },
+                    constraints=constraints,
                 )
                 for proposed in response.relations:
                     if (
                         proposed.target_id != page["id"]
-                        or proposed.origin_evidence_id not in origin_ids
-                        or proposed.target_evidence_id not in target_ids
+                        or proposed.origin_evidence_id not in origin_passages
+                        or proposed.target_evidence_id not in target_passages
                         or proposed.origin_evidence_id != origin["evidence_id"]
                         or proposed.target_evidence_id != target["evidence_id"]
                     ):
