@@ -118,7 +118,11 @@ progress::-moz-progress-bar { background: var(--brand); }
 .noye-print-prose > .noye-heading-block:first-child > :is(h1, h2),
 .noye-print-prose > :is(h1, h2):first-child { margin-top: 0; }
 
+.noye-original-print-link { display: none; }
+
 @media print {
+  .noye-original-print-link { display: inline; }
+  .noye-original-command, .noye-original-message { display: none !important; }
   /* Ink on white. The canvas tint is a screen choice and would either waste toner
      or be dropped by the driver, inconsistently. */
   :root {
