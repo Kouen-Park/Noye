@@ -48,6 +48,22 @@ uploaded files, SQLite data, model weights nor logs are bundled. PyInstaller's
 generated files/cache and Rust targets are ignored. `desktop:dev` is a separate
 development workflow using Next's dev server; packaged builds use no dev server.
 
+For an actual signed build, set `APPLE_SIGNING_IDENTITY` to the same valid
+Apple-issued identity for both build stages. The backend builder forwards it to
+PyInstaller so the libraries compressed inside its one-file executable are signed
+before Tauri signs the app. Re-signing only the outer executable cannot update
+those embedded libraries. See [PyInstaller's signing notes](https://pyinstaller.org/en/stable/feature-notes.html#macos-binary-code-signing).
+The identity `-` retains PyInstaller's default ad-hoc handling; it is not a
+Developer ID. An isolated Phase 8 ad-hoc/hardened QA build passed signature
+integrity but failed to load Python due to library validation. The development
+QA profile was corrected; the product's hardened-runtime configuration remains
+unchanged. Real certificate signing and notarization remain unvalidated.
+
+Run the lifecycle tests against the **bundled**
+`Noye.app/Contents/MacOS/noye-backend` as well as the pre-bundle sidecar. Tauri's
+signing step can change whether the executable starts; signature integrity alone
+does not establish runtime readiness.
+
 ## Lifecycle and storage
 
 - The app manages its bundled backend and only Ollama/Qdrant handles explicitly
