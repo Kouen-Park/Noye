@@ -12,6 +12,7 @@ import httpx
 import pytest
 
 from app.config import get_settings
+from app.services import index_identity
 from app.services.citations import Citation, build_citations, format_citations
 from app.services.retrieval import SearchResult
 
@@ -64,9 +65,7 @@ def test_different_pages_stay_separate() -> None:
 
 
 def test_same_page_number_in_different_files_stays_separate() -> None:
-    citations = build_citations(
-        [result(34, file_id="algorithms"), result(34, file_id="lecture")]
-    )
+    citations = build_citations([result(34, file_id="algorithms"), result(34, file_id="lecture")])
 
     assert len(citations) == 2
     assert {citation.file_id for citation in citations} == {"algorithms", "lecture"}
@@ -81,12 +80,8 @@ def test_citations_are_ordered_by_best_score() -> None:
 
 
 def test_ordering_is_deterministic_on_ties() -> None:
-    first = build_citations(
-        [result(7, file_id="b", score=0.5), result(3, file_id="a", score=0.5)]
-    )
-    second = build_citations(
-        [result(3, file_id="a", score=0.5), result(7, file_id="b", score=0.5)]
-    )
+    first = build_citations([result(7, file_id="b", score=0.5), result(3, file_id="a", score=0.5)])
+    second = build_citations([result(3, file_id="a", score=0.5), result(7, file_id="b", score=0.5)])
 
     assert first == second
     assert [citation.file_id for citation in first] == ["a", "b"]
@@ -97,9 +92,7 @@ def test_no_results_produce_no_citations() -> None:
 
 
 def test_file_names_are_applied_when_known() -> None:
-    citations = build_citations(
-        [result(34, file_id="abc")], file_names={"abc": "Algorithms.pdf"}
-    )
+    citations = build_citations([result(34, file_id="abc")], file_names={"abc": "Algorithms.pdf"})
 
     assert citations[0].file_name == "Algorithms.pdf"
     assert citations[0].label == "Algorithms.pdf — page 34"
@@ -120,9 +113,7 @@ def test_format_citations_lists_every_source() -> None:
 
     rendered = format_citations(citations)
 
-    assert rendered == (
-        "Sources:\nAlgorithms.pdf — page 34\nLecture-07.pdf — page 12"
-    )
+    assert rendered == ("Sources:\nAlgorithms.pdf — page 34\nLecture-07.pdf — page 12")
 
 
 def test_format_citations_is_empty_without_citations() -> None:
@@ -171,9 +162,7 @@ def test_format_citations_mixes_paged_and_pageless_sources() -> None:
         file_names={"algo": "Algorithms.pdf", "notes": "study-notes.md"},
     )
 
-    assert format_citations(citations) == (
-        "Sources:\nAlgorithms.pdf — page 34\nstudy-notes.md"
-    )
+    assert format_citations(citations) == ("Sources:\nAlgorithms.pdf — page 34\nstudy-notes.md")
 
 
 def test_mixed_sources_sort_without_comparing_none_to_a_number() -> None:
@@ -240,16 +229,21 @@ def test_full_pipeline_cites_the_page_the_fact_was_written_on(tmp_path) -> None:
     try:
         pages = extract_pdf(pdf_path)
         chunks = chunk_pages(pages, file_id=PIPELINE_FILE)
-        index_chunks(chunks, embed_chunks(chunks), client=client)
+        identity = index_identity.current_index_identity()
+        index_chunks(
+            chunks,
+            embed_chunks(chunks),
+            client=client,
+            index_fingerprint=identity.fingerprint,
+            index_metadata=identity.metadata_json,
+        )
 
         answer = answer_question(
             "How does Dijkstra choose the next vertex?",
             file_ids=[PIPELINE_FILE],
             qdrant_client=client,
         )
-        citations = build_citations(
-            answer.sources, file_names={PIPELINE_FILE: "graphs.pdf"}
-        )
+        citations = build_citations(answer.sources, file_names={PIPELINE_FILE: "graphs.pdf"})
 
         assert answer.is_grounded
         assert citations, "a grounded answer must carry at least one citation"

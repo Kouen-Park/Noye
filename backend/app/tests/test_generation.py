@@ -15,7 +15,7 @@ import httpx
 import pytest
 
 from app.config import get_settings
-from app.services import generation
+from app.services import generation, index_identity
 from app.services.chunking import Chunk
 from app.services.generation import (
     NO_CONTEXT_ANSWER,
@@ -290,7 +290,14 @@ def indexed_corpus():
             ),
         ),
     ]
-    index_chunks(chunks, embed_chunks(chunks), client=real)
+    identity = index_identity.current_index_identity()
+    index_chunks(
+        chunks,
+        embed_chunks(chunks),
+        client=real,
+        index_fingerprint=identity.fingerprint,
+        index_metadata=identity.metadata_json,
+    )
     yield real
     delete_file_chunks(INTEGRATION_FILE, client=real)
     real.close()
@@ -321,10 +328,11 @@ def test_real_answer_declines_when_the_excerpts_do_not_contain_it(
         qdrant_client=indexed_corpus,
     )
 
+    assert answer.is_grounded, "This must exercise model refusal with retrieved context."
+    assert answer.text != NO_CONTEXT_ANSWER
     lowered = answer.text.lower()
     assert any(
-        phrase in lowered
-        for phrase in ("not", "no ", "does not", "cannot", "don't", "unable")
+        phrase in lowered for phrase in ("not", "no ", "does not", "cannot", "don't", "unable")
     ), f"expected a refusal, got: {answer.text}"
 
 
