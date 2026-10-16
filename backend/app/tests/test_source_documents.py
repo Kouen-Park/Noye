@@ -127,7 +127,7 @@ def model(
                 "audits": [
                     {
                         "claim_index": claim["claim_index"],
-                        "original_indexes": [0],
+                        "original_indexes": claim["original_indexes"][:1],
                         "unestablished": [] if supported else [claim["text"]],
                         "supported": supported,
                     }
@@ -772,6 +772,37 @@ def test_audit_original_index_is_bounded_to_its_own_claim(workspace):
     assert documents.count_documents(db) == 0
 
 
+def test_audit_uses_stable_batch_indexes_and_deduplicates_text_without_mutating_claims(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {
+            "text": "First fact and second fact",
+            "quotes": ["First fact", "Second fact"],
+            "original_passages": ["First fact", "Second fact", "Second fact"],
+        },
+        {"text": "Third fact", "quotes": ["Third fact"], "original_passages": ["Third fact"]},
+    ]
+    client, calls = model()
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        "test",
+        claims,
+        Settings(_env_file=None),
+        client,
+    ) == [True, True]
+    audit = next(c for c in calls if c["task"] == "verify_support")
+    assert audit["original_passages"] == [
+        {"original_index": 0, "text": "First fact"},
+        {"original_index": 1, "text": "Second fact"},
+        {"original_index": 2, "text": "Third fact"},
+    ]
+    assert [c["original_indexes"] for c in audit["claims"]] == [[0, 1], [2]]
+    assert claims[0]["original_passages"] == ["First fact", "Second fact", "Second fact"]
+
+
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
     pipeline.verify_numbers("백업은 하루 2번 실행됩니다.", "Backups run twice a day.")
     pipeline.verify_numbers("Backups run 1 time daily.", "백업은 하루에 한 번 실행됩니다.")
@@ -807,7 +838,8 @@ def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(wor
     # Distinct source IDs with the same original bytes must share retained prose
     # while preserving both citations. Models no longer supply subquote text.
     discover(workspace, "duplicate.txt")
-    artifact = run(db, enqueue(db), model(invalid="synthesis_support")[0])
+    client, calls = model(invalid="synthesis_support")
+    artifact = run(db, enqueue(db), client)
     revision = store.current(db, artifact)
     assert "unsupported universal guarantee" not in revision["content"]
     assert "earlier overconfident paraphrase" not in revision["content"]
@@ -818,3 +850,8 @@ def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(wor
     assert revision["metadata"]["coverage"]["partial"]
     assert revision["metadata"]["coverage"]["synthesis_limits"]
     assert "comparative conclusions" in revision["content"]
+    assert len(revision["metadata"]["citations"]) == 2
+    assert len({c["source"]["source_id"] for c in revision["metadata"]["citations"]}) == 2
+    for call in calls:
+        if call["task"] == "verify_support":
+            assert len(call["original_passages"]) == 1

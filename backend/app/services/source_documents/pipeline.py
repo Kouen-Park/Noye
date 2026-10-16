@@ -327,37 +327,47 @@ def check_numbers(context, req, text, originals):
 
 
 def verify(context, req, key, claims, settings, client, *, strict=True):
+    def originals(group):
+        # One index always means the same text within a batch. Reusing local 0
+        # for unrelated originals in different claims confuses small verifiers.
+        return list(dict.fromkeys(text for c in group for text in c["original_passages"]))
+
     def payload(group):
+        passages = originals(group)
+        indexes = {text: i for i, text in enumerate(passages)}
         return {
             "task": "verify_support",
+            "original_passages": [
+                {"original_index": i, "text": text} for i, text in enumerate(passages)
+            ],
             "claims": [
                 {
                     "claim_index": i,
-                    "original_passages": [
-                        {"original_index": n, "text": text}
-                        for n, text in enumerate(claim["original_passages"])
-                    ],
+                    "original_indexes": list(
+                        dict.fromkeys(indexes[text] for text in claim["original_passages"])
+                    ),
                     "text": claim["text"],
                 }
                 for i, claim in enumerate(group)
             ],
             "rules": "For EACH claim select its index and relevant original indexes, identify "
             "unestablished claim text, then decide whether every assertion follows from "
-            "its own original_passages. Read adjoining sentences for subjects and conditions. "
+            "the UNION of its allowed originals. Read every allowed passage and adjoining "
+            "sentences for subjects and conditions. Do not borrow evidence from other claims. "
             "Faithful translations are allowed. No outside knowledge.",
         }
 
     def constraints(group):
         return {
             "claim_index": list(range(len(group))),
-            "original_indexes": list(
-                range(max(len(claim["original_passages"]) for claim in group))
-            ),
+            "original_indexes": list(range(len(originals(group)))),
         }
 
     groups = list(batches(claims, payload, SupportVerification, settings, constraints))
     verdicts = []
     for position, group in enumerate(groups):
+        passages = originals(group)
+        indexes = {text: i for i, text in enumerate(passages)}
         result = _call(
             context,
             req,
@@ -375,7 +385,8 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
             raise local.DocumentError("The local evidence check returned invalid claim indexes.")
         audits = [by_index[i] for i in range(len(group))]
         for audit, claim in zip(audits, group, strict=True):
-            if any(index >= len(claim["original_passages"]) for index in audit.original_indexes):
+            allowed = {indexes[text] for text in claim["original_passages"]}
+            if not set(audit.original_indexes) <= allowed:
                 raise local.DocumentError("The local evidence check selected an unknown original.")
             if any(not text.strip() or text not in claim["text"] for text in audit.unestablished):
                 raise local.DocumentError("The local evidence check invented a claim fragment.")
@@ -396,9 +407,7 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
                 "audits": [
                     {
                         **audit.model_dump(),
-                        "original_quotes": [
-                            claim["original_passages"][index] for index in audit.original_indexes
-                        ],
+                        "original_quotes": [passages[index] for index in audit.original_indexes],
                     }
                     for audit, claim in zip(audits, group, strict=True)
                 ],

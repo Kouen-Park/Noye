@@ -61,7 +61,7 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v20` prefers one to four topical sections for small source
+Prompt `source-document-v21` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. The constrained schema is included in
 the actual model prompt as well as Ollama's decoder format, with both using the
 same allowed identifiers and cardinality. The byte budget measures that actual
@@ -103,11 +103,18 @@ to extraction and synthesis even if the model would approve the claim, and fail
 without a new document. This conservative policy can reject faithful paraphrases
 of an original absence statement. Original quotations and saved user edits remain
 intact. The support verifier returns an evidence audit per input claim: its input
-index, selected indexes into that claim's original passages, exact claim fragments
+index, selected original indexes from that claim's allowed list, exact claim fragments
 it finds unestablished, and a boolean verdict. The application copies the selected
 original text into a rejected audit's metadata. Runtime checks reject missing/
 duplicate/unknown claim indexes, passage indexes outside that claim's own originals,
-invented claim fragments and inconsistent verdicts. A supported claim requires an
+invented claim fragments and inconsistent verdicts. Audit inputs use one deduplicated
+original-text table:
+an index identifies the same bytes throughout a batch, and each claim lists its
+own allowed indexes. The verifier must consider those originals together when
+different assertions rely on different passages. Repeated text is sent once;
+distinct source identities and final citations are preserved separately in the
+application's evidence metadata. These instructions do not prove model reasoning.
+A supported claim requires an
 original reference and no unestablished fragment.
 Response order cannot silently change claim identity. The model still decides
 semantic entailment; valid quotes and a consistent audit do not prove that decision

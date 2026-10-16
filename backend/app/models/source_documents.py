@@ -87,7 +87,8 @@ class SupportAudit(Strict):
     claim_index: int = Field(ge=0, description="Copy the claim_index from the input claim.")
     original_indexes: list[Annotated[int, Field(ge=0)]] = Field(
         max_length=4,
-        description="Select relevant original_index values from this claim's original_passages.",
+        description="Select all relevant original indexes from this claim's allowed list. "
+        "Different assertions may rely on different originals.",
     )
     unestablished: list[Annotated[str, Field(min_length=1, max_length=1800)]] = Field(
         max_length=6,
