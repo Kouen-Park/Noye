@@ -63,11 +63,14 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v5` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v6` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
 quotes, including responses from a server that ignores the requested schema.
+The model sees that same constrained output schema in the prompt, including the
+meaning of each relation kind. The input byte budget counts this actual prompt
+once; the decoder grammar alone does not explain the contract to the model.
 Exact Unicode-normalized topic identities prevent duplicate pages
 for the same kind/root/name. Semantic aliases can still form separate concepts; there is
 no automatic destructive merge of authored pages.

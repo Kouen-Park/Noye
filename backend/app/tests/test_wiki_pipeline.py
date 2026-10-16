@@ -4,9 +4,9 @@ import httpx
 import pytest
 
 from app.config import Settings
-from app.models.wiki import Passage, SectionSummary, SourceRef, WikiScope
+from app.models.wiki import Passage, RelationsOutput, SectionSummary, SourceRef, WikiScope
 from app.services.wiki import pipeline
-from app.services.wiki.local import WikiError, structured
+from app.services.wiki.local import SYSTEM, WikiError, request_size, structured
 
 
 def passage(text, page=None):
@@ -71,6 +71,39 @@ def test_invalid_model_schema_rejected(value):
         structured(
             "Test", SectionSummary, client=mock_client(value), settings=Settings(_env_file=None)
         )
+
+
+def test_wiki_model_sees_the_constrained_schema_with_original_fields_and_exact_budget():
+    prompt = json.dumps({"task": "verify_relation", "origin": {"text": "원문 조건입니다."}})
+    constraints = {"target_id": ["known-target"], "origin_evidence_id": ["known-original"]}
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        body = json.loads(request.content)
+        sent.append(body)
+        return httpx.Response(200, json={"done": True, "response": '{"relations":[]}'})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        structured(
+            prompt,
+            RelationsOutput,
+            client=client,
+            constraints=constraints,
+            settings=Settings(_env_file=None),
+        )
+    body = sent[0]
+    visible = json.loads(body["prompt"])
+    assert visible["origin"]["text"] == "원문 조건입니다."
+    assert visible["output_schema"] == body["format"]
+    fields = visible["output_schema"]["$defs"]["RelationProposal"]["properties"]
+    assert fields["target_id"]["enum"] == ["known-target"]
+    assert fields["origin_evidence_id"]["enum"] == ["known-original"]
+    assert "comparable conditions" in fields["kind"]["description"]
+    assert request_size(prompt, RelationsOutput, constraints) == len(
+        (SYSTEM + body["prompt"]).encode("utf-8")
+    )
 
 
 def test_remote_local_url_never_receives_evidence():
