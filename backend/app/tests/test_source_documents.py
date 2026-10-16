@@ -757,7 +757,8 @@ def test_audit_original_index_is_bounded_to_its_own_claim(workspace):
 
     def cross_claim(payload, result):
         if payload["task"] == "verify_support":
-            # 1 is allowed by the batch union, but belongs only to the other claim.
+            # The other claim's evidence is absent from this call; an ignored
+            # decoder constraint still cannot attest it by returning index 1.
             result["audits"][0]["original_indexes"] = [1]
 
     with pytest.raises(local.DocumentError, match="selected an unknown original"):
@@ -782,7 +783,11 @@ def test_audit_uses_stable_batch_indexes_and_deduplicates_text_without_mutating_
             "quotes": ["First fact", "Second fact"],
             "original_passages": ["First fact", "Second fact", "Second fact"],
         },
-        {"text": "Third fact", "quotes": ["Third fact"], "original_passages": ["Third fact"]},
+        {
+            "text": "Second fact",
+            "quotes": ["Second fact"],
+            "original_passages": ["Second fact", "First fact"],
+        },
     ]
     client, calls = model()
     assert pipeline.verify(
@@ -797,10 +802,60 @@ def test_audit_uses_stable_batch_indexes_and_deduplicates_text_without_mutating_
     assert audit["original_passages"] == [
         {"original_index": 0, "text": "First fact"},
         {"original_index": 1, "text": "Second fact"},
-        {"original_index": 2, "text": "Third fact"},
     ]
-    assert [c["original_indexes"] for c in audit["claims"]] == [[0, 1], [2]]
+    assert [c["original_indexes"] for c in audit["claims"]] == [[0, 1], [1, 0]]
     assert claims[0]["original_passages"] == ["First fact", "Second fact", "Second fact"]
+
+
+def test_other_claim_evidence_cannot_influence_support_and_verdicts_keep_order(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {
+            "text": "Gull permits exports on Thursdays.",
+            "quotes": ["Gull permits exports on Mondays."],
+            "original_passages": ["Gull permits exports on Mondays."],
+        },
+        {
+            "text": "Kittiwake permits exports on Thursdays.",
+            "quotes": ["Kittiwake permits exports on Thursdays."],
+            "original_passages": ["Kittiwake permits exports on Thursdays."],
+        },
+        {
+            "text": "Gull permits exports on Mondays.",
+            "quotes": ["Gull permits exports on Mondays."],
+            "original_passages": ["Gull permits exports on Mondays."],
+        },
+    ]
+
+    def borrows_visible_fact(payload, result):
+        if payload["task"] != "verify_support":
+            return
+        visible = " ".join(p["text"] for p in payload["original_passages"])
+        for claim, audit in zip(payload["claims"], result["audits"], strict=True):
+            day = "Thursdays" if "Thursdays" in claim["text"] else "Mondays"
+            audit["supported"] = day in visible
+            audit["unestablished"] = [] if audit["supported"] else [claim["text"]]
+
+    client, calls = model(transform=borrows_visible_fact)
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        "isolated",
+        claims,
+        Settings(_env_file=None),
+        client,
+        strict=False,
+    ) == [False, True, True]
+    audits = [c for c in calls if c["task"] == "verify_support"]
+    assert len(audits) == 3
+    for audit in audits:
+        visible = {p["text"] for p in audit["original_passages"]}
+        for claim in audit["claims"]:
+            original = next(c for c in claims if c["text"] == claim["text"])
+            assert visible == set(original["original_passages"])
+    assert claims[0]["original_passages"] == ["Gull permits exports on Mondays."]
 
 
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():

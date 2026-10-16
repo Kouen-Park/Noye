@@ -5,6 +5,7 @@ import json
 import re
 import time
 from collections import defaultdict
+from itertools import groupby
 
 from app.config import get_settings
 from app.db import source_documents as store
@@ -363,7 +364,15 @@ def verify(context, req, key, claims, settings, client, *, strict=True):
             "original_indexes": list(range(len(originals(group)))),
         }
 
-    groups = list(batches(claims, payload, SupportVerification, settings, constraints))
+    # A permitted-reference list cannot stop a model reasoning from another
+    # claim's original. Only batch adjacent claims with identical evidence sets,
+    # so every passage visible in a call is allowed for every claim in that call.
+    # Keeping adjacent runs also preserves verdict order and cache-stage identity.
+    groups = [
+        batch
+        for _, related in groupby(claims, key=lambda c: frozenset(c["original_passages"]))
+        for batch in batches(list(related), payload, SupportVerification, settings, constraints)
+    ]
     verdicts = []
     for position, group in enumerate(groups):
         passages = originals(group)

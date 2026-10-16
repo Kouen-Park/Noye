@@ -111,7 +111,11 @@ invented claim fragments and inconsistent verdicts. Audit inputs use one dedupli
 original-text table:
 an index identifies the same bytes throughout a batch, and each claim lists its
 own allowed indexes. The verifier must consider those originals together when
-different assertions rely on different passages. Repeated text is sent once;
+different assertions rely on different passages. Claims with different original
+sets are verified in separate calls: an allowed-index list alone cannot prevent
+the model from reasoning from another claim's visible evidence. Adjacent claims
+with identical evidence sets can share a bounded call, preserving input/verdict
+order. This can increase inference calls for mixed-source synthesis. Repeated text is sent once;
 distinct source identities and final citations are preserved separately in the
 application's evidence metadata. These instructions do not prove model reasoning.
 A supported claim requires an
