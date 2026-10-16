@@ -61,7 +61,7 @@ block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v19` prefers one to four topical sections for small source
+Prompt `source-document-v20` prefers one to four topical sections for small source
 sets and avoids assuming textbook topics. The constrained schema is included in
 the actual model prompt as well as Ollama's decoder format, with both using the
 same allowed identifiers and cardinality. The byte budget measures that actual
@@ -93,6 +93,9 @@ numerals remain rejected; arithmetic-derived quantities are not automatically pr
 The Phase 8 quantity check additionally rejects explicit capacity/stored-amount
 swaps for numeric litre quantities, including Korean wording. It is deliberately
 narrow: it does not establish subject attribution or cover every unit and phrasing.
+Property matching stops at the preceding quantity so a capacity label cannot leak
+into an independently phrased current amount later in the sentence. A later
+explicit property swap still fails; unknown phrasing still needs semantic review.
 Generated missing-evidence assertions are also refused unless the exact statement
 occurs in an original; a bounded model batch cannot establish collection-wide
 absence. Actual read failures belong to application coverage. These checks apply

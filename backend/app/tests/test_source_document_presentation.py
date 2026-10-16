@@ -41,6 +41,45 @@ def test_recorded_and_translated_volume_properties_remain_available(text, origin
     presentation.check_volume_properties(text, originals)
 
 
+@pytest.mark.parametrize(
+    "text,original",
+    [
+        (
+            "Magpie has a capacity of 29 litres, and currently holds 8 litres.",
+            "Magpie의 저장 용량은 29리터입니다. 현재 8리터가 저장되어 있습니다.",
+        ),
+        (
+            "Capacity is 17 litres; it currently retains 3 litres.",
+            "Capacity is 17 litres. It stores 3 litres.",
+        ),
+        (
+            "It stores 6 litres, and the rated limit is 20 litres.",
+            "It stores 6 litres. Capacity is 20 litres.",
+        ),
+    ],
+)
+def test_volume_properties_do_not_carry_across_another_quantity(text, original):
+    presentation.check_volume_properties(text, [original])
+
+
+@pytest.mark.parametrize(
+    "text,original",
+    [
+        (
+            "Capacity is 29 litres, and capacity is 8 litres.",
+            "Capacity is 29 litres. It stores 8 litres.",
+        ),
+        (
+            "It stores 6 litres, and it stores 20 litres.",
+            "It stores 6 litres. Capacity is 20 litres.",
+        ),
+    ],
+)
+def test_a_later_explicit_volume_property_swap_is_still_rejected(text, original):
+    with pytest.raises(local.DocumentError, match="capacity into an amount stored"):
+        presentation.check_volume_properties(text, [original])
+
+
 def test_model_absence_assertion_cannot_replace_actual_coverage():
     with pytest.raises(local.DocumentError, match="missing-evidence"):
         presentation.check_absence_claim(

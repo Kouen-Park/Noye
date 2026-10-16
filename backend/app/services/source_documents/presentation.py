@@ -105,10 +105,16 @@ def check_volume_properties(text, originals):
 
     def properties(value):
         found = {}
+        previous_quantity_end = 0
         for quantity in re.finditer(
             r"(\d+(?:[.,]\d+)*)\s*(?:litres?|liters?|리터|L)(?![A-Za-z])", value, re.I
         ):
-            prefix = re.split(r"[.!?。\n]", value[: quantity.start()])[-1][-100:]
+            # A property before one quantity cannot label a later, independently
+            # phrased quantity. Unknown phrasing still needs semantic verification.
+            prefix = re.split(r"[.!?。\n]", value[previous_quantity_end : quantity.start()])[-1][
+                -100:
+            ]
+            previous_quantity_end = quantity.end()
             anchors = list(
                 re.finditer(r"capacity|용량|stores?|stored|storing|저장량|저장|보관", prefix, re.I)
             )
