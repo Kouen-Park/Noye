@@ -56,11 +56,14 @@ fn choose_save(filename: &str) -> Result<Option<PathBuf>, String> {
         use objc2_foundation::NSString;
         let marker = MainThreadMarker::new().ok_or("Save dialog needs the main thread")?;
         let panel = NSSavePanel::savePanel(marker);
-        panel.setNameFieldStringValue(&NSString::from_str(filename));
         panel.setCanCreateDirectories(true);
         panel.setMessage(Some(&NSString::from_str(
             "Choose a new filename. Existing files are preserved.",
         )));
+        panel.setNameFieldStringValue(&NSString::from_str(filename));
+        // Refresh the configured panel before presenting it. Otherwise a
+        // remembered directory can leave Save disabled until it is reselected.
+        panel.validateVisibleColumns();
         if panel.runModal() != NSModalResponseOK {
             return Ok(None);
         }
