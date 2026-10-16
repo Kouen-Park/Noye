@@ -63,7 +63,7 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v4` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v5` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
@@ -78,7 +78,11 @@ shortlists them. Local inference must confirm one of `shared_subject`,
 and verified evidence IDs on both sides. There are at most eight candidates, four claim
 comparisons per candidate and six accepted links. Confidence below 0.8 creates no link.
 Each comparison now receives both complete bounded original fragments and their source
-identities, rather than summary text and a short quote alone. It explicitly distinguishes
+identities, rather than summary text and a short quote alone.
+Only original text reaches relation inference: unverified summary wording is excluded,
+so a summary that omitted a condition cannot become the comparison premise. Repeated
+claims referring to the same pair of original fragments cause one comparison, not
+repeated inference calls. The comparison explicitly distinguishes
 different subjects/conditions and missing information from contradiction. Missing or
 non-verbatim evidence fails before inference. A pair exceeding the input budget is skipped
 without trimming conditions or aborting the source summary; no relation is inferred for

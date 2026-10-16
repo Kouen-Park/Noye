@@ -133,11 +133,38 @@ def test_relation_reads_original_context_beyond_summary_and_quote(workspace):
     prompts = []
     generate(db, second.id, model(callback=prompts.append))
     relation = next(p for p in prompts if p["task"] == "verify_relation")
-    assert relation["origin_original"]["text"] == second_text
-    assert relation["target_original"]["text"] == first_text
-    assert relation["origin_original"]["source"]["source_id"] == second.id
-    assert relation["target_original"]["source"]["source_id"] == first.id
-    assert relation["target"]["quote"] != first_text
+    assert relation["origin"]["text"] == second_text
+    assert relation["target"]["text"] == first_text
+    assert relation["origin"]["source"]["source_id"] == second.id
+    assert relation["target"]["source"]["source_id"] == first.id
+    assert "quote" not in relation["origin"] and "quote" not in relation["target"]
+
+
+def test_relation_compares_each_original_pair_once_despite_multiple_summary_claims(workspace):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    client = model()
+    compared = []
+
+    def respond(request):
+        response = client.send(request)
+        if request.url.path == "/api/show":
+            return response
+        prompt = json.loads(json.loads(request.content)["prompt"])
+        body = response.json()
+        result = json.loads(body["response"])
+        if prompt["task"] == "summarize_section":
+            result["key_points"] = [dict(result["summary"]), dict(result["summary"])]
+        else:
+            compared.append(prompt)
+            result = {"relations": []}
+        return httpx.Response(200, json={**body, "response": json.dumps(result)})
+
+    with client, httpx.Client(transport=httpx.MockTransport(respond)) as actual:
+        generate(db, first.id, actual)
+        generate(db, second.id, actual)
+    assert len(compared) == 1
 
 
 def test_oversized_relation_pair_is_skipped_without_trimming_or_failing_summary(

@@ -58,13 +58,11 @@ def infer(
         if len(verified) >= MAX_RELATIONS:
             break
         target_passages = {p["id"]: p for p in revision["evidence"]}
-        comparisons, accepted = 0, None
+        comparisons, accepted, seen = 0, None, set()
         for origin in claims(result):
             for target in claims(revision["metadata"]):
                 if comparisons >= MAX_COMPARISONS:
                     break
-                checkpoint()
-                comparisons += 1
                 original = origin_passages.get(origin["evidence_id"])
                 target_original = target_passages.get(target["evidence_id"])
                 if (
@@ -76,6 +74,12 @@ def infer(
                     raise WikiError(
                         "A relation claim has missing or non-verbatim original evidence."
                     )
+                pair = (origin["evidence_id"], target["evidence_id"])
+                if pair in seen:
+                    continue
+                seen.add(pair)
+                checkpoint()
+                comparisons += 1
                 constraints = {
                     "target_id": [page["id"]],
                     "origin_evidence_id": [origin["evidence_id"]],
@@ -86,18 +90,18 @@ def infer(
                         "task": "verify_relation",
                         "origin_id": identifier,
                         "target_id": page["id"],
-                        "origin": origin,
-                        "target": target,
-                        "origin_original": {
+                        "origin": {
+                            "evidence_id": origin["evidence_id"],
                             "source": original["source"],
                             "text": original["text"],
                         },
-                        "target_original": {
+                        "target": {
+                            "evidence_id": target["evidence_id"],
                             "source": target_original["source"],
                             "text": target_original["text"],
                         },
-                        "rules": "Decide using the original text on BOTH sides. Summary text "
-                        "is an interpretation, not evidence. Contradiction requires mutually "
+                        "rules": "Decide using the original text on BOTH sides. "
+                        "Contradiction requires mutually "
                         "incompatible assertions about the SAME subject, property and "
                         "conditions. Different projects can have different rules without "
                         "contradicting each other. A passage omitting a fact does not deny "
