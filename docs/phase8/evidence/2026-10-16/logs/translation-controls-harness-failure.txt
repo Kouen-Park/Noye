@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/private/tmp/noye-phase8-20261016/translation-controls.py", line 46, in <module>
+    with RecordedClient() as client:
+         ~~~~~~~~~~~~~~^^
+TypeError: 'production_holdout_client.RecordedClient' object does not support the context manager protocol (missed __exit__ method)

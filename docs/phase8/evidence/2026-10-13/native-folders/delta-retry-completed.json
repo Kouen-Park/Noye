@@ -1,0 +1,213 @@
+{
+  "native_observations": [
+    "Native Cancel during running checking transitioned to cancelled/classification_summary and visible cancellation reason",
+    "Native Retry knowledge stages created a new attempt preserving the frozen manifest, then completed; source still READY; Open Wiki returned",
+    "Completed-stage display showed summarizing finished; filing skipped because Delta is outside Course organization area"
+  ],
+  "cancelled_job": {
+    "id": "8d93c1e0-844a-49d6-90ef-7a231ccbe6cc",
+    "kind": "wiki",
+    "subject_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "dedupe_key": "wiki:84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "payload_json": "{\"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\"}",
+    "scope_json": "{\"mode\": \"chosen\", \"source_ids\": [], \"root_ids\": [\"737724ae-d1b2-4c09-a1c9-c9308b70aa89\"]}",
+    "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Reviewed/Alpha-renamed.md\", \"version\": \"c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Unclassified/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"66f8cb98-4c8c-44f2-94c5-ae3615c40df0\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Unclassified/Gamma.txt\", \"version\": \"0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Delta.txt\", \"version\": \"a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280\", \"availability\": \"available\", \"processing_state\": \"READY\"}]",
+    "state": "cancelled",
+    "stage": "classification_summary",
+    "completed": 0,
+    "total": 0,
+    "attempt": 1,
+    "cancel_requested": 1,
+    "artifact_id": null,
+    "error": "Knowledge processing was cancelled.",
+    "created_at": "2026-10-13T03:23:51.327397+00:00",
+    "updated_at": "2026-10-13T03:24:37.934682+00:00"
+  },
+  "retry_job": {
+    "id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+    "kind": "wiki",
+    "subject_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "dedupe_key": "wiki:84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "payload_json": "{\"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\"}",
+    "scope_json": "{\"mode\": \"chosen\", \"source_ids\": [], \"root_ids\": [\"737724ae-d1b2-4c09-a1c9-c9308b70aa89\"]}",
+    "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Reviewed/Alpha-renamed.md\", \"version\": \"c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Unclassified/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"66f8cb98-4c8c-44f2-94c5-ae3615c40df0\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Unclassified/Gamma.txt\", \"version\": \"0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Delta.txt\", \"version\": \"a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280\", \"availability\": \"available\", \"processing_state\": \"READY\"}]",
+    "state": "complete",
+    "stage": "complete",
+    "completed": 0,
+    "total": 0,
+    "attempt": 2,
+    "cancel_requested": 0,
+    "artifact_id": "585ef39e-fd08-5ff0-908e-81dc0310aeb9",
+    "error": null,
+    "created_at": "2026-10-13T03:25:05.756502+00:00",
+    "updated_at": "2026-10-13T03:25:37.718336+00:00"
+  },
+  "events": [
+    {
+      "sequence": 120,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "starting",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:06.178285+00:00"
+    },
+    {
+      "sequence": 121,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "classification_summary",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:06.196277+00:00"
+    },
+    {
+      "sequence": 122,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:06.364298+00:00"
+    },
+    {
+      "sequence": 123,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "summarizing",
+      "state": "running",
+      "completed": 1,
+      "total": 1,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.616153+00:00"
+    },
+    {
+      "sequence": 124,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.616487+00:00"
+    },
+    {
+      "sequence": 125,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "complete",
+      "state": "running",
+      "completed": 1,
+      "total": 1,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.708921+00:00"
+    },
+    {
+      "sequence": 126,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "classification_summary",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{\"wiki_id\": \"585ef39e-fd08-5ff0-908e-81dc0310aeb9\"}",
+      "created_at": "2026-10-13T03:25:37.712598+00:00"
+    },
+    {
+      "sequence": 127,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "filing",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.712758+00:00"
+    },
+    {
+      "sequence": 128,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "filing",
+      "state": "skipped",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{\"reason\": \"This original is outside the enabled organization area.\"}",
+      "created_at": "2026-10-13T03:25:37.714539+00:00"
+    },
+    {
+      "sequence": 129,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "relations_topics",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.714701+00:00"
+    },
+    {
+      "sequence": 130,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "relations_topics",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.717940+00:00"
+    },
+    {
+      "sequence": 131,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "saving",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.718137+00:00"
+    },
+    {
+      "sequence": 132,
+      "job_id": "5b56f3a6-86a5-4d20-af05-c2122afd0f00",
+      "stage": "saving",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T03:25:37.718264+00:00"
+    }
+  ],
+  "source": {
+    "file_id": "84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+    "relative_path": "Delta.txt",
+    "device": 16777229,
+    "inode": 17651112,
+    "size": 200,
+    "mtime_ns": 1791861826788930180,
+    "version": "a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280",
+    "availability": "available",
+    "manual_category": null,
+    "error": null,
+    "status": "READY",
+    "chunk_count": 1
+  },
+  "wiki": {
+    "id": "585ef39e-fd08-5ff0-908e-81dc0310aeb9",
+    "kind": "source",
+    "identity": "source:84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "title": "Delta.txt",
+    "current_revision": "c0dac3cb-07ec-407a-bb69-dfb1166cf190",
+    "published_hash": "d3ecea13d996096e5ac704e17a55b66cc9dee599625b328d357476332efe1928",
+    "publication_error": null,
+    "created_at": "2026-10-13T03:22:29.368183+00:00",
+    "updated_at": "2026-10-13T03:25:37.692848+00:00",
+    "content": "<!-- Wiki ID: 585ef39e-fd08-5ff0-908e-81dc0310aeb9; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-13T03:25:37.690113+00:00; processing seconds: 31.326 -->\n\n# Delta.txt\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: Access Control, Archived Notes, Backups, Project Delta, SQLite\n\n## Summary\n\nProject Delta maintains 23 archived notes without recording execution times. [E1]\n\n- Backups occur every Tuesday. [E1]\n\n- Readers cannot write on Sunday. [E1]\n\n- Saturday access is read-only. [E1]\n\n- The system uses SQLite. [E1]\n\n## Original evidence\n\n### E1: Delta.txt\nSource ID: `84f43e04-ec92-45c6-9343-c566c0a9b082`; version: `a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280`\n\nPassage 0, characters 0–199\n\n> Project Delta keeps 23 archived notes. It does not record any measured execution time.\n> \n> Backups run every Tuesday. Readers cannot write on Sunday. Delta uses SQLite, and Saturday access is read-only.\n",
+    "metadata": "{\"batch_count\": 1, \"classification_is_proposal\": true, \"fragment_count\": 1, \"generated_at\": \"2026-10-13T03:25:37.690113+00:00\", \"generation_key\": \"ad14af38e7ac8649849282e736e0722b63eb93225f3933f4623df81433df3258\", \"manifest\": [{\"availability\": \"available\", \"processing_state\": \"READY\", \"relative_path\": \"Course/Reviewed/Alpha-renamed.md\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"version\": \"c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154\"}, {\"availability\": \"available\", \"processing_state\": \"READY\", \"relative_path\": \"Course/Unclassified/Beta.txt\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\"}, {\"availability\": \"available\", \"processing_state\": \"READY\", \"relative_path\": \"Orchard.txt\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\"}, {\"availability\": \"available\", \"processing_state\": \"READY\", \"relative_path\": \"Course/Unclassified/Gamma.txt\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_id\": \"66f8cb98-4c8c-44f2-94c5-ae3615c40df0\", \"version\": \"0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd\"}, {\"availability\": \"available\", \"processing_state\": \"READY\", \"relative_path\": \"Delta.txt\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\", \"version\": \"a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280\"}], \"model\": \"qwen3.5:4b\", \"output_root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"parameters\": {\"context_tokens\": 8192, \"output_tokens\": 2048, \"thinking\": false}, \"passage_count\": 1, \"primary_category\": \"Unclassified\", \"processing_seconds\": 31.326093584000773, \"prompt_version\": \"wiki-grounded-v3\", \"relation_candidate_limit\": 8, \"relation_comparisons_per_candidate\": 4, \"scope\": {\"mode\": \"chosen\", \"root_ids\": [\"737724ae-d1b2-4c09-a1c9-c9308b70aa89\"], \"source_ids\": []}, \"sections\": [{\"category_confidence\": 0.8, \"key_points\": [{\"evidence_id\": \"a805cb60b27694c590f3ea19:0:199\", \"quote\": \"Backups run every Tuesday.\", \"text\": \"Backups occur every Tuesday.\"}, {\"evidence_id\": \"a805cb60b27694c590f3ea19:0:199\", \"quote\": \"Readers cannot write on Sunday.\", \"text\": \"Readers cannot write on Sunday.\"}, {\"evidence_id\": \"a805cb60b27694c590f3ea19:0:199\", \"quote\": \"and Saturday access is read-only.\", \"text\": \"Saturday access is read-only.\"}, {\"evidence_id\": \"a805cb60b27694c590f3ea19:0:199\", \"quote\": \"Delta uses SQLite,\", \"text\": \"The system uses SQLite.\"}], \"primary_category\": \"Unclassified\", \"summary\": {\"evidence_id\": \"a805cb60b27694c590f3ea19:0:199\", \"quote\": \"Project Delta keeps 23 archived notes. It does not record any measured execution time.\", \"text\": \"Project Delta maintains 23 archived notes without recording execution times.\"}, \"tags\": [\"Project Delta\", \"SQLite\", \"Backups\", \"Access Control\", \"Archived Notes\"], \"topics\": [{\"kind\": \"project\", \"title\": \"Project Delta\"}], \"uncertainties\": []}], \"source\": {\"availability\": \"available\", \"indexing_status\": \"READY\", \"name\": \"Delta.txt\", \"relative_path\": \"Delta.txt\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"source_hash\": \"a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280\", \"source_id\": \"84f43e04-ec92-45c6-9343-c566c0a9b082\", \"source_version\": \"a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280\"}, \"tags\": [\"Access Control\", \"Archived Notes\", \"Backups\", \"Project Delta\", \"SQLite\"]}"
+  },
+  "checks": {
+    "cancelled_retained": true,
+    "retry_completed": true,
+    "second_attempt": true,
+    "frozen_manifest_retained": true,
+    "outside_area_unchanged": true,
+    "new_condition_generated": true
+  }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="3.200" timestamp="2026-10-16T22:28:01.046621+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_generation" name="test_real_answer_uses_the_retrieved_passage" time="2.279"><failure message="AssertionError: assert False&#10; +  where False = Answer(text='I could not find anything about that in your indexed documents.', sources=[]).is_grounded">indexed_corpus = &lt;qdrant_client.qdrant_client.QdrantClient object at 0x10b34fb60&gt;
+
+    @requires_services
+    def test_real_answer_uses_the_retrieved_passage(indexed_corpus) -&gt; None:
+        answer = answer_question(
+            "How does Dijkstra pick the next vertex?",
+            file_ids=[INTEGRATION_FILE],
+            qdrant_client=indexed_corpus,
+        )
+
+&gt;       assert answer.is_grounded
+E       AssertionError: assert False
+E        +  where False = Answer(text='I could not find anything about that in your indexed documents.', sources=[]).is_grounded
+
+app/tests/test_generation.py:307: AssertionError</failure></testcase></testsuite></testsuites>

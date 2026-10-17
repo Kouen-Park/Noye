@@ -1,0 +1,7 @@
+{"mode": "idle", "kind": "source", "ready": true, "error": null, "cpu_workers_running": 0, "ready_seconds": 1.063, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 1.64}
+{"mode": "idle", "kind": "frozen", "ready": true, "error": null, "cpu_workers_running": 0, "ready_seconds": 5.19, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 5.565}
+{"mode": "idle", "kind": "frozen", "ready": true, "error": null, "cpu_workers_running": 0, "ready_seconds": 5.597, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 5.977}
+{"mode": "idle", "kind": "source", "ready": true, "error": null, "cpu_workers_running": 0, "ready_seconds": 1.049, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 1.434}
+{"mode": "two_cpu_workers", "kind": "source", "ready": true, "error": null, "cpu_workers_running": 2, "ready_seconds": 0.723, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 1.105}
+{"mode": "two_cpu_workers", "kind": "frozen", "ready": true, "error": null, "cpu_workers_running": 2, "ready_seconds": 5.485, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 5.869}
+{"mode": "two_cpu_workers", "kind": "frozen", "ready": true, "error": null, "cpu_workers_running": 2, "ready_seconds": 5.161, "health": {"status": "ok"}, "exit_code": 0, "total_seconds": 5.555}

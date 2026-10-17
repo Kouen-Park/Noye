@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.091" timestamp="2026-10-16T22:26:46.642358+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_embeddings" name="test_related_texts_are_closer_than_unrelated_ones" time="0.057" /></testsuite></testsuites>

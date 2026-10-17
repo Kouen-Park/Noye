@@ -1,0 +1,9 @@
+{
+  "covered_lines": 6429,
+  "num_statements": 7508,
+  "covered_branches": 1662,
+  "num_branches": 2154,
+  "lines_percent": 85.629,
+  "branches_percent": 77.159,
+  "method": "Sum JSON summaries excluding app/tests; subprocess coverage is not enabled."
+}

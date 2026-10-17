@@ -76,6 +76,9 @@ def poisoned_proxy(monkeypatch):
         def do_POST(self):
             self.respond()
 
+        def do_DELETE(self):
+            self.respond()
+
         def respond(self):
             length = int(self.headers.get("Content-Length", 0))
             payload = json.loads(self.rfile.read(length)) if length else None

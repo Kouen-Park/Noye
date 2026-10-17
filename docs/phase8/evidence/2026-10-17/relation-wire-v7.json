@@ -1,0 +1,7 @@
+{
+  "method": "No-inference comparison: v7 quantity guard/version does not alter the twelve recorded v6 relation requests. This is compatibility evidence, not new semantic evaluation.",
+  "prompt_version": "wiki-grounded-v7",
+  "source_sha256": "b73ad01201109a41c0fdad99b4effd167e83215040ea72c186f031ea889706a8",
+  "requests": 12,
+  "identical": 12
+}

@@ -1,0 +1,18 @@
+{
+  "method": "Primary-agent CUA observation of the rebuilt ad-hoc native QA app. No manual navigation to an original URL was substituted for handoff acceptance.",
+  "app_id": "com.noye.desktopphase8qa20261012",
+  "conversation_id": "d649a89f-2d2c-47c3-8d4c-54fa59f8111d",
+  "source_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+  "observations": [
+    "Restored conversation retained measured runtime 12 milliseconds and memory 37 megabytes.",
+    "Passages drawer exposes Open AT-201.pdf at page 1 as a button.",
+    "Tab from Close passages focused that button.",
+    "Return produced Sent the original to your default browser.",
+    "Screenshot visually confirmed the result and retained source excerpt.",
+    "Filtered enabled browser/app inventory found no AT-201/source-ID destination.",
+    "App quit through Command-Q."
+  ],
+  "native_command_acknowledged": true,
+  "actual_browser_destination_accepted": false,
+  "limitation": "Successful OS launch-command acknowledgment does not prove that the browser loaded the PDF. No private browser page was operated."
+}

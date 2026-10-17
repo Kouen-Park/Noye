@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.065" timestamp="2026-10-16T22:26:46.180537+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_embeddings" name="test_real_ollama_embeds_korean_text" time="0.032" /></testsuite></testsuites>

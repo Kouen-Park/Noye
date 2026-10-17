@@ -1,0 +1,22 @@
+{"name": "restart-days-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 43.955}
+{"name": "restart-days-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "The local evidence check invented a claim fragment."}, "seconds": 16.103}
+{"name": "approval-states-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 16.028}
+{"name": "approval-states-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "The local evidence check invented a claim fragment."}, "seconds": 20.403}
+{"name": "temperature-properties-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 30.147}
+{"name": "temperature-properties-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "The local evidence check invented a claim fragment."}, "seconds": 18.065}
+{"name": "translated-conditions-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 16.563}
+{"name": "translated-conditions-unsupported", "known": true, "expected": false, "actual": false, "valid": true, "correct": true, "seconds": 36.532}
+{"name": "independent-facts-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 25.117}
+{"name": "independent-facts-unsupported", "known": true, "expected": false, "actual": false, "valid": true, "correct": true, "seconds": 26.076}
+{"name": "measurement-subjects-supported", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 50.449}
+{"name": "measurement-subjects-unsupported", "known": true, "expected": false, "actual": false, "valid": true, "correct": true, "seconds": 51.19}
+{"name": "second-original-only", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 47.529}
+{"name": "first-original-only", "known": true, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 45.366}
+{"name": "mixed-power-true", "known": false, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 39.067}
+{"name": "mixed-power-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "The local evidence check invented a claim fragment."}, "seconds": 41.417}
+{"name": "independent-tool-true", "known": false, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 41.064}
+{"name": "independent-tool-false", "known": false, "expected": false, "actual": false, "valid": true, "correct": true, "seconds": 38.654}
+{"name": "adjoining-true", "known": false, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 50.75}
+{"name": "adjoining-false", "known": false, "expected": false, "actual": false, "valid": true, "correct": true, "seconds": 47.349}
+{"name": "translated-exception-true", "known": false, "expected": true, "actual": true, "valid": true, "correct": true, "seconds": 28.097}
+{"name": "translated-exception-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "The local evidence check invented a claim fragment."}, "seconds": 43.653}

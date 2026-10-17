@@ -1,0 +1,830 @@
+{
+  "prompt_version": "source-document-v14",
+  "model": "qwen3.5:4b",
+  "context_tokens": 8192,
+  "output_tokens": 2048,
+  "thinking": false,
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "cases": [
+    [
+      "capacity-translation",
+      true,
+      "Cedar has a capacity of 18 litres.",
+      [
+        "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+      ]
+    ],
+    [
+      "capacity-is-not-content",
+      false,
+      "Cedar stores 18 litres.",
+      [
+        "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+      ]
+    ],
+    [
+      "content-is-not-capacity",
+      false,
+      "Oak has a capacity of 41 litres.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "direct-storage",
+      true,
+      "Oak stores 41 litres.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "swapped-subject",
+      false,
+      "Cedar stores 41 litres.",
+      [
+        "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다.",
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "wrong-unit",
+      false,
+      "Oak stores 41 kilograms.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "unsupported-purpose",
+      false,
+      "Oak stores 41 litres using log files.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "independent-conjunction",
+      true,
+      "Oak stores 41 litres and uses log files.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "lost-exception",
+      false,
+      "Oak runs its backup every day.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "preserved-exception",
+      true,
+      "Oak runs its backup daily except on Tuesdays.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "wrong-day",
+      false,
+      "Cedar stops writes on Saturdays.",
+      [
+        "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+      ]
+    ],
+    [
+      "unverified-absence",
+      false,
+      "No evidence was supplied for Cedar storage.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "faithful-korean",
+      true,
+      "Oak는 41리터를 저장하고 로그 파일을 사용한다.",
+      [
+        "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+      ]
+    ],
+    [
+      "recorded-condition",
+      true,
+      "Cedar permits writes on weekdays and stops them on Sundays.",
+      [
+        "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+      ]
+    ]
+  ],
+  "rows": [
+    {
+      "id": "capacity-translation",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 17.896
+    },
+    {
+      "id": "capacity-is-not-content",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "mechanical",
+      "reason": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.",
+      "model_calls": 0,
+      "seconds": 0.01
+    },
+    {
+      "id": "content-is-not-capacity",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "mechanical",
+      "reason": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.",
+      "model_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "id": "direct-storage",
+      "expected": true,
+      "supported": true,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 3.661
+    },
+    {
+      "id": "swapped-subject",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 4.264
+    },
+    {
+      "id": "wrong-unit",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 3.715
+    },
+    {
+      "id": "unsupported-purpose",
+      "expected": false,
+      "supported": true,
+      "matches_rubric": false,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 3.518
+    },
+    {
+      "id": "independent-conjunction",
+      "expected": true,
+      "supported": true,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 6.448
+    },
+    {
+      "id": "lost-exception",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 5.849
+    },
+    {
+      "id": "preserved-exception",
+      "expected": true,
+      "supported": true,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 15.924
+    },
+    {
+      "id": "wrong-day",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 11.324
+    },
+    {
+      "id": "unverified-absence",
+      "expected": false,
+      "supported": false,
+      "matches_rubric": true,
+      "decision_stage": "mechanical",
+      "reason": "A generated claim makes an unverified missing-evidence assertion. Missing material belongs in the coverage report. No document was saved.",
+      "model_calls": 0,
+      "seconds": 0.026
+    },
+    {
+      "id": "faithful-korean",
+      "expected": true,
+      "supported": true,
+      "matches_rubric": true,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 15.979
+    },
+    {
+      "id": "recorded-condition",
+      "expected": true,
+      "supported": false,
+      "matches_rubric": false,
+      "decision_stage": "semantic",
+      "reason": null,
+      "model_calls": 2,
+      "seconds": 18.604
+    }
+  ],
+  "model_calls": [
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.115764,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:08:42.519143Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,34,32112,682,264,8390,314,220,16,23,84887,10152,328,51492,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,1089,328,9596,15010,1098,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":17041308833,\"load_duration\":13377980250,\"prompt_eval_count\":404,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2945952000,\"eval_count\":8,\"eval_duration\":493098000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 17041308833,
+      "load_duration": 13377980250,
+      "prompt_eval_count": 404,
+      "prompt_eval_duration": 2945952000,
+      "eval_count": 8,
+      "eval_duration": 493098000,
+      "wall_seconds": 17.619228
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.030328,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:08:46.537932Z\",\"response\":\"{\\\"supported\\\": [true]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,10220,220,19,16,84887,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,1802,13587],\"total_duration\":3172924375,\"load_duration\":20579000,\"prompt_eval_count\":380,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2626023000,\"eval_count\":8,\"eval_duration\":464003000}",
+      "response": "{\"supported\": [true]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3172924375,
+      "load_duration": 20579000,
+      "prompt_eval_count": 380,
+      "prompt_eval_duration": 2626023000,
+      "eval_count": 8,
+      "eval_duration": 464003000,
+      "wall_seconds": 3.53063
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.032042,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:08:50.968401Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,34,32112,10220,220,19,16,84887,10152,328,51492,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,10152,328,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,10152,328,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":3963802333,\"load_duration\":25361416,\"prompt_eval_count\":443,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":3066721000,\"eval_count\":8,\"eval_duration\":824247000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3963802333,
+      "load_duration": 25361416,
+      "prompt_eval_count": 443,
+      "prompt_eval_duration": 3066721000,
+      "eval_count": 8,
+      "eval_duration": 824247000,
+      "wall_seconds": 4.17078
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.038807,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:08:54.766414Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,10220,220,19,16,81391,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":3488448291,\"load_duration\":25060208,\"prompt_eval_count\":380,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2870366000,\"eval_count\":8,\"eval_duration\":535263000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 3488448291,
+      "load_duration": 25060208,
+      "prompt_eval_count": 380,
+      "prompt_eval_duration": 2870366000,
+      "eval_count": 8,
+      "eval_duration": 535263000,
+      "wall_seconds": 3.633771
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.083689,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:08:57.999026Z\",\"response\":\"{\\\"supported\\\": [true]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,10220,220,19,16,84887,1608,1433,3425,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,1802,13587],\"total_duration\":2963806667,\"load_duration\":15200292,\"prompt_eval_count\":383,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":2458975000,\"eval_count\":8,\"eval_duration\":436354000}",
+      "response": "{\"supported\": [true]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 2963806667,
+      "load_duration": 15200292,
+      "prompt_eval_count": 383,
+      "prompt_eval_duration": 2458975000,
+      "eval_count": 8,
+      "eval_duration": 436354000,
+      "wall_seconds": 3.345982
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.082669,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:09:02.898062Z\",\"response\":\"{\\\"supported\\\": [true]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,10220,220,19,16,84887,321,5533,1433,3425,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,1802,13587],\"total_duration\":4303855750,\"load_duration\":57048084,\"prompt_eval_count\":384,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":3201733000,\"eval_count\":8,\"eval_duration\":698305000}",
+      "response": "{\"supported\": [true]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 4303855750,
+      "load_duration": 57048084,
+      "prompt_eval_count": 384,
+      "prompt_eval_duration": 3201733000,
+      "eval_count": 8,
+      "eval_duration": 698305000,
+      "wall_seconds": 6.152442
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.245521,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:09:10.309684Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,8213,1141,15264,1396,1834,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":5014603667,\"load_duration\":167855625,\"prompt_eval_count\":380,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":3931965000,\"eval_count\":8,\"eval_duration\":775160000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 5014603667,
+      "load_duration": 167855625,
+      "prompt_eval_count": 380,
+      "prompt_eval_duration": 3931965000,
+      "eval_count": 8,
+      "eval_duration": 775160000,
+      "wall_seconds": 5.441421
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.038623,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:09:25.831717Z\",\"response\":\"{\\\"supported\\\": [true]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,8213,1141,15264,7071,3525,383,79831,13382,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,1802,13587],\"total_duration\":14903872667,\"load_duration\":38953208,\"prompt_eval_count\":383,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":9057551000,\"eval_count\":8,\"eval_duration\":5747468000}",
+      "response": "{\"supported\": [true]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 14903872667,
+      "load_duration": 38953208,
+      "prompt_eval_count": 383,
+      "prompt_eval_duration": 9057551000,
+      "eval_count": 8,
+      "eval_duration": 5747468000,
+      "wall_seconds": 15.695735
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.162867,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:09:37.928808Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,34,32112,17397,13514,383,72653,10152,328,51492,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,1089,328,9596,15010,1098,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":10683068542,\"load_duration\":212200042,\"prompt_eval_count\":400,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":8783023000,\"eval_count\":8,\"eval_duration\":1462556000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 10683068542,
+      "load_duration": 212200042,
+      "prompt_eval_count": 400,
+      "prompt_eval_duration": 8783023000,
+      "eval_count": 8,
+      "eval_duration": 1462556000,
+      "wall_seconds": 10.838925
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.03184,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:09:53.320378Z\",\"response\":\"{\\\"supported\\\": [true]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,82875,16072,220,19,16,27096,219228,179246,149789,162267,202737,39376,50130,10152,328,51492,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,1089,328,9596,15010,1098,763,4241,82875,10220,220,19,16,84887,13,17739,5533,1433,3425,13,561,15264,8213,7071,3525,79831,13382,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,1802,13587],\"total_duration\":15071159791,\"load_duration\":38173750,\"prompt_eval_count\":387,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":10415536000,\"eval_count\":8,\"eval_duration\":4334564000}",
+      "response": "{\"supported\": [true]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 15071159791,
+      "load_duration": 38173750,
+      "prompt_eval_count": 387,
+      "prompt_eval_duration": 10415536000,
+      "eval_count": 8,
+      "eval_duration": 4334564000,
+      "wall_seconds": 15.800053
+    },
+    {
+      "task": "model_preflight",
+      "endpoint": "/api/show",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "response": null,
+      "done": null,
+      "done_reason": null,
+      "total_duration": null,
+      "load_duration": null,
+      "prompt_eval_count": null,
+      "prompt_eval_duration": null,
+      "eval_count": null,
+      "eval_duration": null,
+      "wall_seconds": 0.153914,
+      "publication": {
+        "omitted": "Repeated model preflight metadata; generation responses are retained exactly.",
+        "original_response_sha256": "528dfdedd85b7821126d210f68e0ecd828f38c7d79b27659fe4302bdcb0dee69",
+        "original_response_bytes": 25916,
+        "full_original_report": "/private/tmp/noye-phase8-20261014/outputs/support-holdout-v14.json"
+      }
+    },
+    {
+      "task": "verify_support",
+      "endpoint": "/api/generate",
+      "model": "qwen3.5:4b",
+      "http_status": 200,
+      "raw_response": "{\"model\":\"qwen3.5:4b\",\"created_at\":\"2026-10-14T22:10:12.045796Z\",\"response\":\"{\\\"supported\\\": [false]}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[248045,8678,198,58223,1754,3591,27222,2272,1141,1765,3889,15010,1098,13,198,5423,799,2623,791,3591,303,279,1788,1906,11,1608,1132,421,16713,5721,13,198,19986,25,1396,26532,303,279,3591,10695,494,279,3889,11,2583,35209,198,56478,11,2050,83020,321,60134,25717,13,7585,25,506,3140,799,26532,369,198,7965,327,12404,466,11039,1928,524,9272,539,279,3889,13,198,4274,87634,22157,310,8563,14448,11,31591,11,7896,321,4530,13,198,760,3591,1144,524,12771,43697,12688,11,694,1902,13657,9468,18987,13,198,2381,3010,11,3889,328,34,32112,10220,220,23,84887,13,1049,5533,1433,3425,1,11222,198,44773,32112,10220,220,23,84887,1,321,328,34,32112,5533,1433,3425,4961,424,1503,524,5517,198,44773,32112,682,264,6966,8390,314,220,23,84887,1,466,328,34,32112,579,4220,1785,369,8472,14934,3158,198,2014,20335,10661,8390,11222,264,8390,3591,11,524,449,3202,3404,1429,13,198,32,35209,23756,7071,9412,369,7021,26,264,4906,14988,369,524,13,198,5439,425,7063,11,524,12219,4105,466,15005,13,18307,660,16713,1414,430,632,80946,198,68,26590,11,2496,10895,13,3054,524,958,4732,6337,466,7141,13,248046,198,248045,846,198,4754,7945,763,328,12089,25004,487,328,46944,763,59670,1272,763,328,34,32112,27751,13514,383,69549,321,17397,1070,383,59023,10152,328,51492,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,1089,328,9596,15010,1098,763,4241,34,32112,19779,171463,217718,220,16,23,27096,32742,150254,13,54753,16072,80674,161271,18803,152557,153275,231038,50130,13,150993,31020,152166,152557,159581,185785,155144,1149,13587,1089,328,21299,763,328,2381,91153,3591,460,3315,279,16713,3889,45205,321,4581,16687,1761,1396,2029,11,11960,11,1324,11,2876,321,4531,303,279,1414,13,5272,87634,3889,22157,310,8563,279,3704,314,264,12278,13,2233,4732,6337,13,3439,364,39072,29256,466,67765,5721,13,3301,799,2623,791,3591,1149,92,248046,198,248045,74455,198,248068,271,248069,271,4754,17675,763,498,3721,13587],\"total_duration\":17549805083,\"load_duration\":95790625,\"prompt_eval_count\":405,\"prompt_eval_cached_count\":0,\"prompt_eval_duration\":15169370000,\"eval_count\":8,\"eval_duration\":1966295000}",
+      "response": "{\"supported\": [false]}",
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 17549805083,
+      "load_duration": 95790625,
+      "prompt_eval_count": 405,
+      "prompt_eval_duration": 15169370000,
+      "eval_count": 8,
+      "eval_duration": 1966295000,
+      "wall_seconds": 18.260956
+    }
+  ],
+  "pipeline_sha256": "9f4cdbd55bc1abc959a3133dbd968ab15cbd82dda11f8b54a21001ca7924ab4e",
+  "local_sha256": "fd00aaf362c17ec395dbcfc07716bab1c12116f12ca3abc176d4246346bb938e",
+  "method": "Unseen invented subjects/values/conditions. First production check_numbers (numeric/property/absence guards), then production verify(strict=False), one claim per call. Mechanical rejection is reported separately; matching this rubric is not full document quality.",
+  "seconds": 107.51,
+  "events": [
+    {
+      "stage": "capacity-translation",
+      "state": "failed",
+      "detail": {
+        "stage": "capacity-translation",
+        "claims": [
+          {
+            "text": "Cedar has a capacity of 18 litres.",
+            "quotes": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ],
+            "original_passages": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "swapped-subject",
+      "state": "failed",
+      "detail": {
+        "stage": "swapped-subject",
+        "claims": [
+          {
+            "text": "Cedar stores 41 litres.",
+            "quotes": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다.",
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ],
+            "original_passages": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다.",
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "wrong-unit",
+      "state": "failed",
+      "detail": {
+        "stage": "wrong-unit",
+        "claims": [
+          {
+            "text": "Oak stores 41 kilograms.",
+            "quotes": [
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ],
+            "original_passages": [
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "lost-exception",
+      "state": "failed",
+      "detail": {
+        "stage": "lost-exception",
+        "claims": [
+          {
+            "text": "Oak runs its backup every day.",
+            "quotes": [
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ],
+            "original_passages": [
+              "Oak stores 41 litres. Oak uses log files. The backup runs daily except Tuesdays."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "wrong-day",
+      "state": "failed",
+      "detail": {
+        "stage": "wrong-day",
+        "claims": [
+          {
+            "text": "Cedar stops writes on Saturdays.",
+            "quotes": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ],
+            "original_passages": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    },
+    {
+      "stage": "recorded-condition",
+      "state": "failed",
+      "detail": {
+        "stage": "recorded-condition",
+        "claims": [
+          {
+            "text": "Cedar permits writes on weekdays and stops them on Sundays.",
+            "quotes": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ],
+            "original_passages": [
+              "Cedar의 용량은 18리터이다. Cedar는 일요일에 쓰기를 중지한다. 평일에는 쓰기가 허용된다."
+            ]
+          }
+        ],
+        "supported": [
+          false
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "qa_pid": 67972,
+  "maximum_staged_bytes": 10850304,
+  "limit_bytes": 10485760,
+  "note": "Test-only watchdog for this one-page synthetic PDF; no product cap and no UI automation.",
+  "result": "qa_stopped_for_oversized_staging",
+  "seconds": 75.131
+}

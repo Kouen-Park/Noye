@@ -1,0 +1,8 @@
+{
+  "app_pid": 48651,
+  "backend_pid": 48689,
+  "selection_persisted": true,
+  "restored_api_healthy": true,
+  "automation_observation": "noWindowsAvailable after built-in workspace restart, bundle-id/path lookup and automation reset; visible UI unconfirmed",
+  "recovery_action": "SIGTERM verified QA executable only, then ordinary native launch; retain restart uncertainty"
+}

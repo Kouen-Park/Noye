@@ -1,0 +1,33 @@
+{
+  "method": "Primary-agent manual review of exact saved body against invented originals; not independent review.",
+  "file": "comparison-054d959e-cd29-4f39-bed6-357b519b7f8a.json",
+  "body_sha256": "0fda5805d9a68279727e12b00867e82c9514dd824149d7d34b43013b3e7b2b47",
+  "generation_seconds": 465.269,
+  "job_complete": true,
+  "accepted": false,
+  "requested_language": "English",
+  "language_pass": true,
+  "coverage": {
+    "inventory": 2,
+    "selected": 2,
+    "processed": 2,
+    "reported_partial": false
+  },
+  "findings": [
+    {
+      "priority": 1,
+      "text": "Storage synthesis asserts Beta stores 92 litres using append-only log files. The original states stored amount and log-file use independently; the instrumental relationship is not established. Actual model audit nevertheless approved it."
+    },
+    {
+      "priority": 2,
+      "text": "Storage paragraph repeats Sunday and backup facts that recur in their own later sections."
+    }
+  ],
+  "retained_faithful_facts": [
+    "Alpha capacity 37 litres versus Beta stored amount 92 litres",
+    "Alpha SQLite",
+    "Alpha Sunday stops versus Beta Sunday permits",
+    "Alpha daily backup versus Beta twice daily"
+  ],
+  "meaning": "Completed job and model approval do not establish accepted document quality."
+}

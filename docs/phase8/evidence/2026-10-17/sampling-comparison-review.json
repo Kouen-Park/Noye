@@ -1,0 +1,36 @@
+{
+  "method": "Compare actual recorded requests and rubric outcomes; no causal or general benchmark claim. Fresh controls were fixed before the experiment. Old controls and a derived previously unrun counterfactual are regressions.",
+  "production_sampling_unchanged": true,
+  "zero_penalty_adopted": false,
+  "baseline_fresh": {
+    "claims": 8,
+    "valid_claims": 8,
+    "correct": 7
+  },
+  "baseline_regression": {
+    "claims": 6,
+    "valid_claims": 6,
+    "correct": 5
+  },
+  "neutral_fresh": {
+    "claims": 6,
+    "valid_claims": 6,
+    "correct": 6
+  },
+  "neutral_regression": {
+    "claims": 16,
+    "valid_claims": 16,
+    "correct": 13
+  },
+  "neutral_seconds": 269.743,
+  "matched_recorded_baseline_requests_except_added_presence_zero": 14,
+  "neutral_generation_calls": 18,
+  "findings": [
+    "A faithful Korean four-day translation is now accepted.",
+    "An English rated-speed claim changed to observed-speed is falsely accepted; baseline v23 rejected it.",
+    "The faithful adjoining Gannet backup assertion is still falsely rejected.",
+    "The actual saved unsupported using-logs comparison remains falsely approved.",
+    "No improvement in overall correctness on the fourteen directly paired controls; do not adopt a setting that exchanges a false rejection for a false approval."
+  ],
+  "limits": "Run order and warm-cache state differ, so wall times are not a controlled latency comparison. Matching wire requests does not prove general causation or language accuracy."
+}

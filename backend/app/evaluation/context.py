@@ -16,7 +16,7 @@ from app.evaluation.run import DenseRanker
 from app.models.conversations import Message, Role
 from app.services.conversation_context import recent_context, retrieval_question
 from app.services.embeddings import embed_query, input_format_version
-from app.services.generation import build_prompt, generate
+from app.services.generation import SYSTEM_PROMPT, build_prompt, generate
 from app.services.retrieval import SearchResult
 
 
@@ -82,7 +82,15 @@ def main():
               "cases_sha256": hashlib.sha256(args.cases.read_bytes()).hexdigest(),
               "context_sha256": hashlib.sha256(
                   (Path(__file__).parents[1] / "services" / "conversation_context.py").read_bytes()
-              ).hexdigest(), "system": platform.platform(),
+              ).hexdigest(),
+              "generation_source_sha256": hashlib.sha256(
+                  (Path(__file__).parents[1] / "services" / "generation.py").read_bytes()
+              ).hexdigest(),
+              "system_prompt_sha256": hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest(),
+              "context_tokens": settings.generation_context_tokens,
+              "output_tokens": settings.generation_output_tokens,
+              "thinking": settings.ollama_thinking,
+              "system": platform.platform(),
               "cold_embedding_ms": cold_ms,
               "note": "One explicitly unloaded embedding query. Subsequent queries are warm; "
                       "in-memory Qdrant, not complete API/desktop latency. "

@@ -1,0 +1,80 @@
+{
+  "workspace": "/private/tmp/noye-phase8-20261014/model-lifecycle-9f3e8e2b-b8d8-49de-95b9-f61b37d6753f",
+  "model": "qwen3.5:0.8b",
+  "method": "Production ModelManager + actual isolated Ollama server and registry. Network failure uses an unreachable proxy only for the owned server; cancellation/retry uses a real pull. No UI acceptance or generation on this downloaded model is claimed.",
+  "steps": [
+    {
+      "case": "network_failure",
+      "seconds": 0.041,
+      "job": {
+        "state": "failed",
+        "model": "qwen3.5:0.8b",
+        "completed": 0,
+        "total": 0,
+        "error": "Download did not finish. Check Ollama, storage and connection, then retry."
+      }
+    },
+    {
+      "case": "actual_cancel",
+      "seconds": 2.325,
+      "before": {
+        "state": "downloading",
+        "model": "qwen3.5:0.8b",
+        "completed": 4287476,
+        "total": 207346304,
+        "error": null
+      },
+      "after": {
+        "state": "cancelled",
+        "model": "qwen3.5:0.8b",
+        "completed": 4287476,
+        "total": 207346304,
+        "error": null
+      }
+    },
+    {
+      "case": "explicit_retry",
+      "seconds": 23.682,
+      "job": {
+        "state": "complete",
+        "model": "qwen3.5:0.8b",
+        "completed": 0,
+        "total": 0,
+        "error": null
+      }
+    }
+  ],
+  "installed_tags": {
+    "models": [
+      {
+        "name": "qwen3.5:0.8b",
+        "model": "qwen3.5:0.8b",
+        "modified_at": "2026-10-15T11:00:20.49947334+13:00",
+        "size": 1322069277,
+        "digest": "de63045f29755d4721c09d54c9b45c2dadb644f4fd7d604d4cac90d96049971c",
+        "details": {
+          "parent_model": "qwen35-validation-20260930:0.8b-stock-q8_0-q8draft2",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "752.39M",
+          "quantization_level": "Q8_0",
+          "context_length": 262144,
+          "embedding_length": 1024
+        },
+        "capabilities": [
+          "completion",
+          "vision",
+          "tools",
+          "thinking"
+        ]
+      }
+    ]
+  },
+  "tags_after_qa_model_deletion": {
+    "models": []
+  },
+  "state": "passed"
+}

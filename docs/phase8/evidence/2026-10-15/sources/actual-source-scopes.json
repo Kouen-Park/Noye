@@ -1,0 +1,58 @@
+{
+  "method": "Read-only production SourceCatalog/SourceSession over the real invented corpus; no inference or vectors.",
+  "all_count": 3,
+  "chosen_count": 1,
+  "chosen_passages": [
+    {
+      "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+      "file_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+      "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+      "relative_path": "Course/01-한국어.md",
+      "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+      "content_hash": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+      "historical": false,
+      "chunk_index": 0,
+      "page_number": null,
+      "content": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+    }
+  ],
+  "blocked": [
+    {
+      "relative_path": "Course/02-English.txt",
+      "error": "This source is outside the frozen inventory.",
+      "code": "out_of_scope"
+    },
+    {
+      "relative_path": "Unrelated.txt",
+      "error": "This source is outside the frozen inventory.",
+      "code": "out_of_scope"
+    }
+  ],
+  "empty_read_rejected": true,
+  "manifest": [
+    {
+      "source_id": "7ba353bd-81d5-4990-b460-493303ef0079",
+      "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+      "relative_path": "Course/02-English.txt",
+      "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+      "availability": "available",
+      "processing_state": "READY"
+    },
+    {
+      "source_id": "04e582da-7bb6-406c-9114-a8c842f91201",
+      "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+      "relative_path": "Course/01-한국어.md",
+      "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5",
+      "availability": "available",
+      "processing_state": "READY"
+    },
+    {
+      "source_id": "762e7eb3-043e-41e4-a278-dce73b721b31",
+      "root_id": "7db44afc-7e5e-473a-b124-56b6ea9c0b01",
+      "relative_path": "Unrelated.txt",
+      "version": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf",
+      "availability": "available",
+      "processing_state": "READY"
+    }
+  ]
+}

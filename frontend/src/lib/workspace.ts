@@ -1,5 +1,7 @@
-import { apiBaseUrl } from "./runtime";
+import { apiBaseUrl, isDesktopRuntime } from "./runtime";
 import type { AiSettings } from "./ai-settings";
+import { invoke } from "@tauri-apps/api/core";
+import type { ExportResult } from "./native-export";
 
 export interface WorkspaceInfo {
   directory: string;
@@ -29,7 +31,10 @@ async function workspaceRequest(settings: AiSettings, path: string, options: Req
 export async function readWorkspace(settings: AiSettings, signal?: AbortSignal): Promise<WorkspaceInfo> {
   return (await workspaceRequest(settings, "", { signal })).json();
 }
-export async function downloadBackup(settings: AiSettings) {
+export async function downloadBackup(settings: AiSettings): Promise<ExportResult> {
+  if (isDesktopRuntime()) {
+    return await invoke<boolean>("save_workspace_backup") ? "saved" : "cancelled";
+  }
   const response = await workspaceRequest(settings, "/backup", { method: "POST" });
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
@@ -40,6 +45,7 @@ export async function downloadBackup(settings: AiSettings) {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  return "download";
 }
 export async function restoreWorkspace(settings: AiSettings, file: File): Promise<RestoredWorkspace> {
   const body = new FormData();

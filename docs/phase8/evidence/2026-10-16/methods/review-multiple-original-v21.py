@@ -1,0 +1,10 @@
+"""Read-only primary-agent audit-reference review; labels never reach inference."""
+import json,pathlib,hashlib
+root=pathlib.Path('/private/tmp/noye-phase8-20261016');path=root/'multiple-original-v21.json';d=json.loads(path.read_text());calls=[c for c in d['model_calls'] if c.get('task')=='verify_support'];rows=[]
+for case,row,call in zip(d['suite']['cases'],d['rows'],calls,strict=True):
+    audit=json.loads(call['response'])['audits'][0]
+    required=[1] if case[0]=='second-original-only' else [0] if case[0]=='first-original-only' else [0,1]
+    rows.append({'id':case[0],'expected':case[1],'actual':row['supported'],'valid_semantic':row['valid_semantic_decision'],'selected_original_indexes':audit['original_indexes'],'all_needed_originals_selected_if_supported':set(required)<=set(audit['original_indexes']) if case[1] and row['supported'] else None})
+review={'method':'Primary-agent review of exact original/claim pairs, full actual audits and preserved inputs. Not an independent review or end-to-end document run. Cases were fixed before the v21 correction; no labels or prompt changed after this run.', 'raw_report_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'rubric_matches':12,'valid_semantic_decisions':14,'seconds':d['seconds'],'false_approval':'Zenith rated limit 52 Celsius was approved as an observed temperature. Shared digits and correct Caldera observation do not establish that measurement property.','false_rejection':'Coda Thursday-only, not-under-maintenance export condition and Ember Monday permission were faithfully preserved but both literal clauses were marked unestablished.','inspector_note':'Initial inspection mistakenly read the HTTP response envelope as the structured audit; it failed before writing any review. The corrected read uses the recorded response field. No product/model/PDF changes or rerun.','rows':rows}
+(root/'multiple-original-v21-manual.json').write_text(json.dumps(review,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(rows,ensure_ascii=False))

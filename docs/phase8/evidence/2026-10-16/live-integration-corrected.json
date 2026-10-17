@@ -1,0 +1,76 @@
+{
+  "method": "Rerun the four affected integration cases after correcting embedding-identity fixtures. The first failed/vacuous outcomes remain recorded; the other fifteen passing checks are not repeated.\n\nEach test gets a unique SQLite/files root and Qdrant collection. This also keeps\narbitrary-vector server tests separate from genuine embedding-identity tests.\nNo cloud credentials, personal collections, model pulls or model deletion.\n",
+  "service_settings": {
+    "OLLAMA_BASE_URL": "http://127.0.0.1:11439",
+    "OLLAMA_MODEL": "qwen3.5:4b",
+    "OLLAMA_EMBEDDING_MODEL": "embeddinggemma",
+    "QDRANT_URL": "http://127.0.0.1:16339",
+    "QDRANT_VECTOR_SIZE": "768",
+    "GENERATION_CONTEXT_TOKENS": "8192",
+    "GENERATION_OUTPUT_TOKENS": "2048",
+    "OLLAMA_THINKING": "false",
+    "LOG_TO_FILE": "false",
+    "NO_PROXY": "127.0.0.1,localhost"
+  },
+  "rows": [
+    {
+      "number": 15,
+      "nodeid": "app/tests/test_citations.py::test_full_pipeline_cites_the_page_the_fact_was_written_on",
+      "exit_code": 0,
+      "seconds": 21.069,
+      "collection": "noye_phase8_live_corrected_20261016_15",
+      "log_sha256": "ef8a47723d06979ea70b8cde6ba9b9aa03dd275466d90b84d638c2b9850ef607",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 17,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_uses_the_retrieved_passage",
+      "exit_code": 0,
+      "seconds": 19.91,
+      "collection": "noye_phase8_live_corrected_20261016_17",
+      "log_sha256": "ebf569ad64f6552d44c433ffcece6ceec5d7154fa690c388146f71189a8ff5c8",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 18,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_declines_when_the_excerpts_do_not_contain_it",
+      "exit_code": 0,
+      "seconds": 32.813,
+      "collection": "noye_phase8_live_corrected_20261016_18",
+      "log_sha256": "7d320fecc4dcaa2d073349c3a417c8abc2c7a25c3278ab13e72cae16a2d9b94a",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 19,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_replies_in_korean_to_a_korean_question",
+      "exit_code": 0,
+      "seconds": 26.387,
+      "collection": "noye_phase8_live_corrected_20261016_19",
+      "log_sha256": "80a336f1eb33c9dfddd379d51d4756243e6ff9b0b4cf0ebe63cff0ed30d42228",
+      "cleanup_http_status": 200
+    }
+  ],
+  "preflight": [
+    {
+      "url": "http://127.0.0.1:11439/api/version",
+      "status": 200,
+      "body": {
+        "version": "0.34.2"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:16339/",
+      "status": 200,
+      "body": {
+        "title": "qdrant - vector search engine",
+        "version": "1.19.1",
+        "commit": "6ab21cac18ebb6f4ae29102c7f8f5cc11affd5de"
+      }
+    }
+  ],
+  "unload_http_status": 200,
+  "unload_embedding_http_status": 200,
+  "remaining_loaded_models": {
+    "models": []
+  }
+}

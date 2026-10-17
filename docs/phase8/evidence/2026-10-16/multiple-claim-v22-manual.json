@@ -1,0 +1,14 @@
+{
+  "method": "Primary-agent comparison of preserved v21 cases under evidence-context isolation. This is a known-case regression rerun, not a fresh holdout. No case/label/prompt changed after either run. Different original sets receive separate support calls; same sets can still share one.",
+  "report_sha256": "fbbad649bbf97e5e397880b68774b965ea800594d140e63d1d0015e2f4012eb2",
+  "claims": 12,
+  "matches": 11,
+  "valid_batches": 6,
+  "generation_calls": 11,
+  "seconds": 648.838,
+  "previous_seconds": 242.503,
+  "previous_generation_calls": 6,
+  "fixed_false_approval": "Skua independent encrypted-storage/map facts are now correctly rejected as an instrumental relationship; Siskin explicit relationship remains accepted. This observes the isolated invocation result, without proving the cause of the v21 false approval.",
+  "remaining_false_rejection": "Gannet runs backups daily is still falsely rejected despite its adjoining original sentence.",
+  "latency_note": "The rerun took 648.838 s versus 242.503 s previously. Inference-call count increased 6 to 11; wall-time comparison was not a controlled benchmark, so its full change cannot be attributed to call isolation."
+}

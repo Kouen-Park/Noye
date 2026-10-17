@@ -1,0 +1,7 @@
+{
+  "method": "Image-only PDF authored by embedding the seven already-reviewed native page PNGs, with no text layer. Reopened and visually inspected every raster PDF page. Actual scanner/ingestion, SQLite and local embedding HTTP requests with in-memory Qdrant. Not native picker or representative model quality.",
+  "initial_qa_failure": "Inspector incorrectly treated SourceSession dictionaries as objects; ingestion itself had already produced expected READY/FAILED states. First source/log retained; fixed inspector and reran in a new isolated workspace.",
+  "rerun": "Valid PDF READY in 2.296 seconds, 11 points/chunks, all seven pages and final sentinel in SourceSession. Image-only PDF FAILED in 0.080 seconds with explicit OCR limitation, all seven extracted pages empty. Corrupt PDF FAILED in 0.001 seconds. Both failed sources rejected as not_ready and produced no vector points. Missing PDF raised ExtractionError.",
+  "native_or_cloud_generation": false,
+  "visual_review": "All seven raster pages retain the reviewed native layout, including table, wrapped code, whole image/caption, Korean, list and final sentinel."
+}

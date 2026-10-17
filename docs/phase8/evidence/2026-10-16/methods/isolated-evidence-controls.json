@@ -1,0 +1,82 @@
+{
+  "method": "Fresh controls fixed after v21 disjoint-evidence false approval and before claim-context isolation. Four two-claim batches, five positives and three negatives. Gold labels and batch IDs remain evaluator-only. These measure evidence isolation transfer, not general document quality.",
+  "batches": [
+    [
+      "independent-instrument",
+      [
+        [
+          false,
+          "Mica stores encrypted archives using a Bloom filter.",
+          [
+            "Mica stores encrypted archives. Mica uses a Bloom filter."
+          ]
+        ],
+        [
+          true,
+          "Topaz stores encrypted archives using a Bloom filter.",
+          [
+            "Topaz stores encrypted archives using a Bloom filter."
+          ]
+        ]
+      ]
+    ],
+    [
+      "maintenance-condition",
+      [
+        [
+          false,
+          "Cork always allows downloads on Tuesdays.",
+          [
+            "Cork allows downloads on Tuesdays except during maintenance."
+          ]
+        ],
+        [
+          true,
+          "Ash always allows downloads on Tuesdays.",
+          [
+            "Ash always allows downloads on Tuesdays."
+          ]
+        ]
+      ]
+    ],
+    [
+      "allocated-measured",
+      [
+        [
+          false,
+          "Salt had measured memory usage of 19 mebibytes.",
+          [
+            "Salt has an allocated memory limit of 19 mebibytes."
+          ]
+        ],
+        [
+          true,
+          "Amber had measured memory usage of 19 mebibytes.",
+          [
+            "Amber had measured memory usage of 19 mebibytes."
+          ]
+        ]
+      ]
+    ],
+    [
+      "shared-context",
+      [
+        [
+          true,
+          "Kestrel resumes exports on Wednesdays.",
+          [
+            "Kestrel resumes exports on Wednesdays. Its audit logs run hourly."
+          ]
+        ],
+        [
+          true,
+          "Kestrel audit logs run hourly.",
+          [
+            "Kestrel resumes exports on Wednesdays. Its audit logs run hourly.",
+            "Kestrel resumes exports on Wednesdays. Its audit logs run hourly."
+          ]
+        ]
+      ]
+    ]
+  ]
+}

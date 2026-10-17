@@ -1,0 +1,32 @@
+{
+  "native_relaunch": "Launch Services /usr/bin/open -n own bundle after plugin Exit cleanup",
+  "directions": [
+    {
+      "destination": "restored",
+      "app_pid": 50671,
+      "backend_pids": [
+        50678,
+        50680
+      ],
+      "window_accessible": true,
+      "settings_responded": true,
+      "workspace_path_visible": true
+    },
+    {
+      "destination": "original",
+      "processes": "50766 /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-desktop\n50773 /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-backend --data-dir /Users/gavinpark/Library/Application Support/com.noye.desktopphase8qa20261012\n50776 /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-backend --data-dir /Users/gavinpark/Library/Application Support/com.noye.desktopphase8qa20261012\n",
+      "window_accessible": true,
+      "chat_screen_responded": true
+    }
+  ],
+  "selection": {
+    "version": 1,
+    "current": "/Users/gavinpark/Library/Application Support/com.noye.desktopphase8qa20261012",
+    "previous": "/Users/gavinpark/Library/Application Support/noye-restored-3265c255-c2f2-43d7-8714-0ba4eaecccd0"
+  },
+  "external_services": {
+    "11439": 200,
+    "6339": 200
+  },
+  "old_restored_processes_closed": true
+}

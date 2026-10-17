@@ -1,0 +1,13 @@
+{
+  "method": "Primary-agent manual comparison of exact saved v6 Wiki claims with invented originals; not independent review.",
+  "scenario": "wiki",
+  "prompt_version": "wiki-grounded-v6",
+  "seconds": 96.575,
+  "accepted": false,
+  "p1": [
+    "Alpha summary implies SQLite establishes its 37-litre capacity, which the original never relates to SQLite.",
+    "Beta key point replaces currently stored 92 litres with storage capacity of 92 litres."
+  ],
+  "protection_followup": "v7 shares the existing narrow volume-property guard with Wiki. No-model replay blocks the exact Beta key point; it does not reject the Alpha relationship or establish complete factual accuracy.",
+  "source_report": "wiki-b049b862-58fa-42ea-be8d-caa4d0390f4e.json"
+}

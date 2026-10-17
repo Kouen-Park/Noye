@@ -1,0 +1,264 @@
+{
+  "method": "Nineteen distinct existing live integration tests, evaluated through JUnit results rather than process exit codes. First run: 16 pass/3 fail/0 skip; refusal case 18 was vacuous before the fixture correction and is excluded from accepted results. Four affected cases rerun after adding actual embedding identity/metadata; refusal now requires retrieved context and a non-canned model response. Other fifteen passing cases are not repeated. These automated checks do not establish broader model semantic quality.",
+  "environment": {
+    "Qdrant": "cached official qdrant/qdrant:v1.19.1, dedicated loopback port 16339, 512 MiB container limit, telemetry disabled before tests",
+    "Ollama": "dedicated 11439, installed embeddinggemma and qwen3.5:4b, one loaded model at a time",
+    "isolation": "unique collection and SQLite/files root per test; no personal collections or cloud credentials"
+  },
+  "rows": [
+    {
+      "number": 1,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_finds_the_relevant_page",
+      "corrected_run": false,
+      "seconds": 2.82,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "64120491b725bf52726dd1bca876814f952afd6119e61120583af13f8e146a10"
+    },
+    {
+      "number": 2,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_matches_by_meaning_not_keywords",
+      "corrected_run": false,
+      "seconds": 1.01,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "83f370cc1bf2d36a789d3fc9083703413c201e71893e1b90dd042c64657fbe2e"
+    },
+    {
+      "number": 3,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_answers_a_korean_question_about_english_text",
+      "corrected_run": false,
+      "seconds": 0.981,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "8c31f13817cae5601ecbaac311084deecfe14d36b92df291beb06f638d643492"
+    },
+    {
+      "number": 4,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_ranks_the_unrelated_passage_last",
+      "corrected_run": false,
+      "seconds": 1.008,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "c38fa24d167119f2aacc12d9a0470f1fd6423471c06114b8487a680ba2b18eb5"
+    },
+    {
+      "number": 5,
+      "nodeid": "app/tests/test_search_api.py::test_search_finds_a_real_passage_end_to_end",
+      "corrected_run": false,
+      "seconds": 1.268,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "5691940b76e3cd4222bc032946136babf94a7a89bc778421d40dde95fb3afd21"
+    },
+    {
+      "number": 6,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_returns_the_configured_dimension",
+      "corrected_run": false,
+      "seconds": 0.475,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "f33662ddc6380fa11addb1abc90c8357d17240c37f03395630fff3108cf2b6a8"
+    },
+    {
+      "number": 7,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_embeds_korean_text",
+      "corrected_run": false,
+      "seconds": 0.457,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "89372a97d708aa12b5ec2a41c754da453f48e6348969ff7051fce4e376b588da"
+    },
+    {
+      "number": 8,
+      "nodeid": "app/tests/test_embeddings.py::test_related_texts_are_closer_than_unrelated_ones",
+      "corrected_run": false,
+      "seconds": 0.49,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "319d62a6c3b5fac09005d67067f357bec6510d60c2cbbfee050b17404f2d256c"
+    },
+    {
+      "number": 9,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_matches_korean_question_to_korean_passage",
+      "corrected_run": false,
+      "seconds": 0.509,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "8e582b2aff5cfcb0e1a8d428028cd71296e73b54657c566af4a7def22df9824c"
+    },
+    {
+      "number": 10,
+      "nodeid": "app/tests/test_documents_api.py::test_a_real_draft_is_markdown_and_editable",
+      "corrected_run": false,
+      "seconds": 22.1,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "b254287131ec6fd5872664bbe6d1548971ae40a394a1e5b3ce1c85a5f78c5bbe"
+    },
+    {
+      "number": 11,
+      "nodeid": "app/tests/test_indexing.py::test_real_server_round_trip",
+      "corrected_run": false,
+      "seconds": 2.173,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "57cc30ef9eb1991ffe6673c603bf37e39e009c1b8641c2fe20b3e6601d1857ff"
+    },
+    {
+      "number": 12,
+      "nodeid": "app/tests/test_indexing.py::test_real_server_delete_is_scoped_to_the_file",
+      "corrected_run": false,
+      "seconds": 2.001,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "728a095e2d45a4bee96785e58753ca9776f6f6d48250eae2256745f773667e3a"
+    },
+    {
+      "number": 13,
+      "nodeid": "app/tests/test_files_api.py::test_real_upload_ingests_and_becomes_ready",
+      "corrected_run": false,
+      "seconds": 4.095,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "1f0450f5e4ce44cc4146ddadbc7ee8d1f86230b9bce68bff78cd5de25332f33b"
+    },
+    {
+      "number": 14,
+      "nodeid": "app/tests/test_ingestion.py::test_real_ingestion_makes_a_document_searchable_and_citable",
+      "corrected_run": false,
+      "seconds": 19.544,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "d812b839ad1f28c1828b8628293856fce6959a4354e1c0708e7018ab4ec1e70b"
+    },
+    {
+      "number": 15,
+      "nodeid": "app/tests/test_citations.py::test_full_pipeline_cites_the_page_the_fact_was_written_on",
+      "corrected_run": true,
+      "seconds": 21.069,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "495216e97ec022fb3752ee8a8ae026e4629e136bb5ad3416f8bc70310feac113"
+    },
+    {
+      "number": 16,
+      "nodeid": "app/tests/test_chat_api.py::test_a_real_question_is_answered_and_cited_end_to_end",
+      "corrected_run": false,
+      "seconds": 14.641,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "03306056c57cb95daae537d2b84cfa33bc1acd2548f7cc7464fd3d3f7f489c92"
+    },
+    {
+      "number": 17,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_uses_the_retrieved_passage",
+      "corrected_run": true,
+      "seconds": 19.91,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "a87882968c1625174d91d0a6d3321a216ca1d8e4b7e7ffc775ba59738a7d858b"
+    },
+    {
+      "number": 18,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_declines_when_the_excerpts_do_not_contain_it",
+      "corrected_run": true,
+      "seconds": 32.813,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "4aaa6f79c6661906cf5acf438d6de589cfa983c30081a839c7eefff981828101"
+    },
+    {
+      "number": 19,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_replies_in_korean_to_a_korean_question",
+      "corrected_run": true,
+      "seconds": 26.387,
+      "junit": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "junit_sha256": "7f2267a5811349b13ff46bbd082fb06b0e20c7613a98576e3fb0280ca636359d"
+    }
+  ],
+  "distinct_tests": 19,
+  "accepted_passes": 19,
+  "skipped": 0,
+  "failures": 0,
+  "unloaded": {
+    "models": []
+  }
+}

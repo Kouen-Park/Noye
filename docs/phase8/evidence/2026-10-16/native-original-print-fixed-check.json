@@ -1,0 +1,32 @@
+{
+  "method": "Read-only checks for a native-exported synthetic source-link PDF.\n\nMuPDF Rect objects are serialized as strings. This inspector does not create or\nedit PDFs. Rendering is for visual review, which is recorded separately.\n",
+  "path": "/private/tmp/noye-phase8-20261016/exports/Phase 8 original command print fixed QA.pdf",
+  "bytes": 19570,
+  "sha256": "082911d23289eabe10b1b88c03479f0b37acd680cecd030df092b496c4d338a3",
+  "pages": 1,
+  "checks": {
+    "one_page": true,
+    "korean": true,
+    "measured_values": true,
+    "label": true,
+    "destination_text": true,
+    "destination_annotation": true,
+    "sent_status_hidden": true,
+    "pending_status_hidden": true,
+    "sentinel": true,
+    "markdown_unchanged": true
+  },
+  "links": [
+    {
+      "kind": 2,
+      "xref": 11,
+      "from": "Rect(51.02362060546875, 167.20440673828125, 411.8562927246094, 204.0413818359375)",
+      "uri": "http://127.0.0.1:58307/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+      "id": ""
+    }
+  ],
+  "text": "Original command print QA\n한국어 원문 링크 인쇄 검증.\nMeasured runtime: 12 milliseconds. Memory usage: 37 megabytes.\nOpen AT-201 original (http://127.0.0.1:58307/files/151d52e3-\n3c5a-44aa-963d-4afbde8ee0fb/source#page=1)\nFINAL-ORIGINAL-PRINT-20261016\n",
+  "visual_accepted": true,
+  "native_save_observation": "Initial Save remained disabled, confirmed by screenshot and later full AX. Re-selecting the same existing QA directory enabled it; filename was unchanged. This save does not accept first-panel default destination activation.",
+  "visual_observation": "One-page render has readable Korean, unchanged measured values and sentinel, wrapped monospaced literal URL, no clipped/overlapping content, and no command-status text."
+}

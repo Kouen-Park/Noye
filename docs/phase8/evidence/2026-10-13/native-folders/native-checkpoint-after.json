@@ -1,0 +1,160 @@
+{
+  "observation": "Native Folders > Alpha-renamed.md > Source details, packaged app after completed-stage UI fix",
+  "visible_stage_labels": [
+    "classification summary · complete",
+    "summarizing · finished · 1/1",
+    "filing · skipped · Automatic organization is disabled for this folder.",
+    "relations topics · complete"
+  ],
+  "job": {
+    "id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+    "kind": "wiki",
+    "subject_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+    "dedupe_key": "wiki:db415e88-8802-4cd6-8901-a3cc6ac11590",
+    "payload_json": "{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\"}",
+    "scope_json": "{\"mode\": \"chosen\", \"source_ids\": [], \"root_ids\": [\"737724ae-d1b2-4c09-a1c9-c9308b70aa89\"]}",
+    "manifest_json": "[{\"source_id\": \"db415e88-8802-4cd6-8901-a3cc6ac11590\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Alpha.md\", \"version\": \"9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Course/Beta.txt\", \"version\": \"f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16\", \"availability\": \"available\", \"processing_state\": \"READY\"}, {\"source_id\": \"715329a0-e737-4e6a-880a-d886b1206cda\", \"root_id\": \"737724ae-d1b2-4c09-a1c9-c9308b70aa89\", \"relative_path\": \"Orchard.txt\", \"version\": \"717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf\", \"availability\": \"available\", \"processing_state\": \"READY\"}]",
+    "state": "complete",
+    "stage": "complete",
+    "completed": 0,
+    "total": 0,
+    "attempt": 1,
+    "cancel_requested": 0,
+    "artifact_id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "error": null,
+    "created_at": "2026-10-13T02:39:08.372057+00:00",
+    "updated_at": "2026-10-13T02:40:00.046416+00:00"
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "starting",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:39:08.439953+00:00"
+    },
+    {
+      "sequence": 2,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "classification_summary",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:39:08.440655+00:00"
+    },
+    {
+      "sequence": 3,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:39:08.443524+00:00"
+    },
+    {
+      "sequence": 4,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "summarizing",
+      "state": "running",
+      "completed": 1,
+      "total": 1,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:39:59.984724+00:00"
+    },
+    {
+      "sequence": 5,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "checking",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:39:59.985387+00:00"
+    },
+    {
+      "sequence": 6,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "complete",
+      "state": "running",
+      "completed": 1,
+      "total": 1,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.040062+00:00"
+    },
+    {
+      "sequence": 7,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "classification_summary",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{\"wiki_id\": \"052487ea-e541-5cce-a3b8-267f6b2dff3e\"}",
+      "created_at": "2026-10-13T02:40:00.042053+00:00"
+    },
+    {
+      "sequence": 8,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "filing",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.042257+00:00"
+    },
+    {
+      "sequence": 9,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "filing",
+      "state": "skipped",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{\"reason\": \"Automatic organization is disabled for this folder.\"}",
+      "created_at": "2026-10-13T02:40:00.043448+00:00"
+    },
+    {
+      "sequence": 10,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "relations_topics",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.043658+00:00"
+    },
+    {
+      "sequence": 11,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "relations_topics",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.045606+00:00"
+    },
+    {
+      "sequence": 12,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "saving",
+      "state": "running",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.045776+00:00"
+    },
+    {
+      "sequence": 13,
+      "job_id": "c7e63d7f-9a10-454c-8aa9-68399b00626b",
+      "stage": "saving",
+      "state": "complete",
+      "completed": 0,
+      "total": 0,
+      "detail_json": "{}",
+      "created_at": "2026-10-13T02:40:00.045873+00:00"
+    }
+  ]
+}

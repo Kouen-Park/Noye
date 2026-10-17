@@ -24,7 +24,11 @@ uses every source in the selected scope. A named collection resolves to a unique
 registered root or relative folder and enumerates every frozen member; missing or
 ambiguous collections require a scope clarification. Relevant reports inspect all
 catalog descriptors in bounded batches, using scoped Wiki/relationship hints and
-lexical search over frozen extracted text. These hints select candidate IDs; they
+lexical search over frozen extracted text. Each scoped descriptor also includes a
+preview of at most 360 extracted characters: the first matching passage, or the
+first nonempty passage when no query terms match. A lack of shared words is not
+proof of irrelevance across languages. Previews use the frozen source version and
+remain untrusted discovery context. These hints select candidate IDs; they
 do not establish consumption coverage or document facts. New sources discovered
 later cannot join the request. Empty scope does not broaden to all.
 
@@ -51,14 +55,29 @@ redirect following or automatic fallback. Responses must satisfy strict schemas.
 Owned document clients ignore proxy environment variables, keeping preflight and
 source context on direct loopback transport. Model-written inline citation labels
 are rejected in headings and claims; only verified application labels are attached.
-Unknown source, evidence, section or synthesis IDs, non-verbatim quotes, invented
+Unknown source, evidence, section or synthesis IDs, model-supplied quote fields, invented
 numerals, unfinished model output and failed original-processing entailment checks
 block saving. If cross-source wording fails the final entailment pass, actual
 verbatim original passages replace that wording and the artifact is marked partial.
 Earlier model-approved paraphrases are not used as fallback proof. Those original
 quotes retain their source language; translated comparison remains unresolved.
-Prompt `source-document-v5` prefers one to four topical sections for small source
-sets and avoids assuming textbook topics. Retained original paragraphs are
+Prompt `source-document-v21` prefers one to four topical sections for small source
+sets and avoids assuming textbook topics. The constrained schema is included in
+the actual model prompt as well as Ollama's decoder format, with both using the
+same allowed identifiers and cardinality. The byte budget measures that actual
+system/prompt input. Generation also names the concrete requested language in the
+system instruction and descriptions of generated prose fields. Literal evidence
+references and audit fragments receive no language transformation. This addresses
+observed source-language copying; publication still refuses wrong-language prose,
+and the prompt does not establish successful translation quality.
+Extraction selects supplied evidence IDs before drafting one
+assertion per claim; synthesis selects supporting claim IDs before drafting prose.
+The application attaches the complete bounded original passages and their character
+spans from SourceSession metadata. The model cannot replace or translate that
+quoted text. Citations therefore cover a bounded original passage rather than a
+model-selected subquote. This ordering
+guides generation; it is not evidence that the resulting prose is faithful.
+Retained original paragraphs are
 deduplicated within each section, with only their matching evidence labels.
 Each original-processing call sees only one source batch; it must not draw
 collection-wide conclusions about other sources being absent. Unverified model
@@ -70,6 +89,53 @@ The entailment pass is a model check, not independent proof; source review remai
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
 English/Korean counts such as “twice” or “두 번” rendered as 2. Other unstated
 numerals remain rejected; arithmetic-derived quantities are not automatically proven.
+
+The Phase 8 quantity check additionally rejects explicit capacity/stored-amount
+swaps for numeric litre quantities, including Korean wording. It is deliberately
+narrow: it does not establish subject attribution or cover every unit and phrasing.
+Property matching stops at the preceding quantity so a capacity label cannot leak
+into an independently phrased current amount later in the sentence. A later
+explicit property swap still fails; unknown phrasing still needs semantic review.
+Generated missing-evidence assertions are also refused unless the exact statement
+occurs in an original; a bounded model batch cannot establish collection-wide
+absence. Actual read failures belong to application coverage. These checks apply
+to extraction and synthesis even if the model would approve the claim, and fail
+without a new document. This conservative policy can reject faithful paraphrases
+of an original absence statement. Original quotations and saved user edits remain
+intact. The support verifier returns an evidence audit per input claim: its input
+index, selected original indexes from that claim's allowed list, a bounded evidence
+comparison before its boolean verdict. With protocol v23 the application copies the
+entire rejected claim and selected originals into metadata, rather than asking the model
+to reproduce unsupported substrings. The analysis is diagnostic model output, not original
+evidence or independent proof. Runtime checks reject missing/
+duplicate/unknown claim indexes, passage indexes outside that claim's own originals,
+empty/non-string analysis and supported verdicts without references. Unknown output
+fields (including model-written rejected fragments) are refused. Audit inputs use one deduplicated
+original-text table:
+an index identifies the same bytes throughout a batch, and each claim lists its
+own allowed indexes. The verifier must consider those originals together when
+different assertions rely on different passages. Claims with different original
+sets are verified in separate calls: an allowed-index list alone cannot prevent
+the model from reasoning from another claim's visible evidence. Adjacent claims
+with identical evidence sets can share a bounded call, preserving input/verdict
+order. Each call also reserves output space for analysis: at most one claim per
+1,024 configured output tokens, with a minimum of one. This can increase inference
+calls and latency. Repeated text is sent once;
+distinct source identities and final citations are preserved separately in the
+application's evidence metadata. These instructions do not prove model reasoning.
+A supported claim requires an
+original reference and a nonempty analysis.
+Response order cannot silently change claim identity. The model still decides
+semantic entailment; valid quotes and a consistent audit do not prove that decision
+correct. Semantically rejected audits remain in request metadata. Heading checks retain their
+separate boolean schema, topical-label instructions and supplied group context.
+
+Actual v11–v14 model attempts still produced incorrect or incomplete comparisons.
+The v14 English comparison and Korean collection, and a later v15 comparison,
+were blocked after changing a capacity into an amount stored. A guard rejection is
+data protection, not successful
+document generation or a general faithfulness guarantee. Phase 8 quality acceptance
+therefore remains open.
 
 ### Output language and document structure
 

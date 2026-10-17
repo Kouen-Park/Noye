@@ -1,0 +1,6 @@
+{
+  "native_search_query": "AT-201 experiment runtime memory",
+  "native_observation": "AT-201 first; 5 passages \u00b7 6 files searched. Source button uses active backend port 60027 and #page=1. Agent clicked it; no error appeared before ordinary quit.",
+  "destination": "Not confirmed. Chrome window lookup did not identify the synthetic original and further control was interrupted by changed app state. No user login or unrelated page was operated. Known-URL browser selection returned IAB metadata, which does not certify an OS browser destination.",
+  "acceptance": false
+}

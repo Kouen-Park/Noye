@@ -1,0 +1,86 @@
+{
+  "method": "Component replay of retained v20 rejected candidates through v21 verify. Known regression diagnostics, not fresh holdouts, new generation or whole-document quality. Primary-agent labels from original passages: the storage-using relationship is unsupported; remaining candidates are faithful. Labels stay outside inference. Original artifacts are unchanged.",
+  "sources": [
+    {
+      "file": "comparison-13075f70-515e-4474-98af-a4a17a8d6a62.json",
+      "sha256": "7a9035ae8c2ebaf596dca3f29b3f3a93825efa9ba08e8883a2d95a099c71be13"
+    },
+    {
+      "file": "collection-e69ebb80-0db3-46e2-977e-19eaf56687a4.json",
+      "sha256": "72fbd3bec7629bcb2789f7ba7cc375b99cf4243582ba20f9992bbf1ecb3e29d6"
+    },
+    {
+      "file": "report-c9549e2c-ac6a-4165-9994-f3ba5ce49659.json",
+      "sha256": "fc8b2abb7b74a7378d47115f221bbe428527a55965afb5f2c5c3f300ac51d54f"
+    }
+  ],
+  "batches": [
+    [
+      "comparison:synthesis:sec-01:0",
+      [
+        [
+          false,
+          "Project Alpha has a storage capacity of 37 liters and uses SQLite, whereas Project Beta stores 92 litres using append-only log files.",
+          [
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+            "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day.",
+            "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+          ]
+        ]
+      ]
+    ],
+    [
+      "comparison:synthesis:sec-02:0",
+      [
+        [
+          true,
+          "Project Alpha stops writing on Sundays, whereas Project Beta permits writes on Sundays.",
+          [
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+            "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+          ]
+        ]
+      ]
+    ],
+    [
+      "collection:synthesis:sec-02:0",
+      [
+        [
+          true,
+          "저수지 Alpha 는 SQLite 를 사용하며 일요일에 쓰기를 중지하고, 백업은 하루에 한 번 실행됩니다.",
+          [
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+          ]
+        ],
+        [
+          true,
+          "Project Beta 는 92 리터를 저장하며 append-only 로그 파일을 사용하고, 일요일에도 쓰기를 허용합니다. 또한 백업은 하루에 두 번 실행됩니다.",
+          [
+            "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+          ]
+        ]
+      ]
+    ],
+    [
+      "report:synthesis:sec-02:0",
+      [
+        [
+          true,
+          "The Alpha reservoir uses SQLite and stops writing on Sundays. Backups run once per day.",
+          [
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+            "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다."
+          ]
+        ],
+        [
+          true,
+          "Project Beta permits writes on Sundays.",
+          [
+            "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day."
+          ]
+        ]
+      ]
+    ]
+  ]
+}

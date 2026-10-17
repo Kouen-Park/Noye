@@ -1,0 +1,298 @@
+npm notice run noye-frontend@0.1.0 test
+npm notice run vitest run --run src/components/original-link.test.tsx
+
+ RUN  v5.0.1 /Users/gavinpark/Projects/Noye/frontend
+
+Not implemented: navigation to another Document
+ ❯ src/components/original-link.test.tsx (8 tests | 6 failed) 1108ms
+   ❯ original opening (8)
+     × does not grant native opening to https://example.com/files/f1/source 7ms
+     × does not grant native opening to http://127.0.0.1:34568/files/f1/source 3ms
+     × does not grant native opening to /services/start 2ms
+     × does not grant native opening to /files/f1/source?other=1 3ms
+     × keeps normal web links and explicit cancellation 2ms
+     × reports failure and permits a successful retry 1005ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > does not grant native opening to https://example.com/files/f1/source
+TestingLibraryElementError: Unable to find an accessible element with the role "button"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "Open":
+  <a
+    href="https://example.com/files/f1/source"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <a
+      href="https://example.com/files/f1/source"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/original-link.test.tsx:24:28
+     22|     mocks.isTauri.mockReturnValue(true);
+     23|     render(<OriginalLink href={href}>Open</OriginalLink>);
+     24|     fireEvent.click(screen.getByRole("button"));
+       |                            ^
+     25|     expect(mocks.invoke).not.toHaveBeenCalled();
+     26|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > does not grant native opening to http://127.0.0.1:34568/files/f1/source
+TestingLibraryElementError: Unable to find an accessible element with the role "button"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "Open":
+  <a
+    href="http://127.0.0.1:34568/files/f1/source"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <a
+      href="http://127.0.0.1:34568/files/f1/source"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/original-link.test.tsx:24:28
+     22|     mocks.isTauri.mockReturnValue(true);
+     23|     render(<OriginalLink href={href}>Open</OriginalLink>);
+     24|     fireEvent.click(screen.getByRole("button"));
+       |                            ^
+     25|     expect(mocks.invoke).not.toHaveBeenCalled();
+     26|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > does not grant native opening to /services/start
+TestingLibraryElementError: Unable to find an accessible element with the role "button"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "Open":
+  <a
+    href="/services/start"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <a
+      href="/services/start"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/original-link.test.tsx:24:28
+     22|     mocks.isTauri.mockReturnValue(true);
+     23|     render(<OriginalLink href={href}>Open</OriginalLink>);
+     24|     fireEvent.click(screen.getByRole("button"));
+       |                            ^
+     25|     expect(mocks.invoke).not.toHaveBeenCalled();
+     26|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > does not grant native opening to /files/f1/source?other=1
+TestingLibraryElementError: Unable to find an accessible element with the role "button"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "Open":
+  <a
+    href="/files/f1/source?other=1"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <a
+      href="/files/f1/source?other=1"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/original-link.test.tsx:24:28
+     22|     mocks.isTauri.mockReturnValue(true);
+     23|     render(<OriginalLink href={href}>Open</OriginalLink>);
+     24|     fireEvent.click(screen.getByRole("button"));
+       |                            ^
+     25|     expect(mocks.invoke).not.toHaveBeenCalled();
+     26|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > keeps normal web links and explicit cancellation
+TestingLibraryElementError: Unable to find an accessible element with the role "button"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "Open":
+  <a
+    href="/files/f1/source"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <a
+      href="/files/f1/source"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/original-link.test.tsx:31:28
+     29|     const { rerender } = render(<OriginalLink href="/files/f1/source">…
+     30|     expect(screen.getByRole("link")).toHaveAttribute("target", "_blank…
+     31|     fireEvent.click(screen.getByRole("button"));
+       |                            ^
+     32|     mocks.isTauri.mockReturnValue(true);
+     33|     rerender(<OriginalLink href="/files/f1/source" onClick={event => e…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/components/original-link.test.tsx > original opening > reports failure and permits a successful retry
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <button
+      aria-busy="false"
+      aria-describedby="_r_6_"
+      class=" noye-original-command"
+      type="button"
+    >
+      Open
+    </button>
+    <span
+      class="noye-original-message sr-only"
+      id="_r_6_"
+      role="status"
+    />
+    <a
+      class="noye-original-print-link"
+      href="/files/f1/source"
+      tabindex="-1"
+    >
+      Open
+    </a>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <button
+      aria-busy="false"
+      aria-describedby="_r_6_"
+      class=" noye-original-command"
+      type="button"
+    >
+      Open
+    </button>
+    <span
+      class="noye-original-message sr-only"
+      id="_r_6_"
+      role="status"
+    />
+    <a
+      class="noye-original-print-link"
+      href="/files/f1/source"
+      tabindex="-1"
+    >
+      Open
+    </a>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/original-link.test.tsx:42:25
+     40|     render(<OriginalLink href="/files/f1/source">Open</OriginalLink>);
+     41|     fireEvent.click(screen.getByRole("link"));
+     42|     expect(await screen.findByRole("alert")).toHaveTextContent("Could …
+       |                         ^
+     43|     fireEvent.click(screen.getByRole("link"));
+     44|     await waitFor(() => expect(screen.queryByRole("alert")).not.toBeIn…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 2 passed (8)
+   Start at  14:20:59
+   Duration  1.99s (tests 58%, environment 31%, setup 8%, transform 2%)

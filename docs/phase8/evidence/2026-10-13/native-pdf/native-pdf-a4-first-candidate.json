@@ -1,0 +1,6 @@
+{
+  "observation": "Copying print defaults and forcing A4 did not fix the synchronous runOperation candidate. The test-only watchdog stopped only the verified QA PID once this one-page staging output exceeded 10 MiB. No final PDF was published.",
+  "partial_pdf_bytes": 10932224,
+  "partial_pdf_sha256": "e1d6c27c47252fa870ede44a1f49bdf69da3be3d6d893366e80df37de9706758",
+  "next_change": "Use WebKit/AppKit asynchronous modal completion instead of synchronous runOperation, preserving the main event loop for page preparation."
+}

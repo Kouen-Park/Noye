@@ -1,0 +1,19 @@
+{
+  "method": "Second invented QA fixture uses the active sidecar port; first fixture unchanged. Native PDF results compare the same content with only the temporary port changed.",
+  "base_url": "http://127.0.0.1:58307",
+  "source_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+  "document": {
+    "id": "e099fc18-9a3b-4273-85eb-76bb18b4c1c9",
+    "title": "Phase 8 original command print fixed QA",
+    "content": "# Original command print QA\n\n한국어 원문 링크 인쇄 검증.\n\nMeasured runtime: 12 milliseconds. Memory usage: 37 megabytes.\n\n[Open AT-201 original](http://127.0.0.1:58307/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1)\n\nFINAL-ORIGINAL-PRINT-20261016\n",
+    "source_conversation_id": null,
+    "source_message_id": null,
+    "source_instruction": null,
+    "citations": [],
+    "created_at": "2026-10-16T03:38:25.961695+00:00",
+    "updated_at": "2026-10-16T03:38:25.961701+00:00",
+    "provenance_markdown": ""
+  },
+  "content_sha256": "945ee7f7953341e20223f83db03e3549da2d71e8949b83364acc9dbd548b7d62",
+  "original_url": "http://127.0.0.1:58307/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1"
+}

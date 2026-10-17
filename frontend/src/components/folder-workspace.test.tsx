@@ -85,6 +85,7 @@ it("requires an explicitly chosen organization area and preserves disconnect sem
   await waitFor(() => expect(folderRequest).toHaveBeenCalledWith("/root-1", "PATCH", { disconnect: true }));
   await screen.findByRole("button", { name: "Reconnect folder" });
   expect(screen.getByText(/Processing inactive/)).toBeInTheDocument();
+  expect(screen.queryByText("0", { exact: true })).not.toBeInTheDocument();
 });
 
 it("shows interrupted progress and explicitly retries the existing ingestion job", async () => {

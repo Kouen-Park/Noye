@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.920" timestamp="2026-10-16T22:27:42.228732+13:00" hostname="Gavins-MacBook-Air.local"><testcase classname="app.tests.test_citations" name="test_full_pipeline_cites_the_page_the_fact_was_written_on" time="2.175"><failure message="AssertionError: assert False&#10; +  where False = Answer(text='I could not find anything about that in your indexed documents.', sources=[]).is_grounded">tmp_path = PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-107/test_full_pipeline_cites_the_p0')
+
+    @requires_services
+    def test_full_pipeline_cites_the_page_the_fact_was_written_on(tmp_path) -&gt; None:
+        """Phase 1's exit condition, end to end, from a PDF on disk."""
+        import pymupdf
+        from qdrant_client import QdrantClient
+
+        from app.services.chunking import chunk_pages
+        from app.services.embeddings import embed_chunks
+        from app.services.extraction import extract_pdf
+        from app.services.generation import answer_question
+        from app.services.indexing import delete_file_chunks, index_chunks
+
+        # A three-page PDF where the answer lives only on page 2.
+        pdf_path = tmp_path / "graphs.pdf"
+        document = pymupdf.open()
+        for text in (
+            "Chapter one introduces graphs, vertices and edges in general terms.",
+            "Dijkstra's algorithm always selects the unvisited vertex whose distance "
+            "estimate is smallest, drawing it from a priority queue.",
+            "Chapter three covers unrelated material about sorting networks.",
+        ):
+            page = document.new_page()
+            page.insert_textbox(pymupdf.Rect(60, 60, 540, 300), text, fontsize=11)
+        document.save(pdf_path)
+        document.close()
+
+        client = QdrantClient(url=get_settings().qdrant_url)
+        try:
+            pages = extract_pdf(pdf_path)
+            chunks = chunk_pages(pages, file_id=PIPELINE_FILE)
+            index_chunks(chunks, embed_chunks(chunks), client=client)
+
+            answer = answer_question(
+                "How does Dijkstra choose the next vertex?",
+                file_ids=[PIPELINE_FILE],
+                qdrant_client=client,
+            )
+            citations = build_citations(
+                answer.sources, file_names={PIPELINE_FILE: "graphs.pdf"}
+            )
+
+&gt;           assert answer.is_grounded
+E           AssertionError: assert False
+E            +  where False = Answer(text='I could not find anything about that in your indexed documents.', sources=[]).is_grounded
+
+app/tests/test_citations.py:254: AssertionError</failure></testcase></testsuite></testsuites>

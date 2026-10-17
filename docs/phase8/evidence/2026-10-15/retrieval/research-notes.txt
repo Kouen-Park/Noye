@@ -1,0 +1,5 @@
+RS-044 compared two fictional coating recipes. Recipe Cedar dried in 18 minutes; recipe Birch dried in 31 minutes. The notebook did not measure durability or safety.
+
+RS-044는 가상 코팅 레시피 두 개를 비교했다. Cedar는 18분, Birch는 31분 만에 건조했다. 내구성이나 안전성은 측정하지 않았다.
+
+Research notes procedure: record the run identifier RS-044 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

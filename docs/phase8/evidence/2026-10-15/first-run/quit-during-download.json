@@ -1,0 +1,10 @@
+{
+  "owned_sidecar_closed_after_quit": true,
+  "external_model_server_available": true,
+  "installed_models": [
+    "qwen3.5:0.8b",
+    "noye-phase8-alias:qa"
+  ],
+  "models_loaded": [],
+  "cancelled_model_not_installed": true
+}

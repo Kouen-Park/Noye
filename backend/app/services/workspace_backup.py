@@ -230,9 +230,18 @@ def restore_backup(archive: Path, destination: Path) -> dict:
                     raise ValueError("The backup manifest is too large.")
                 manifest = json.loads(packed.read(meta))
                 if (
-                    manifest["format"] != "noye-workspace"
-                    or manifest["version"] != FORMAT_VERSION
-                    or not isinstance(manifest["files"], dict)
+                    not isinstance(manifest, dict)
+                    or manifest.get("format") != "noye-workspace"
+                    or manifest.get("version") != FORMAT_VERSION
+                    or not isinstance(manifest.get("files"), dict)
+                    or not isinstance(manifest.get("schema_version"), int)
+                    or isinstance(manifest.get("schema_version"), bool)
+                    or manifest["schema_version"] < 0
+                    or not isinstance(manifest.get("missing_sources"), list)
+                    or any(
+                        not isinstance(identifier, str)
+                        for identifier in manifest["missing_sources"]
+                    )
                     or set(names) != set(manifest["files"]) | {"manifest.json"}
                     or "app.db" not in manifest["files"]
                 ):

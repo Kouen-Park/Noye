@@ -6,6 +6,9 @@ import type { AiSettings } from "@/lib/ai-settings";
 import { downloadBackup, readWorkspace, restoreWorkspace } from "@/lib/workspace";
 import { WorkspaceSettings } from "./workspace-settings";
 import { openWorkspace, readWorkspaceLocations } from "@/lib/native-workspace";
+import { isDesktopRuntime } from "@/lib/runtime";
+
+vi.mock("@/lib/runtime", () => ({ isDesktopRuntime: vi.fn() }));
 
 vi.mock("@/lib/native-workspace", () => ({
   openWorkspace: vi.fn(), readWorkspaceLocations: vi.fn(),
@@ -18,6 +21,8 @@ const settings = { control_token: "synthetic" } as AiSettings;
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.mocked(isDesktopRuntime).mockReturnValue(false);
+  vi.mocked(downloadBackup).mockResolvedValue("download");
   vi.mocked(readWorkspace).mockResolvedValue({
     directory: "/synthetic/active", backup_format: 1, restore_limit_bytes: 20 * 1024**3,
   });
@@ -60,6 +65,18 @@ it("reports busy backups without claiming success and permits retry", async () =
   await screen.findByRole("alert");
   expect(screen.queryByText(/Backup download prepared/)).not.toBeInTheDocument();
   await waitFor(() => expect(screen.getByRole("button", { name: "Download workspace backup" })).toBeEnabled());
+});
+
+it("distinguishes a native saved backup from a cancelled save dialog", async () => {
+  vi.mocked(isDesktopRuntime).mockReturnValue(true);
+  vi.mocked(downloadBackup).mockResolvedValueOnce("cancelled").mockResolvedValueOnce("saved");
+  render(<WorkspaceSettings settings={settings} />);
+  await screen.findByText("/synthetic/active");
+  await userEvent.click(screen.getByRole("button", { name: "Save workspace backup" }));
+  await screen.findByText("Backup export cancelled. Your workspace is unchanged.");
+  expect(screen.queryByText(/Backup saved/)).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Save workspace backup" }));
+  await screen.findByText("Backup saved. Keep the archive in a safe place.");
 });
 
 it("requires saved-edit confirmation before switching a verified restore", async () => {

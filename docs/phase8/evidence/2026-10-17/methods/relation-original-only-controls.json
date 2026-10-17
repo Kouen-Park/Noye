@@ -1,0 +1,8 @@
+{
+  "method": "Three fresh controls fixed before removing summary interpretations from relation input; names/allowed kinds remain evaluator-only.",
+  "cases": [
+    {"id":"fresh-condition-in-original", "origin":"Willow permits exports on Mondays. During an inspection, exports are prohibited instead.", "target":"During an inspection, Willow prohibits Monday exports.", "origin_summary":"Willow permits Monday exports.", "target_summary":"Willow prohibits Monday exports during an inspection.", "allowed":["shared_subject","supporting_evidence"], "required":true},
+    {"id":"fresh-same-condition-opposite", "origin":"At night, Fir permits launches.", "target":"At night, Fir prohibits launches.", "origin_summary":"Fir permits night launches.", "target_summary":"Fir prohibits night launches.", "allowed":["contradiction"], "required":true},
+    {"id":"fresh-separate-subjects", "origin":"Teal permits imports on Sundays.", "target":"Wren blocks imports on Sundays.", "origin_summary":"Teal permits Sunday imports.", "target_summary":"Wren blocks Sunday imports.", "allowed":["shared_subject","alternative"]}
+  ]
+}

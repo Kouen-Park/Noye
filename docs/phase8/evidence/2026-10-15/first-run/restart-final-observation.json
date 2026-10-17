@@ -1,0 +1,12 @@
+{
+  "observed_at_utc": "2026-10-15T11:19:52.954581+00:00",
+  "pull_request_counts": {
+    "first-run-ollama-restored.log": 3,
+    "first-run-ollama-recheck.log": 0
+  },
+  "native_observation": "Settings loaded; installed saved alias selected; no active/cancel download controls; Download model disabled until the storage-volume confirmation. Saved conversation visible.",
+  "service_note": "Original server was no longer running when the session resumed. A new owned server on the same isolated store was started; its pull count remained zero. Previous server log remained at the pre-restart three pulls. No replay was observed; service downtime is part of this observation.",
+  "model_job_direct_api": "403 without native control authentication; no bypass attempted. Native Settings observation and server request logs used instead.",
+  "selected_model": "noye-phase8-alias:qa",
+  "documents_and_conversation_exactly_preserved": true
+}

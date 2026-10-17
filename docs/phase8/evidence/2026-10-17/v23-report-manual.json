@@ -1,0 +1,28 @@
+{
+  "method": "Primary-agent manual review against both invented originals; not independent review.",
+  "file": "report-5aaabb35-82f7-46a5-8c6e-decd494f4eb1.json",
+  "body_sha256": "9aee6de2f5c1c9458c4bdf8696ce38e5157e07a8fa4d74b26118a47472575703",
+  "generation_seconds": 701.827,
+  "job_complete": true,
+  "accepted_complete_presentation": false,
+  "inspected_body_facts_faithful": true,
+  "reported_partial": true,
+  "discovery": {
+    "inventory": 3,
+    "selected": 2,
+    "processed": 2,
+    "both_relevant_languages": true,
+    "unrelated_orchard_excluded": true
+  },
+  "findings": [
+    {
+      "priority": 2,
+      "text": "Alpha technology, Sunday and backup facts repeat across paragraphs and sections."
+    },
+    {
+      "priority": 2,
+      "text": "The heading Backup Schedules and Contingency Protocols adds a contingency-protocol topic not established in these originals. Another heading became neutral Source notes."
+    }
+  ],
+  "meaning": "Faithful inspected body facts and successful discovery do not certify all generated headings or complete presentation."
+}

@@ -1,0 +1,5 @@
+{"id": "comparison:synthesis:sec-01:0", "expected": [false], "actual": [true], "valid_semantic_decision": true, "matches_rubric": [false], "seconds": 50.664}
+{"id": "comparison:synthesis:sec-02:0", "expected": [true], "actual": [true], "valid_semantic_decision": true, "matches_rubric": [true], "seconds": 16.121}
+{"id": "collection:synthesis:sec-02:0", "expected": [true, true], "actual": [true, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 18.532}
+{"id": "report:synthesis:sec-02:0", "expected": [true, true], "actual": [true, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 41.716}
+{"batches": 4, "matches": 5, "claims": 6, "seconds": 129.23}

@@ -1,5 +1,6 @@
 """Real SQLite/WAL snapshots preserve writing and never overwrite a workspace."""
 
+import json
 import stat
 import zipfile
 from pathlib import Path
@@ -18,11 +19,104 @@ from app.db.migrations import LATEST_VERSION
 from app.main import app
 from app.models.conversations import Role
 from app.models.files import FileStatus, FileType
-from app.services import ingestion, workspace_backup
+from app.services import ingestion, native_exports, workspace_backup
 from app.services.evidence import capture_citations
 from app.services.retrieval import SearchResult
 from app.services.workspace_access import WorkspaceBusy, request_access, snapshot_access
 from app.services.workspace_backup import create_backup, restore_backup
+
+
+def configure_native_export(monkeypatch, saved_workspace):
+    root, *_ = saved_workspace
+    monkeypatch.setattr(native_exports, "data_directory", lambda: root)
+    monkeypatch.setattr(native_exports, "database_path", lambda: root / "app.db")
+
+
+def test_native_backup_saves_a_restorable_archive_without_webview_bytes(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "native.noye.zip"
+    assert native_exports.dispatch("backup", {"destination": str(destination)}) == "saved"
+    restored = tmp_path / "native-restored"
+    assert restore_backup(destination, restored)["rebuild_required"]
+    assert (restored / "sources/source.md").read_text() == "한국어 원문 742 units"
+    with connect(restored / "app.db") as db:
+        document = saved_workspace[-1]
+        assert documents_db.get_document(db, document.id).content == "# User edited writing\n한국어"
+    assert not list(tmp_path.glob(".noye-export-*"))
+
+
+@pytest.mark.parametrize("kind", ["file", "directory", "broken_symlink"])
+def test_native_backup_preserves_existing_destinations(
+    saved_workspace, tmp_path, monkeypatch, kind
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "existing.noye.zip"
+    if kind == "file":
+        destination.write_bytes(b"existing authored bytes")
+    elif kind == "directory":
+        destination.mkdir()
+    else:
+        destination.symlink_to(tmp_path / "missing")
+    with pytest.raises(ValueError, match="Existing files are preserved"):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert destination.is_symlink() if kind == "broken_symlink" else destination.exists()
+    if kind == "file":
+        assert destination.read_bytes() == b"existing authored bytes"
+
+
+def test_native_backup_rejects_workspace_and_relative_destinations(saved_workspace, monkeypatch):
+    configure_native_export(monkeypatch, saved_workspace)
+    for destination in ("relative.zip", str(saved_workspace[0] / "inside.zip")):
+        with pytest.raises(ValueError):
+            native_exports.dispatch("backup", {"destination": destination})
+    assert not (saved_workspace[0] / "inside.zip").exists()
+
+
+def test_native_backup_never_publishes_a_partial_archive(saved_workspace, tmp_path, monkeypatch):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "partial.zip"
+
+    def interrupted(root, database, archive):
+        archive.write_bytes(b"partial archive")
+        raise OSError("synthetic disk failure")
+
+    monkeypatch.setattr(native_exports, "create_backup", interrupted)
+    with pytest.raises(OSError, match="synthetic disk failure"):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert not destination.exists()
+    assert not list(tmp_path.glob(".noye-export-*"))
+    assert (saved_workspace[0] / "sources/source.md").read_text() == "한국어 원문 742 units"
+
+
+def test_native_backup_preserves_a_destination_created_during_staging(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "raced.zip"
+    original_rename = native_exports.rename_exclusive
+
+    def racing_rename(*args):
+        destination.write_bytes(b"another saved file")
+        original_rename(*args)
+
+    monkeypatch.setattr(native_exports, "rename_exclusive", racing_rename)
+    with pytest.raises(FileExistsError):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert destination.read_bytes() == b"another saved file"
+    assert not list(tmp_path.glob(".noye-export-*"))
+
+
+def test_native_backup_reports_busy_workspace_without_creating_an_export(
+    saved_workspace, tmp_path, monkeypatch
+):
+    configure_native_export(monkeypatch, saved_workspace)
+    destination = tmp_path / "busy.zip"
+    with request_access(), pytest.raises(WorkspaceBusy):
+        native_exports.dispatch("backup", {"destination": str(destination)})
+    assert not destination.exists()
+    assert not list(tmp_path.glob(".noye-export-*"))
 
 
 @pytest.fixture
@@ -190,6 +284,60 @@ def test_checksums_and_manifest_completeness_are_required(saved_workspace, tmp_p
     assert not (tmp_path / "partial").exists()
 
 
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("schema_version", ...),
+        ("missing_sources", ...),
+        ("schema_version", None),
+        ("schema_version", True),
+        ("schema_version", "10"),
+        ("missing_sources", None),
+        ("missing_sources", "not a list"),
+        ("missing_sources", [None]),
+    ],
+)
+def test_invalid_manifest_metadata_is_a_recoverable_restore_rejection(
+    saved_workspace, tmp_path, monkeypatch, field, value
+):
+    root, original_db, record, message, document = saved_workspace
+    archive = archive_for(saved_workspace, tmp_path)
+    with zipfile.ZipFile(archive) as packed:
+        entries = {name: packed.read(name) for name in packed.namelist()}
+    manifest = json.loads(entries["manifest.json"])
+    if value is Ellipsis:
+        manifest.pop(field)
+    else:
+        manifest[field] = value
+    entries["manifest.json"] = json.dumps(manifest).encode()
+    damaged = tmp_path / "damaged.zip"
+    with zipfile.ZipFile(damaged, "w") as packed:
+        for name, body in entries.items():
+            packed.writestr(name, body)
+    destination = tmp_path / "rejected"
+    with pytest.raises(ValueError, match="manifest"):
+        restore_backup(damaged, destination)
+    assert not destination.exists()
+
+    settings = Settings(_env_file=None, noye_data_dir=root)
+    monkeypatch.setattr(models, "get_settings", lambda: settings)
+    monkeypatch.setattr(workspace, "data_directory", lambda: root)
+    monkeypatch.setenv("NOYE_CONTROL_TOKEN", "synthetic-control")
+    with damaged.open("rb") as source:
+        response = TestClient(app).post(
+            "/workspace/restore",
+            headers={"X-Noye-Control": "synthetic-control"},
+            files={"file": ("damaged.zip", source)},
+        )
+    assert response.status_code == 400
+    assert "manifest" in response.json()["detail"]
+    assert not list(tmp_path.glob("noye-restored-*"))
+    assert not list(tmp_path.glob(".noye-restore-*"))
+    assert files_db.get_file(original_db, record.id).path == record.path
+    assert documents_db.get_document(original_db, document.id).content.startswith("# User")
+    assert conversations_db.get_message(original_db, message.id).content == "saved answer"
+
+
 def test_symbolic_links_are_not_backed_up_or_restored(saved_workspace, tmp_path):
     root, *_ = saved_workspace
     (root / "sources" / "link").symlink_to(tmp_path / "outside")
@@ -289,6 +437,37 @@ def test_restore_publishes_its_receipt_only_after_the_complete_payload(
     restore_backup(archive, destination)
     assert publications[-1] == "noye-workspace.json"
     assert (destination / "app.db").is_file()
+
+
+def test_interrupted_restore_publication_removes_only_the_new_workspace_and_can_retry(
+    saved_workspace, tmp_path, monkeypatch
+):
+    root, original_db, record, message, document = saved_workspace
+    archive = archive_for(saved_workspace, tmp_path)
+    destination = tmp_path / "restored-after-interruption"
+    real_rename = Path.rename
+
+    def interrupted(path, target):
+        if Path(target) == destination / "noye-workspace.json":
+            assert (destination / "app.db").is_file()
+            assert (destination / "sources" / "source.md").is_file()
+            raise OSError("Synthetic interruption before publishing the restore receipt.")
+        return real_rename(path, target)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(Path, "rename", interrupted)
+        with pytest.raises(OSError, match="Synthetic interruption"):
+            restore_backup(archive, destination)
+    assert not destination.exists()
+    assert not list(tmp_path.glob(".noye-restore-*"))
+    assert (root / "sources" / "source.md").read_text() == "한국어 원문 742 units"
+    assert files_db.get_file(original_db, record.id).path == record.path
+    assert documents_db.get_document(original_db, document.id).content.startswith("# User")
+    assert conversations_db.get_message(original_db, message.id).content == "saved answer"
+    restore_backup(archive, destination)
+    assert (destination / "noye-workspace.json").is_file()
+    with connect(destination / "app.db") as restored:
+        assert documents_db.get_document(restored, document.id).content.startswith("# User")
 
 
 def test_snapshot_blocks_requests_and_processing_and_releases_after_failure():

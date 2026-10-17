@@ -1,0 +1,46 @@
+{
+  "native_saved_and_preview": true,
+  "input_method": "same CUA setValue as Wiki baseline",
+  "document": {
+    "id": "203a96a8-83f9-4ae3-8b69-0026373a3a7e",
+    "title": "Phase8 generated AT-201",
+    "content": "# AT-201 Experiment Results\n\n*   **Measured Runtime**: 12 milliseconds\n*   **Memory Usage**: 37 megabytes\n\nPhase8 generated document edit · 생성 문서 편집 검증.\n\n<!-- Phase8 Markdown fidelity -->\nLiteral tokens: --, \"quoted\", `->`, 37 litres.\n",
+    "source_conversation_id": "d649a89f-2d2c-47c3-8d4c-54fa59f8111d",
+    "source_message_id": "124e85ca-2eb0-4290-ada2-b0d193ec488b",
+    "source_instruction": "Write a short English note with two bullets for the measured runtime and memory. Preserve the exact values and do not add conclusions.",
+    "citations": [
+      {
+        "file_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+        "file_name": "AT-201.pdf",
+        "page_number": 1,
+        "chunk_indexes": [
+          0
+        ],
+        "score": 0.72996247,
+        "label": "AT-201.pdf — page 1",
+        "evidence": {
+          "captured_at": "2026-10-12T22:51:15.486811+00:00",
+          "excerpts": [
+            {
+              "content": "AT-201 experiment\nAT-201 uses a binary heap. The measured runtime is 12 milliseconds. Memory\nusage is 37 megabytes. It was measured on a graph with 8,000 vertices.",
+              "chunk_index": 0,
+              "retrieval_rank": 1,
+              "score": 0.72996247,
+              "source_hash": "66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af",
+              "index_fingerprint": "94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7",
+              "index_metadata": "{\"chunk_overlap\":150,\"chunk_size\":1000,\"chunker_version\":\"page-boundary-v1\",\"embedding_model\":\"embeddinggemma:latest\",\"extractor_version\":\"pdf-text-utf8-v1\",\"input_format\":\"raw-v1\",\"model_digest\":\"85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1\",\"pymupdf_version\":\"1.28.2\",\"vector_size\":768,\"version\":1}"
+            }
+          ],
+          "version": 1
+        },
+        "original_status": "unchanged"
+      }
+    ],
+    "created_at": "2026-10-12T22:52:51.392071+00:00",
+    "updated_at": "2026-10-13T03:15:53.628507+00:00",
+    "provenance_markdown": "## Provenance\n\nEvidence saved with the first draft, from passages consulted for its source answer. These do not validate later edits or every generated claim.\n\n> AT-201.pdf — page 1\n> Chunks: 0\n\n> Evidence captured: 2026-10-12T22:51:15.486811+00:00\n\n> Chunk: 0\n> Source SHA-256: 66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af\n> Index fingerprint: 94ee1b96015fa306e01caa37241aaf773604c12b72f3b91400d5360baf92b1d7\n\n```text\nAT-201 experiment\nAT-201 uses a binary heap. The measured runtime is 12 milliseconds. Memory\nusage is 37 megabytes. It was measured on a graph with 8,000 vertices.\n```"
+  },
+  "expected_content": "# AT-201 Experiment Results\n\n*   **Measured Runtime**: 12 milliseconds\n*   **Memory Usage**: 37 megabytes\n\nPhase8 generated document edit · 생성 문서 편집 검증.\n\n<!-- Phase8 Markdown fidelity -->\nLiteral tokens: --, \"quoted\", `->`, 37 litres.\n",
+  "exact_match": true,
+  "saved_sha256": "0b35bc8caba144a4d8b601751913351f2d5faffc0267f90299995af685b79467"
+}

@@ -125,7 +125,7 @@ export function WikiEditor({ page, scope, onSaved }: {
       </div>
     </section>}
     {writing ? <div className="flex h-full min-h-0 flex-col">
-      <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} className="noye-editor-input w-full rounded border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed" /></label>
+      <label className="flex min-h-0 flex-1 flex-col gap-2 text-sm">Markdown<textarea disabled={saving} value={draft.content} onChange={e => change({ ...draft, content: e.target.value })} autoCorrect="off" autoCapitalize="none" spellCheck={false} className="noye-editor-input w-full rounded border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed" /></label>
     </div> : <MarkdownContent content={wikiPreviewContent(draft.content, revision.metadata.contributors, scope)} allowImages={false}
       rewriteLink={href => wikiLinkHref(href, scope, revision.metadata.contributors)} />}
     </div>

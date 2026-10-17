@@ -1,7 +1,7 @@
 "use client";
 
 import { invoke, isTauri } from "@tauri-apps/api/core";
-import { useState, type AnchorHTMLAttributes } from "react";
+import { useId, useRef, useState, useSyncExternalStore, type HTMLAttributes } from "react";
 import { apiBaseUrl } from "@/lib/runtime";
 
 /** Only original-source API URLs use the native bridge; Markdown cannot grant
@@ -15,18 +15,44 @@ export function isOriginalHref(href: string) {
   } catch { return false; }
 }
 
-export function OriginalLink({ href, children, onClick, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
-  const [error, setError] = useState<string | null>(null);
+const subscribeDesktop = () => () => {};
+const desktopSnapshot = () => isTauri();
+
+export function OriginalLink({ href, children, onClick, ...props }: HTMLAttributes<HTMLElement> & { href: string }) {
+  const desktop = useSyncExternalStore(subscribeDesktop, desktopSnapshot, () => false);
+  const [phase, setPhase] = useState<"idle" | "opening" | "sent" | "error">("idle");
+  const pending = useRef(false);
+  const messageId = useId();
+  if (!desktop || !isOriginalHref(href)) {
+    return <a {...props} href={href} target="_blank" rel="noopener noreferrer" onClick={onClick}>{children}</a>;
+  }
+  const message = {
+    idle: "",
+    opening: "Opening original…",
+    sent: "Sent the original to your default browser.",
+    error: "Could not open this original. Check its availability and try again.",
+  }[phase];
   return <>
-    <a {...props} href={href} target="_blank" rel="noopener noreferrer" onClick={event => {
+    <button {...props} type="button"
+      className={`${props.className ?? ""} noye-original-command`}
+      disabled={phase === "opening"} aria-busy={phase === "opening"}
+      aria-describedby={[props["aria-describedby"], messageId].filter(Boolean).join(" ")}
+      onClick={event => {
       onClick?.(event);
-      if (event.defaultPrevented || !isTauri() || !isOriginalHref(href)) return;
+      if (event.defaultPrevented || pending.current) return;
       event.preventDefault();
-      setError(null);
-      void invoke("open_original", { url: new URL(href, apiBaseUrl()).href }).catch(() => {
-        setError("Could not open this original. Check its availability and try again.");
+      pending.current = true;
+      setPhase("opening");
+      void invoke("open_original", { url: new URL(href, apiBaseUrl()).href }).then(() => {
+        setPhase("sent");
+      }).catch(() => {
+        setPhase("error");
+      }).finally(() => {
+        pending.current = false;
       });
-    }}>{children}</a>
-    {error && <span role="alert" className="noye-original-error basis-full">{error}</span>}
+    }}>{children}</button>
+    <span id={messageId} role={phase === "error" ? "alert" : "status"}
+      className={`noye-original-message ${phase === "idle" ? "sr-only" : "basis-full noye-meta"}${phase === "error" ? " noye-original-error" : ""}`}>{message}</span>
+    <a href={href} className="noye-original-print-link" tabIndex={-1}>{children}</a>
   </>;
 }

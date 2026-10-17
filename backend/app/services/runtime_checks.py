@@ -58,7 +58,7 @@ def model_installed(configured: str, installed: set[str]) -> bool:
 
 
 async def inspect_services(settings: Settings) -> ServiceSnapshot:
-    async with httpx.AsyncClient(timeout=1.5, follow_redirects=False) as client:
+    async with httpx.AsyncClient(timeout=1.5, follow_redirects=False, trust_env=False) as client:
 
         async def ollama_models() -> tuple[bool, list[InstalledModel]]:
             try:

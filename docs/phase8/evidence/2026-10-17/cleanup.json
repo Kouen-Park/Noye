@@ -1,0 +1,9 @@
+{
+  "method": "Verified dedicated QA listener/process before SIGTERM. No other service stopped.",
+  "endpoint": "http://127.0.0.1:11439",
+  "pid": 23055,
+  "command": "/opt/homebrew/bin/ollama serve",
+  "loaded_models_before": [],
+  "listener_closed": true,
+  "model_weights_modified": false
+}

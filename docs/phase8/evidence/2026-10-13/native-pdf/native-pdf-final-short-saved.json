@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-10-14",
+  "native_saved_notice": true,
+  "path": "/private/tmp/noye-phase8-20261012/native-folder/exports/final/Phase8 generated AT-201.pdf",
+  "bytes": 21946,
+  "sha256": "024d19d2e5b135bcc1103833558f08953407dfdc9f3321b989a328aead4c043e",
+  "pages": 1,
+  "text": "AT-201 Experiment Results\nMeasured Runtime: 12 milliseconds\nMemory Usage: 37 megabytes\nPhase8 generated document edit · 생성 문서 편집 검증.\n<!-- Phase8 Markdown ﬁdelity !\nLiteral tokens: --, \"quoted\", -> , 37 litres.\nPhase8 native export · 저장 창에서 내보내기.\n",
+  "checks": {
+    "recorded_values": true,
+    "korean_text": true,
+    "no_leftover_staging": true
+  },
+  "native_dialog_observation": "The first accessibility capture showed Save disabled in the remembered folder. Confirming that same existing folder through Go to Folder enabled Save; PDF saved returned. This does not distinguish initial validation delay from a persistent first-open activation problem.",
+  "visual_review": "One rendered page directly inspected: both measured values and Korean edit markers are readable, no app chrome or clipping. Plain-prose font ligatures display the literal comment terminator as an arrow; the saved Markdown bytes remain unchanged. PDF text extraction is not a byte-fidelity test."
+}

@@ -5,6 +5,7 @@ import re
 from collections import Counter
 
 from app.models.wiki import Passage, SectionSummary
+from app.services import quantity_properties
 from app.services.wiki.local import WikiError, input_budget, request_size, structured
 
 
@@ -79,6 +80,10 @@ def verify_claim(claim, evidence):
     passage = evidence.get(claim.evidence_id)
     if passage is None or claim.quote not in passage.text:
         raise WikiError("The model returned an unknown passage or non-verbatim quote.")
+    try:
+        quantity_properties.check_volume_properties(claim.text, [passage.text])
+    except quantity_properties.QuantityPropertyError as error:
+        raise WikiError(f"{error} No Wiki revision was published.") from None
 
 
 def classify(sections, categories, manual_category=None):

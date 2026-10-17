@@ -1,0 +1,8 @@
+{
+  "method": "Six fresh claims fixed before the first zero-presence-penalty experiment. Gold labels and names are evaluator-only. No case-specific wording is added to model instructions.",
+  "batches": [
+    ["fresh-same-source-counts", [[true,"Roan retained 7 approved packets and 3 failed packets.",["Roan retained 7 approved packets and 3 failed packets."]],[false,"Roan retained 3 approved packets and 7 failed packets.",["Roan retained 7 approved packets and 3 failed packets."]]]],
+    ["fresh-two-faithful-assertions", [[true,"Marten permits exports on Wednesdays.",["Marten grants exports on Wednesdays. Its archives are snapshotted every five hours."]],[true,"Marten snapshots its archives every five hours.",["Marten grants exports on Wednesdays. Its archives are snapshotted every five hours."]]]],
+    ["fresh-two-unsupported-assertions", [[false,"Caiman had observed memory usage of 42 MiB.",["Caiman has an allotted memory budget of 42 MiB. Caiman holds signed packages. Separately, it uses a radix-tree index."]],[false,"Caiman signs packages using a radix-tree index.",["Caiman has an allotted memory budget of 42 MiB. Caiman holds signed packages. Separately, it uses a radix-tree index."]]]]
+  ]
+}

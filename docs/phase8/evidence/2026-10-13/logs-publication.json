@@ -1,0 +1,106 @@
+{
+  "purpose": "Preserve original log hashes while publishing whitespace-normalized copies with unchanged commands, measurements and failure descriptions.",
+  "files": [
+    {
+      "published_path": "native-folders/native-exports-app-build.log",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-exports-app-build.log",
+      "full_original_sha256": "81c97befd50f41bcf6dadcdfd59f65884f8008e20160cdac1ef0fefd6a767931",
+      "published_copy_before_whitespace_normalization_sha256": "81c97befd50f41bcf6dadcdfd59f65884f8008e20160cdac1ef0fefd6a767931",
+      "published_sha256": "89b5ea5e0a64a1e44413cad00ca29e32aabf97e742ad4bdf1d48361d87b214bd",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-folders/native-exports-frozen-tests-idle.log",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-exports-frozen-tests-idle.log",
+      "full_original_sha256": "9ca94b05464369d4b035df38ec16722756ec95137b8c2b6b5afc01e4d7709f4e",
+      "published_copy_before_whitespace_normalization_sha256": "9ca94b05464369d4b035df38ec16722756ec95137b8c2b6b5afc01e4d7709f4e",
+      "published_sha256": "9ca94b05464369d4b035df38ec16722756ec95137b8c2b6b5afc01e4d7709f4e",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-folders/native-exports-frozen-tests.log",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-exports-frozen-tests.log",
+      "full_original_sha256": "1423f0393105462f9abaca2f11fa0f22d1472403b079f2d94f91e22e97032114",
+      "published_copy_before_whitespace_normalization_sha256": "d31804f098f79b048abb49f7bbf06d25e9a1ba3717214e7e0edc1f49fab02bed",
+      "published_sha256": "695bd70433f09c5cb2459aff8d5e292511a82d944012c3d1befd1bbf627c09fb",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF.",
+        "Ephemeral QA control token redacted before normalization; see the existing publication record."
+      ]
+    },
+    {
+      "published_path": "native-folders/native-exports-sidecar-build.log",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-exports-sidecar-build.log",
+      "full_original_sha256": "41b4154bc6d1537acab709034d0af0e7eac8ae04bb56b3826ff80d7573feebed",
+      "published_copy_before_whitespace_normalization_sha256": "41b4154bc6d1537acab709034d0af0e7eac8ae04bb56b3826ff80d7573feebed",
+      "published_sha256": "41b4154bc6d1537acab709034d0af0e7eac8ae04bb56b3826ff80d7573feebed",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-folders/native-exports-ui-build.log",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-exports-ui-build.log",
+      "full_original_sha256": "80dca0190a440dbd12ede5bebd5c467cd8cb8169d344875c754c6415060d09bc",
+      "published_copy_before_whitespace_normalization_sha256": "f092bc39cff9cd869967ddf603df89eb130bae5f98d6ed8db3198edfd2a2d7e8",
+      "published_sha256": "9d54d02d118abf2417d7c32469370060ff27438afd55f9ca4dcdc2d291564390",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-pdf/native-pdf-completion-final-build.log.txt",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-completion-final-build.log",
+      "full_original_sha256": "f44716bf3eb3459612a6a20b2858f8d35a26e3a50f9fb3dacb03db8eb9f1ef8d",
+      "published_copy_before_whitespace_normalization_sha256": "f44716bf3eb3459612a6a20b2858f8d35a26e3a50f9fb3dacb03db8eb9f1ef8d",
+      "published_sha256": "6fa6401711b123f61b337129aee6f26ff427508b314e4111744fa70e90422ea2",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-pdf/native-pdf-final-lint.log.txt",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-final-lint.log",
+      "full_original_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "published_copy_before_whitespace_normalization_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "published_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-pdf/native-pdf-final-targeted-tests.log.txt",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-final-targeted-tests.log",
+      "full_original_sha256": "f5a0233347891f83cb2833325d77835cf4507111e122cab0800e00295fa2cdac",
+      "published_copy_before_whitespace_normalization_sha256": "f5a0233347891f83cb2833325d77835cf4507111e122cab0800e00295fa2cdac",
+      "published_sha256": "fd2583259604abfec92cad5d1fcfc2e0b2dce7724acfb7fd09f0c2783b8e90da",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-pdf/native-pdf-frozen-tests.log.txt",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-frozen-tests.log",
+      "full_original_sha256": "41916e7d5e07081e8df9ea1bdf417bf5a10f5d8a8c90fbc55703dc3ad8901670",
+      "published_copy_before_whitespace_normalization_sha256": "41916e7d5e07081e8df9ea1bdf417bf5a10f5d8a8c90fbc55703dc3ad8901670",
+      "published_sha256": "41916e7d5e07081e8df9ea1bdf417bf5a10f5d8a8c90fbc55703dc3ad8901670",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    },
+    {
+      "published_path": "native-pdf/native-pdf-prepare.log.txt",
+      "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-prepare.log",
+      "full_original_sha256": "0a38e821e136c285a2dbe0abf074642385d9d5a57d3c66f6ca38f354581f6b49",
+      "published_copy_before_whitespace_normalization_sha256": "0a38e821e136c285a2dbe0abf074642385d9d5a57d3c66f6ca38f354581f6b49",
+      "published_sha256": "1524ab9a697b471cdd497d2e9b5ea5f67b837f638929a745423ade70459cecc8",
+      "transformations": [
+        "Normalize line endings to LF; strip trailing spaces and extra blank lines at EOF."
+      ]
+    }
+  ]
+}

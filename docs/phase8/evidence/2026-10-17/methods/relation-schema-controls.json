@@ -1,0 +1,8 @@
+{
+  "method": "Three fresh controls fixed before adding the actual output schema to Wiki prompts. Labels/IDs are evaluator-only; older v4/v5 controls remain regressions.",
+  "cases": [
+    {"id":"fresh-v6-same-condition-negation", "origin":"During reindexing, Poppy does not accept imports.", "target":"During reindexing, Poppy accepts imports.", "origin_summary":"Poppy does not accept imports during reindexing.", "target_summary":"Poppy accepts imports during reindexing.", "allowed":["contradiction"], "required":true},
+    {"id":"fresh-v6-compatible-exception", "origin":"Linden runs backups every day. During upgrades, Linden stops all backups.", "target":"Linden blocks all backups while upgrades are active.", "origin_summary":"Linden runs daily backups.", "target_summary":"Linden blocks backups during upgrades.", "allowed":["shared_subject","supporting_evidence"], "required":true},
+    {"id":"fresh-v6-distinct-properties", "origin":"Jasmine had an observed temperature of 14 degrees Celsius.", "target":"Jasmine has a rated temperature limit of 48 degrees Celsius.", "origin_summary":"Jasmine was at 14 degrees Celsius.", "target_summary":"Jasmine's rated limit is 48 degrees Celsius.", "allowed":["shared_subject"]}
+  ]
+}

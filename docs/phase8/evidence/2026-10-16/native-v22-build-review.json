@@ -1,0 +1,68 @@
+{
+  "method": "Sequential local ad-hoc QA bundle and bundled-backend checks, model unloaded.",
+  "stages": [
+    {
+      "name": "backend-v22-build",
+      "argv": [
+        "npm",
+        "run",
+        "desktop:backend"
+      ],
+      "seconds": 33.655,
+      "exit_code": 0,
+      "log_sha256": "eca6c84a5199625812385b03b9f734d76675c600164959a03a2911ac12d43758"
+    },
+    {
+      "name": "native-v22-bundle",
+      "argv": [
+        "npx",
+        "tauri",
+        "build",
+        "--bundles",
+        "app",
+        "--config",
+        "/private/tmp/noye-phase8-20261016/tauri-qa.json"
+      ],
+      "seconds": 24.393,
+      "exit_code": 0,
+      "log_sha256": "31a400748e3363a2a6cce1a5dbb12ccdb058d4bebca57cd5656d905ddae5b7a4"
+    },
+    {
+      "name": "native-v22-signature",
+      "argv": [
+        "codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app"
+      ],
+      "seconds": 0.047,
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "frozen-v22-bundled",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "app/tests/test_desktop.py",
+        "app/tests/test_native_folder_protocol.py"
+      ],
+      "seconds": 50.378,
+      "exit_code": 0,
+      "log_sha256": "ad744d1bd96c733d3e9f60c069cb4111f0997ce2e042d90888e0914c2931fb33"
+    }
+  ],
+  "files": {
+    "Contents/MacOS/noye-backend": {
+      "bytes": 57230240,
+      "sha256": "9e19ddb96a7e8c3e00d6570c621aafa5bd448a639f71ebcaff2f996bf41f29eb"
+    },
+    "Contents/MacOS/noye-desktop": {
+      "bytes": 14270000,
+      "sha256": "ff2ec96a5a1ab4585f40890b4fbbb6d386119ca7d13061b9b356e68c0ce39649"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________ test_real_answer_uses_the_retrieved_passage __________________
+
+indexed_corpus = <qdrant_client.qdrant_client.QdrantClient object at 0x10b34fb60>
+
+    @requires_services
+    def test_real_answer_uses_the_retrieved_passage(indexed_corpus) -> None:
+        answer = answer_question(
+            "How does Dijkstra pick the next vertex?",
+            file_ids=[INTEGRATION_FILE],
+            qdrant_client=indexed_corpus,
+        )
+
+>       assert answer.is_grounded
+E       AssertionError: assert False
+E        +  where False = Answer(text='I could not find anything about that in your indexed documents.', sources=[]).is_grounded
+
+app/tests/test_generation.py:307: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_generation.py::test_real_answer_uses_the_retrieved_passage
+1 failed, 5 warnings in 3.20s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

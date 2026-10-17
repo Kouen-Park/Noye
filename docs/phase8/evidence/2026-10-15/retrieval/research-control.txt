@@ -1,0 +1,5 @@
+RS-040 recorded room temperature as 22 degrees Celsius and humidity as 45 percent. It did not test Cedar or Birch. This environmental log does not establish recipe durability.
+
+RS-040의 실내 온도는 섭씨 22도, 습도는 45퍼센트였다. Cedar나 Birch를 시험하지 않았다. 환경 기록으로 코팅 내구성을 판단할 수 없다.
+
+Research control procedure: record the run identifier RS-040 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

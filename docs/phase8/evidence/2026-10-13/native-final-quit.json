@@ -1,0 +1,9 @@
+{
+  "action": "Native Cmd-Q after final Launch Services build",
+  "qa_processes_closed": true,
+  "backend_52559_closed": true,
+  "external_services": {
+    "11439": 200,
+    "6339": 200
+  }
+}

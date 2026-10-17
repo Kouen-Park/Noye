@@ -1,0 +1,1254 @@
+{
+  "dataset": "actual-native-pdf-atlas-chunk-500",
+  "mode": "dense",
+  "diversity": false,
+  "k": [
+    1,
+    3,
+    5
+  ],
+  "vector_size": 768,
+  "input_format": "raw-v1",
+  "lexical_tokenizer": "unicode-words-preserving-ids",
+  "model": "embeddinggemma",
+  "model_digest": "85462619ee721b466c5927d109d4cb765861907d5417b9109caebc4e614679f1",
+  "generation_model": null,
+  "repeats": 2,
+  "passages": 42,
+  "indexing_ms": 3693.0988340027397,
+  "documents": 11,
+  "latency": {
+    "first_query_ms": 22.641875009867363,
+    "warm_p50_ms": 16.95416698930785,
+    "warm_p95_ms": 20.963333998224698,
+    "cold_model_ms": null,
+    "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+  },
+  "summary": {
+    "1": {
+      "questions": 11,
+      "answerable": 9,
+      "negatives": 2,
+      "recall": 0.7222222222222222,
+      "precision": 0.8888888888888888,
+      "mrr": 0.8888888888888888,
+      "ndcg": 0.8888888888888888,
+      "negative_returned_context": 1,
+      "document_recall": 0.7777777777777778
+    },
+    "3": {
+      "questions": 11,
+      "answerable": 9,
+      "negatives": 2,
+      "recall": 0.8888888888888888,
+      "precision": 0.4074074074074074,
+      "mrr": 0.8888888888888888,
+      "ndcg": 0.8888888888888888,
+      "negative_returned_context": 1,
+      "document_recall": 0.8888888888888888
+    },
+    "5": {
+      "questions": 11,
+      "answerable": 9,
+      "negatives": 2,
+      "recall": 0.8888888888888888,
+      "precision": 0.24444444444444446,
+      "mrr": 0.8888888888888888,
+      "ndcg": 0.8888888888888888,
+      "negative_returned_context": 1,
+      "document_recall": 0.8888888888888888
+    }
+  },
+  "by_category": {
+    "actual-pdf": {
+      "1": {
+        "questions": 3,
+        "answerable": 3,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 0.6666666666666666,
+        "mrr": 0.6666666666666666,
+        "ndcg": 0.6666666666666666,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 3,
+        "answerable": 3,
+        "negatives": 0,
+        "recall": 0.6666666666666666,
+        "precision": 0.3333333333333333,
+        "mrr": 0.6666666666666666,
+        "ndcg": 0.6666666666666666,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 3,
+        "answerable": 3,
+        "negatives": 0,
+        "recall": 0.6666666666666666,
+        "precision": 0.2,
+        "mrr": 0.6666666666666666,
+        "ndcg": 0.6666666666666666,
+        "negative_returned_context": null
+      }
+    },
+    "cross-language": {
+      "1": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    "english": {
+      "1": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 0.875,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.41666666666666663,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 5,
+        "answerable": 4,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.25,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      }
+    },
+    "exact-identifier": {
+      "1": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 4,
+        "answerable": 4,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.2,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    "korean": {
+      "1": {
+        "questions": 3,
+        "answerable": 2,
+        "negatives": 1,
+        "recall": 0.75,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 3,
+        "answerable": 2,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.5,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 3,
+        "answerable": 2,
+        "negatives": 1,
+        "recall": 1.0,
+        "precision": 0.30000000000000004,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": 1
+      }
+    },
+    "multi-document": {
+      "1": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 0.5,
+        "precision": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "3": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      },
+      "5": {
+        "questions": 2,
+        "answerable": 2,
+        "negatives": 0,
+        "recall": 1.0,
+        "precision": 0.4,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "negative_returned_context": null
+      }
+    },
+    "negative": {
+      "1": {
+        "questions": 2,
+        "answerable": 0,
+        "negatives": 2,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "3": {
+        "questions": 2,
+        "answerable": 0,
+        "negatives": 2,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      },
+      "5": {
+        "questions": 2,
+        "answerable": 0,
+        "negatives": 2,
+        "recall": null,
+        "precision": null,
+        "mrr": null,
+        "ndcg": null,
+        "negative_returned_context": 1
+      }
+    }
+  },
+  "answer_review": {
+    "completed": 0,
+    "accuracy": null,
+    "abstention_accuracy": null,
+    "note": "Human review against the rubric is required. Returned context is not proof of answer support."
+  },
+  "rows": [
+    {
+      "question_id": "AT-201-en",
+      "question": "Which queue and latency were recorded for AT-201?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-lab-0",
+        "graph-control-0",
+        "native-complex-pdf-3",
+        "native-complex-pdf-6",
+        "native-complex-pdf-5",
+        "native-complex-pdf-1",
+        "native-complex-pdf-2",
+        "native-complex-pdf-4",
+        "native-complex-pdf-7",
+        "seminar-minutes-0",
+        "database-control-0",
+        "database-lab-0",
+        "native-complex-pdf-16",
+        "research-control-0",
+        "native-complex-pdf-15",
+        "native-complex-pdf-0",
+        "native-complex-pdf-20",
+        "native-complex-pdf-8",
+        "native-complex-pdf-14",
+        "native-complex-pdf-13",
+        "research-notes-0",
+        "native-complex-pdf-17",
+        "database-lab-1",
+        "capture-control-1",
+        "research-notes-1",
+        "capture-log-1",
+        "research-control-1",
+        "seminar-minutes-1",
+        "native-complex-pdf-11",
+        "native-complex-pdf-24",
+        "native-complex-pdf-18",
+        "seminar-agenda-0",
+        "native-complex-pdf-12",
+        "capture-log-0",
+        "native-complex-pdf-9",
+        "native-complex-pdf-25",
+        "native-complex-pdf-22",
+        "native-complex-pdf-10",
+        "native-complex-pdf-19",
+        "native-complex-pdf-21",
+        "native-complex-pdf-23",
+        "capture-control-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 22.641875009867363,
+      "repeat_ms": [
+        17.23566600412596
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Binary heap; 12 milliseconds.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "AT-201-ko",
+      "question": "AT-201은 어떤 큐를 사용했고 얼마나 걸렸나요?",
+      "categories": [
+        "korean",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "graph-lab-0",
+        "graph-control-0",
+        "native-complex-pdf-5",
+        "native-complex-pdf-6",
+        "native-complex-pdf-3",
+        "native-complex-pdf-1",
+        "native-complex-pdf-7",
+        "native-complex-pdf-2",
+        "native-complex-pdf-4",
+        "research-notes-0",
+        "database-lab-0",
+        "native-complex-pdf-0",
+        "database-control-0",
+        "native-complex-pdf-15",
+        "native-complex-pdf-20",
+        "native-complex-pdf-14",
+        "native-complex-pdf-16",
+        "native-complex-pdf-25",
+        "research-control-0",
+        "native-complex-pdf-8",
+        "native-complex-pdf-13",
+        "seminar-agenda-0",
+        "seminar-minutes-0",
+        "capture-log-0",
+        "native-complex-pdf-12",
+        "native-complex-pdf-11",
+        "native-complex-pdf-18",
+        "native-complex-pdf-22",
+        "native-complex-pdf-19",
+        "native-complex-pdf-17",
+        "native-complex-pdf-9",
+        "native-complex-pdf-23",
+        "native-complex-pdf-24",
+        "native-complex-pdf-21",
+        "native-complex-pdf-10",
+        "capture-control-0",
+        "seminar-minutes-1",
+        "capture-log-1",
+        "research-notes-1",
+        "capture-control-1",
+        "database-lab-1",
+        "research-control-1"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 17.06545900378842,
+      "repeat_ms": [
+        17.0417090121191
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Binary heap; 12 milliseconds.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "DB-318-en",
+      "question": "Which saved work was copied by DB-318?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "database-lab-0",
+        "database-control-0",
+        "native-complex-pdf-2",
+        "native-complex-pdf-6",
+        "native-complex-pdf-20",
+        "native-complex-pdf-21",
+        "native-complex-pdf-1",
+        "native-complex-pdf-22",
+        "native-complex-pdf-25",
+        "native-complex-pdf-19",
+        "native-complex-pdf-5",
+        "native-complex-pdf-14",
+        "native-complex-pdf-12",
+        "native-complex-pdf-13",
+        "native-complex-pdf-3",
+        "native-complex-pdf-7",
+        "native-complex-pdf-9",
+        "native-complex-pdf-17",
+        "native-complex-pdf-8",
+        "native-complex-pdf-11",
+        "native-complex-pdf-23",
+        "native-complex-pdf-4",
+        "native-complex-pdf-10",
+        "native-complex-pdf-18",
+        "graph-control-0",
+        "native-complex-pdf-0",
+        "native-complex-pdf-16",
+        "seminar-minutes-0",
+        "native-complex-pdf-15",
+        "capture-control-0",
+        "native-complex-pdf-24",
+        "research-notes-0",
+        "seminar-agenda-0",
+        "graph-lab-0",
+        "capture-log-0",
+        "research-control-1",
+        "research-notes-1",
+        "seminar-minutes-1",
+        "database-lab-1",
+        "capture-log-1",
+        "capture-control-1",
+        "research-control-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 16.51362499978859,
+      "repeat_ms": [
+        18.671415993594564
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "87 conversations and 14 edited notes; committed WAL included; vectors excluded.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "RS-044-en",
+      "question": "Which RS-044 coating dried faster, and what was not measured?",
+      "categories": [
+        "english",
+        "cross-language",
+        "exact-identifier"
+      ],
+      "ranking": [
+        "research-notes-0",
+        "research-control-0",
+        "native-complex-pdf-5",
+        "native-complex-pdf-1",
+        "database-lab-1",
+        "research-notes-1",
+        "research-control-1",
+        "seminar-minutes-1",
+        "capture-log-1",
+        "capture-control-1",
+        "native-complex-pdf-3",
+        "native-complex-pdf-7",
+        "native-complex-pdf-6",
+        "native-complex-pdf-4",
+        "native-complex-pdf-2",
+        "graph-lab-0",
+        "capture-log-0",
+        "graph-control-0",
+        "native-complex-pdf-13",
+        "capture-control-0",
+        "native-complex-pdf-20",
+        "native-complex-pdf-0",
+        "native-complex-pdf-22",
+        "native-complex-pdf-17",
+        "native-complex-pdf-9",
+        "native-complex-pdf-11",
+        "native-complex-pdf-16",
+        "native-complex-pdf-21",
+        "seminar-minutes-0",
+        "native-complex-pdf-18",
+        "native-complex-pdf-12",
+        "native-complex-pdf-8",
+        "database-lab-0",
+        "native-complex-pdf-14",
+        "seminar-agenda-0",
+        "native-complex-pdf-25",
+        "native-complex-pdf-19",
+        "native-complex-pdf-10",
+        "native-complex-pdf-15",
+        "database-control-0",
+        "native-complex-pdf-24",
+        "native-complex-pdf-23"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 17.216292006196454,
+      "repeat_ms": [
+        16.885334000107832
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "Cedar (18 minutes vs Birch 31); durability and safety unmeasured.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "compare-graphs",
+      "question": "Compare the runtimes of AT-201 and AT-210.",
+      "categories": [
+        "english",
+        "multi-document"
+      ],
+      "ranking": [
+        "graph-control-0",
+        "graph-lab-0",
+        "native-complex-pdf-1",
+        "native-complex-pdf-5",
+        "native-complex-pdf-2",
+        "native-complex-pdf-6",
+        "native-complex-pdf-3",
+        "native-complex-pdf-4",
+        "native-complex-pdf-7",
+        "research-notes-0",
+        "native-complex-pdf-16",
+        "native-complex-pdf-15",
+        "native-complex-pdf-14",
+        "native-complex-pdf-20",
+        "native-complex-pdf-13",
+        "native-complex-pdf-0",
+        "native-complex-pdf-11",
+        "native-complex-pdf-8",
+        "database-lab-0",
+        "research-control-0",
+        "seminar-minutes-0",
+        "native-complex-pdf-10",
+        "native-complex-pdf-12",
+        "seminar-agenda-0",
+        "native-complex-pdf-9",
+        "database-control-0",
+        "native-complex-pdf-17",
+        "capture-log-1",
+        "seminar-minutes-1",
+        "capture-control-1",
+        "research-control-1",
+        "research-notes-1",
+        "database-lab-1",
+        "native-complex-pdf-18",
+        "native-complex-pdf-21",
+        "native-complex-pdf-22",
+        "native-complex-pdf-23",
+        "native-complex-pdf-19",
+        "native-complex-pdf-25",
+        "capture-control-0",
+        "native-complex-pdf-24",
+        "capture-log-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 17.09041699359659,
+      "repeat_ms": [
+        16.95416698930785
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "12 ms versus 39 ms; heap run is 27 ms faster.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "compare-pdf",
+      "question": "PX-606과 PX-660의 텍스트 추출 범위를 비교해 주세요.",
+      "categories": [
+        "korean",
+        "multi-document"
+      ],
+      "ranking": [
+        "capture-control-0",
+        "capture-log-0",
+        "native-complex-pdf-0",
+        "native-complex-pdf-1",
+        "native-complex-pdf-7",
+        "native-complex-pdf-5",
+        "native-complex-pdf-9",
+        "native-complex-pdf-10",
+        "native-complex-pdf-24",
+        "native-complex-pdf-4",
+        "research-notes-0",
+        "native-complex-pdf-3",
+        "native-complex-pdf-13",
+        "native-complex-pdf-2",
+        "native-complex-pdf-25",
+        "native-complex-pdf-6",
+        "native-complex-pdf-18",
+        "native-complex-pdf-14",
+        "native-complex-pdf-11",
+        "graph-control-0",
+        "native-complex-pdf-8",
+        "native-complex-pdf-12",
+        "native-complex-pdf-20",
+        "native-complex-pdf-19",
+        "native-complex-pdf-22",
+        "native-complex-pdf-17",
+        "native-complex-pdf-21",
+        "native-complex-pdf-15",
+        "native-complex-pdf-16",
+        "native-complex-pdf-23",
+        "database-lab-0",
+        "graph-lab-0",
+        "seminar-minutes-0",
+        "research-control-0",
+        "database-control-0",
+        "research-control-1",
+        "research-notes-1",
+        "database-lab-1",
+        "seminar-minutes-1",
+        "capture-control-1",
+        "capture-log-1",
+        "seminar-agenda-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 0.5
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 15.932209003949538,
+      "repeat_ms": [
+        15.944707993185148
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "5/8 pages vs 4/4; missing PX-606 pages 3,5,7.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "identifier-negative",
+      "question": "What was measured in AT-999?",
+      "categories": [
+        "english",
+        "negative"
+      ],
+      "ranking": [
+        "graph-lab-0",
+        "graph-control-0",
+        "database-lab-1",
+        "research-notes-1",
+        "research-control-1",
+        "seminar-minutes-1",
+        "capture-log-1",
+        "capture-control-1",
+        "native-complex-pdf-5",
+        "research-notes-0",
+        "capture-log-0",
+        "native-complex-pdf-6",
+        "native-complex-pdf-4",
+        "capture-control-0",
+        "native-complex-pdf-1",
+        "native-complex-pdf-3",
+        "native-complex-pdf-2",
+        "research-control-0",
+        "native-complex-pdf-25",
+        "native-complex-pdf-7",
+        "seminar-agenda-0",
+        "database-control-0",
+        "database-lab-0",
+        "native-complex-pdf-24",
+        "native-complex-pdf-0",
+        "native-complex-pdf-11",
+        "seminar-minutes-0",
+        "native-complex-pdf-23",
+        "native-complex-pdf-20",
+        "native-complex-pdf-19",
+        "native-complex-pdf-9",
+        "native-complex-pdf-18",
+        "native-complex-pdf-13",
+        "native-complex-pdf-14",
+        "native-complex-pdf-8",
+        "native-complex-pdf-10",
+        "native-complex-pdf-12",
+        "native-complex-pdf-15",
+        "native-complex-pdf-16",
+        "native-complex-pdf-22",
+        "native-complex-pdf-17",
+        "native-complex-pdf-21"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 16.44891699834261,
+      "repeat_ms": [
+        20.963333998224698
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No AT-999 record; do not confuse AT-201 or AT-210.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "fees-negative",
+      "question": "SM-812 세미나 참가비는 얼마인가요?",
+      "categories": [
+        "korean",
+        "negative"
+      ],
+      "ranking": [
+        "seminar-agenda-0",
+        "seminar-minutes-0",
+        "native-complex-pdf-1",
+        "native-complex-pdf-12",
+        "native-complex-pdf-11",
+        "native-complex-pdf-4",
+        "native-complex-pdf-19",
+        "database-lab-0",
+        "native-complex-pdf-24",
+        "native-complex-pdf-5",
+        "native-complex-pdf-3",
+        "native-complex-pdf-7",
+        "native-complex-pdf-20",
+        "native-complex-pdf-6",
+        "native-complex-pdf-9",
+        "native-complex-pdf-22",
+        "native-complex-pdf-2",
+        "native-complex-pdf-14",
+        "native-complex-pdf-13",
+        "database-control-0",
+        "native-complex-pdf-15",
+        "native-complex-pdf-17",
+        "graph-lab-0",
+        "native-complex-pdf-0",
+        "native-complex-pdf-16",
+        "native-complex-pdf-8",
+        "research-notes-1",
+        "capture-control-1",
+        "database-lab-1",
+        "capture-log-1",
+        "seminar-minutes-1",
+        "research-control-1",
+        "native-complex-pdf-10",
+        "capture-log-0",
+        "native-complex-pdf-25",
+        "native-complex-pdf-18",
+        "capture-control-0",
+        "native-complex-pdf-21",
+        "research-notes-0",
+        "native-complex-pdf-23",
+        "research-control-0",
+        "graph-control-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "3": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        },
+        "5": {
+          "recall": null,
+          "precision": null,
+          "mrr": null,
+          "ndcg": null,
+          "negative_returned_context": true,
+          "document_recall": null
+        }
+      },
+      "first_pass_ms": 17.143791003036313,
+      "repeat_ms": [
+        16.892457992071286
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "No attendance fee is supplied; decline rather than inventing a price.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "table-038",
+      "question": "What measure, condition and exact token are recorded in PDF row T038?",
+      "categories": [
+        "actual-pdf"
+      ],
+      "ranking": [
+        "native-complex-pdf-6",
+        "native-complex-pdf-7",
+        "native-complex-pdf-22",
+        "native-complex-pdf-21",
+        "native-complex-pdf-2",
+        "native-complex-pdf-5",
+        "native-complex-pdf-4",
+        "native-complex-pdf-0",
+        "native-complex-pdf-25",
+        "native-complex-pdf-20",
+        "native-complex-pdf-19",
+        "native-complex-pdf-1",
+        "native-complex-pdf-3",
+        "native-complex-pdf-11",
+        "native-complex-pdf-18",
+        "native-complex-pdf-14",
+        "native-complex-pdf-9",
+        "database-lab-1",
+        "research-control-1",
+        "seminar-minutes-1",
+        "capture-log-1",
+        "capture-control-1",
+        "research-notes-1",
+        "native-complex-pdf-13",
+        "native-complex-pdf-8",
+        "native-complex-pdf-12",
+        "database-control-0",
+        "native-complex-pdf-15",
+        "native-complex-pdf-10",
+        "native-complex-pdf-17",
+        "capture-log-0",
+        "native-complex-pdf-24",
+        "capture-control-0",
+        "native-complex-pdf-16",
+        "database-lab-0",
+        "seminar-minutes-0",
+        "native-complex-pdf-23",
+        "research-control-0",
+        "graph-control-0",
+        "research-notes-0",
+        "graph-lab-0",
+        "seminar-agenda-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.5,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.4,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 17.14929200534243,
+      "repeat_ms": [
+        17.45029199810233
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "38 ms, Sunday exception, TOKEN-038-END.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "table-040-ko",
+      "question": "PDF 표 T040의 수치와 정확한 토큰은?",
+      "categories": [
+        "actual-pdf"
+      ],
+      "ranking": [
+        "native-complex-pdf-3",
+        "native-complex-pdf-0",
+        "native-complex-pdf-6",
+        "native-complex-pdf-22",
+        "native-complex-pdf-1",
+        "native-complex-pdf-7",
+        "native-complex-pdf-25",
+        "native-complex-pdf-5",
+        "research-control-0",
+        "native-complex-pdf-4",
+        "native-complex-pdf-14",
+        "native-complex-pdf-24",
+        "native-complex-pdf-20",
+        "native-complex-pdf-15",
+        "native-complex-pdf-13",
+        "native-complex-pdf-16",
+        "native-complex-pdf-9",
+        "native-complex-pdf-11",
+        "native-complex-pdf-2",
+        "native-complex-pdf-17",
+        "native-complex-pdf-19",
+        "native-complex-pdf-12",
+        "native-complex-pdf-10",
+        "capture-control-0",
+        "native-complex-pdf-21",
+        "native-complex-pdf-18",
+        "native-complex-pdf-8",
+        "capture-log-0",
+        "research-notes-0",
+        "graph-control-0",
+        "native-complex-pdf-23",
+        "graph-lab-0",
+        "research-control-1",
+        "research-notes-1",
+        "seminar-minutes-1",
+        "database-lab-1",
+        "capture-log-1",
+        "capture-control-1",
+        "seminar-minutes-0",
+        "seminar-agenda-0",
+        "database-lab-0",
+        "database-control-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        },
+        "3": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        },
+        "5": {
+          "recall": 0.0,
+          "precision": 0.0,
+          "mrr": 0,
+          "ndcg": 0.0,
+          "negative_returned_context": null,
+          "document_recall": 0.0
+        }
+      },
+      "first_pass_ms": 17.086417006794363,
+      "repeat_ms": [
+        16.53049999731593
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "40 ms, TOKEN-040-END.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    },
+    {
+      "question_id": "final-sentinel",
+      "question": "What final sentinel appears at the end of the complex PDF?",
+      "categories": [
+        "actual-pdf"
+      ],
+      "ranking": [
+        "native-complex-pdf-25",
+        "native-complex-pdf-0",
+        "native-complex-pdf-7",
+        "native-complex-pdf-3",
+        "capture-control-0",
+        "capture-log-0",
+        "native-complex-pdf-6",
+        "native-complex-pdf-2",
+        "native-complex-pdf-1",
+        "native-complex-pdf-4",
+        "native-complex-pdf-14",
+        "native-complex-pdf-19",
+        "native-complex-pdf-12",
+        "native-complex-pdf-5",
+        "native-complex-pdf-22",
+        "native-complex-pdf-10",
+        "native-complex-pdf-9",
+        "native-complex-pdf-17",
+        "native-complex-pdf-11",
+        "native-complex-pdf-18",
+        "native-complex-pdf-13",
+        "native-complex-pdf-20",
+        "native-complex-pdf-23",
+        "native-complex-pdf-8",
+        "native-complex-pdf-21",
+        "native-complex-pdf-15",
+        "native-complex-pdf-16",
+        "native-complex-pdf-24",
+        "seminar-minutes-0",
+        "database-lab-1",
+        "research-control-1",
+        "research-notes-1",
+        "capture-control-1",
+        "seminar-minutes-1",
+        "capture-log-1",
+        "database-lab-0",
+        "graph-lab-0",
+        "graph-control-0",
+        "seminar-agenda-0",
+        "database-control-0",
+        "research-notes-0",
+        "research-control-0"
+      ],
+      "metrics": {
+        "1": {
+          "recall": 1.0,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "3": {
+          "recall": 1.0,
+          "precision": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        },
+        "5": {
+          "recall": 1.0,
+          "precision": 0.2,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": null,
+          "document_recall": 1.0
+        }
+      },
+      "first_pass_ms": 17.428666003979743,
+      "repeat_ms": [
+        16.454708005767316
+      ],
+      "ranking_consistent": true,
+      "expected_answer": "FINAL-PDF-ALL-CONTENT-20261015 / 끝까지 보존.",
+      "answer": null,
+      "answer_ms": null,
+      "review": null
+    }
+  ]
+}

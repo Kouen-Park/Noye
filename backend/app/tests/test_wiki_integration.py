@@ -13,7 +13,7 @@ from app.services.source_catalog import SourceCatalog, SourceError
 from app.services.wiki import publication, relations, service, sources
 from app.services.wiki.local import WikiError
 from app.tests.test_folder_foundation import discover, folder, ingest
-from app.tests.test_wiki_pipeline import summary
+from app.tests.test_wiki_pipeline import passage, summary
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ def workspace(folder):
     return folder
 
 
-def model(kind="shared_subject", bad_target=False, callback=None):
+def model(kind="shared_subject", bad_target=False, callback=None, claim_text=None):
     def response(request):
         if request.url.path == "/api/show":
             return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
@@ -34,7 +34,7 @@ def model(kind="shared_subject", bad_target=False, callback=None):
         if prompt["task"] == "summarize_section":
             p = prompt["passages"][0]
             result = summary(p["evidence_id"], p["text"][:40])
-            result["summary"]["text"] = p["text"][:80]
+            result["summary"]["text"] = claim_text or p["text"][:80]
             result["tags"] = ["reservoir", "capacity"]
             result["topics"] = [
                 {"title": "Reservoir", "kind": "concept"},
@@ -121,6 +121,88 @@ def test_invented_relation_target_does_not_publish(workspace):
     with pytest.raises(WikiError, match="unverified"):
         generate(db, second.id, model(bad_target=True))
     assert not store.find(db, f"source:{second.id}")["current_revision"]
+
+
+def test_relation_reads_original_context_beyond_summary_and_quote(workspace):
+    db, *_ = workspace
+    first_text = "Reservoir capacity is 37 litres. That limit applies only during maintenance."
+    second_text = "A separate reservoir has a measured volume of 92 litres, not a capacity limit."
+    first = discover(workspace, "one.txt", first_text)
+    second = discover(workspace, "two.txt", second_text)
+    generate(db, first.id)
+    prompts = []
+    generate(db, second.id, model(callback=prompts.append))
+    relation = next(p for p in prompts if p["task"] == "verify_relation")
+    assert relation["origin"]["text"] == second_text
+    assert relation["target"]["text"] == first_text
+    assert relation["origin"]["source"]["source_id"] == second.id
+    assert relation["target"]["source"]["source_id"] == first.id
+    assert "quote" not in relation["origin"] and "quote" not in relation["target"]
+
+
+def test_relation_compares_each_original_pair_once_despite_multiple_summary_claims(workspace):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    client = model()
+    compared = []
+
+    def respond(request):
+        response = client.send(request)
+        if request.url.path == "/api/show":
+            return response
+        prompt = json.loads(json.loads(request.content)["prompt"])
+        body = response.json()
+        result = json.loads(body["response"])
+        if prompt["task"] == "summarize_section":
+            result["key_points"] = [dict(result["summary"]), dict(result["summary"])]
+        else:
+            compared.append(prompt)
+            result = {"relations": []}
+        return httpx.Response(200, json={**body, "response": json.dumps(result)})
+
+    with client, httpx.Client(transport=httpx.MockTransport(respond)) as actual:
+        generate(db, first.id, actual)
+        generate(db, second.id, actual)
+    assert len(compared) == 1
+
+
+def test_oversized_relation_pair_is_skipped_without_trimming_or_failing_summary(
+    workspace, monkeypatch
+):
+    db, *_ = workspace
+    first = discover(workspace, "one.txt", "Reservoir capacity is 37 litres.")
+    second = discover(workspace, "two.txt", "Reservoir capacity is 92 litres.")
+    generate(db, first.id)
+    monkeypatch.setattr(relations, "input_budget", lambda settings: 1)
+    prompts = []
+    result = generate(db, second.id, model(callback=prompts.append))
+    assert result["revision_id"]
+    assert not store.relations(db, result["wiki_id"])
+    assert all(p["task"] != "verify_relation" for p in prompts)
+
+
+@pytest.mark.parametrize("side", ["origin", "target"])
+@pytest.mark.parametrize("invalid", ["missing", "nonverbatim"])
+def test_relation_rejects_invalid_original_before_inference(monkeypatch, side, invalid):
+    original = passage("Reservoir capacity is 37 litres.")
+    origin = summary(quote=original.text)
+    target = summary(quote=original.text)
+    bad = origin if side == "origin" else target
+    bad["summary"]["evidence_id" if invalid == "missing" else "quote"] = "invented"
+    revision = {
+        "id": "revision",
+        "metadata": {"sections": [target]},
+        "evidence": [original.model_dump()],
+    }
+    monkeypatch.setattr(relations, "candidates", lambda *args: [(1, {"id": "target"}, revision)])
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("Invalid original evidence reached the model")
+
+    monkeypatch.setattr(relations, "structured", unexpected)
+    with pytest.raises(WikiError, match="original evidence"):
+        relations.infer(None, "origin", {"sections": [origin]}, [original], WikiScope(), [], None)
 
 
 def test_topic_reuse_hints_do_not_cross_selected_sources(workspace):
@@ -283,3 +365,30 @@ def test_saved_analysis_has_authored_revision_and_scope_manifest(workspace):
     current = store.revision(db, store.page(db, identifier)["current_revision"])
     assert current["origin"] == "user" and current["evidence"]
     assert current["metadata"]["manifest"][0]["source_id"] == record.id
+
+
+def test_refused_quantity_drift_preserves_authored_revision_and_file(workspace):
+    db, *_ = workspace
+    record = discover(workspace, "beta.txt", "Project Beta stores 92 litres.")
+    first = generate(db, record.id)
+    identifier = first["wiki_id"]
+    service.edit(
+        db,
+        identifier,
+        EditWiki(
+            expected_revision=first["revision_id"],
+            title="My Beta notes",
+            content="My authored notes must survive.",
+        ),
+    )
+    prior = store.page(db, identifier)["current_revision"]
+    path = publication.disk_path(db, identifier)
+    before = path.read_bytes()
+    count = len(store.revisions(db, identifier))
+    changed = discover(workspace, "beta.txt", "Project Beta stores 92 litres. New source detail.")
+    assert changed.id == record.id
+    with pytest.raises(WikiError, match="No Wiki revision was published"):
+        generate(db, record.id, model(claim_text="The system has a storage capacity of 92 litres."))
+    assert store.page(db, identifier)["current_revision"] == prior
+    assert len(store.revisions(db, identifier)) == count
+    assert path.read_bytes() == before

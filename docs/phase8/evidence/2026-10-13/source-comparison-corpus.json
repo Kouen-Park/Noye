@@ -1,0 +1,5 @@
+{
+  "Unrelated.txt": "The orchard grows apples and pears. Harvest is in autumn.\n",
+  "Course/02-English.txt": "Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day.\n",
+  "Course/01-한국어.md": "# 저수지 Alpha\nAlpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n"
+}

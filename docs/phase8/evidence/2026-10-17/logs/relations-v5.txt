@@ -1,0 +1,9 @@
+{"id": "fresh-condition-in-original", "regression": false, "valid": true, "actual": [], "matches_rubric": false, "seconds": 15.877}
+{"id": "fresh-same-condition-opposite", "regression": false, "valid": true, "actual": [], "matches_rubric": false, "seconds": 5.119}
+{"id": "fresh-separate-subjects", "regression": false, "valid": true, "actual": [], "matches_rubric": true, "seconds": 5.583}
+{"id": "different-subject-rules", "regression": true, "valid": true, "actual": [], "matches_rubric": true, "seconds": 4.305}
+{"id": "absence-is-not-denial", "regression": true, "valid": true, "actual": [], "matches_rubric": true, "seconds": 3.771}
+{"id": "same-subject-opposite-condition", "regression": true, "valid": true, "actual": [], "matches_rubric": false, "seconds": 3.966}
+{"id": "exception-in-original", "regression": true, "valid": true, "actual": [], "matches_rubric": false, "seconds": 6.549}
+{"id": "different-property", "regression": true, "valid": true, "actual": [], "matches_rubric": true, "seconds": 4.98}
+{"id": "translated-same-rule", "regression": true, "valid": true, "actual": [], "matches_rubric": false, "seconds": 15.014}

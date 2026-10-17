@@ -1,0 +1,21 @@
+{
+  "app": "com.noye.desktopphase8qa20261012",
+  "bundle_backend": "published v14 build; frontend unchanged by v15/v16 work",
+  "original_url": "http://127.0.0.1:54066/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+  "actions": [
+    "Reopened retained AT-201 conversation",
+    "Opened consulted passage drawer",
+    "AX activated Open current",
+    "Filtered enabled browser tabs and app windows for only the QA URL/source ID/AT-201",
+    "Screenshot confirmed current link; coordinate input failed with noWindowsAvailable",
+    "Raised the exposed QA window; Tab gave no observable focus target",
+    "Quit QA app normally via Command-Q"
+  ],
+  "native_error_observed": false,
+  "qa_browser_destination_observed": false,
+  "accepted": false,
+  "limitation": "No browser destination was visible to the enabled inventory; coordinate input could not target an OS window. This does not establish whether the native command or OS navigation failed. No private browser page was operated or retained. No manually navigated URL is counted as acceptance.",
+  "tool_launch_call_seconds": 94.5693,
+  "launch_timing_note": "CUA getApp returned Starting Noye; this tool wall time is not a measured application startup latency. Later AX state showed the retained workspace.",
+  "app_quit": true
+}

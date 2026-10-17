@@ -1,0 +1,1124 @@
+{
+  "method": "Read-only comparison of every PyInstaller CArchive payload entry. Outer signatures may differ; no signature was removed or modified by this check. This is payload identity, not native UI acceptance.",
+  "source_sha256": "a71deeec4d27f47ce389b93e0578acc73950fbd1202d180a03090bd476e746e8",
+  "bundled_sha256": "1fc900674b1b89e755851654a2cedb2107f4bdbfd07348999a37ff5a696d9610",
+  "all_entries_equal": true,
+  "entries": [
+    {
+      "entry": "struct",
+      "sha256": "97bb8aad7c1879275ba0aa0705c99759cd23178593fa66d0acdaf15854fdab5b"
+    },
+    {
+      "entry": "pyimod01_archive",
+      "sha256": "2f1074d6b969d902e92b8addecb7e4fdec2f1bceb060348805e9250dcc0eaff5"
+    },
+    {
+      "entry": "pyimod02_importers",
+      "sha256": "256c10c1f4543e7f593d71523107b2fbf6a4ba5be42cdb23ff027f80cb76a79c"
+    },
+    {
+      "entry": "pyimod03_ctypes",
+      "sha256": "c8deab179ed81927d37cbc936a847a095c4e597e6f77ac9fc3aa8110019e1ab3"
+    },
+    {
+      "entry": "pyiboot01_bootstrap",
+      "sha256": "234ac0279e39e67c9a03ca09eaf91df234926ceaa497dec26448f8d0f1a9e6a9"
+    },
+    {
+      "entry": "pyi_rth_inspect",
+      "sha256": "bce33ad21566e31689c257facd3b9d3acbf26679842e0a2fd22ba52fda6197ee"
+    },
+    {
+      "entry": "pyi_rth_multiprocessing",
+      "sha256": "ef53391e3795ee2b477c62f8d6cd13a3df8a53dcde6d674a298881c355b255ab"
+    },
+    {
+      "entry": "pyi_rth_pkgutil",
+      "sha256": "f2c4681599071667907ec2fe04b4cfcbeebf3835199f7c2201a9a517fdcbbe5f"
+    },
+    {
+      "entry": "pyi_rth_setuptools",
+      "sha256": "4be5875f47295b50e8fc9da691334da0278d929f45aa4279d915428a6f96285c"
+    },
+    {
+      "entry": "desktop",
+      "sha256": "c15bafd029be275837acb0cb12f0fac5fb0f3c716f41b6edc81334b5b5af8023"
+    },
+    {
+      "entry": "Python.framework/Versions/3.14/Python",
+      "sha256": "4ab407f6cef1eb27b8cde14e1af1453866121c7710b32218a84fd7eaa68c34b4"
+    },
+    {
+      "entry": "google/_upb/_message.abi3.so",
+      "sha256": "7ef4e99950eec00fd8932478737be45c8a42db2005b8b2dbad5113dad13d85ce"
+    },
+    {
+      "entry": "grpc/_cython/cygrpc.cpython-314-darwin.so",
+      "sha256": "82db0202b0da906bebad5788723d2cd12d574323a8092c50681c0c7978f141f8"
+    },
+    {
+      "entry": "httptools/parser/parser.cpython-314-darwin.so",
+      "sha256": "837c35e7bb6d79e79a73130fcda6971c6827a397e03c4a69f6d365d5493b17ad"
+    },
+    {
+      "entry": "httptools/parser/url_parser.cpython-314-darwin.so",
+      "sha256": "cfbc38b0c3263279e71371b3d3732def96f08859953d4ed7496d5c204f11b2c2"
+    },
+    {
+      "entry": "libcrypto.3.dylib",
+      "sha256": "a8493466cc97962b9ad2f4a318c2cc2d5c05388dcdd9c7abd80303af0a82c34f"
+    },
+    {
+      "entry": "liblzma.5.dylib",
+      "sha256": "f337280256637f971a31df9ea1d5aa9e025d5a501e0d65b83bd6534be310369d"
+    },
+    {
+      "entry": "libmpdec.4.dylib",
+      "sha256": "d731724c0ee094eaba1ecdaa19c4e5bcf5ee004e395c8002d7449ad42620c2b5"
+    },
+    {
+      "entry": "libsqlite3.dylib",
+      "sha256": "4fb8bea82a2965f542a5e4527461cfd50d0af6576af715723ab4df67fd506158"
+    },
+    {
+      "entry": "libssl.3.dylib",
+      "sha256": "d3e5665289ef12ae1bb91520d1ef4cd488cef8ab507a1ee1fc8aeb0024e50422"
+    },
+    {
+      "entry": "libzstd.1.dylib",
+      "sha256": "39a3e0247a5b3c6ced1ee0186e8239cea440b882eac37b4bf7fa628425f84ade"
+    },
+    {
+      "entry": "numpy/_core/_multiarray_tests.cpython-314-darwin.so",
+      "sha256": "bb965f902c3d30612a607fa400770a8dfc3b0389392536ce63c77663c5696c1c"
+    },
+    {
+      "entry": "numpy/_core/_multiarray_umath.cpython-314-darwin.so",
+      "sha256": "b177702147232f047e28c7439d7b62ac644b58b13539cb5e053b80a7f16b53ca"
+    },
+    {
+      "entry": "numpy/fft/_pocketfft_umath.cpython-314-darwin.so",
+      "sha256": "a76f82f19d5d621227ceaeec4360cb1a47dc35c5586051127a898a9d0555f2b2"
+    },
+    {
+      "entry": "numpy/linalg/_umath_linalg.cpython-314-darwin.so",
+      "sha256": "2d4cb2cbba3019ee4aeb8f92ecc58f8a01483bc2fdd7f4b8284028c342df56eb"
+    },
+    {
+      "entry": "numpy/random/_bounded_integers.cpython-314-darwin.so",
+      "sha256": "580f858e1e1408df5b310acf8e2a9897f514dd208280f2bf2c5fcc580b026d3d"
+    },
+    {
+      "entry": "numpy/random/_common.cpython-314-darwin.so",
+      "sha256": "44b45e8b678dacc2f08e2e198b33855e23874243b2130035447858ccbe161b08"
+    },
+    {
+      "entry": "numpy/random/_generator.cpython-314-darwin.so",
+      "sha256": "7cf7682ca0efc28e3e4c26efd222d15de177c30f3f6e5b6b6a2a0a997a09aba4"
+    },
+    {
+      "entry": "numpy/random/_mt19937.cpython-314-darwin.so",
+      "sha256": "2b96d3bae1096bd8531849b4ba4b612de464b3ad6ffb8b01f4f779d8a24f8c90"
+    },
+    {
+      "entry": "numpy/random/_pcg64.cpython-314-darwin.so",
+      "sha256": "cd7360b95cb09cf0e3b97fc11089048402d6257b979e2123e1cb572b21f3baba"
+    },
+    {
+      "entry": "numpy/random/_philox.cpython-314-darwin.so",
+      "sha256": "be8c8fa466a19a00a455333dc659fef6819b34182070e461d4e7547d39cd689c"
+    },
+    {
+      "entry": "numpy/random/_sfc64.cpython-314-darwin.so",
+      "sha256": "771bb00120ba50c755f226151571cfe0a4445722b7dd4da85aa8630eb1eef02e"
+    },
+    {
+      "entry": "numpy/random/bit_generator.cpython-314-darwin.so",
+      "sha256": "7506e26f67df8188a84feaad547e19d254a5eb22ab311e6c0d148480beb4cb6b"
+    },
+    {
+      "entry": "numpy/random/mtrand.cpython-314-darwin.so",
+      "sha256": "b946ad5600a6318bea5365beab7c41f522500e3573aa01c044def8e05d780bfb"
+    },
+    {
+      "entry": "pydantic_core/_pydantic_core.cpython-314-darwin.so",
+      "sha256": "203e697813f9af9c954a5eb61d0d2bff2dee4cb2e8db2085277b03debe6c1b7b"
+    },
+    {
+      "entry": "pymupdf/_extra.so",
+      "sha256": "aef5e4f17b5cd161b31031c08276e34faaf0608ffd38747b88c06030f4b6dd7f"
+    },
+    {
+      "entry": "pymupdf/_mupdf.so",
+      "sha256": "b5f6d81fd88ae8e665994eb24160faa64f1ddefdec23235545b4f21de5204b65"
+    },
+    {
+      "entry": "pymupdf/libmupdf.dylib",
+      "sha256": "95b6040280d3f80f1dd3b48f07c5617cab2ce2360bc0a2f13af5a8137e8850be"
+    },
+    {
+      "entry": "pymupdf/libmupdfcpp.so",
+      "sha256": "ba09cb2581430d4cc0d7ce7c9ba552d9ae7581fd83579233490bb7460e5f5b66"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_asyncio.cpython-314-darwin.so",
+      "sha256": "bcbc402e18c443b1eaae413ada29e3e3c21f5d39e9c020e81be9fa7832ee8a5c"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_bisect.cpython-314-darwin.so",
+      "sha256": "c15bf69b1319b4be354e7009871a12dd01cb0b9fbba2ed8ba26ee6582969935d"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_blake2.cpython-314-darwin.so",
+      "sha256": "5298bd8329ec50f7f50c9bf48f26c1f115f7e89ef7f2ecea90f48b5186a89994"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_bz2.cpython-314-darwin.so",
+      "sha256": "12f47ce06fcfffb3eb07e86eaf93a3d36d6271f58c7e8bfd08220122bff81b55"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_cn.cpython-314-darwin.so",
+      "sha256": "4f6de54a3fd6826439d3a50e75852891f3bf6db29fbf0a31c28b3f7d467b2b08"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_hk.cpython-314-darwin.so",
+      "sha256": "e56673ee9113b3eba503a426fec544bd7ab1a40f0d1e77c84a538fa81e26b43d"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_iso2022.cpython-314-darwin.so",
+      "sha256": "a955712a7b20365f9fa79bbd81df5eb5a85f063fc5ee2492288159c0d662228c"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_jp.cpython-314-darwin.so",
+      "sha256": "bbd7d9ca35f36b8455f9036289f083835c534dd827bb520626324a8a4f37057b"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_kr.cpython-314-darwin.so",
+      "sha256": "59b851894a356c6e765f2e07f2bd19d4781311289ad22fd4683b54ab8da522a5"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_codecs_tw.cpython-314-darwin.so",
+      "sha256": "e7552e8ac1bbec33e4c34f03ffa2fc2828f9d5f839c25e983850883848a7c99d"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_csv.cpython-314-darwin.so",
+      "sha256": "c0bd3f796db13f01c9b3019661485be53dedd65b94c14ead42b2afa46a3e3954"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_ctypes.cpython-314-darwin.so",
+      "sha256": "04e47490927f4948939d5a5caf4c88c6f7657cb9dd44e057e0eccbf51170565b"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_dbm.cpython-314-darwin.so",
+      "sha256": "b0d8bb275c27559aa20b4729ff5c997fd80e6825113c0d76a2c1d4f5a4abdb0d"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_decimal.cpython-314-darwin.so",
+      "sha256": "ecaa7aff6093f2182f9188a4c0c7e03d9c67c48196bf794e3693c947cba26c6f"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_hashlib.cpython-314-darwin.so",
+      "sha256": "c589971e2a86527c78e34a2e3cae376046ccbd536f588e3bdc933d7588e716a3"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_heapq.cpython-314-darwin.so",
+      "sha256": "c87ade689279955c805b3253bdf185e31417b9ee12d3970a793aa0e92bbf59c3"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_hmac.cpython-314-darwin.so",
+      "sha256": "3cef44e4b4412fd8ff4012546757e9ae3309a75c9676e9b53be54ea3b3ac4687"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_interpqueues.cpython-314-darwin.so",
+      "sha256": "4228c4df51d8c8b97bb0c846c3fb35f897ff37d04afa1647b88369dd8e20211a"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_interpreters.cpython-314-darwin.so",
+      "sha256": "00abcb40b73bdc46b2ff274f7200a8873bc5ccc78efa62770b6c1803f9076303"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_json.cpython-314-darwin.so",
+      "sha256": "854e25b133b873470b00e7fdcc2ee658e5415433b460b7a74e7c24ebac467e58"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_lzma.cpython-314-darwin.so",
+      "sha256": "cdd6bce694c9ba7f3de079a486b6cc844d111438e0e0bccb25ad9753caf51241"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_md5.cpython-314-darwin.so",
+      "sha256": "bbde28845348935a4a291ff85897dc0dd34566e22661e26fc124164f258b2bf4"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_multibytecodec.cpython-314-darwin.so",
+      "sha256": "217f08c863e1afd7bec5995f6c9c6ace30aa43ce493cb29e1b99f1e05e99a59d"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_multiprocessing.cpython-314-darwin.so",
+      "sha256": "3c49b2c6d86a2c62005346ed508e86c4c37d82854cacdbb3ec27f884f8376e17"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_pickle.cpython-314-darwin.so",
+      "sha256": "178936bec648c36e3426e02cae294a0ba020b5f60fb8d3f2419705f03daee386"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_posixshmem.cpython-314-darwin.so",
+      "sha256": "375935c9eabe3f61d7f821564dd1f167b1e98371577124d533f19f6b06870939"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_posixsubprocess.cpython-314-darwin.so",
+      "sha256": "015bd8c15d3973f713504ffd0591008c554aeae10e8ed88ecf26196a36e8a74a"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_queue.cpython-314-darwin.so",
+      "sha256": "bf84c115a0aad5a820b65c9f878c5d978789aff9ab87785ae5b68657db8164e0"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_random.cpython-314-darwin.so",
+      "sha256": "0a021476bdf3eb8dac2274a322dc5004cd55693666fe42e4b7c3d4152c3319bf"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_scproxy.cpython-314-darwin.so",
+      "sha256": "fd5edb90b02fe08b709317cb2e0e5448ba5bbfc7a8d036bf021da18c05621cd6"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_sha1.cpython-314-darwin.so",
+      "sha256": "4788c468b8461d3bbe2a5d66aa953bef64cfc02381ce83d39a94bb4b41b9bddf"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_sha2.cpython-314-darwin.so",
+      "sha256": "267480d41c1e3df27a3d7bf502b7e2e4ce2c7ae311b0d4f2f077ac7ca1908735"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_sha3.cpython-314-darwin.so",
+      "sha256": "58d8715e97792ef6530eaa9c621d03db13c6bf2ca5965ba960abb3ba0b715df6"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_socket.cpython-314-darwin.so",
+      "sha256": "dc14fb995889fc204dd395b2b077095f720ee175e974fb3ba5c8d9b70e34a13c"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_sqlite3.cpython-314-darwin.so",
+      "sha256": "977adae10dd77960620f8ac7c4ea0ae84013c93259b7883bda5ba73c28ff3529"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_ssl.cpython-314-darwin.so",
+      "sha256": "809060c190cd98616634e650bf4d07ea7f4f02d24f51bd9aeacc86a74f058ef6"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_statistics.cpython-314-darwin.so",
+      "sha256": "b5d66bffe997570a20c7587c6baa2176aa0733f8148587a56eabc6866a08629a"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_struct.cpython-314-darwin.so",
+      "sha256": "80a988b84f6d1dbb69f367fe55b5857db867e3c449a3c242826d3a6d42837231"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_uuid.cpython-314-darwin.so",
+      "sha256": "f91083170578593368650e638b56e0712abf2d13db363296395227dd23f56912"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_zoneinfo.cpython-314-darwin.so",
+      "sha256": "c4572b483531e495e0761b37deee2d8127141b0fe92454a8cf178b28c8240b28"
+    },
+    {
+      "entry": "python3.14/lib-dynload/_zstd.cpython-314-darwin.so",
+      "sha256": "b90d036ac773b7915d39b8424e575b9971127869c83c35f441160dbcf61571b0"
+    },
+    {
+      "entry": "python3.14/lib-dynload/array.cpython-314-darwin.so",
+      "sha256": "fc33f99422e05c2afd672321f9808b96c2c1da3b7a02e036cc96ec12fe3399f1"
+    },
+    {
+      "entry": "python3.14/lib-dynload/binascii.cpython-314-darwin.so",
+      "sha256": "3a9d698f16a4c0c0fa9f217a27c1df958e7de8e0d9f070716604c1c278d4e822"
+    },
+    {
+      "entry": "python3.14/lib-dynload/fcntl.cpython-314-darwin.so",
+      "sha256": "6d1c7e3ece6a3600e3a5a470febcf166e0c22c0446a5c0b3a72eedcb1d7b57a2"
+    },
+    {
+      "entry": "python3.14/lib-dynload/grp.cpython-314-darwin.so",
+      "sha256": "d5eb762d09d1cf037d72f6a31e7d834821029cc91d5274900b6b935037087bed"
+    },
+    {
+      "entry": "python3.14/lib-dynload/math.cpython-314-darwin.so",
+      "sha256": "331b9ab75955b197ca9b745129b5735c2354fa190cef36546cd0c3ca91392088"
+    },
+    {
+      "entry": "python3.14/lib-dynload/mmap.cpython-314-darwin.so",
+      "sha256": "7a4a64913df16878a2ee9620e62a6cd4bec5f39e55ef578783cf87f64769c7fb"
+    },
+    {
+      "entry": "python3.14/lib-dynload/pyexpat.cpython-314-darwin.so",
+      "sha256": "3277f59fbc7055470a5c8063a2ae5e200cde9c95bade084a1aa414d6ecad6b4a"
+    },
+    {
+      "entry": "python3.14/lib-dynload/readline.cpython-314-darwin.so",
+      "sha256": "af0a4e6da4f4cfb16da1270363c002d3a1552774c5810f8b8be30bde0c9df725"
+    },
+    {
+      "entry": "python3.14/lib-dynload/resource.cpython-314-darwin.so",
+      "sha256": "3548ce9552782b25b438dcc500a66a111fcb06767ec13591e9471c1dbbdf779b"
+    },
+    {
+      "entry": "python3.14/lib-dynload/select.cpython-314-darwin.so",
+      "sha256": "0f3a4d96eca56a3e71643c87bd211226126da1a2a3be359b83d449b859937091"
+    },
+    {
+      "entry": "python3.14/lib-dynload/syslog.cpython-314-darwin.so",
+      "sha256": "7cff0374b9ef74b9559ce671cda9024fe0acaef6a2ad737537cc31bc383ca98a"
+    },
+    {
+      "entry": "python3.14/lib-dynload/termios.cpython-314-darwin.so",
+      "sha256": "bc0b2f22d19879ee61f95cfd8031b3141873d1eea6c692e97b85e62855fd6b33"
+    },
+    {
+      "entry": "python3.14/lib-dynload/unicodedata.cpython-314-darwin.so",
+      "sha256": "b74e7e848d45b6e36d02fd21ce3906836d690fc2866d6b1c9bc0db8280cac570"
+    },
+    {
+      "entry": "python3.14/lib-dynload/zlib.cpython-314-darwin.so",
+      "sha256": "0ec9b7a5bdc6bc428f6ecef7e1d039806395d132ace9bbe5ff2f368b3cb6c4bc"
+    },
+    {
+      "entry": "uvloop/loop.cpython-314-darwin.so",
+      "sha256": "eff368bb5f4d0d9993dabf3ed3220b4245494e3f52b40d9764c8e8242dfcc90c"
+    },
+    {
+      "entry": "watchfiles/_rust_notify.abi3.so",
+      "sha256": "54e030169544dc5eabfc0c5b5ec00f46d466be567eba7cf9277f57f175c3e626"
+    },
+    {
+      "entry": "websockets/speedups.cpython-314-darwin.so",
+      "sha256": "04e8456adb10c7816303bece72a9cdc8c21c83632b4ded05528c9b95a720d96f"
+    },
+    {
+      "entry": "yaml/_yaml.cpython-314-darwin.so",
+      "sha256": "7fd30b93be539b38ff273e62b157e0e573a77fa235799780f563c29adbd9aee8"
+    },
+    {
+      "entry": "Python",
+      "sha256": "5a99bdf22199606a6137be179020e5be447c969fb4115f9d495abdce452a9f0e"
+    },
+    {
+      "entry": "Python.framework/Python",
+      "sha256": "d40912f18bc605459717c783f85c2af755e09f13155ba6517b42758dec0a7504"
+    },
+    {
+      "entry": "Python.framework/Resources",
+      "sha256": "7271140e2b16015909edfeec5281cb52e209dab77e9c2d7ade63ceb43f8abddd"
+    },
+    {
+      "entry": "Python.framework/Versions/Current",
+      "sha256": "7e3cec56cbf2204ba41016a74d71cef512c9627e022193b2f82bb672fa0744c1"
+    },
+    {
+      "entry": "libmupdf.dylib",
+      "sha256": "b1c5a0147ecc9ca4bc4618686f5803a342ac1fb70bebcd82176c81fc91d6ff2f"
+    },
+    {
+      "entry": "libmupdfcpp.so",
+      "sha256": "cce88593528c22fc21fabafd08cd9464795a1feb0e159e9902c5ab95a5271a07"
+    },
+    {
+      "entry": "Python.framework/Versions/3.14/Resources/Info.plist",
+      "sha256": "43f73ed996d116e6164161f5be1b35487618776bee221e3c753c46c477c5e450"
+    },
+    {
+      "entry": "base_library.zip",
+      "sha256": "5ccfa9dd87eb6ff71fb721d94cd975419dfeac8eadaf1030d016173e0fec5c84"
+    },
+    {
+      "entry": "certifi/cacert.pem",
+      "sha256": "9cc2a774b5198dcff14d9be1e66091f538975d867ce029a96bce15a55dfd730f"
+    },
+    {
+      "entry": "certifi/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "entry": "click-8.5.0.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "click-8.5.0.dist-info/METADATA",
+      "sha256": "e87bce0bd194de70dfb8e708e0a6b0483009f25611804eaf87bfeb63e6c20501"
+    },
+    {
+      "entry": "click-8.5.0.dist-info/RECORD",
+      "sha256": "20955ac987165f25287f4c143219480b49d4dec92a22cf5027341049dc9c0117"
+    },
+    {
+      "entry": "click-8.5.0.dist-info/WHEEL",
+      "sha256": "1b68144734c4b66791f27add5d425f3620775585718a03d0f9b110ba3a4d88db"
+    },
+    {
+      "entry": "click-8.5.0.dist-info/licenses/LICENSE.txt",
+      "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+    },
+    {
+      "entry": "grpc/_cython/_credentials/roots.pem",
+      "sha256": "3d636834428627c2fafcf60dbe865f1a259352e508f7779a5714a77033ba6b20"
+    },
+    {
+      "entry": "grpc/_cython/_cygrpc/private_key_signing/private_key_signer_py_wrapper.cc",
+      "sha256": "da51feaec0f22798c6503ae66de2f0b04b8eb613a85ee87005ece5fe27ce4071"
+    },
+    {
+      "entry": "grpc/_cython/_cygrpc/private_key_signing/private_key_signer_py_wrapper.h",
+      "sha256": "aba047798801fd071a952d393b09bb941bb3eb95b9b1305ffba4729d3be85363"
+    },
+    {
+      "entry": "grpc/_cython/cygrpc.pyi",
+      "sha256": "05e90cc424754f6937733208e6a782fbe83f8ff60e899bce74ec1c6137cb7814"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/METADATA",
+      "sha256": "b17f68f6127946c3b748ea5728a9b172589ede2b9cebfa353dd5f05263096c7f"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/RECORD",
+      "sha256": "865c15884cfce2da007d11b29e6bd7374df2daaad9eb283d441104ea23f2d5c5"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/WHEEL",
+      "sha256": "2b6eb4118ce7cd7b09601406aa623c553c4476265836f0d9c16f5c061f7efcc0"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/licenses/LICENSE",
+      "sha256": "7a65a5af0cbabf1c16251c7c6b2b7cb46d16a7222e79975b9b61fcd66a2e3f28"
+    },
+    {
+      "entry": "h2-4.4.1.dist-info/top_level.txt",
+      "sha256": "1e2ba5c7c2b12368c550cd5d1bbf8265e4643b78f9d0c07008b1b7e95aeafa42"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/METADATA",
+      "sha256": "451a9b8028000588e66b0b415587b6aef0bbc51a96d8e8a0cba0dc23acf64f99"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/RECORD",
+      "sha256": "1e63493f5d6a78dd404ddcc605365b8fd3647898a293a7905bd22228adaf23e4"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/WHEEL",
+      "sha256": "43712150aca02b943d5bd1783187d0a440bbeff529a6161af684b05938124512"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/entry_points.txt",
+      "sha256": "ec26fade0c8bdac211a6c1dd003a65eb16885b925395423e93fcaa115af4052c"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/LICENSE.txt",
+      "sha256": "649a589ab31076e79e9ce62ba24eae9959598124176640dbc95f87bd10f34fcf"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "sha256": "fbc539f47d0cf83bc61378080fb873d5c14630126cacbfe754035c3926daa5ec"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "sha256": "3f2c1ffa76383a55ae0aac01c9737cd70050dff63e1f026694fbe9d662573c98"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+      "sha256": "e340270d4f64384569a91d546acb5b094d69ce47f0c015db77abb74dc6f815af"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "sha256": "f7b14309e5f54e5022b26448eefd419988ada2aec01d3c1162d84a0ea8f21f2c"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "sha256": "211e7d737d6179a08f791ebb0a99897ce7cd2457410c542876d125576edfe910"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+      "sha256": "c17011467b4fe6e20fbfbeda4df09e58c2bca5480a063e55735a4000a379aad9"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+      "sha256": "a85ca13fdf90160b64a0698215868c13b74d835ad0a4e2ba44713b8c5058a056"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+      "sha256": "a14cc25e10d40a3aa705b7de2fb764a6535d8ee9b2db4e1724900585457dfd55"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/ma/LICENSE",
+      "sha256": "05f3b88351988ecfad10abe92c0c50e5875c6452d5009a0084cc291551ffcca6"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/LICENSE.md",
+      "sha256": "103166b62b80443afb9eb3488e052ea06be0cff566b908f199e561fde49af19f"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+      "sha256": "469778be8f33d54e1bcaab28c281cc472916d2d273f835e55bc487d30503face"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+      "sha256": "0e111337b25494a773106695f0e799f642b8567aaacca4f116a74a8177179156"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+      "sha256": "e7d4f4fb20358f314210a892ae17351e04993813646f697ec387385ca2a36918"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+      "sha256": "6f5828a57223d4cc7f8ea505a2623e7b978b242752c1515e355f46ba2cec1800"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+      "sha256": "9d4098846018319cd68e228ee6220361787f73bccbf00237a85e4fc9621b998f"
+    },
+    {
+      "entry": "numpy-2.5.3.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+      "sha256": "268b0ca06759d31ea3ca68dd35f20e877916e927b1c2a835e4592a3c4354b1f9"
+    },
+    {
+      "entry": "pydantic-2.13.5.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "pydantic-2.13.5.dist-info/METADATA",
+      "sha256": "0685830d13647bd6f3f05526043d32a8b2a221d86b53773053d6c52bb17a9c07"
+    },
+    {
+      "entry": "pydantic-2.13.5.dist-info/RECORD",
+      "sha256": "b30464dc1ed2bf65325acbf20acec1ba8ec168acd08a7146c5b6b9661b0c4eef"
+    },
+    {
+      "entry": "pydantic-2.13.5.dist-info/WHEEL",
+      "sha256": "ccec20e2307acd7da453dd7437e70c6b08e2bc3ead3bc3445af135da37b56d59"
+    },
+    {
+      "entry": "pydantic-2.13.5.dist-info/licenses/LICENSE",
+      "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/COPYING",
+      "sha256": "40e60697600535eabfb5ae05f72829d88cfe8d02dd4792f5a754f6f51dabe55b"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/METADATA",
+      "sha256": "5c1fc460889bd3ff8d213e6c0f29154a8cd3576505f4844d7c3e089fa45eed40"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/README.md",
+      "sha256": "d0d17bed851133430744866941a1707542d1aeb072bbab681deec1e49498663c"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/RECORD",
+      "sha256": "16a6a74ad1ef1a8bd2cd09b27250bcd1f2d461262037da3fb26b93409872e07f"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/REQUESTED",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/WHEEL",
+      "sha256": "19cbbec01160c694e7c562916641d1c81bd6684ba02ab6022dde2e2b6db3196d"
+    },
+    {
+      "entry": "pymupdf-1.28.2.dist-info/entry_points.txt",
+      "sha256": "f4d707fc25641d5b8b3711354d86dfc17c0295590c70cf3dd133132770b97c30"
+    },
+    {
+      "entry": "pymupdf/__init__.py",
+      "sha256": "e8cdb45ed0afa21f919cec30e69b7b572c3db7bc80d203e4e07e4c7ea2b19cce"
+    },
+    {
+      "entry": "pymupdf/__main__.py",
+      "sha256": "763a97305937d0665a43d4b6920924efb15d8f87795ec2926c09f9da69bfd2cb"
+    },
+    {
+      "entry": "pymupdf/_apply_pages.py",
+      "sha256": "720b52015d70320bb3603c1a724c0741c9b53e87a9943ec96a911ef38b5bd457"
+    },
+    {
+      "entry": "pymupdf/_build.py",
+      "sha256": "0782e5fc15483348a65c9318ed774d369011974ff1f0d1b51ff38c3f0a1de0b4"
+    },
+    {
+      "entry": "pymupdf/_table_headers.py",
+      "sha256": "881a63053ebcb2ce48c87689380774391bbe09eb0996a14b8df7f0b2465e9215"
+    },
+    {
+      "entry": "pymupdf/_table_refine.py",
+      "sha256": "37e9f101c3285633a4d62181f008fa36daba1efde30eda1bb7395908aa3af5d2"
+    },
+    {
+      "entry": "pymupdf/_table_spans.py",
+      "sha256": "caec10e8e755984e14f3b27463b9e725897d7b98c22e4b447951a9c563b5f949"
+    },
+    {
+      "entry": "pymupdf/_table_union.py",
+      "sha256": "efd332e5b513c758425a53c8b8f6b5b99c15bdda7f884818ee62e406d9265592"
+    },
+    {
+      "entry": "pymupdf/_wxcolors.py",
+      "sha256": "02363faab89d46857e25e7ca88707ca2975d36754a4fa9fd1d15081fc523ac1d"
+    },
+    {
+      "entry": "pymupdf/extra.py",
+      "sha256": "cb1d279512f67a7c1abd2adaca62a9a0a4467d877c8b477d5730e7abaf9ad8c9"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/classes.h",
+      "sha256": "56027c737a6a107683c71cba6ccd3ec830fede56f6adb320dc3473eb5badb873"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/classes2.h",
+      "sha256": "31cbdc306f8240f97009059155b6e3a9026273dd6741867fae9982ad7a032b57"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/exceptions.h",
+      "sha256": "9592bc6bc6d574962d3125ee3fb94579ec294291bdede52915d86fd50ca9880c"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/extra.h",
+      "sha256": "8945a1d85de45e7df77864eebfd9a270d1897c90d35748898eb1b9b1fab35900"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz.h",
+      "sha256": "3c851e3727717bd651128371da8e5e4276334159cfa59aa4f7a633467bedeb7b"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/archive.h",
+      "sha256": "2eba82c2015535f41de90e94ad7389e8b252f26e7364e7e190b6b18227395061"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/band-writer.h",
+      "sha256": "44be4eca94818d624772bec2eea3d9912734a6c631a1f0ece0af379b3d44dfa9"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/barcode.h",
+      "sha256": "75f0e4ce540f571db2f5c9e2ee897f8d73a4002f42a66f7d8c39978d6e1f2cc1"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/bidi.h",
+      "sha256": "627146b07faf503c9434cdc6a2fa3efa75a036f2fb96d6d2c4e6fd47afa19b37"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/bitmap.h",
+      "sha256": "1a8fad7b399b82630b83a44951c50802f5581c69ba0c62af61fdda3857fba5cd"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/buffer.h",
+      "sha256": "dd14c15f836831fe8314e908d409bff6cf6506aecf282ad2535a921707070d56"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/color.h",
+      "sha256": "940820d1c64c2ddd63766b188f9b9798a7865e0bf951e13c46396bfa27fd6988"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/compress.h",
+      "sha256": "ab336a35dad5c56e1cf8b62a70727086081ce11e0082c0c207dc52b80a2ac7f7"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/compressed-buffer.h",
+      "sha256": "4cec63441089eac89ea77197b82077682a740625782a555f48980c653ef3f24b"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/config.h",
+      "sha256": "134195a6dec13aa8e217882cd78b3610c8966f465d393be4bd9a373dfad429b4"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/context.h",
+      "sha256": "d7fbe6da14ff6abcf00ad56f8626642ce708166e6454074f309786c0fd02c05d"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/crypt.h",
+      "sha256": "b450f276736931a98595c20ba397f05a742237563e6a5a14113a60b9dcaaa546"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/deskew.h",
+      "sha256": "537342f379f7ac930dfc93a121fe9f3983478f897489a9de9eb78c95625759f5"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/device.h",
+      "sha256": "6b12f488c9b69eee072d64aed9c5fb956ff39e5924117c077a423ada4d3f7bae"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/display-list.h",
+      "sha256": "c98b57de844757c0c50a38c16b210357e70b99db51156d921891fffa3c6f2e9a"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/document.h",
+      "sha256": "f51abb1e802db10be17b46402732f0ffb50adee2f2b809947399384260ea2d0a"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/export.h",
+      "sha256": "f93587a7b608eeb8396d83a060c3721b13951942c9dd2465c6d47314b0113d2c"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/filter.h",
+      "sha256": "173b32b75dac41c6661782e1fc283e55621d9e607571ef2bb71bd830b529731f"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/font.h",
+      "sha256": "d581849d2a51dd21b128b2edf37ec96818adbe68dc25fb1400651e278c7a607b"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/geometry.h",
+      "sha256": "cefc87522783de2dc65ba0c0e50c4718517f477c1816ead818d01d7ad3680c75"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/getopt.h",
+      "sha256": "27ea89de11d5be647d9f5994bfbc68bad50752f6c6bbce7f34c2ef135851e261"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/glyph-cache.h",
+      "sha256": "e45eeb4a37a3f6fc3e3410cb992774cddc29b14ea8923b850f11c1dada74c4c3"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/glyph.h",
+      "sha256": "8d28fe8eca52390351d1cfd58bdaad98758daa483a1b14890bf16ce1a138ecb4"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/hash.h",
+      "sha256": "dabd114f9476b54a75c4368624fda367ed52b8bef510140dee55cf1ca74ef72c"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/heap-imp.h",
+      "sha256": "29fd176fa89d50b117b2b56fcd53d3ce20514feb3ec185fe6916e0e5d60a3523"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/heap.h",
+      "sha256": "36392e523b8b51d6259c001dcae7a7e0c134af4b2b5fae45411a904ae07c549f"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/hyphen.h",
+      "sha256": "8cfdfbfc9fa1c40cbf10faed8b5239940d0177083431a1a8e586793f3717848f"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/image.h",
+      "sha256": "ec4fc7fb94e3ecbd52354fd4e3a5582194cd9db0078fbcc46713f891c8c4574e"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/json.h",
+      "sha256": "d399be259e5c589c8beec3b9b41038251f4837c2add27854fe6ba82385df3223"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/link.h",
+      "sha256": "ccc11438759247393d9dddaf9026920e400d24e346cd8915cc35946a6f766c35"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/log.h",
+      "sha256": "e319a159d830b81b45a9b7f5d8e5217ca8014f81cb10439d59e66a1e323e0917"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/options.h",
+      "sha256": "a7c9ea8c302b565e70e29623084a4d81395f370694a0e183d2741f160e616307"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/outline.h",
+      "sha256": "e85933f83ca4d1a91657169019160165d55a941f4d1b48961ce74e442bcfad34"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/output-svg.h",
+      "sha256": "ef60697e748e3e1fc6ce775099f15a86de36946c56335cf58b2f072bbef58919"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/output.h",
+      "sha256": "24e7b9a0dd4cbc99264cf19f399f6d7f6f1e8a0fd83a49918390ac1a6e415325"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/path.h",
+      "sha256": "1644bfa7df3549cf8028b3eba7f93d3473f18fa3116bd8190855c56c64a61bc5"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/pixmap.h",
+      "sha256": "a6cd7aafbd8b1bfae091e080a3b184a161eae449283540750c153703219477ca"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/pool.h",
+      "sha256": "e690110a2dff0393751f4cacdb3abacaa25124edb7db2c9cc8b5bac19ffd3d47"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/separation.h",
+      "sha256": "d8df4cb980c86ba8c3e67e11a4e8cfa962649f4e6f2a496a1839b511241cabdd"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/shade.h",
+      "sha256": "74f1e40ab5f10faadaec0d92441ab10d2e1aa09bf4f43e90d9d3557ab3c7f9cb"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/store.h",
+      "sha256": "bf3a29039908745131714a84f8602faf8f2b772de23b7532c5cc6296b1545588"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/story-writer.h",
+      "sha256": "1b7f9e778667b7c7e390f3e142f9cceb788d103861380574aa9eb15fac530d3e"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/story.h",
+      "sha256": "774d15d23dd1efb428a8a5e6a2f141d584e24c6b6a3eccd1256ac49e1100fdbe"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/stream.h",
+      "sha256": "c1c60ec456a96746a95a966324e74cbb6746b85a3be80e2217ea57942a8f68df"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/string-util.h",
+      "sha256": "62f5f52ddd6242f0f37bf303c20885abbfadb2cf7b197c63a2acbc0942b4d8e6"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/structured-text.h",
+      "sha256": "14f6425c468e8d4be79075ae347dd3907bdecf5971fb630d516e61c7d993b636"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/system.h",
+      "sha256": "073e469542ba3a84b3fad93bd5fab1464bb792aa82dea6b91558e5e355630be5"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/text.h",
+      "sha256": "174b56b21d13fe18246427dd68d712b0a81c254fbc17cd48154d023a4c1195c9"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/track-usage.h",
+      "sha256": "a25792ab5670596a8cb00ca4bc52aac5c4c60470d0a568e643845114bb1d072a"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/transition.h",
+      "sha256": "07951b7fd6e3fd65a8a9ad3922721d93defcf95460eab474ecfbb16ad7eee7ac"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/tree.h",
+      "sha256": "e36e427266db0748fd3c5b6ae12e13c0b9445af2d310c27dda685e5e8116585f"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/types.h",
+      "sha256": "3f458b09794660dc954ab76f8e546074b528647a6d13f582937e5892c59ed9fd"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/util.h",
+      "sha256": "6023a214810ad85d254e41362506b5c0f14ea1ef6f248a503bf012b8b95c1041"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/version.h",
+      "sha256": "e29279facac2566060ba013550bd6178fefc6c4d0eca49433044489396768502"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/write-pixmap.h",
+      "sha256": "82218ff6d619fa9d1746aefa952e66845af2d9fddc988cb14c988b92051aab1c"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/writer.h",
+      "sha256": "dab95772c6d1e3bd2a487b67fac36f14a580bef74b729864223d77de7bb7d953"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/fitz/xml.h",
+      "sha256": "d80c67814bf1adfd4f52c6585bf6a1ff6f1112564dc0e177adf2dd0167578436"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/functions.h",
+      "sha256": "7855d158ac5ff0e43af3aa786c782abb612ff4f6961eb7b5a8366558072781a9"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/helpers/mu-office-lib.h",
+      "sha256": "cb1bc9e41f747354eee6caaaf1de8ee1d21924ee3c641bd75a5bb913a6d54811"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/helpers/mu-threads.h",
+      "sha256": "f594589fe460ff4d968c74eda602fa03d806b94f122169be18cd49417e09f210"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/helpers/pkcs7-openssl.h",
+      "sha256": "8d06f568c3447200bc11a2a17d7e2623313b29cbc010d94affe8cc893a5e961e"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/html.h",
+      "sha256": "44972ea016ae9ce65cbeea8c647306bc27a9638adcfcb6de9e3fe33997fa503b"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/internal.h",
+      "sha256": "cd5f8ad68dc2834c2b3e511b71a28c1f8643f6c537d87d5fab90d1041c3f39b6"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/memento.h",
+      "sha256": "312a318d0270fb6a7dc4f92fb8f9f95606983c2e648db0730629ef4ad64e7179"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf.h",
+      "sha256": "1b31e9a7ef52807a8ce361e52a778e3361644b616e0eb39ee44f9f3c10e646c8"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/annot.h",
+      "sha256": "0c0c3d9a22d2d361f2c0812f35ca7acbfffd9239a4dc6336ecc3bd9f9ab0bbed"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/clean.h",
+      "sha256": "c989642f135090ee63fce8e8db09152e7fa2d6faa50c72fa73e5d0032eebba16"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/cmap.h",
+      "sha256": "ba25bb58f39c235b67125053c4022d3889cd1c8727e6de89a3e6c288920ab7fe"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/crypt.h",
+      "sha256": "e546987708e80e0f65163d4ba773ec3368f6d3a8566a4dc38f192ee5feacbea6"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/document.h",
+      "sha256": "6a17c1f8d0fe2149e609094a20d0665bd2229d55f1fc575a361c1ce4226b23d4"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/event.h",
+      "sha256": "27fc16c1e10772f553073bb103b73f8cebf5a5fd9c08494ac02b243baf750ea6"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/font.h",
+      "sha256": "aefff8634d5e035ab3bf0f14a3a9892c3cf72d2eed9dc878779f6b6d0362d7d7"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/form.h",
+      "sha256": "91969646a2d9cead53f9be1d3e8cd8109023709572e9ef5556aa2cac5a57cdb2"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/image-rewriter.h",
+      "sha256": "d7999b657f43edcba6e4b8a527fc9301308a6f15b9513bb0f0f3590b1267361e"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/interpret.h",
+      "sha256": "2af5eb6ae564b09fbf4ca82baf7afdbe70c78538be5c695f25874ea8e4c92e0d"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/javascript.h",
+      "sha256": "342addf0d1bfaa23498a270456ef284f52189e9bd726570d8e525b3a840dc2e0"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/name-table.h",
+      "sha256": "3a23207fb4cb723c11d9c324f388cc5bc6df4cc0dff4354022b72e36a98d7f4f"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/object.h",
+      "sha256": "cebc8f81d07380a776c066fa91dce76252dbbabdb9127d8548dd73052463ebc8"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/page.h",
+      "sha256": "e60801c6f080fef1bffee4aadb11ddc5a9250f40a5a2ea7aab3812d3890aabde"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/parse.h",
+      "sha256": "9d7d82a04a4eec8ee98b9c7df5c30b1e1ca02d36494ae697e0fe05f77d0a6753"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/recolor.h",
+      "sha256": "284afd1764a75be4b7a7ddae9d3291b6526d84a2375e5918f7168e014b871930"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/resource.h",
+      "sha256": "427b22972c0398d5d0b6d7935351179e804504f0b21ed5c1f4e6afb9985ef45d"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/xref.h",
+      "sha256": "4d54ed3f01ca989426bb200b78d4ca8cb54ae930d4c6b870abc00871d8ef0585"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/pdf/zugferd.h",
+      "sha256": "99adf5e050ccdfb24576dab245830b8011bc171c339087911344e96cd5d44fcf"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/include/mupdf/ucdn.h",
+      "sha256": "872446ff16664050594bc1e6c2b4a95a35f5c1c9a65565430efa8c286235ca75"
+    },
+    {
+      "entry": "pymupdf/mupdf-devel/lib/libmupdf-threads.a",
+      "sha256": "d58a1ada557033eb88ac3639e6f0bc887abb73d288572b12f080fe1918f228a0"
+    },
+    {
+      "entry": "pymupdf/mupdf.py",
+      "sha256": "33035d2f4ec38117764edb5310062b0ab5b42ee6ef7b096a9a0514c32a07ea7d"
+    },
+    {
+      "entry": "pymupdf/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "entry": "pymupdf/pymupdf.py",
+      "sha256": "4e6040168b78f7ddf96f6ce4b0ddb59e6702a979b55704e62c38b9b430596352"
+    },
+    {
+      "entry": "pymupdf/table.py",
+      "sha256": "c6523e32da763bd2b84e7b0cb3d221c9938ff1dc06c19a2d0d97d3635999d6ca"
+    },
+    {
+      "entry": "pymupdf/utils.py",
+      "sha256": "cc172067fe277068a3abdb9c8886efbfacaabc9b261f82ecb686ecd85fb7622d"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/METADATA",
+      "sha256": "b1db9f41e614732dcdd0e5ed5f831139ff95ae6562cef2d955948b943d398288"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/RECORD",
+      "sha256": "ec702c4a7813b7cd3f7077137bc686115e19c7121cbb09d3e9e84f2cee77304b"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/REQUESTED",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/WHEEL",
+      "sha256": "10612f4a984562a5cab36dfe91005ec8da093f59eb4fc649290a22e69e4360bf"
+    },
+    {
+      "entry": "qdrant_client-1.19.1.dist-info/licenses/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "entry": "setuptools/_vendor/jaraco/text/Lorem ipsum.txt",
+      "sha256": "37fedcffbf73c4eb9f058f47677cb33203a436ff9390e4d38a8e01c9dad28e0b"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/INSTALLER",
+      "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/METADATA",
+      "sha256": "17c70f9c6a34a204f2a969c73e47eba77289ef2a29914208ab10ae49973e1ada"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/RECORD",
+      "sha256": "4feaf8cbf292184a54eb23c5f4c1ebeba383de485e1861af3f55635520d6be46"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/WHEEL",
+      "sha256": "9d69d4f51fe86232cbb71822d7a0c5780f7f20c42cdae9c18a35ba3708db0c6a"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/entry_points.txt",
+      "sha256": "0e7867e1d9b912c23864c02c1e574617a0b005766b1979d1edc9cadbe5d1ef36"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/licenses/LICENSE",
+      "sha256": "3d6a0c050d8bec52fabad502e45fb25bd02bcadbd70dea34d447b6a0ff4e6da8"
+    },
+    {
+      "entry": "websockets-17.1.dist-info/top_level.txt",
+      "sha256": "08ca5d2a49712acbd980283296dc5458e1e26d95d9d6e60856971af71b10f079"
+    },
+    {
+      "entry": "PYZ.pyz",
+      "sha256": "2b357c0004cfcbb57c5167212b005cf37605e6cdddca9b5e50d3258d746e378b"
+    }
+  ]
+}

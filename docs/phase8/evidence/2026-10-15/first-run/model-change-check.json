@@ -1,0 +1,7 @@
+{
+  "document_unchanged": true,
+  "conversation_unchanged": true,
+  "provider": "ollama",
+  "selected_model": "noye-phase8-alias:qa",
+  "plaintext_credential_fields": []
+}

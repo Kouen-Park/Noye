@@ -1,0 +1,197 @@
+{
+  "known_count": 14,
+  "cases": [
+    [
+      "restart-days-supported",
+      true,
+      "Nereid restarts on Mondays, whereas Atlas restarts on Tuesdays.",
+      [
+        "Nereid restarts on Mondays.",
+        "Atlas restarts on Tuesdays."
+      ]
+    ],
+    [
+      "restart-days-unsupported",
+      false,
+      "Nereid and Atlas both restart on Mondays.",
+      [
+        "Nereid restarts on Mondays.",
+        "Atlas restarts on Tuesdays."
+      ]
+    ],
+    [
+      "approval-states-supported",
+      true,
+      "The Hemlock change was approved, while the Flint change is still proposed and unapproved.",
+      [
+        "The Hemlock change was approved.",
+        "The Flint change is proposed and has not been approved."
+      ]
+    ],
+    [
+      "approval-states-unsupported",
+      false,
+      "The Hemlock and Flint changes were both approved.",
+      [
+        "The Hemlock change was approved.",
+        "The Flint change is proposed and has not been approved."
+      ]
+    ],
+    [
+      "temperature-properties-supported",
+      true,
+      "Caldera had an observed temperature of 18 degrees Celsius; Zenith has a rated limit of 52 degrees Celsius.",
+      [
+        "Caldera had an observed temperature of 18 degrees Celsius.",
+        "Zenith has a rated temperature limit of 52 degrees Celsius."
+      ]
+    ],
+    [
+      "temperature-properties-unsupported",
+      false,
+      "Caldera and Zenith had observed temperatures of 18 and 52 degrees Celsius, respectively.",
+      [
+        "Caldera had an observed temperature of 18 degrees Celsius.",
+        "Zenith has a rated temperature limit of 52 degrees Celsius."
+      ]
+    ],
+    [
+      "translated-conditions-supported",
+      true,
+      "Coda allows exports only on Thursdays when not under maintenance, while Ember permits exports on Mondays.",
+      [
+        "Coda는 유지보수 중이 아닐 때 목요일에만 내보내기를 허용합니다.",
+        "Ember permits exports on Mondays."
+      ]
+    ],
+    [
+      "translated-conditions-unsupported",
+      false,
+      "Coda always allows exports on Thursdays, while Ember permits exports on Mondays.",
+      [
+        "Coda는 유지보수 중이 아닐 때 목요일에만 내보내기를 허용합니다.",
+        "Ember permits exports on Mondays."
+      ]
+    ],
+    [
+      "independent-facts-supported",
+      true,
+      "Moss uses a queue, and Nova stores encrypted reports.",
+      [
+        "Moss uses a queue.",
+        "Nova stores encrypted reports."
+      ]
+    ],
+    [
+      "independent-facts-unsupported",
+      false,
+      "Nova stores encrypted reports because Moss uses a queue.",
+      [
+        "Moss uses a queue.",
+        "Nova stores encrypted reports."
+      ]
+    ],
+    [
+      "measurement-subjects-supported",
+      true,
+      "Tanager had a measured runtime of 12 milliseconds, whereas Loon used 5 megabytes of memory.",
+      [
+        "Tanager had a measured runtime of 12 milliseconds.",
+        "Loon used 5 megabytes of memory."
+      ]
+    ],
+    [
+      "measurement-subjects-unsupported",
+      false,
+      "Loon had a measured runtime of 12 milliseconds, whereas Tanager used 5 megabytes of memory.",
+      [
+        "Tanager had a measured runtime of 12 milliseconds.",
+        "Loon used 5 megabytes of memory."
+      ]
+    ],
+    [
+      "second-original-only",
+      true,
+      "Aster keeps 7 successful messages.",
+      [
+        "Birch keeps 3 failed messages.",
+        "Aster keeps 7 successful messages."
+      ]
+    ],
+    [
+      "first-original-only",
+      true,
+      "Birch keeps 3 failed messages.",
+      [
+        "Birch keeps 3 failed messages.",
+        "Aster keeps 7 successful messages."
+      ]
+    ],
+    [
+      "mixed-power-true",
+      true,
+      "Pine draws 14 watts, while Elm is rated for up to 70 watts.",
+      [
+        "Pine was measured drawing 14 watts.",
+        "Elm has a maximum power rating of 70 watts."
+      ]
+    ],
+    [
+      "mixed-power-false",
+      false,
+      "Pine and Elm draw 14 and 70 watts, respectively.",
+      [
+        "Pine was measured drawing 14 watts.",
+        "Elm has a maximum power rating of 70 watts."
+      ]
+    ],
+    [
+      "independent-tool-true",
+      true,
+      "Vega keeps signed bundles and uses a trie.",
+      [
+        "Vega keeps signed bundles. Separately, Vega uses a trie."
+      ]
+    ],
+    [
+      "independent-tool-false",
+      false,
+      "Vega signs bundles using a trie.",
+      [
+        "Vega keeps signed bundles. Separately, Vega uses a trie."
+      ]
+    ],
+    [
+      "adjoining-true",
+      true,
+      "Lyra records a snapshot every six hours.",
+      [
+        "Lyra stores confidential notes. Its snapshots are recorded every six hours."
+      ]
+    ],
+    [
+      "adjoining-false",
+      false,
+      "Lyra records a snapshot every hour.",
+      [
+        "Lyra stores confidential notes. Its snapshots are recorded every six hours."
+      ]
+    ],
+    [
+      "translated-exception-true",
+      true,
+      "Eris permits imports on Tuesdays except during a safety inspection.",
+      [
+        "Eris는 안전 점검 중인 경우를 제외하고 화요일에 가져오기를 허용한다."
+      ]
+    ],
+    [
+      "translated-exception-false",
+      false,
+      "Eris always permits imports on Tuesdays.",
+      [
+        "Eris는 안전 점검 중인 경우를 제외하고 화요일에 가져오기를 허용한다."
+      ]
+    ]
+  ]
+}

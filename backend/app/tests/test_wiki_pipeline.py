@@ -4,9 +4,9 @@ import httpx
 import pytest
 
 from app.config import Settings
-from app.models.wiki import Passage, SectionSummary, SourceRef, WikiScope
+from app.models.wiki import Passage, RelationsOutput, SectionSummary, SourceRef, WikiScope
 from app.services.wiki import pipeline
-from app.services.wiki.local import WikiError, structured
+from app.services.wiki.local import SYSTEM, WikiError, request_size, structured
 
 
 def passage(text, page=None):
@@ -71,6 +71,39 @@ def test_invalid_model_schema_rejected(value):
         structured(
             "Test", SectionSummary, client=mock_client(value), settings=Settings(_env_file=None)
         )
+
+
+def test_wiki_model_sees_the_constrained_schema_with_original_fields_and_exact_budget():
+    prompt = json.dumps({"task": "verify_relation", "origin": {"text": "원문 조건입니다."}})
+    constraints = {"target_id": ["known-target"], "origin_evidence_id": ["known-original"]}
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        body = json.loads(request.content)
+        sent.append(body)
+        return httpx.Response(200, json={"done": True, "response": '{"relations":[]}'})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        structured(
+            prompt,
+            RelationsOutput,
+            client=client,
+            constraints=constraints,
+            settings=Settings(_env_file=None),
+        )
+    body = sent[0]
+    visible = json.loads(body["prompt"])
+    assert visible["origin"]["text"] == "원문 조건입니다."
+    assert visible["output_schema"] == body["format"]
+    fields = visible["output_schema"]["$defs"]["RelationProposal"]["properties"]
+    assert fields["target_id"]["enum"] == ["known-target"]
+    assert fields["origin_evidence_id"]["enum"] == ["known-original"]
+    assert "comparable conditions" in fields["kind"]["description"]
+    assert request_size(prompt, RelationsOutput, constraints) == len(
+        (SYSTEM + body["prompt"]).encode("utf-8")
+    )
 
 
 def test_remote_local_url_never_receives_evidence():
@@ -202,3 +235,55 @@ def test_taxonomy_hints_are_in_every_complete_bounded_prompt():
         assert prompt["existing_topics"] == topics
         assert "language" in prompt
         assert all(p["text"] for p in prompt["passages"])
+
+
+@pytest.mark.parametrize("field", ["summary", "key_points"])
+@pytest.mark.parametrize(
+    "original,generated",
+    [
+        ("Project Beta stores 92 litres.", "The system has a storage capacity of 92 litres."),
+        ("용량은 43리터입니다.", "It stores 43 litres."),
+        ("It stores 16 litres.", "저장 용량은 16리터입니다."),
+    ],
+)
+def test_quantity_property_drift_cannot_pass_literal_wiki_evidence(field, original, generated):
+    data = summary(quote=original)
+    claim = {"text": generated, "quote": original, "evidence_id": "verified"}
+    if field == "summary":
+        data[field] = claim
+    else:
+        data["summary"]["text"] = original
+        data[field] = [claim]
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        identifier = json.loads(json.loads(request.content)["prompt"])["passages"][0]["evidence_id"]
+        for value in [data["summary"], *data["key_points"]]:
+            value["evidence_id"] = identifier
+        return httpx.Response(200, json={"done": True, "response": json.dumps(data)})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        with pytest.raises(WikiError, match="capacity into an amount stored"):
+            pipeline.summarize(
+                [passage(original)], categories=[], settings=Settings(_env_file=None), client=client
+            )
+
+
+def test_quantity_property_guard_uses_only_the_claims_cited_original():
+    first = passage("It stores 27 litres.")
+    second = first.model_copy(update={"id": "other", "text": "Capacity is 27 litres."})
+    claim = SectionSummary.model_validate(
+        {
+            **summary(quote=first.text),
+            "summary": {
+                "text": "Capacity is 27 litres.",
+                "quote": first.text,
+                "evidence_id": first.id,
+            },
+        }
+    ).summary
+    with pytest.raises(WikiError, match="capacity into an amount stored"):
+        pipeline.verify_claim(claim, {p.id: p for p in [first, second]})
+    claim.evidence_id, claim.quote = second.id, second.text
+    pipeline.verify_claim(claim, {p.id: p for p in [first, second]})

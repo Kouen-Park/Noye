@@ -1,0 +1,5 @@
+{"id": "independent-instrument", "expected": [false, true], "actual": [false, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 111.624}
+{"id": "maintenance-condition", "expected": [false, true], "actual": [false, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 89.275}
+{"id": "allocated-measured", "expected": [false, true], "actual": [false, true], "valid_semantic_decision": true, "matches_rubric": [true, true], "seconds": 52.986}
+{"id": "shared-context", "expected": [true, true], "actual": [true, false], "valid_semantic_decision": true, "matches_rubric": [true, false], "seconds": 23.167}
+{"batches": 4, "matches": 7, "claims": 8, "seconds": 277.432}

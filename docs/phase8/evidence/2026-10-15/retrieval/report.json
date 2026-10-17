@@ -1,0 +1,4418 @@
+{
+  "method": "Actual exported PDF extraction + existing Atlas originals, existing rank harness.\n\nSynthetic calibration only. No generation, personal library, production threshold\nchange or replacement evaluation harness. Full source paragraphs are the Atlas\ngold evidence; the PDF rows require all specified markers in one real chunk.\n",
+  "source_records": {
+    "graph-lab": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/graph-lab.txt",
+      "sha256": "eb321a0f34f6e32a0c65600db92285cc8868c76ec3ed7d733155cb18dfea4a0f",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 453,
+          "empty": false
+        }
+      ]
+    },
+    "graph-control": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/graph-control.txt",
+      "sha256": "f0be1651af3554da7d336825c2c0c4875bc75898d4f782399012c39c1b116e90",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 474,
+          "empty": false
+        }
+      ]
+    },
+    "database-lab": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/database-lab.txt",
+      "sha256": "de8772192dbe2cd7bef2eefe44442b76bde99ac1dca73de960a7a3f0c0a91e56",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 521,
+          "empty": false
+        }
+      ]
+    },
+    "database-control": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/database-control.txt",
+      "sha256": "bda96e1a263aa8e3975cfc65999dac05204d1b13cf20044a3ded8effd0623d2a",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 489,
+          "empty": false
+        }
+      ]
+    },
+    "research-notes": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/research-notes.txt",
+      "sha256": "0d6c62fc0e4b4f9c4b71b1720d06ebcfe67ea0ed4edede8adba9bfea4d6176f5",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 507,
+          "empty": false
+        }
+      ]
+    },
+    "research-control": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/research-control.txt",
+      "sha256": "a357dc0a4bcce2f7aa0a66db61a569c3716f5f6b0e914289c56519ff4de80fff",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 523,
+          "empty": false
+        }
+      ]
+    },
+    "seminar-agenda": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/seminar-agenda.txt",
+      "sha256": "ffbe5915bae5ba35ce249bebede0bdd3bdddb4d4ac37cdf5daa7312dbbc91958",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 477,
+          "empty": false
+        }
+      ]
+    },
+    "seminar-minutes": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/seminar-minutes.txt",
+      "sha256": "cc39ef5d352cb7b2b49df2fbb1e4e260ccea30345190503d76e62617b8be979d",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 527,
+          "empty": false
+        }
+      ]
+    },
+    "capture-log": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/capture-log.txt",
+      "sha256": "f5d0b6b84ef2fe66a50fdc5d739c7698fbd19c00142e032d8bd4ee85adf19189",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 527,
+          "empty": false
+        }
+      ]
+    },
+    "capture-control": {
+      "path": "/private/tmp/noye-phase8-20261014/pdf-chunk-comparison/capture-control.txt",
+      "sha256": "ba7eec89a9f88dddd65e9dbb1bdfa64e8df503cacfeca3ee22a4a7da690ac90c",
+      "physical_pages": null,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 522,
+          "empty": false
+        }
+      ]
+    },
+    "native-complex-pdf": {
+      "path": "/Users/gavinpark/Projects/Noye/docs/phase8/evidence/2026-10-15/native-pdf/fixed-native.pdf",
+      "sha256": "1a2c8b5ce9ff89f557c8d16688626e70de778533d2488b4fd2b5e743d4ed7b64",
+      "physical_pages": 7,
+      "pages": [
+        {
+          "page": 1,
+          "characters": 1566,
+          "empty": false
+        },
+        {
+          "page": 2,
+          "characters": 1614,
+          "empty": false
+        },
+        {
+          "page": 3,
+          "characters": 1833,
+          "empty": false
+        },
+        {
+          "page": 4,
+          "characters": 1755,
+          "empty": false
+        },
+        {
+          "page": 5,
+          "characters": 749,
+          "empty": false
+        },
+        {
+          "page": 6,
+          "characters": 77,
+          "empty": false
+        },
+        {
+          "page": 7,
+          "characters": 797,
+          "empty": false
+        }
+      ]
+    }
+  },
+  "sizes": [
+    {
+      "size": 500,
+      "overlap": 150,
+      "chunks": 42,
+      "summary": {
+        "1": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 0.7222222222222222,
+          "precision": 0.8888888888888888,
+          "mrr": 0.8888888888888888,
+          "ndcg": 0.8888888888888888,
+          "negative_returned_context": 1,
+          "document_recall": 0.7777777777777778
+        },
+        "3": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 0.8888888888888888,
+          "precision": 0.4074074074074074,
+          "mrr": 0.8888888888888888,
+          "ndcg": 0.8888888888888888,
+          "negative_returned_context": 1,
+          "document_recall": 0.8888888888888888
+        },
+        "5": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 0.8888888888888888,
+          "precision": 0.24444444444444446,
+          "mrr": 0.8888888888888888,
+          "ndcg": 0.8888888888888888,
+          "negative_returned_context": 1,
+          "document_recall": 0.8888888888888888
+        }
+      },
+      "latency": {
+        "first_query_ms": 22.641875009867363,
+        "warm_p50_ms": 16.95416698930785,
+        "warm_p95_ms": 20.963333998224698,
+        "cold_model_ms": null,
+        "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+      },
+      "threshold_probes": [
+        {
+          "cutoff": 0.3,
+          "negative_questions_with_any_result": 2,
+          "answerable_questions_with_no_gold_retained": 0
+        },
+        {
+          "cutoff": 0.4,
+          "negative_questions_with_any_result": 1,
+          "answerable_questions_with_no_gold_retained": 1
+        },
+        {
+          "cutoff": 0.5,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 3
+        },
+        {
+          "cutoff": 0.6,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 6
+        },
+        {
+          "cutoff": 0.7,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.8,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.9,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        }
+      ],
+      "score_rows": [
+        {
+          "id": "AT-201-en",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.5973224598203583
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.4666927447922295
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.35991200370842824
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3564459085014843
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3562997039342256
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.351460054569268
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3452925801361077
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.33523070593996884
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.31926854209533767
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.27314601746123546
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.26126446435440015
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2546508711928597
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.25439807872352566
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.2523753530802546
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.24197954460051246
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.23522996591979217
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.23491859978533697
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.23124008381997313
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.2259398853701739
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.22144749237224182
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.21597738445253695
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.21063905421908333
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.2078132657580946
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.20573043496675297
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.20223454100176494
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.19970400354346848
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19864646676853076
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.19750935846568435
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.19711340547680875
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.19149854825777068
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.19136556632366936
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.1860172002301958
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.18471209921192858
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.18257562139375233
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.17506943538673814
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.1721905945654366
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.1449588514026081
+            }
+          ]
+        },
+        {
+          "id": "AT-201-ko",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.6641982582439239
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.5720092246152543
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.40558314455012473
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.40110882185326047
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.39785264075724924
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3959741416930626
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.39002704035489416
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3761840579127327
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.37500418680505243
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.29675371575461335
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2873254893351334
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.2844778893813453
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2771822879354343
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.26734746278662885
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.25838255277091726
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.2576849839599233
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.25659027443006294
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.2438321649275018
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.2424621993288517
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.23993356201670865
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.23924981285849029
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.23604626400434348
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2359978461783143
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.22963406541721076
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.22661113824972326
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.2238921853107881
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.22309034185976717
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.22160153743134747
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.21951520721779488
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.21600050460593112
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.21410824285627472
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.21253378347489668
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.20172045913556413
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.1975809772052819
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.19628003950839168
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15512484929978881
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.15201561153521398
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.15201561153521398
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.15201561153521398
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.15201561153521398
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.15201561153521398
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.15201561153521395
+            }
+          ]
+        },
+        {
+          "id": "DB-318-en",
+          "unanswerable": false,
+          "gold": {
+            "database-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "database-lab-0",
+              "score": 0.5983930482174582
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.4870163168163012
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.34820754421042077
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.29584125653870535
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.2856772434800839
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.2682092782908346
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.266441271231032
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.2662891871766303
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.2611513165973773
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.260781768251262
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.2598571947977636
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.24674901129934335
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.24253707271627595
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.23937362890704075
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.23755795878474165
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.2362610066201426
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.23611844939762017
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.22904913040158315
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.22146351079689414
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.22066925817569738
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.21980253803359948
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.21919426464833827
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.21914223191612572
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.21845252373480484
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21709977631484828
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.21334624196689767
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.21173158295799843
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.20860467053039033
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.20806548837137234
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.20448720728553116
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.20327803374580566
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.18553920954851053
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.17853832244251971
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.17303857787410637
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.16667421118559061
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.16494066985025368
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.16494066985025366
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.16494066985025366
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.16494066985025366
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.16494066985025366
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.16494066985025366
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.14244639882873456
+            }
+          ]
+        },
+        {
+          "id": "RS-044-en",
+          "unanswerable": false,
+          "gold": {
+            "research-notes-0": 2
+          },
+          "ranking": [
+            {
+              "id": "research-notes-0",
+              "score": 0.6500434106980549
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.5194520068005318
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.33149163256825154
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.31941280337836336
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.31362351295072866
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2882696735833922
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.2875231375626972
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.25874909553691483
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.24679135809884784
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.24230059409901722
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.24055750445877763
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.22004147481406341
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21766822521413323
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.2114919025272546
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.21110534380064683
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.20357652076082525
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.20011350057258026
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.192770612023283
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.18208757724807328
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.18087600074085666
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.1791030468021934
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.17658074559890716
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.1744868966180749
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.1713979712026449
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.1704176134236155
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.1696796008168308
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.1667490479300987
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.16546965483451004
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.16474464905082536
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.1626955733885132
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.16232831962423316
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.16222638931596162
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.14526618923506557
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.14138975717812152
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1396622987912909
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.1390332228559481
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.11832951951318185
+            }
+          ]
+        },
+        {
+          "id": "compare-graphs",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2,
+            "graph-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-control-0",
+              "score": 0.6090367042825104
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.5465619403238717
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3491671646134715
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3482256546006692
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.34662873571001135
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.33019422959976996
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.3251068155589979
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3217111997092593
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.31514115042753427
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2571159926907358
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.23444833140407284
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.22981893895305827
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.20744684996038082
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.19902119490522852
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.19497369644377488
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.19479767861462066
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.19365405888248619
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.1876231733422702
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.18739920866629006
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.18566732917325363
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.18354364279123708
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.1773959985889019
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.17704992292905047
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.1746661867802985
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.17150543714882605
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1705220900737111
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.1693387521088525
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.1692832122866033
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.16791277928117027
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.16720686583660532
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.16671174755776944
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.16089487135729602
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.1586320256911683
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.14611739634520896
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.13631603168415052
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.1298311928576531
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.11694534022710644
+            }
+          ]
+        },
+        {
+          "id": "compare-pdf",
+          "unanswerable": false,
+          "gold": {
+            "capture-log-0": 2,
+            "capture-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "capture-control-0",
+              "score": 0.578463673383814
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.5568847155649351
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.326756143825765
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.31223842954023456
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.29953900416289053
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.2851934822392854
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.28163850929507533
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.27157740096489386
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.2657376553835626
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.25943785464569225
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2574767836464016
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2548314198388128
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.2492482268507696
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.24905607063010288
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.2478337443556307
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.24746272795836188
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.24595919459851923
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.23266452475150862
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.23229317979459096
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.22703259818709676
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.22485442564563757
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.22381298656874432
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.22220837245335567
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.21841404695697775
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.21208748533774446
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.20751166267583077
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.1922193558796324
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.1899726189125825
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.1898131801932223
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.18209585807314493
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.17890642759325823
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16621771732866814
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.14800024267991763
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.14114683650546753
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.14061150074950246
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.13696492144555966
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.13335016131987343
+            }
+          ]
+        },
+        {
+          "id": "identifier-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.36882552490587805
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.3611542876256508
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.32476254143255845
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.31410276711209284
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.28314558303746146
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.2757550130792155
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.27240618433007413
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.2709937264025014
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.2660845281866598
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.26569524654193133
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2607881428957431
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2473129536199254
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.23450401265038048
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.23205136244060004
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.22401290597897555
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.21928881980413867
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2126857444409928
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2105858216448992
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.2102990633588253
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.20873727307552387
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.19999657327453513
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.19914260927843724
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.18612010413466507
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.17515580299468908
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.16514289668407817
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.16425946884515868
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.16205472053355985
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.15936150186569703
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.15728037122155603
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.15704134268601927
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.15175663397482467
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.1517144302101116
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.15019319395277567
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.13863332190694722
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.1369280607546846
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.12777784826034014
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.11996125723526185
+            }
+          ]
+        },
+        {
+          "id": "fees-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.4940578601388278
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.45565635445935326
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2567261032805337
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.22540799817547277
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.21279731950829728
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.21210081288650018
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.20917418487024114
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.20797020857547782
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.199612680880617
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.19855259216048207
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.19638602935796795
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.19222154624687718
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.19016164851793593
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.18735882786237634
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.1851883773778069
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.18383210425353436
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.18379049908082606
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.1832078222704196
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.17660597471150913
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.17593115170356444
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.1731782428520761
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.17264515257701588
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16801584003660888
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.16748024077604162
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.16710292250928724
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.1622267524385841
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.16173193425715635
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.16114421933462508
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.1610529831952835
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.16083932846752635
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.16007549529299764
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15573483216921385
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.1529158038703582
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.15042227326660496
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.13753893320739385
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.13187345836528563
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.12240072089321147
+            }
+          ]
+        },
+        {
+          "id": "table-038",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-6": 2,
+            "native-complex-pdf-7": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.48610418090397467
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.46900750218003195
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.45312293418458566
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.4483704095921416
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.4441070047357601
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.4324047401981143
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.4286624227073287
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.4068481042582446
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.4021012650024199
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.3973039923823317
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.39005081220864124
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.38569788249002857
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.37921173682276943
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.36740197677142994
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.36097190740950724
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.35344175636353564
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.351844103807121
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.3492074400157926
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.34686258434129347
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.3446466481499876
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.3411529077592407
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.34043924759878247
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.3387870783336765
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.3387449192751769
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.3368802074261409
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.33403055709176055
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.31670041032534385
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.31667357721828326
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.3157236744063395
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.31422159107787073
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.26472006546358223
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.24692276076036246
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.23950204932036395
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.2204327791436253
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.21818892569379417
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.21109722685001722
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19069442208730344
+            }
+          ]
+        },
+        {
+          "id": "table-040-ko",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-7": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.3984490216319214
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3909684428081123
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.37960479844339096
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.3790174361455176
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.37287801202250875
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3724731451514939
+            },
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.36598377392218323
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.36328524480691027
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.3631660446627862
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3528197261408045
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.3205203574011992
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.31874626710444987
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.3157218597383876
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.31551360572106635
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.31327105867073873
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.31314580629859823
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.31017456350797035
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.30970210039298274
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.30961660505568406
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.30878864935750505
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.30009970444465994
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.2994736863973737
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.29906678463578273
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.2960876630138136
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.2956680350327831
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.2945654651231795
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2940952748226121
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.27061775004789074
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2683119099003879
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.2129570619112238
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.19980464399070483
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.1803865885048017
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.17271176264708943
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.15072564683911263
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.14482331470825094
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.13608940350323598
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.13551778868443543
+            }
+          ]
+        },
+        {
+          "id": "final-sentinel",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-25": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-25",
+              "score": 0.46774414562050215
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.46124045923537843
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3473435385569347
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.3468020329284577
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.34143614170371
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.33760696692171177
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3353879591563139
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3351011542056799
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3320406619826093
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.323210774221202
+            },
+            {
+              "id": "native-complex-pdf-14",
+              "score": 0.32104534621178277
+            },
+            {
+              "id": "native-complex-pdf-19",
+              "score": 0.3201339120438279
+            },
+            {
+              "id": "native-complex-pdf-12",
+              "score": 0.3155967612047459
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3152385879407772
+            },
+            {
+              "id": "native-complex-pdf-22",
+              "score": 0.31487756367438835
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.3114184012378963
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.3081773821911682
+            },
+            {
+              "id": "native-complex-pdf-17",
+              "score": 0.30756932240085066
+            },
+            {
+              "id": "native-complex-pdf-11",
+              "score": 0.307256349266808
+            },
+            {
+              "id": "native-complex-pdf-18",
+              "score": 0.3068259340222612
+            },
+            {
+              "id": "native-complex-pdf-13",
+              "score": 0.3057748193359483
+            },
+            {
+              "id": "native-complex-pdf-20",
+              "score": 0.30297058030382307
+            },
+            {
+              "id": "native-complex-pdf-23",
+              "score": 0.2855760054325829
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.27986357424133906
+            },
+            {
+              "id": "native-complex-pdf-21",
+              "score": 0.2796404467393113
+            },
+            {
+              "id": "native-complex-pdf-15",
+              "score": 0.27939300953482565
+            },
+            {
+              "id": "native-complex-pdf-16",
+              "score": 0.27905266902331605
+            },
+            {
+              "id": "native-complex-pdf-24",
+              "score": 0.2397690798381677
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2397417437868327
+            },
+            {
+              "id": "database-lab-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "research-control-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "research-notes-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "capture-control-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "seminar-minutes-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "capture-log-1",
+              "score": 0.22438996308307468
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.21358986105125102
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.20279133198302884
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.201414293041273
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.18561270599277738
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.16539209921950881
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.15540696672409854
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.10872152312716796
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "size": 1000,
+      "overlap": 150,
+      "chunks": 21,
+      "summary": {
+        "1": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 0.7222222222222222,
+          "precision": 0.8888888888888888,
+          "mrr": 0.8888888888888888,
+          "ndcg": 0.8888888888888888,
+          "negative_returned_context": 1,
+          "document_recall": 0.7777777777777778
+        },
+        "3": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 1.0,
+          "precision": 0.4444444444444444,
+          "mrr": 0.9444444444444444,
+          "ndcg": 0.9589921948412731,
+          "negative_returned_context": 1,
+          "document_recall": 1.0
+        },
+        "5": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 1.0,
+          "precision": 0.26666666666666666,
+          "mrr": 0.9444444444444444,
+          "ndcg": 0.9589921948412731,
+          "negative_returned_context": 1,
+          "document_recall": 1.0
+        }
+      },
+      "latency": {
+        "first_query_ms": 19.87195899710059,
+        "warm_p50_ms": 16.750208000303246,
+        "warm_p95_ms": 18.167541013099253,
+        "cold_model_ms": null,
+        "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+      },
+      "threshold_probes": [
+        {
+          "cutoff": 0.3,
+          "negative_questions_with_any_result": 2,
+          "answerable_questions_with_no_gold_retained": 0
+        },
+        {
+          "cutoff": 0.4,
+          "negative_questions_with_any_result": 1,
+          "answerable_questions_with_no_gold_retained": 0
+        },
+        {
+          "cutoff": 0.5,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 3
+        },
+        {
+          "cutoff": 0.6,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 6
+        },
+        {
+          "cutoff": 0.7,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.8,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.9,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        }
+      ],
+      "score_rows": [
+        {
+          "id": "AT-201-en",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.5973224598203583
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.46669274479222966
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3568938604648959
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.30136518952095365
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2797851237369544
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2770249718158406
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2612644643544001
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.2583273142802529
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.25781547809087385
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.2548660901060656
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.25076827655893175
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.2502071177822724
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.21715240861250484
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.21514378113259972
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.2107941379029123
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.20202630205851896
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19864646676853076
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.19360356354738853
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.18271591980571633
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.17219059456543653
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15346311784556843
+            }
+          ]
+        },
+        {
+          "id": "AT-201-ko",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.6641982582439239
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.5720092246152544
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3839739148012349
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3833091936506785
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.35276291943911564
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3034983404927443
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2979732747404549
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2876854238973474
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.27718228793543426
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.2727901489152642
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.25878655208437407
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.25046793359177993
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.24614530118944355
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2414657680701373
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.2360462640043434
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.23183749991386376
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.21752605068284314
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.21253378347489665
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.2117276338862564
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2104898200476678
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.1608648990707371
+            }
+          ]
+        },
+        {
+          "id": "DB-318-en",
+          "unanswerable": false,
+          "gold": {
+            "database-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "database-lab-0",
+              "score": 0.5887284218146238
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.48701631681630114
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.29428957113924026
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.27228529420832714
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.26466588985612977
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.25228452470324764
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.24721705343617079
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.234844497725273
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.22474864004514825
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.21980253803359945
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.21970004292539294
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2188691221105813
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2184242082899108
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21709977631484823
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2028853803239677
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.19917263796257406
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.1817704387792315
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.17853832244251971
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.17303857787410634
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.15863285235327418
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.1424334809075214
+            }
+          ]
+        },
+        {
+          "id": "RS-044-en",
+          "unanswerable": false,
+          "gold": {
+            "research-notes-0": 2
+          },
+          "ranking": [
+            {
+              "id": "research-notes-0",
+              "score": 0.6521469909471549
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.5246251944486604
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2790833979571987
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2780277049535682
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2681757076116336
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.24055750445877763
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.2326373395871785
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.22281544065559267
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.222037029323241
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.2176682252141332
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2099475357193521
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.20081541978205808
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.19790910570967138
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.19605255461316906
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.181163264704296
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.1767563366755044
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.17272690578153888
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.17142918556266004
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.16269557338851326
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.13966229879129088
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.11832951951318182
+            }
+          ]
+        },
+        {
+          "id": "compare-graphs",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2,
+            "graph-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-control-0",
+              "score": 0.6090367042825104
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.5465619403238718
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.31245468326018466
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2883746994738154
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2827462057211747
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.259511017754539
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.22733830716736653
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.2245260216664711
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.20502406041422552
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.19269600814368265
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.18837729264011668
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.18785712912941882
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.17466618678029852
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.1716934110919546
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.17114562010055928
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1705220900737111
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.16089487135729608
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.15882620035578623
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.15402414429050967
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.13965422132810285
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.1185394574178671
+            }
+          ]
+        },
+        {
+          "id": "compare-pdf",
+          "unanswerable": false,
+          "gold": {
+            "capture-log-0": 2,
+            "capture-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "capture-control-0",
+              "score": 0.5739496305547495
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.5619852444680813
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.30491750667972006
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3040463839080122
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.27711691647083825
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.27696079104904103
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.27647800059580385
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2566187259651618
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2508849948810921
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.23247249489546223
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.22860070271111274
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.22703259818709673
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.20981651812216412
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.20329521431053943
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.182095858073145
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.1803969344156865
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16621771732866816
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.14957153383704686
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.1421716921565174
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1406115007495024
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.1333501613198734
+            }
+          ]
+        },
+        {
+          "id": "identifier-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.368825524905878
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.3611542876256508
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.28499088975091413
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.28276049157398764
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.279810279926455
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2607178408915516
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.23745170611747535
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.22711783830806453
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.22379482035197018
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.2192888198041387
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2126857444409927
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.21256153234971106
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.20507065046175643
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.19491836722612865
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.186120104134665
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.16548983668578388
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.16250106633590397
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.16148311903319934
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.16027319126530226
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.14579887780065987
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.1145030567753574
+            }
+          ]
+        },
+        {
+          "id": "fees-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.49405786013882774
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.4515613038212074
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2197758014651589
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.20567537921011253
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.1910550777625105
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.1859636385914108
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.17593115170356444
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.17381097891706224
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.169458007114467
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.16858495590508654
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16801584003660885
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.16456948468763075
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.15702342639044575
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.15622093359414052
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.15601511691961512
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15242604395333725
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.1514111659716054
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.14415026727664176
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.13753893320739385
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.13094041302606466
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.12240072089321147
+            }
+          ]
+        },
+        {
+          "id": "table-038",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-2": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.440194901708395
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.40886858187933195
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.403233913510855
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.39687073253297506
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.382947298764737
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.37949598349003194
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.37810897774453456
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.37144521476230996
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3597663235977032
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.34938402486125614
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.3404392475987824
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.33566540692985564
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.3246397235894652
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.3152084216087603
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.27357169591925184
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.2469227607603624
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.24321125243291367
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.22043277914362527
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2185276810908857
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.2110972268500172
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19069442208730344
+            }
+          ]
+        },
+        {
+          "id": "table-040-ko",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-2": 2,
+            "native-complex-pdf-3": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.44824939559556237
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.43456019896373416
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.39742802030014235
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.39061169150019365
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.37343245560463184
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.3671192822288588
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.34515594730433913
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3448515955516528
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3430274166591191
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.337503065960187
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3206393580321447
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.3007053621547731
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.2739910868302262
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.269748043417464
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21295706191122377
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.1998046439907048
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.18038658850480166
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.15548571081113238
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.144823314708251
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.13820602634470652
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.13551778868443543
+            }
+          ]
+        },
+        {
+          "id": "final-sentinel",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-10": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.4441922398427412
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.43629503908325074
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.35642251679706066
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.33969977229121495
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.336888052367715
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.3335826991665428
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3317466115971862
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3296229806724592
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3128033122346749
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.31076890838150534
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3044698398373692
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2895894474809373
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.2855760054325829
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.23974943993365191
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2097253900079467
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.2027913319830289
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.201414293041273
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.18561270599277735
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1653920992195089
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.15183947335493303
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.11183025410156082
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "size": 1500,
+      "overlap": 150,
+      "chunks": 21,
+      "summary": {
+        "1": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 0.8888888888888888,
+          "precision": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": 1,
+          "document_recall": 0.8888888888888888
+        },
+        "3": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 1.0,
+          "precision": 0.4074074074074074,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": 1,
+          "document_recall": 1.0
+        },
+        "5": {
+          "questions": 11,
+          "answerable": 9,
+          "negatives": 2,
+          "recall": 1.0,
+          "precision": 0.24444444444444446,
+          "mrr": 1.0,
+          "ndcg": 1.0,
+          "negative_returned_context": 1,
+          "document_recall": 1.0
+        }
+      },
+      "latency": {
+        "first_query_ms": 16.686541988747194,
+        "warm_p50_ms": 17.06416701199487,
+        "warm_p95_ms": 18.672000005608425,
+        "cold_model_ms": null,
+        "note": "Corpus embedding warms the model before queries; Qdrant is in memory, not a REST server."
+      },
+      "threshold_probes": [
+        {
+          "cutoff": 0.3,
+          "negative_questions_with_any_result": 2,
+          "answerable_questions_with_no_gold_retained": 0
+        },
+        {
+          "cutoff": 0.4,
+          "negative_questions_with_any_result": 1,
+          "answerable_questions_with_no_gold_retained": 0
+        },
+        {
+          "cutoff": 0.5,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 3
+        },
+        {
+          "cutoff": 0.6,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 6
+        },
+        {
+          "cutoff": 0.7,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.8,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        },
+        {
+          "cutoff": 0.9,
+          "negative_questions_with_any_result": 0,
+          "answerable_questions_with_no_gold_retained": 9
+        }
+      ],
+      "score_rows": [
+        {
+          "id": "AT-201-en",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.5973224598203583
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.46669274479222966
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.36379908816757434
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3071063763038538
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2797851237369544
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.27054619822342113
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2612644643544001
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.25781547809087385
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.2548660901060656
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.24973220656517572
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.24582873468672178
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.2224700503430478
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.21715240861250484
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.21514378113259972
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.20204094704555217
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.20202630205851896
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19864646676853076
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.19635829949882658
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.18271591980571633
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.17219059456543653
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15346311784556843
+            }
+          ]
+        },
+        {
+          "id": "AT-201-ko",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.6641982582439239
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.5720092246152544
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.4290043580120412
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3547554252693437
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3145415575331846
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2979732747404549
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2876854238973474
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.27718228793543426
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.2727901489152642
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.2605140035403136
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.2526588834851791
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.24614530118944355
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2414657680701373
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.2360462640043434
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.23361786682540558
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.23183749991386376
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.22769864232101328
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.21253378347489665
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2104898200476678
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2036831691200356
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.1608648990707371
+            }
+          ]
+        },
+        {
+          "id": "DB-318-en",
+          "unanswerable": false,
+          "gold": {
+            "database-lab-0": 2
+          },
+          "ranking": [
+            {
+              "id": "database-lab-0",
+              "score": 0.5887284218146238
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.48701631681630114
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.29428957113924026
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.2936926805308219
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.2850432904209589
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.2609047482323734
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.25769183903959075
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2556119967067143
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.24404861138406297
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.23014535136587608
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.21980253803359945
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2184242082899108
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21709977631484823
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.2028853803239677
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.19917263796257406
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.19675453981280266
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.1817704387792315
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.17853832244251971
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.17303857787410634
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.15863285235327418
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.1424334809075214
+            }
+          ]
+        },
+        {
+          "id": "RS-044-en",
+          "unanswerable": false,
+          "gold": {
+            "research-notes-0": 2
+          },
+          "ranking": [
+            {
+              "id": "research-notes-0",
+              "score": 0.6521469909471549
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.5246251944486604
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2595515020659282
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.24148501171936626
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.24055750445877763
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.2326373395871785
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.222037029323241
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.2176682252141332
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2099475357193521
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.20696378405240795
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.19968542625089125
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.19012126210324454
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.1866632340822437
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.1767563366755044
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.1763124270688044
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.17441963167430116
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.17272690578153888
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.17142918556266004
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.16269557338851326
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.13966229879129088
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.11832951951318182
+            }
+          ]
+        },
+        {
+          "id": "compare-graphs",
+          "unanswerable": false,
+          "gold": {
+            "graph-lab-0": 2,
+            "graph-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "graph-control-0",
+              "score": 0.6090367042825104
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.5465619403238718
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3554773371239344
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2768076859317828
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.259511017754539
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.22040014738752856
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.21962562674345945
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.21659638303324025
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.19269600814368265
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.18837729264011668
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.18785712912941882
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.18680370151046333
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.176916029430038
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.17466618678029852
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.17379753707835843
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.17114562010055928
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1705220900737111
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.16089487135729608
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.15402414429050967
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.13965422132810285
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.1185394574178671
+            }
+          ]
+        },
+        {
+          "id": "compare-pdf",
+          "unanswerable": false,
+          "gold": {
+            "capture-log-0": 2,
+            "capture-control-0": 2
+          },
+          "ranking": [
+            {
+              "id": "capture-control-0",
+              "score": 0.5739496305547495
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.5619852444680813
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.2956816995643975
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.29065216035396935
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.27701457160071435
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.27696079104904103
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2566187259651618
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.2515308592034145
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2500448962083862
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.22703259818709673
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.21858521562845737
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.21457113858186738
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.20981651812216412
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.18685532592541815
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.182095858073145
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.1803969344156865
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16621771732866816
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.14957153383704686
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.1421716921565174
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1406115007495024
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.1333501613198734
+            }
+          ]
+        },
+        {
+          "id": "identifier-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "graph-lab-0",
+              "score": 0.368825524905878
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.3611542876256508
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.28499088975091413
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.28276049157398764
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.279810279926455
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.2520918183440447
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.23745170611747535
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.22711783830806453
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.2192888198041387
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.2126857444409927
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.21256153234971106
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.21117378243911308
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.20603833449060194
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.20507065046175643
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.186120104134665
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.16785591943752967
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.16106796468378787
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.15627997461532023
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.15247179574684605
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.14404881735472796
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.1145030567753574
+            }
+          ]
+        },
+        {
+          "id": "fees-negative",
+          "unanswerable": true,
+          "gold": {},
+          "ranking": [
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.49405786013882774
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.4515613038212074
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.22346079745076824
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.21649300792554022
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.20567537921011253
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.18940212509488516
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.18648742892773568
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.17593115170356444
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.1702081617460324
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.16801584003660885
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.16456948468763075
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.1609324294620344
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.16074250394757766
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.15891953661413155
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.15702342639044575
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.15622093359414052
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.15242604395333725
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.14415026727664176
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.13753893320739385
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.13094041302606466
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.12240072089321147
+            }
+          ]
+        },
+        {
+          "id": "table-038",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-2": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.4158372164163095
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.40014976551058645
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3969866049482097
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.39687073253297506
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3807014271821
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.37810897774453456
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3750872454849796
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.372707632805923
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.3437754560448385
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.3404392475987824
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3389559191921717
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.33566540692985564
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.3246397235894652
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.3152084216087603
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.27357169591925184
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.2469227607603624
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.24321125243291367
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.22043277914362527
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.2185276810908857
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.2110972268500172
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.19069442208730344
+            }
+          ]
+        },
+        {
+          "id": "table-040-ko",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-2": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.4220234274790488
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.39742802030014235
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.3722046862576319
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.36790706121841477
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.3671192822288588
+            },
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.337503065960187
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.3256735213896289
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.31228362579661373
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.30971646219008747
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3056721728577428
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3049230274487529
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.3007053621547731
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.2739910868302262
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.269748043417464
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.21295706191122377
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.1998046439907048
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.18038658850480166
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.15548571081113238
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.144823314708251
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.13820602634470652
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.13551778868443543
+            }
+          ]
+        },
+        {
+          "id": "final-sentinel",
+          "unanswerable": false,
+          "gold": {
+            "native-complex-pdf-10": 2
+          },
+          "ranking": [
+            {
+              "id": "native-complex-pdf-10",
+              "score": 0.4441922398427412
+            },
+            {
+              "id": "native-complex-pdf-0",
+              "score": 0.4378070317936952
+            },
+            {
+              "id": "native-complex-pdf-2",
+              "score": 0.3435800593551271
+            },
+            {
+              "id": "capture-control-0",
+              "score": 0.33969977229121495
+            },
+            {
+              "id": "native-complex-pdf-4",
+              "score": 0.3363616776481228
+            },
+            {
+              "id": "capture-log-0",
+              "score": 0.3335826991665428
+            },
+            {
+              "id": "native-complex-pdf-7",
+              "score": 0.3215662513547914
+            },
+            {
+              "id": "native-complex-pdf-1",
+              "score": 0.3202081966156417
+            },
+            {
+              "id": "native-complex-pdf-6",
+              "score": 0.3138492426251279
+            },
+            {
+              "id": "native-complex-pdf-5",
+              "score": 0.3053575168112262
+            },
+            {
+              "id": "native-complex-pdf-3",
+              "score": 0.2955506585512757
+            },
+            {
+              "id": "native-complex-pdf-8",
+              "score": 0.2895894474809373
+            },
+            {
+              "id": "native-complex-pdf-9",
+              "score": 0.2855760054325829
+            },
+            {
+              "id": "seminar-minutes-0",
+              "score": 0.23974943993365191
+            },
+            {
+              "id": "database-lab-0",
+              "score": 0.2097253900079467
+            },
+            {
+              "id": "graph-lab-0",
+              "score": 0.2027913319830289
+            },
+            {
+              "id": "graph-control-0",
+              "score": 0.201414293041273
+            },
+            {
+              "id": "seminar-agenda-0",
+              "score": 0.18561270599277735
+            },
+            {
+              "id": "database-control-0",
+              "score": 0.1653920992195089
+            },
+            {
+              "id": "research-notes-0",
+              "score": 0.15183947335493303
+            },
+            {
+              "id": "research-control-0",
+              "score": 0.11183025410156082
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "production_defaults_changed": false,
+  "limitations": "Eleven invented documents and eleven hand-selected questions, including two negatives. Source paragraphs, PDF text and ranking are actually processed; this is not representative personal-document calibration or an answer-quality test. Overlap is fixed at 150 characters, sizes are 500/1000/1500. Atlas files are short and may not change shape across sizes. All three variants are reported, no winner or threshold is installed from this sample."
+}

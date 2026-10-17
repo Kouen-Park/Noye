@@ -1,0 +1,22 @@
+{
+  "method": "CUA only for UI; existing invented restored QA workspace and v22 native bundle. No manual URL navigation to manufacture handoff success.",
+  "conversation_id": "d649a89f-2d2c-47c3-8d4c-54fa59f8111d",
+  "source_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+  "observed": [
+    "QA app relaunched, saved AT-201 conversation loaded, saved answer retained 12 milliseconds and 37 megabytes.",
+    "Consulted-passages panel retained the unchanged original and exact saved excerpt.",
+    "Native Open AT-201.pdf at page 1 button returned Sent the original to your default browser.",
+    "The default Chrome window selected the exact loopback source URL with #page=1. Unrelated tab metadata is deliberately excluded from this record.",
+    "After user approval, the already-open QA PDF tab was selected; no manual URL navigation or reload was used.",
+    "Chrome PDF viewer reports AT-201.pdf, page 1 of 1, PDF load complete, and the exact binary-heap/12 milliseconds/37 megabytes/8,000 vertices body."
+  ],
+  "destination": "http://127.0.0.1:51440/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+  "pdf_rendering_confirmed": false,
+  "cleanup": "CUA quit failed with Sky startup error. The verified QA desktop PID received SIGTERM through permitted CLI lifecycle control; subsequent process inspection found no QA desktop or child backend. This is cleanup, not native quit acceptance.",
+  "quality_measurement_note": "Native UI observations overlapped the first analysis prototype, so its wall times are not a controlled model latency comparison. Heavy builds/tests and model calls remained sequential.",
+  "approval_history": "Automatic approval review initially rejected whole-window Chrome inspection due to possible unrelated private-session information. Exact-PDF-only cua.getTab was unavailable. The user subsequently explicitly approved window inspection with unrelated tab-title exposure; the pending permission was resolved before inspection.",
+  "pdf_viewer_and_text_loaded_confirmed": true,
+  "visual_capture_confirmed": false,
+  "pixel_capture_limitation": "Three CUA Chrome screenshots, including after raising the exact QA PDF window, returned white images despite repeated PDF viewer AX load-complete/body state. No claim of visual page appearance is made.",
+  "private_content_hygiene": "The initial approved window query showed another selected page. Only the QA PDF tab was then operated; all unrelated page and tab contents are excluded from this evidence."
+}

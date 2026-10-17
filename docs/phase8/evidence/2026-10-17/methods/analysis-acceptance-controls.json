@@ -1,0 +1,13 @@
+{
+  "method": "Eight fresh cases fixed before the metadata-owned rejection protocol and any calls with that protocol. Evaluator-only names and labels are never included in generation input. Additional known controls must be labelled regressions.",
+  "cases": [
+    ["count-subjects-true", true, "Petrel retained 6 accepted packets, while Rook retained 13 rejected packets.", ["Petrel retained 6 accepted packets.", "Rook retained 13 rejected packets."]],
+    ["count-subjects-false", false, "Petrel retained 13 accepted packets, while Rook retained 6 rejected packets.", ["Petrel retained 6 accepted packets.", "Rook retained 13 rejected packets."]],
+    ["limit-observation-true", true, "Amber has a speed limit of 38 kilometres per hour; Copper was observed moving at 21 kilometres per hour.", ["Amber has a speed limit of 38 kilometres per hour.", "Copper was observed moving at 21 kilometres per hour."]],
+    ["limit-observation-false", false, "Amber and Copper were observed moving at 38 and 21 kilometres per hour, respectively.", ["Amber has a speed limit of 38 kilometres per hour.", "Copper was observed moving at 21 kilometres per hour."]],
+    ["independent-purpose-true", true, "Quartz stores private records, and it uses a queue.", ["Quartz stores private records. Separately, it uses a queue."]],
+    ["independent-purpose-false", false, "Quartz uses a queue to keep its records private.", ["Quartz stores private records. Separately, it uses a queue."]],
+    ["translated-adjoining-true", true, "Brine blocks exports during maintenance, and its backups run every four days.", ["Brine는 유지보수 중 내보내기를 차단한다. 백업은 나흘마다 실행된다."]],
+    ["translated-adjoining-false", false, "Brine always permits exports, and its backups run every four days.", ["Brine는 유지보수 중 내보내기를 차단한다. 백업은 나흘마다 실행된다."]]
+  ]
+}

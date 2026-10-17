@@ -1,0 +1,32 @@
+{
+  "method": "Read-only actual QA model defaults; only configured model metadata retained.",
+  "parameters": "presence_penalty               1.5\ntemperature                    1\ntop_k                          20\ntop_p                          0.95",
+  "quantization": "Q4_K_M",
+  "model": {
+    "name": "qwen3.5:4b",
+    "model": "qwen3.5:4b",
+    "modified_at": "2026-09-21T23:19:53.433245374+12:00",
+    "size": 3389983735,
+    "digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen35",
+      "families": [
+        "qwen35"
+      ],
+      "parameter_size": "4.7B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560
+    },
+    "capabilities": [
+      "completion",
+      "vision",
+      "tools",
+      "thinking"
+    ]
+  },
+  "official_options_reference": "https://github.com/ollama/ollama/blob/main/docs/api.md",
+  "hypothesis_not_established": "Default presence penalty may bias repeated factual terms and multi-claim verdicts. A zero-penalty comparison has not yet run."
+}

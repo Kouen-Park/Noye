@@ -1,0 +1,79 @@
+{
+  "pdf": "/private/tmp/noye-phase8-20261014/complex-native-pdf/Phase 8 complex PDF QA.pdf",
+  "bytes": 57833,
+  "sha256": "1a2c8b5ce9ff89f557c8d16688626e70de778533d2488b4fd2b5e743d4ed7b64",
+  "missing_tokens_after_whitespace_normalization": {
+    "table": [],
+    "table_end": [],
+    "code_begin": [],
+    "code_end": [],
+    "list": [],
+    "final": []
+  },
+  "pages": [
+    {
+      "page": 1,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 1567,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-01.png",
+      "has_image_heading": false,
+      "drawing_count": 632
+    },
+    {
+      "page": 2,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 1616,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-02.png",
+      "has_image_heading": false,
+      "drawing_count": 388
+    },
+    {
+      "page": 3,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 1834,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-03.png",
+      "has_image_heading": false,
+      "drawing_count": 7
+    },
+    {
+      "page": 4,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 1756,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-04.png",
+      "has_image_heading": false,
+      "drawing_count": 7
+    },
+    {
+      "page": 5,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 750,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-05.png",
+      "has_image_heading": false,
+      "drawing_count": 4
+    },
+    {
+      "page": 6,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 78,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-06.png",
+      "has_image_heading": true,
+      "drawing_count": 3
+    },
+    {
+      "page": 7,
+      "width": 595.0,
+      "height": 842.0,
+      "characters": 798,
+      "image": "/private/tmp/noye-phase8-20261014/complex-native-pdf/fixed-page-07.png",
+      "has_image_heading": false,
+      "drawing_count": 19
+    }
+  ],
+  "note": "Whitespace normalization is diagnostic for line-wrapped code. Literal Markdown is checked separately. SVG can be vector drawings rather than raster image objects. Visual page review is still required."
+}

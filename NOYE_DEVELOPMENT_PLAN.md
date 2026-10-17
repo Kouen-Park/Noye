@@ -2180,6 +2180,13 @@ print dialog. Mitigated with a print stylesheet so the exported page is the
 document rather than the application around it. Revisit only if the output proves
 unusable, and say so in the PR if it does.
 
+**Phase 8 update, 2026-10-14:** web mode retains that print dialog. The native
+macOS dialog could not save in the acceptance run, so the packaged app now selects
+a destination with `NSSavePanel` and uses asynchronous WebKit/AppKit print
+completion to publish the staged PDF. It retains the existing print engine and
+stylesheet, stays offline and adds no server renderer. See §17.10 and its evidence
+record for accepted synthetic outputs and remaining limits.
+
 ### Markdown preview uses `react-markdown`, not a string-to-HTML renderer
 
 The content is model-generated and then user-edited, and it is derived from the
@@ -3566,6 +3573,114 @@ PDF checks are deferred to Phase 8 at the user's request.
 
 ## 17.10 Stability/quality refinement and final acceptance
 
+The earlier web-MVP end-to-end record remains in
+[`MVP_VALIDATION_2026-09-26.md`](MVP_VALIDATION_2026-09-26.md). Its historical
+observations do not establish acceptance of the current packaged application.
+
+**Acceptance progress, 2026-10-13–14:** the owner's existing `feat/mvp-end-to-end`
+branch now includes focused backup, requested-language/heading, failed-read
+coverage and unknown-count follow-up fixes. A later native ZIP backup/restore
+included an external root, recovered authored Wiki files after native reconnection
+and rebuilt six sources into a separate test index. IDs, original bytes and user
+writing survived; fresh loopback service configuration was manual QA setup, not
+part of the backup. Native Markdown editors preserve literal punctuation and
+Markdown/backup exports use OS save dialogs after a WebKit download stall.
+A reproduced macOS workspace restart
+without a visible window was corrected through Launch Services and rechecked in
+both directions. Native chat, original-passage inspection and conversation reload
+were observed. The record in
+[`docs/phase8/acceptance-2026-10-13.md`](docs/phase8/acceptance-2026-10-13.md)
+retains actual model failures and measured component latency. Native PDF saving
+now uses asynchronous WebKit/AppKit completion and an OS-selected destination.
+Actual one-page and three-page exports retained Korean, measured values and all
+20 long-document sections; heading/paragraph grouping corrected orphan headings.
+Failed synchronous prototypes remain recorded. Save-panel first-open activation,
+broader PDF layouts, the OS Original-link destination and multi-source English
+comparison quality remain open. The v10 comparison retry is still partial despite
+improved translated-claim support. This is not Phase 8 or MVP completion.
+
+**Acceptance progress, 2026-10-15–16:**
+[`docs/phase8/acceptance-2026-10-15.md`](docs/phase8/acceptance-2026-10-15.md)
+records later focused proxy-routing, quantity-property and print-image fixes.
+A seven-page native PDF retained Korean, 40 table rows, 40 code lines, a complete
+local image and all list/sentinel content; its orphan image heading was corrected.
+A fresh QA identifier exercised first-run local setup, saved model selection,
+download failure/cancel/explicit retry and shutdown during a real download.
+Saved writing and model preferences survived relaunch, with no observed automatic
+pull. Service-level real-inference cancellation, source edits and worker recovery
+also preserved existing writing. The first worker kill occurred during model
+loading; a later explicitly instrumented streaming request confirmed an output
+token before worker termination and repeated recovery/preservation. Neither is a
+native OS force-quit test. A narrow real-PDF/production-chunker comparison retained
+the default 1,000/150 after measuring three sizes; no sampled score cutoff both
+refused all negatives and kept every answerable question's gold evidence.
+Representative calibration remains open. A synthetic cross-process Keychain check and
+local ad-hoc envelope check do not establish protected provider authorization or
+trusted distribution. Full backend 1,058/19 skipped, frontend 386 and Rust 14 tests
+passed; the same frozen sidecar failed its busy 20-second startup bound and passed
+an idle rerun. Coverage methods and both outcomes are retained. Complete v14
+English comparison, Korean collection and relevant report attempts still failed
+the capacity-versus-stored guard. The holdout verifier falsely approved one
+unsupported relationship and rejected two faithful statements. These are open
+P1 quality failures; successful guard refusal is not successful generation.
+Keep Phase 8/MVP and conditional final merge open.
+
+**Further acceptance progress, 2026-10-16–17:**
+[`docs/phase8/acceptance-2026-10-16.md`](docs/phase8/acceptance-2026-10-16.md)
+retains the v15/v16 failures and subsequent evidence-reference corrections. Models
+now select original IDs/indexes; the application copies frozen passage bytes and
+spans. Bounded original previews improve multilingual discovery without counting
+as original reads. A fresh 16-case production-verifier suite matched 15/16 valid
+semantic judgments, including all eight negatives, with one faithful claim falsely
+rejected. This small sample does not establish complete generated-document quality.
+The v21 audit protocol uses stable shared original indexes while enforcing each
+claim's own allowed evidence set. v22 also separates calls when claims have
+different original sets, preventing exposure to another claim's originals.
+The earlier v21 fourteen-case multi-original controls
+matched 12/14, with a rated/observed-temperature false approval and a faithful
+translation false rejection. The fresh v22 isolation controls matched 7/8;
+a known multi-claim rerun improved from 10/12 to 11/12 while increasing calls
+and latency. Single-claim failures remain applicable to its unchanged wire
+format; complete generation quality remains open. Full backend
+1,086/19 skipped and frontend 387 tests passed; the actual v22 bundled backend
+passed all 12 desktop/folder checks. Native literal-prose and URL printing now
+preserve extracted text; one-page and seven-page mixed-language exports were
+visually inspected, with all table/code/list content retained. Nineteen distinct
+actual Ollama/Qdrant integration tests passed after correcting legacy test fixtures;
+the initial failures and formerly vacuous refusal check are preserved in the ledger.
+Native scope/history/superseded-evidence observations passed on the restored QA
+corpus. Retained relation classifications still overstate contradictions; the UI
+now labels them AI suggestions, without claiming semantic resolution. A QA
+ad-hoc/hardened signing failure exposed compressed Python library validation;
+the temporary development QA profile was corrected, while product hardened runtime
+is unchanged. The builder now forwards a real distribution identity to PyInstaller;
+actual certificate signing/notarization remains unvalidated. Native Original-button
+keyboard execution received OS handoff acknowledgment, but browser loading remains
+unconfirmed. Keep the final acceptance and merge conditions open.
+
+**Latest acceptance progress, 2026-10-17:**
+[`docs/phase8/acceptance-2026-10-17.md`](docs/phase8/acceptance-2026-10-17.md)
+records source-document v23 and Wiki v4–v7 checks. Evidence audits now compare
+assertions before deciding and use application-owned exact rejection text. Wiki
+relations read complete bounded original pairs without summary premises, deduplicate
+pairs and expose the actual constrained schema in the model prompt. Fourteen v23
+support judgments were valid, with 12 matching labels; the fresh subset matched
+7/8. A saved complete comparison still introduced an unsupported instrumental
+relationship that the auditor approved; a Korean collection failed on a correctly
+refused modal change. Report/partial coverage improved but repetitive organization
+remains. The whole v5/v6 Wiki attempts also changed summary meaning. Wiki v7 now
+shares the existing narrow litre-property check with source documents, rejecting
+explicit capacity/currently-stored swaps before publication and preserving authored
+revisions/files. Replay protection is not complete semantic acceptance. Relation v6
+controls matched 7/12, retaining false contradictions. Neither valid JSON nor
+high model confidence establishes factual quality. Sampling and stance-protocol
+experiments are recorded separately and not adopted without improvement.
+The native Original command's actual Chrome PDF destination now reports page 1/1,
+load complete and exact QA text after explicitly authorized inspection; screenshot
+pixels remain unconfirmed. These findings do not close the remaining P1 quality,
+physical-device, cloud, calibration or trusted-distribution checks. Keep Phase 8,
+MVP acceptance and the conditional final merge open.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite
@@ -3596,11 +3711,12 @@ broader acceptance checks below open.
 -   [ ] Run upload → READY → search → chat → source/citation inspection → conversation
     reload → document generation → edit/save → Markdown/PDF export → clean deletion
     in the packaged macOS app. Inspect actual exported files from the native webview.
--   [ ] Complete the unconfirmed native ZIP chooser/restore flow: diagnose the
-    accessibility timeout separately from an application failure, restore into a
-    new destination, reconnect external roots and confirm actual workspace state.
-    Keep the recorded enabled Open button and service restore distinct from native
-    restore completion.
+-   [x] Complete portable native ZIP restore with external-root reconnection.
+    Accepted for the invented corpus: native save/restore into a new destination,
+    native reconnection to relocated originals, recovered authored/user Wiki files,
+    retained IDs/bytes and explicit six-source rebuild/search. Credentials,
+    environment and vectors were excluded. Fresh QA service configuration was
+    manually supplied afterward; removable-drive/failure cases remain untested.
 -   [ ] Run folder selection → detected files → ingestion → classification/filing →
     summaries/links → original-grounded question with Wiki links → prompt document →
     edit/save → actual Markdown/PDF files in the packaged macOS app. Verify restart

@@ -1,0 +1,65 @@
+{
+  "app_identifier": "com.noye.phase8firstrun20261015",
+  "app_product": "Noye Phase8 FirstRun QA",
+  "workspace": "/Users/gavinpark/Library/Application Support/com.noye.phase8firstrun20261015",
+  "method": "Separate compiled QA identifier and empty app data. Only .env loopback service endpoints and 8192/2048 QA request limits were preconfigured; database, AI preferences, setup dismissal and credentials were not preseeded. No production app data or Keychain namespace used.",
+  "first_launch": {
+    "database_existed": false,
+    "ai_preferences_existed": false,
+    "local_guide_selected": true,
+    "suggested_installed_model": "qwen3.5:0.8b",
+    "active_model_unchanged_by_guide": "qwen3.5:4b",
+    "active_model_not_installed_notice": true,
+    "embedding_and_qdrant_unavailable_notices": true,
+    "automatic_install_observed": false,
+    "memory_gib": 8.0,
+    "available_estimate_gib": 1.4,
+    "tight_memory_notice": true,
+    "note": "Measurements are the setup snapshot, not an inference benchmark."
+  },
+  "model_selection": {
+    "native_initial_save": "qwen3.5:0.8b",
+    "native_second_save": "noye-phase8-alias:qa",
+    "alias_note": "Explicit QA alias of identical 0.8b weights. This validates preference switching, not a second model quality comparison.",
+    "restart_preserved_selected_model": true,
+    "new_setup_guide_did_not_reopen": true,
+    "documents_and_conversation_preserved_exactly": true,
+    "plaintext_preference_credentials": false,
+    "real_cloud_credentials_entered": false,
+    "cloud_requests_sent": false
+  },
+  "download_ui": {
+    "failed": {
+      "model": "qwen3.5:0.8b",
+      "condition": "Only owned Ollama server HTTPS_PROXY pointed to closed 127.0.0.1:9; localhost model inventory still worked.",
+      "observed_state": "failed",
+      "error": "Download did not finish. Check Ollama, storage and connection, then retry. Use Download model to retry."
+    },
+    "explicit_retry": {
+      "server_proxy_removed": true,
+      "action": "Clicked Download model again",
+      "observed_state": "complete",
+      "note": "The real model was already cached in the isolated store from earlier actual download. This retry confirms registry/installation, not another full weight transfer."
+    },
+    "cancel": {
+      "model": "qwen3.5:2b",
+      "observed_active_layer": "0.35 GB / 2.01 GB",
+      "observed_rounded_layer_bytes": 352241100,
+      "action": "Clicked Cancel download while actual bytes arrived",
+      "observed_state": "cancelled",
+      "notice": "Noye's download request cancelled. Ollama may retain partial files for retry."
+    },
+    "quit": {
+      "action": "Explicitly restarted the same 2b pull and quit the app while UI said downloading",
+      "sidecar_stopped": true,
+      "external_server_retained": true,
+      "2b_not_installed": true,
+      "auto_replay_after_restart": false,
+      "final_observation": "restart-final-observation.json"
+    },
+    "active_model_remained": "noye-phase8-alias:qa"
+  },
+  "credential_scope": "Separate synthetic Keychain cross-process check passed and removed its QA item. This native pass entered no real or fake provider key; actual protected provider credential entry, authorization and cloud billing remain untested.",
+  "distribution": "No valid Developer ID signing identity was available. A linker-only ad-hoc bundle initially failed strict bundle verification (no resource envelope). Only this QA bundle received a local ad-hoc envelope and then passed codesign --verify --deep --strict. No Gatekeeper setting was changed; no notarization or trusted distribution is claimed.",
+  "tool_latency": "The first CUA path-based app selection took 201.31 seconds before returning an empty window; it is not an isolated app startup measurement. Later identifier-based selections returned startup UI in 1.45/1.86 seconds. No screen-status question was sent to the user."
+}

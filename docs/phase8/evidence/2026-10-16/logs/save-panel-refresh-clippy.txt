@@ -1,0 +1,2 @@
+Compiling noye-desktop v0.1.0 (/Users/gavinpark/Projects/Noye/frontend/src-tauri)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.02s

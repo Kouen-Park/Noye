@@ -63,11 +63,20 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v3` explicitly requests reusable subject tags, source-language
+Prompt `wiki-grounded-v7` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
 quotes, including responses from a server that ignores the requested schema.
+Every summary/key point also runs the shared narrow litre-property guard against
+its own cited original: an explicit capacity/currently-stored swap fails before
+revision or file publication. It does not borrow quantities from other passages.
+This is the same check used by source documents, not a general entailment proof.
+The v7 cache identity prevents reusing a prior generated result without this check;
+existing historical revisions and user writing are preserved.
+The model sees that same constrained output schema in the prompt, including the
+meaning of each relation kind. The input byte budget counts this actual prompt
+once; the decoder grammar alone does not explain the contract to the model.
 Exact Unicode-normalized topic identities prevent duplicate pages
 for the same kind/root/name. Semantic aliases can still form separate concepts; there is
 no automatic destructive merge of authored pages.
@@ -77,6 +86,17 @@ shortlists them. Local inference must confirm one of `shared_subject`,
 `supporting_evidence`, `alternative` or `contradiction`, with a reason, known target ID
 and verified evidence IDs on both sides. There are at most eight candidates, four claim
 comparisons per candidate and six accepted links. Confidence below 0.8 creates no link.
+Each comparison now receives both complete bounded original fragments and their source
+identities, rather than summary text and a short quote alone.
+Only original text reaches relation inference: unverified summary wording is excluded,
+so a summary that omitted a condition cannot become the comparison premise. Repeated
+claims referring to the same pair of original fragments cause one comparison, not
+repeated inference calls. The comparison explicitly distinguishes
+different subjects/conditions and missing information from contradiction. Missing or
+non-verbatim evidence fails before inference. A pair exceeding the input budget is skipped
+without trimming conditions or aborting the source summary; no relation is inferred for
+that pair. Existing saved relations and user revisions are not rewritten. These are
+model suggestions; reference validation and confidence do not prove semantic correctness.
 Backlinks are queried from published edges; historical target revisions remain immutable.
 The API supplies `target_revision` and `target_current_revision`; the UI identifies earlier
 targets. Traversal stops at two levels and twenty eligible pages. Stale edges do not drive discovery.

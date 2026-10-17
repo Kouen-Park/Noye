@@ -1,0 +1,52 @@
+{
+  "method": "No-model replay of exact v6 Wiki claims through the v7 production claim guard. This establishes a narrow rejection, not fresh generation or full semantic acceptance.",
+  "source_sha256": "c136d5c8d5f515e0389c519b68d8374886462c83bd59ba7bf4d94c91f10492af",
+  "prompt_version": "wiki-grounded-v7",
+  "runtime_hashes": {
+    "pipeline.py": "9bab738960035674c7f26d672e833026756ba21c0e242ae03a43439bd7c1617e",
+    "quantity_properties.py": "b66300c8b69990c446e05e704160391436cec52118190b56e9bd5fd87ff67056"
+  },
+  "rows": [
+    {
+      "text": "저수지 Alpha는 SQLite를 사용하여 저장 용량 37리터를 가지며, 일요일에는 쓰기를 중지하고 하루에 한 번 백업이 실행됩니다.",
+      "blocked": false
+    },
+    {
+      "text": "저수지 Alpha의 저장 용량은 37리터입니다.",
+      "blocked": false
+    },
+    {
+      "text": "저수지 Alpha는 SQLite를 사용합니다.",
+      "blocked": false
+    },
+    {
+      "text": "저수지 Alpha는 일요일에 쓰기를 중지합니다.",
+      "blocked": false
+    },
+    {
+      "text": "저수지 Alpha의 백업은 하루에 한 번 실행됩니다.",
+      "blocked": false
+    },
+    {
+      "text": "Project Beta is a storage system that utilizes append-only log files and allows writes on Sundays.",
+      "blocked": false
+    },
+    {
+      "text": "The system has a storage capacity of 92 litres.",
+      "blocked": true,
+      "error": "A generated claim changes capacity into an amount stored, or vice versa. No Wiki revision was published."
+    },
+    {
+      "text": "Data is managed using append-only log files.",
+      "blocked": false
+    },
+    {
+      "text": "Writes are permitted on Sundays.",
+      "blocked": false
+    },
+    {
+      "text": "Backups are executed twice daily.",
+      "blocked": false
+    }
+  ]
+}

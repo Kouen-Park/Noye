@@ -1,0 +1,12 @@
+{
+  "prompt_version": "source-document-v8",
+  "state": "failed",
+  "error": "The local evidence check returned an invalid verdict count.",
+  "cases": 8,
+  "measurement_limit": "The first in-memory diagnostic script did not save its response on exception. No exact response/timing is available for that failed diagnostic. Its script and error are retained; later measurements record every completed call and failure.",
+  "publication": {
+    "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/support-verifier-v8-first.json",
+    "sha256": "eb9316093ca1887c2f1e9cabb5a40f4405f8cb57323408969e900888f1888933",
+    "omitted": "Nothing omitted"
+  }
+}

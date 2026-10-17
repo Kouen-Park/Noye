@@ -1,0 +1,5 @@
+DB-381 restored 6 demonstration notes into a new folder. It did not overwrite the working database. This control has no record of 87 conversations.
+
+DB-381은 시연 노트 6개를 새 폴더에 복원했다. 작업 중인 데이터베이스를 덮어쓰지 않았다. 대화 87개에 대한 기록은 이 대조군에 없다.
+
+Database control procedure: record the run identifier DB-381 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.
