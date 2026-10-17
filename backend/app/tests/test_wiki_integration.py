@@ -24,7 +24,7 @@ def workspace(folder):
     return folder
 
 
-def model(kind="shared_subject", bad_target=False, callback=None):
+def model(kind="shared_subject", bad_target=False, callback=None, claim_text=None):
     def response(request):
         if request.url.path == "/api/show":
             return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
@@ -34,7 +34,7 @@ def model(kind="shared_subject", bad_target=False, callback=None):
         if prompt["task"] == "summarize_section":
             p = prompt["passages"][0]
             result = summary(p["evidence_id"], p["text"][:40])
-            result["summary"]["text"] = p["text"][:80]
+            result["summary"]["text"] = claim_text or p["text"][:80]
             result["tags"] = ["reservoir", "capacity"]
             result["topics"] = [
                 {"title": "Reservoir", "kind": "concept"},
@@ -365,3 +365,30 @@ def test_saved_analysis_has_authored_revision_and_scope_manifest(workspace):
     current = store.revision(db, store.page(db, identifier)["current_revision"])
     assert current["origin"] == "user" and current["evidence"]
     assert current["metadata"]["manifest"][0]["source_id"] == record.id
+
+
+def test_refused_quantity_drift_preserves_authored_revision_and_file(workspace):
+    db, *_ = workspace
+    record = discover(workspace, "beta.txt", "Project Beta stores 92 litres.")
+    first = generate(db, record.id)
+    identifier = first["wiki_id"]
+    service.edit(
+        db,
+        identifier,
+        EditWiki(
+            expected_revision=first["revision_id"],
+            title="My Beta notes",
+            content="My authored notes must survive.",
+        ),
+    )
+    prior = store.page(db, identifier)["current_revision"]
+    path = publication.disk_path(db, identifier)
+    before = path.read_bytes()
+    count = len(store.revisions(db, identifier))
+    changed = discover(workspace, "beta.txt", "Project Beta stores 92 litres. New source detail.")
+    assert changed.id == record.id
+    with pytest.raises(WikiError, match="No Wiki revision was published"):
+        generate(db, record.id, model(claim_text="The system has a storage capacity of 92 litres."))
+    assert store.page(db, identifier)["current_revision"] == prior
+    assert len(store.revisions(db, identifier)) == count
+    assert path.read_bytes() == before

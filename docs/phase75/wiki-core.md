@@ -63,11 +63,17 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v6` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v7` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
 quotes, including responses from a server that ignores the requested schema.
+Every summary/key point also runs the shared narrow litre-property guard against
+its own cited original: an explicit capacity/currently-stored swap fails before
+revision or file publication. It does not borrow quantities from other passages.
+This is the same check used by source documents, not a general entailment proof.
+The v7 cache identity prevents reusing a prior generated result without this check;
+existing historical revisions and user writing are preserved.
 The model sees that same constrained output schema in the prompt, including the
 meaning of each relation kind. The input byte budget counts this actual prompt
 once; the decoder grammar alone does not explain the contract to the model.
