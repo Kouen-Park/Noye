@@ -1,0 +1,4 @@
+Ingestion failed file=b9367a32-59fb-4f47-8d7c-87a53d39faee reason=The file contains no text to index.
+{"ingestion": "empty.txt", "state": "FAILED", "seconds": 0.275}
+{"scenario": "partial", "job_id": "5de90b34-ba63-47b3-824d-75bb1a8255e1", "request_id": "89d078d9-e453-4a96-a59a-4482010e8d27", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "complete", "artifact_id": "44eaadc9-8e8f-5716-86da-381211b24de4", "error": null, "seconds": 637.127, "report": "/private/tmp/noye-phase8-20261017/v23-documents/partial-89d078d9-e453-4a96-a59a-4482010e8d27.json"}

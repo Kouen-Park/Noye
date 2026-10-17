@@ -1,0 +1,2 @@
+{"scenario": "collection", "job_id": "cd903434-500a-40cc-a17d-6a1a5b151142", "request_id": "284ba6f8-4292-4af8-a438-c538281c6705", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "The local evidence check rejected an unsupported conclusion. No artifact was saved.", "seconds": 243.648, "report": "/private/tmp/noye-phase8-20261017/v23-documents/collection-284ba6f8-4292-4af8-a438-c538281c6705.json"}

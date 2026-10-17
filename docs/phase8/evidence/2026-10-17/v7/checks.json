@@ -1,0 +1,21 @@
+{
+  "method": "Final v7 validation: full tests, lint, frozen/native bundle, then one known-corpus actual Wiki attempt; no job retry or inference/build overlap.",
+  "stages": [
+    {
+      "name": "backend-final",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--cov=app",
+        "--cov-branch",
+        "--cov-config=/private/tmp/noye-phase8-20261017/v7/coverage.ini",
+        "--cov-report=json:/private/tmp/noye-phase8-20261017/v7/backend-product-coverage.json",
+        "--cov-report=term"
+      ],
+      "seconds": 43.269,
+      "exit_code": 1
+    }
+  ]
+}

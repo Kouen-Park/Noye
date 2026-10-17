@@ -1,0 +1,20 @@
+{
+  "method": "One fresh whole Wiki attempt on the known invented corpus using production v6; no retry. Wait for packaging to avoid overlapping heavy work.",
+  "argv": [
+    "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+    "/private/tmp/noye-phase8-20261016/recorded-documents-current.py",
+    "--workspace",
+    "/private/tmp/noye-phase8-20261017/v6-wiki",
+    "--scenario",
+    "wiki"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 99.522,
+  "unload_status": {
+    "qwen3.5:4b": 200,
+    "embeddinggemma": 200
+  },
+  "loaded_after": {
+    "models": []
+  }
+}

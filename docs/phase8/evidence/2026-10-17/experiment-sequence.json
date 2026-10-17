@@ -1,0 +1,15 @@
+{
+  "method": "Serialize model experiments after all six current scenarios; no automatic job retries.",
+  "stages": [
+    {
+      "script": "probe-relations-v5.py",
+      "exit_code": 0,
+      "seconds": 67.278
+    },
+    {
+      "script": "probe-presence.py",
+      "exit_code": 0,
+      "seconds": 272.085
+    }
+  ]
+}

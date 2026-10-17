@@ -1,0 +1,35 @@
+{
+  "cases": [
+    {
+      "id": "fresh-stance-equivalent-negative",
+      "origin": "During calibration, Clover rejects uploads.",
+      "target": "Clover does not accept uploads while calibration is active.",
+      "allowed": [
+        "supporting_evidence"
+      ],
+      "required": true,
+      "origin_summary": "During calibration, Clover rejects uploads.",
+      "target_summary": "Clover does not accept uploads while calibration is active."
+    },
+    {
+      "id": "fresh-stance-korean-opposite",
+      "origin": "교정 중에는 아이리스가 내보내기를 허용합니다.",
+      "target": "교정 중에는 아이리스가 내보내기를 금지합니다.",
+      "allowed": [
+        "contradiction"
+      ],
+      "required": true,
+      "origin_summary": "교정 중에는 아이리스가 내보내기를 허용합니다.",
+      "target_summary": "교정 중에는 아이리스가 내보내기를 금지합니다."
+    },
+    {
+      "id": "fresh-stance-unmentioned-condition",
+      "origin": "Basil exports files on weekdays.",
+      "target": "During maintenance, Basil encrypts its files.",
+      "allowed": [],
+      "required": false,
+      "origin_summary": "Basil exports files on weekdays.",
+      "target_summary": "During maintenance, Basil encrypts its files."
+    }
+  ]
+}

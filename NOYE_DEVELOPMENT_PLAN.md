@@ -3658,6 +3658,29 @@ actual certificate signing/notarization remains unvalidated. Native Original-but
 keyboard execution received OS handoff acknowledgment, but browser loading remains
 unconfirmed. Keep the final acceptance and merge conditions open.
 
+**Latest acceptance progress, 2026-10-17:**
+[`docs/phase8/acceptance-2026-10-17.md`](docs/phase8/acceptance-2026-10-17.md)
+records source-document v23 and Wiki v4–v7 checks. Evidence audits now compare
+assertions before deciding and use application-owned exact rejection text. Wiki
+relations read complete bounded original pairs without summary premises, deduplicate
+pairs and expose the actual constrained schema in the model prompt. Fourteen v23
+support judgments were valid, with 12 matching labels; the fresh subset matched
+7/8. A saved complete comparison still introduced an unsupported instrumental
+relationship that the auditor approved; a Korean collection failed on a correctly
+refused modal change. Report/partial coverage improved but repetitive organization
+remains. The whole v5/v6 Wiki attempts also changed summary meaning. Wiki v7 now
+shares the existing narrow litre-property check with source documents, rejecting
+explicit capacity/currently-stored swaps before publication and preserving authored
+revisions/files. Replay protection is not complete semantic acceptance. Relation v6
+controls matched 7/12, retaining false contradictions. Neither valid JSON nor
+high model confidence establishes factual quality. Sampling and stance-protocol
+experiments are recorded separately and not adopted without improvement.
+The native Original command's actual Chrome PDF destination now reports page 1/1,
+load complete and exact QA text after explicitly authorized inspection; screenshot
+pixels remain unconfirmed. These findings do not close the remaining P1 quality,
+physical-device, cloud, calibration or trusted-distribution checks. Keep Phase 8,
+MVP acceptance and the conditional final merge open.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite

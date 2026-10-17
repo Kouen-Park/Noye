@@ -1,0 +1,1058 @@
+{
+  "method": "Explicit synthetic QA evidence publication; excludes runtime state and credentials.",
+  "files": [
+    {
+      "file": "backend-product-coverage.json",
+      "source": "/private/tmp/noye-phase8-20261017/backend-product-coverage.json",
+      "source_bytes": 740135,
+      "source_sha256": "86ecdcd2dc2c9d64c92a4b926f25aba14f6034fcb55b9fd2136443277253adab",
+      "published_bytes": 740135,
+      "published_sha256": "86ecdcd2dc2c9d64c92a4b926f25aba14f6034fcb55b9fd2136443277253adab",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "build-review.json",
+      "source": "/private/tmp/noye-phase8-20261017/build-review.json",
+      "source_bytes": 2077,
+      "source_sha256": "1624e85f45ead9771f6c7f199526884e6a47e341119f94379d6d91075f087fb5",
+      "published_bytes": 2077,
+      "published_sha256": "1624e85f45ead9771f6c7f199526884e6a47e341119f94379d6d91075f087fb5",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "cleanup.json",
+      "source": "/private/tmp/noye-phase8-20261017/cleanup.json",
+      "source_bytes": 294,
+      "source_sha256": "cbed8627d261d37a3d11511eaba7b9364fb1ca0f49b806ebaea3456950b3640d",
+      "published_bytes": 294,
+      "published_sha256": "cbed8627d261d37a3d11511eaba7b9364fb1ca0f49b806ebaea3456950b3640d",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "experiment-sequence.json",
+      "source": "/private/tmp/noye-phase8-20261017/experiment-sequence.json",
+      "source_bytes": 320,
+      "source_sha256": "20c2b29971877bd721145cd146fa7f05cdc37cbc08c6a36a34423c14ed54c980",
+      "published_bytes": 320,
+      "published_sha256": "20c2b29971877bd721145cd146fa7f05cdc37cbc08c6a36a34423c14ed54c980",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "final-checks.json",
+      "source": "/private/tmp/noye-phase8-20261017/final-checks.json",
+      "source_bytes": 1298,
+      "source_sha256": "532bab137e40a87f912a9c271e35e49095772865f737b6105b738d4503bc8726",
+      "published_bytes": 1298,
+      "published_sha256": "532bab137e40a87f912a9c271e35e49095772865f737b6105b738d4503bc8726",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "logs/analysis-probe-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-probe-corrected.log",
+      "source_bytes": 3478,
+      "source_sha256": "06eef8e0c44c94400e720209ebd5b13170870ef8df001daffdf309157dd10a6e",
+      "published_bytes": 3478,
+      "published_sha256": "06eef8e0c44c94400e720209ebd5b13170870ef8df001daffdf309157dd10a6e",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/analysis-probe.txt",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-probe.log",
+      "source_bytes": 9365,
+      "source_sha256": "d6d383a9cd62fd4ac1445fc7d652ceee8f1c7a2af2c6d265840404bf3811cdc5",
+      "published_bytes": 9365,
+      "published_sha256": "d6d383a9cd62fd4ac1445fc7d652ceee8f1c7a2af2c6d265840404bf3811cdc5",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/backend-final.txt",
+      "source": "/private/tmp/noye-phase8-20261017/backend-final.log",
+      "source_bytes": 19989,
+      "source_sha256": "c258a1e48f69983b48fbd7a85ac1cf7044f62c65a3743b583cb132c90900e5c4",
+      "published_bytes": 19989,
+      "published_sha256": "c258a1e48f69983b48fbd7a85ac1cf7044f62c65a3743b583cb132c90900e5c4",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/backend-full.txt",
+      "source": "/private/tmp/noye-phase8-20261017/backend-full.log",
+      "source_bytes": 3336,
+      "source_sha256": "908673c044296296755a4e9944e74ed91c1288c0131a285e09cb231d677b59a1",
+      "published_bytes": 3336,
+      "published_sha256": "908673c044296296755a4e9944e74ed91c1288c0131a285e09cb231d677b59a1",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/backend-lint.txt",
+      "source": "/private/tmp/noye-phase8-20261017/backend-lint.log",
+      "source_bytes": 19,
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "published_bytes": 19,
+      "published_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/experiment-sequence.txt",
+      "source": "/private/tmp/noye-phase8-20261017/experiment-sequence.log",
+      "source_bytes": 211,
+      "source_sha256": "f9eb655eb3d213ae7a838e63cd0833052003e7e87cb56d574d5926dadb8c57b3",
+      "published_bytes": 211,
+      "published_sha256": "f9eb655eb3d213ae7a838e63cd0833052003e7e87cb56d574d5926dadb8c57b3",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/final-checks.txt",
+      "source": "/private/tmp/noye-phase8-20261017/final-checks.log",
+      "source_bytes": 997,
+      "source_sha256": "35f9a1cd3a8568ddd0ad2472fe92b711ba0201e86be512cd1421498331d0dd05",
+      "published_bytes": 997,
+      "published_sha256": "35f9a1cd3a8568ddd0ad2472fe92b711ba0201e86be512cd1421498331d0dd05",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frozen-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261017/frozen-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "5878eb6f54c37a837c57c15c10d8ba22d6cc631d072215d78a0662975ef44b55",
+      "published_bytes": 1566,
+      "published_sha256": "5878eb6f54c37a837c57c15c10d8ba22d6cc631d072215d78a0662975ef44b55",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/native-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261017/native-bundle.log",
+      "source_bytes": 1837,
+      "source_sha256": "d2156c63ec0ef1d8d0654c5b6ab71f047dc9ad15df6fc7384d8c9f8a7e4796e8",
+      "published_bytes": 1836,
+      "published_sha256": "8a4a9d19461576f2b875173eb4f35739e9d4d12cae447dd4278246df7877bc9a",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/native-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261017/native-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/packaging-checks.txt",
+      "source": "/private/tmp/noye-phase8-20261017/packaging-checks.log",
+      "source_bytes": 1180,
+      "source_sha256": "920d3e72c5b96fe60df49fbe8442367254fe643bb3c2138e6f59fe0bdf352082",
+      "published_bytes": 1180,
+      "published_sha256": "920d3e72c5b96fe60df49fbe8442367254fe643bb3c2138e6f59fe0bdf352082",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/presence-zero-probe.txt",
+      "source": "/private/tmp/noye-phase8-20261017/presence-zero-probe.log",
+      "source_bytes": 2632,
+      "source_sha256": "4c15f8a5f8a9aa0309676c0101a32da089548a347201e694d93932a4f1ff80bf",
+      "published_bytes": 2632,
+      "published_sha256": "4c15f8a5f8a9aa0309676c0101a32da089548a347201e694d93932a4f1ff80bf",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/relations-v4.txt",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v4.log",
+      "source_bytes": 1165,
+      "source_sha256": "10df032fec159cdef60326f80b8add3e69a336302cbf8fe85cac222c6b774ba2",
+      "published_bytes": 1165,
+      "published_sha256": "10df032fec159cdef60326f80b8add3e69a336302cbf8fe85cac222c6b774ba2",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/relations-v5.txt",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v5.log",
+      "source_bytes": 1140,
+      "source_sha256": "e8838da4836da0d8d8c2328a901169bcfb30da66ba7608c234ae68280e0093f6",
+      "published_bytes": 1140,
+      "published_sha256": "e8838da4836da0d8d8c2328a901169bcfb30da66ba7608c234ae68280e0093f6",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/relations-v6.txt",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v6.log",
+      "source_bytes": 4697,
+      "source_sha256": "816228ca14a8f63c62e52fc19581bb0ef169c52c9efa06ab618cf7191691aa79",
+      "published_bytes": 4697,
+      "published_sha256": "816228ca14a8f63c62e52fc19581bb0ef169c52c9efa06ab618cf7191691aa79",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/sidecar-build.txt",
+      "source": "/private/tmp/noye-phase8-20261017/sidecar-build.log",
+      "source_bytes": 11626,
+      "source_sha256": "17e5f0f7ed428174dbb56473f5e2d024f4f9e882022b19991598753bff662158",
+      "published_bytes": 11626,
+      "published_sha256": "17e5f0f7ed428174dbb56473f5e2d024f4f9e882022b19991598753bff662158",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/source-v23-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261017/source-v23-tests.log",
+      "source_bytes": 2012,
+      "source_sha256": "2474baaf2493408d3399a0f1acdf09e85a5d9fc42d5b6ecfc613d09c180dba1c",
+      "published_bytes": 2012,
+      "published_sha256": "2474baaf2493408d3399a0f1acdf09e85a5d9fc42d5b6ecfc613d09c180dba1c",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/stances-probe.txt",
+      "source": "/private/tmp/noye-phase8-20261017/stances-probe.log",
+      "source_bytes": 6210,
+      "source_sha256": "6fcfa74c3fe31473500b53b801a850ee0b831242df5c530398d6f94fa367cdde",
+      "published_bytes": 6210,
+      "published_sha256": "6fcfa74c3fe31473500b53b801a850ee0b831242df5c530398d6f94fa367cdde",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/support-v23.txt",
+      "source": "/private/tmp/noye-phase8-20261017/support-v23.log",
+      "source_bytes": 1810,
+      "source_sha256": "c17a56af6c3de377cbd1909ebe8671aa15a289e69c05a5cc2f9a06453a88ea7d",
+      "published_bytes": 1810,
+      "published_sha256": "c17a56af6c3de377cbd1909ebe8671aa15a289e69c05a5cc2f9a06453a88ea7d",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-collection.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-collection.log",
+      "source_bytes": 490,
+      "source_sha256": "3a6ef89257cad119bf2aad718566f89788438a0ef6e94d7b499d209f0123f3af",
+      "published_bytes": 490,
+      "published_sha256": "3a6ef89257cad119bf2aad718566f89788438a0ef6e94d7b499d209f0123f3af",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-comparison.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-comparison.log",
+      "source_bytes": 657,
+      "source_sha256": "bff5db2b6e4c333ab9ec2a0c09336b99972390b05c8c612bc876533cda54d3b6",
+      "published_bytes": 657,
+      "published_sha256": "bff5db2b6e4c333ab9ec2a0c09336b99972390b05c8c612bc876533cda54d3b6",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-empty.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-empty.log",
+      "source_bytes": 469,
+      "source_sha256": "fc9fd9df3ade74791f8a4433ffd44794b84147861cf4281226a06d2f41628132",
+      "published_bytes": 469,
+      "published_sha256": "fc9fd9df3ade74791f8a4433ffd44794b84147861cf4281226a06d2f41628132",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-partial.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-partial.log",
+      "source_bytes": 605,
+      "source_sha256": "ff79591ac451e0200cb71a21ada73b067977b6c03a82bca7c3e86b339b64c2e3",
+      "published_bytes": 605,
+      "published_sha256": "ff79591ac451e0200cb71a21ada73b067977b6c03a82bca7c3e86b339b64c2e3",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-report.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-report.log",
+      "source_bytes": 437,
+      "source_sha256": "267212b31464508ca63eaf881b77e91c87f107b0fdf211bca133df0c09062798",
+      "published_bytes": 437,
+      "published_sha256": "267212b31464508ca63eaf881b77e91c87f107b0fdf211bca133df0c09062798",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v23-wiki.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v23-wiki.log",
+      "source_bytes": 164,
+      "source_sha256": "b6b90dea6a3baad4ebd1dcaa9d2095df4569a2662cc27e37c7a2fc1b58600b99",
+      "published_bytes": 164,
+      "published_sha256": "b6b90dea6a3baad4ebd1dcaa9d2095df4569a2662cc27e37c7a2fc1b58600b99",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/backend-final.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/backend-final.log",
+      "source_bytes": 20701,
+      "source_sha256": "6127a7833b61dbe8dc1e7503fb4b2c90366950ace2cc9c3461c4b154aee20789",
+      "published_bytes": 20701,
+      "published_sha256": "6127a7833b61dbe8dc1e7503fb4b2c90366950ace2cc9c3461c4b154aee20789",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/backend-lint.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/backend-lint.log",
+      "source_bytes": 19,
+      "source_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "published_bytes": 19,
+      "published_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/checks.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/checks.log",
+      "source_bytes": 1199,
+      "source_sha256": "e37d20bb955d660a66201302603ac506916cb00309edaf8805e49bfd72d9e90b",
+      "published_bytes": 1199,
+      "published_sha256": "e37d20bb955d660a66201302603ac506916cb00309edaf8805e49bfd72d9e90b",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/frozen-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/frozen-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "e763ef858e0c24994c5beb0a6c4197d929cfd02ae854178d642a7662f1bb4d6b",
+      "published_bytes": 1566,
+      "published_sha256": "e763ef858e0c24994c5beb0a6c4197d929cfd02ae854178d642a7662f1bb4d6b",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/native-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/native-bundle.log",
+      "source_bytes": 1837,
+      "source_sha256": "cdf717c38294061576db0752916a89e24fe4ae6a0e2e35f1660e15024bc0bf4e",
+      "published_bytes": 1836,
+      "published_sha256": "c2e38695a3a19bc42810020102765d5840ecbfb0c037dee2f8e7b4e9ce19e12b",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/native-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/native-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/packaging-checks.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/packaging-checks.log",
+      "source_bytes": 1179,
+      "source_sha256": "8d34ec48d5fcb3213c2e273f48ea9a5953e31c6a506d1fdda3160508b72911bc",
+      "published_bytes": 1179,
+      "published_sha256": "8d34ec48d5fcb3213c2e273f48ea9a5953e31c6a506d1fdda3160508b72911bc",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/sidecar-build.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/sidecar-build.log",
+      "source_bytes": 11626,
+      "source_sha256": "88e70964e3a4ecc77fffb85764c9c67e786c454052aac741da2a1f3961db23d2",
+      "published_bytes": 11626,
+      "published_sha256": "88e70964e3a4ecc77fffb85764c9c67e786c454052aac741da2a1f3961db23d2",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7-final/wiki-whole.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/wiki-whole.log",
+      "source_bytes": 564,
+      "source_sha256": "567d324980356823bdafac0d510d6d5ea318a0eadbe4b37f1c8f07d9179f7597",
+      "published_bytes": 564,
+      "published_sha256": "567d324980356823bdafac0d510d6d5ea318a0eadbe4b37f1c8f07d9179f7597",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7/backend-final.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7/backend-final.log",
+      "source_bytes": 38060,
+      "source_sha256": "8365cec9811218ac950583e5a20af52ed792862f729525b07d3215a0271d610b",
+      "published_bytes": 37983,
+      "published_sha256": "b5674f2ce79663259ce4caf17311d82d7c19651ab306496b9d8ac1905bda2f55",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/v7/checks.txt",
+      "source": "/private/tmp/noye-phase8-20261017/v7/checks.log",
+      "source_bytes": 386,
+      "source_sha256": "f0c36a6346658ae34cabf7f1ffcaaf8caf9e23434f972df658401dddfaedcfe2",
+      "published_bytes": 386,
+      "published_sha256": "f0c36a6346658ae34cabf7f1ffcaaf8caf9e23434f972df658401dddfaedcfe2",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-support-probe.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-support-probe.log",
+      "source_bytes": 319,
+      "source_sha256": "7e4618ba19fcfe2cd65edaeedb675e7d6540b648b92e2058a396f59f0c7c72d0",
+      "published_bytes": 319,
+      "published_sha256": "7e4618ba19fcfe2cd65edaeedb675e7d6540b648b92e2058a396f59f0c7c72d0",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-tests.log",
+      "source_bytes": 1565,
+      "source_sha256": "de63262cee676a46bdfe9e127a55cdd283767fc881f84f333bbe14b5df6570d7",
+      "published_bytes": 1565,
+      "published_sha256": "de63262cee676a46bdfe9e127a55cdd283767fc881f84f333bbe14b5df6570d7",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v5-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v5-tests.log",
+      "source_bytes": 1565,
+      "source_sha256": "efbee56e17842ba6c29abc1a8a7aa8c1a055b42f931d1cfbfb0374bf6d818b8d",
+      "published_bytes": 1565,
+      "published_sha256": "efbee56e17842ba6c29abc1a8a7aa8c1a055b42f931d1cfbfb0374bf6d818b8d",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v6-sequence.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v6-sequence.log",
+      "source_bytes": 506,
+      "source_sha256": "e89b790239402fb12aacd643d0cd9a97221f9ec22fc136fcb772dedb911fd189",
+      "published_bytes": 506,
+      "published_sha256": "e89b790239402fb12aacd643d0cd9a97221f9ec22fc136fcb772dedb911fd189",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v6-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v6-tests.log",
+      "source_bytes": 1565,
+      "source_sha256": "cc86ca0683ef9d5726031fa74e062d29fb1ed92ebcb84483ec1eaf2cf20760c1",
+      "published_bytes": 1565,
+      "published_sha256": "cc86ca0683ef9d5726031fa74e062d29fb1ed92ebcb84483ec1eaf2cf20760c1",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v6-whole.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v6-whole.log",
+      "source_bytes": 371,
+      "source_sha256": "2e9b4e5511faf2cd363a3e031147d955389e734a0a8c73d24e71e3e162934f8f",
+      "published_bytes": 371,
+      "published_sha256": "2e9b4e5511faf2cd363a3e031147d955389e734a0a8c73d24e71e3e162934f8f",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v7-tests-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v7-tests-corrected.log",
+      "source_bytes": 1662,
+      "source_sha256": "b8b362f0855bfec5d0137a88611c45b696f77d1f77a5a02f681523cf8ba137cf",
+      "published_bytes": 1662,
+      "published_sha256": "b8b362f0855bfec5d0137a88611c45b696f77d1f77a5a02f681523cf8ba137cf",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "logs/wiki-v7-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v7-tests.log",
+      "source_bytes": 11833,
+      "source_sha256": "40c215264a73c98007104e1e11f7c5d193cf022d135b943ab8c4a03014c3c562",
+      "published_bytes": 11833,
+      "published_sha256": "40c215264a73c98007104e1e11f7c5d193cf022d135b943ab8c4a03014c3c562",
+      "transformation": "ANSI/CR/trailing whitespace normalized"
+    },
+    {
+      "file": "methods/after-scenarios.py",
+      "source": "/private/tmp/noye-phase8-20261017/after-scenarios.py",
+      "source_bytes": 1635,
+      "source_sha256": "7e3d3b6e854ded0c551fc958ae9f3bfba6031e078af1beed28c75a142ab12035",
+      "published_bytes": 1635,
+      "published_sha256": "7e3d3b6e854ded0c551fc958ae9f3bfba6031e078af1beed28c75a142ab12035",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/analysis-acceptance-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-acceptance-controls.json",
+      "source_bytes": 1907,
+      "source_sha256": "2c1a5cc4cb47d1916749d95f892cc6ad0d02a0b1937d927a1bbd3030c4fe795e",
+      "published_bytes": 1907,
+      "published_sha256": "2c1a5cc4cb47d1916749d95f892cc6ad0d02a0b1937d927a1bbd3030c4fe795e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/analysis-probe-cases.json",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-probe-cases.json",
+      "source_bytes": 5457,
+      "source_sha256": "f36d3b8f38de35f07bae2d39448f3ffdb45133513a0ae3efb8749da318c4f4a1",
+      "published_bytes": 5457,
+      "published_sha256": "f36d3b8f38de35f07bae2d39448f3ffdb45133513a0ae3efb8749da318c4f4a1",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/build-native-v7-final.py",
+      "source": "/private/tmp/noye-phase8-20261017/build-native-v7-final.py",
+      "source_bytes": 3104,
+      "source_sha256": "f60bfb2e736a0b5dced3d575dacd4383ae66a104092c044d0900d05390b324c8",
+      "published_bytes": 3104,
+      "published_sha256": "f60bfb2e736a0b5dced3d575dacd4383ae66a104092c044d0900d05390b324c8",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/build-native-v7.py",
+      "source": "/private/tmp/noye-phase8-20261017/build-native-v7.py",
+      "source_bytes": 3098,
+      "source_sha256": "8ca644ddbba6b2f8bb64afdabe70522e636b7a3f12052471c61cbb8891b70428",
+      "published_bytes": 3098,
+      "published_sha256": "8ca644ddbba6b2f8bb64afdabe70522e636b7a3f12052471c61cbb8891b70428",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/build-native.py",
+      "source": "/private/tmp/noye-phase8-20261017/build-native.py",
+      "source_bytes": 3095,
+      "source_sha256": "8356f522493b4b4baf881f7f53ab0e0b62e40a637fec91cbb66c31b03617f0a3",
+      "published_bytes": 3095,
+      "published_sha256": "8356f522493b4b4baf881f7f53ab0e0b62e40a637fec91cbb66c31b03617f0a3",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/check-relation-wire-v7.py",
+      "source": "/private/tmp/noye-phase8-20261017/check-relation-wire-v7.py",
+      "source_bytes": 1349,
+      "source_sha256": "ef4a19312883e6df91da7876419a66d9a4add2d7172b53f9be761bca6542f7da",
+      "published_bytes": 1349,
+      "published_sha256": "ef4a19312883e6df91da7876419a66d9a4add2d7172b53f9be761bca6542f7da",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/check-wiki-v6.py",
+      "source": "/private/tmp/noye-phase8-20261017/check-wiki-v6.py",
+      "source_bytes": 1939,
+      "source_sha256": "0f060fb303ff8a8bcb84bdd2eed38c60447c0ffa7a5ccb306b24ebb00371e68c",
+      "published_bytes": 1939,
+      "published_sha256": "0f060fb303ff8a8bcb84bdd2eed38c60447c0ffa7a5ccb306b24ebb00371e68c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/checks-v7-final.py",
+      "source": "/private/tmp/noye-phase8-20261017/checks-v7-final.py",
+      "source_bytes": 2428,
+      "source_sha256": "a08d97b69e4e7c35b49633c05af5899e786bb49d8346c8de1b5b87bb4a960f91",
+      "published_bytes": 2428,
+      "published_sha256": "a08d97b69e4e7c35b49633c05af5899e786bb49d8346c8de1b5b87bb4a960f91",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/checks-v7.py",
+      "source": "/private/tmp/noye-phase8-20261017/checks-v7.py",
+      "source_bytes": 2208,
+      "source_sha256": "0ffafdd8f30b68bd1c10065aba986181dfd819eee3872e577df708b1e477dc5b",
+      "published_bytes": 2208,
+      "published_sha256": "0ffafdd8f30b68bd1c10065aba986181dfd819eee3872e577df708b1e477dc5b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/coverage.ini",
+      "source": "/private/tmp/noye-phase8-20261017/coverage.ini",
+      "source_bytes": 138,
+      "source_sha256": "98ef640c674343028f55ef686db50389330e03cc14e5b45b1a1305a8526c3b34",
+      "published_bytes": 138,
+      "published_sha256": "98ef640c674343028f55ef686db50389330e03cc14e5b45b1a1305a8526c3b34",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/document-scenarios-v23.py",
+      "source": "/private/tmp/noye-phase8-20261017/document-scenarios-v23.py",
+      "source_bytes": 2480,
+      "source_sha256": "a15a1fa48dedfa596580e01052ee8778bfec6ea3e11647108b47a50e7ff8bb67",
+      "published_bytes": 2480,
+      "published_sha256": "a15a1fa48dedfa596580e01052ee8778bfec6ea3e11647108b47a50e7ff8bb67",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/finish-checks.py",
+      "source": "/private/tmp/noye-phase8-20261017/finish-checks.py",
+      "source_bytes": 1880,
+      "source_sha256": "af90f0f69adc818162dd2ede92f9d23f27896a6bb24434466cc2d86c3369404c",
+      "published_bytes": 1880,
+      "published_sha256": "af90f0f69adc818162dd2ede92f9d23f27896a6bb24434466cc2d86c3369404c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-analysis.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-analysis.py",
+      "source_bytes": 5881,
+      "source_sha256": "8b47acc2f1cff53c7a1bd8dff1f67b49e862c5b3ef94640525ed2b2e90cb8526",
+      "published_bytes": 5881,
+      "published_sha256": "8b47acc2f1cff53c7a1bd8dff1f67b49e862c5b3ef94640525ed2b2e90cb8526",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-presence.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-presence.py",
+      "source_bytes": 5255,
+      "source_sha256": "a52afbfb64a59210b51f22f73405c8664c72d457b897fc46edad3de93dac63fa",
+      "published_bytes": 5255,
+      "published_sha256": "a52afbfb64a59210b51f22f73405c8664c72d457b897fc46edad3de93dac63fa",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-relations-v5.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-relations-v5.py",
+      "source_bytes": 4099,
+      "source_sha256": "ef9f606649c89c8abd89a9f6ed3a0872e813cb952ad542847db5899fdbc81f70",
+      "published_bytes": 4099,
+      "published_sha256": "ef9f606649c89c8abd89a9f6ed3a0872e813cb952ad542847db5899fdbc81f70",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-relations-v6.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-relations-v6.py",
+      "source_bytes": 4336,
+      "source_sha256": "223d1edf7f47a8f713f76a4a4f90a207b7963680f00f14036cd8511509e875e1",
+      "published_bytes": 4336,
+      "published_sha256": "223d1edf7f47a8f713f76a4a4f90a207b7963680f00f14036cd8511509e875e1",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-relations.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-relations.py",
+      "source_bytes": 3541,
+      "source_sha256": "d5cb8d25304a40d92e42cbd356ea014fcce5f71c569aa510a8980b503dfe919f",
+      "published_bytes": 3541,
+      "published_sha256": "d5cb8d25304a40d92e42cbd356ea014fcce5f71c569aa510a8980b503dfe919f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-stances.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-stances.py",
+      "source_bytes": 5844,
+      "source_sha256": "93d7846abc7e99b235b35de861ad464041d1bfaae3e4d377c8422b85a6403d50",
+      "published_bytes": 5844,
+      "published_sha256": "93d7846abc7e99b235b35de861ad464041d1bfaae3e4d377c8422b85a6403d50",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-wiki-support.py",
+      "source": "/private/tmp/noye-phase8-20261017/probe-wiki-support.py",
+      "source_bytes": 2928,
+      "source_sha256": "66d6f0850839d19ff98b824b7a1d8480017cf32aee4b6614a46831cfaccd1315",
+      "published_bytes": 2928,
+      "published_sha256": "66d6f0850839d19ff98b824b7a1d8480017cf32aee4b6614a46831cfaccd1315",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/publish.py",
+      "source": "/private/tmp/noye-phase8-20261017/publish.py",
+      "source_bytes": 7412,
+      "source_sha256": "cc351552082c94eec807f982b7e47b87f2718c7ad2e809dbc1ef009bf9a53b41",
+      "published_bytes": 7412,
+      "published_sha256": "cc351552082c94eec807f982b7e47b87f2718c7ad2e809dbc1ef009bf9a53b41",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/relation-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/relation-controls.json",
+      "source_bytes": 2634,
+      "source_sha256": "2807c826d02339fe0acc6d68428596c8c7bd194942c97e6ef1c50c66bb82383c",
+      "published_bytes": 2634,
+      "published_sha256": "2807c826d02339fe0acc6d68428596c8c7bd194942c97e6ef1c50c66bb82383c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/relation-original-only-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/relation-original-only-controls.json",
+      "source_bytes": 1116,
+      "source_sha256": "19e351cc80279a86798711fa6cf8a1f0ae971b2304371282ecaa506dca671cfc",
+      "published_bytes": 1116,
+      "published_sha256": "19e351cc80279a86798711fa6cf8a1f0ae971b2304371282ecaa506dca671cfc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/relation-schema-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/relation-schema-controls.json",
+      "source_bytes": 1236,
+      "source_sha256": "1a64e968cb9d55ab1bd861e8d8ae79840767db32357702774893d94aa1a8ec27",
+      "published_bytes": 1236,
+      "published_sha256": "1a64e968cb9d55ab1bd861e8d8ae79840767db32357702774893d94aa1a8ec27",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/replay-wiki-quantity.py",
+      "source": "/private/tmp/noye-phase8-20261017/replay-wiki-quantity.py",
+      "source_bytes": 1578,
+      "source_sha256": "d2890ca5de3256c4701c331777bf452c3c74f3dd44c9269c44f870846a34c2b1",
+      "published_bytes": 1578,
+      "published_sha256": "d2890ca5de3256c4701c331777bf452c3c74f3dd44c9269c44f870846a34c2b1",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/sampling-neutral-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/sampling-neutral-controls.json",
+      "source_bytes": 1217,
+      "source_sha256": "4aa5f2ac25d33184ab1570826e8e795631e0848cbccc129d8dbb8d46f8601573",
+      "published_bytes": 1217,
+      "published_sha256": "4aa5f2ac25d33184ab1570826e8e795631e0848cbccc129d8dbb8d46f8601573",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/stance-controls.json",
+      "source": "/private/tmp/noye-phase8-20261017/stance-controls.json",
+      "source_bytes": 1308,
+      "source_sha256": "5f33dbc238f9b8c20295b94d99280c47a47a816ce5101fcb6cde7892e43ee886",
+      "published_bytes": 1308,
+      "published_sha256": "5f33dbc238f9b8c20295b94d99280c47a47a816ce5101fcb6cde7892e43ee886",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/v7-coverage.ini",
+      "source": "/private/tmp/noye-phase8-20261017/v7/coverage.ini",
+      "source_bytes": 111,
+      "source_sha256": "561dd6e2094aa55530018201c906f3b37009def91cd111a69708dfb00b5b1947",
+      "published_bytes": 111,
+      "published_sha256": "561dd6e2094aa55530018201c906f3b37009def91cd111a69708dfb00b5b1947",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/v7-final-coverage.ini",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/coverage.ini",
+      "source_bytes": 117,
+      "source_sha256": "ce7bea3891d217694d72eff23b6987fa2d722f93cfbe1a9081146efc98955ad7",
+      "published_bytes": 117,
+      "published_sha256": "ce7bea3891d217694d72eff23b6987fa2d722f93cfbe1a9081146efc98955ad7",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/verify-v23.py",
+      "source": "/private/tmp/noye-phase8-20261017/verify-v23.py",
+      "source_bytes": 4025,
+      "source_sha256": "53b31ad7413cc86b34d9230f4b4a1de3658c0953c02ba0ca373ea7c9ff437228",
+      "published_bytes": 4025,
+      "published_sha256": "53b31ad7413cc86b34d9230f4b4a1de3658c0953c02ba0ca373ea7c9ff437228",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model-review.json",
+      "source": "/private/tmp/noye-phase8-20261017/model-review.json",
+      "source_bytes": 2036,
+      "source_sha256": "564e5df5aafe34bb083e2c8c66502ed89057add2c1f5fbb3e65c4f4f5353595b",
+      "published_bytes": 2036,
+      "published_sha256": "564e5df5aafe34bb083e2c8c66502ed89057add2c1f5fbb3e65c4f4f5353595b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model-sampling-defaults.json",
+      "source": "/private/tmp/noye-phase8-20261017/model-sampling-defaults.json",
+      "source_bytes": 1144,
+      "source_sha256": "e12b03311969d0ccb7e6aeaa309cf5c91de8cdd38194b180a8e89e8ae6a1ecd0",
+      "published_bytes": 1144,
+      "published_sha256": "e12b03311969d0ccb7e6aeaa309cf5c91de8cdd38194b180a8e89e8ae6a1ecd0",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/analysis-probe-corrected.json",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-probe-corrected.json",
+      "source_bytes": 887300,
+      "source_sha256": "3afed22ac959bcd7f275caba6b654688c353683701d9e1fe6fd98f549c7113e4",
+      "published_bytes": 304168,
+      "published_sha256": "862998a3370d7ec838067e50d4906d14410cdd0243e8d5b2b4811531c4f684a5",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/analysis-probe.json",
+      "source": "/private/tmp/noye-phase8-20261017/analysis-probe.json",
+      "source_bytes": 21905,
+      "source_sha256": "6a2b59a659609a97e0939fadcce0d5230cc7a354050ffe03ca9d10ef5a60968f",
+      "published_bytes": 21905,
+      "published_sha256": "6a2b59a659609a97e0939fadcce0d5230cc7a354050ffe03ca9d10ef5a60968f",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/presence-zero-probe.json",
+      "source": "/private/tmp/noye-phase8-20261017/presence-zero-probe.json",
+      "source_bytes": 727129,
+      "source_sha256": "24a2fbe1feb4c9c7a98aa2af2fd7ca11dae97460e69737e3d2853897f5e4c9c3",
+      "published_bytes": 250021,
+      "published_sha256": "4495115bb10d992cf1d4f426288fd596a57d8d80b30fd575f398c369539d84b2",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/relations-v4.json",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v4.json",
+      "source_bytes": 229820,
+      "source_sha256": "c7252efc778243c1c6f7f3aaaabf93f18cc1a1964105b1584495c973234acc96",
+      "published_bytes": 70784,
+      "published_sha256": "efb04f7d387119f5de9da56a26e850c692f73295e83221035dd3cc224d38e912",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/relations-v5.json",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v5.json",
+      "source_bytes": 334621,
+      "source_sha256": "92643ab50a990b134fa61ff33580fc499156b41a1491a8a358f07a4a3dd104fa",
+      "published_bytes": 96067,
+      "published_sha256": "273702efd3f3dd51bb39bbc5cab8c2a2b4ca1f22104bf6f6e918e01dbd0b1901",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/relations-v6.json",
+      "source": "/private/tmp/noye-phase8-20261017/relations-v6.json",
+      "source_bytes": 504470,
+      "source_sha256": "b73ad01201109a41c0fdad99b4effd167e83215040ea72c186f031ea889706a8",
+      "published_bytes": 186398,
+      "published_sha256": "8ff584f0efa85bc75148d12fba109268d869a6af822a79e1c8f7a7fc23405014",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/stances-probe.json",
+      "source": "/private/tmp/noye-phase8-20261017/stances-probe.json",
+      "source_bytes": 658844,
+      "source_sha256": "38b91caa406e8356c439abcc3e6ae7923b1b045b8681e6b1ac3b90f73599c23a",
+      "published_bytes": 261254,
+      "published_sha256": "7682087dbb486848b8f4ff8022094f1ba2ab0d3b05ae19c9c1444da901bbebf4",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/support-v23.json",
+      "source": "/private/tmp/noye-phase8-20261017/support-v23.json",
+      "source_bytes": 520084,
+      "source_sha256": "0bd6faccabb8045bc736d7c78809de30c5c533cac382e909184ea6e820494f80",
+      "published_bytes": 175506,
+      "published_sha256": "0dc627bb41aa17af1bea1a700f56043a00c51c7a15bd85426d528f567ed60062",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/collection-284ba6f8-4292-4af8-a438-c538281c6705.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/collection-284ba6f8-4292-4af8-a438-c538281c6705.json",
+      "source_bytes": 335962,
+      "source_sha256": "cd9ad8823638269297085d08303dbb2814172bbaace711b28ba36d6d2887a852",
+      "published_bytes": 123914,
+      "published_sha256": "4d36bc2d095aafb9544e35bcf83ed1256b4bdc03f5544953c83f2621dc0a34fe",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/comparison-054d959e-cd29-4f39-bed6-357b519b7f8a.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/comparison-054d959e-cd29-4f39-bed6-357b519b7f8a.json",
+      "source_bytes": 762033,
+      "source_sha256": "59d6991497348315d363cf1a92d402fb823bb6be27aafe11b44ae653cae0e170",
+      "published_bytes": 258419,
+      "published_sha256": "a923073e30662638373bb30570be182303cf6c321156f5388d03c9ee95177e7e",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/empty-6dc090a9-2877-4bdc-a969-ed9671b9f88b.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/empty-6dc090a9-2877-4bdc-a969-ed9671b9f88b.json",
+      "source_bytes": 3286,
+      "source_sha256": "739ba7bf7c97311318bb6799a1b3db5678b648a316af798bbff243895fdbe549",
+      "published_bytes": 3286,
+      "published_sha256": "739ba7bf7c97311318bb6799a1b3db5678b648a316af798bbff243895fdbe549",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/partial-89d078d9-e453-4a96-a59a-4482010e8d27.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/partial-89d078d9-e453-4a96-a59a-4482010e8d27.json",
+      "source_bytes": 631701,
+      "source_sha256": "744781b2a6c7a1533c766a7d03ef62ee6f964c8555bd03409292bbf9e658e8c0",
+      "published_bytes": 234111,
+      "published_sha256": "ba469485f4d8237fcb802e08e60f7eb6e35a9d19dd8fd9f453e2969cd89e60bf",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/report-5aaabb35-82f7-46a5-8c6e-decd494f4eb1.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/report-5aaabb35-82f7-46a5-8c6e-decd494f4eb1.json",
+      "source_bytes": 921420,
+      "source_sha256": "a2c601e7ba64c964033174ea4faec5cf92dac13137f9f8476547796b0b490d2c",
+      "published_bytes": 311782,
+      "published_sha256": "b3ca958b81de7dda071f9038e131e3dde915b90cbe364e321fa473c508ecb88e",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v23/wiki-1cab8e3d-14fe-45ac-b670-f0079e4792da.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-documents/wiki-1cab8e3d-14fe-45ac-b670-f0079e4792da.json",
+      "source_bytes": 138403,
+      "source_sha256": "f56f0a2d64979330c79a852fd03583a86a2fa6268977537751c3454e18212e8c",
+      "published_bytes": 58885,
+      "published_sha256": "8d394a8589b574b5c927d09851c133a45d103a4dda5497d463860ddb017ff7c7",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v6-wiki/wiki-b049b862-58fa-42ea-be8d-caa4d0390f4e.json",
+      "source": "/private/tmp/noye-phase8-20261017/v6-wiki/wiki-b049b862-58fa-42ea-be8d-caa4d0390f4e.json",
+      "source_bytes": 152145,
+      "source_sha256": "c136d5c8d5f515e0389c519b68d8374886462c83bd59ba7bf4d94c91f10492af",
+      "published_bytes": 72627,
+      "published_sha256": "55a1591c3baaa1c5b013a0a73ad7b73938f57462f7b0164a510324e5783c5946",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v7-final/wiki-aab65f2a-024d-4154-9d96-30820f64a54a.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/wiki/wiki-aab65f2a-024d-4154-9d96-30820f64a54a.json",
+      "source_bytes": 101360,
+      "source_sha256": "ff73e5b5128b9756550f3bd71e1426949986d24c93a934652c4b13cf862ece40",
+      "published_bytes": 48348,
+      "published_sha256": "5e1843a0ccf66b5f1ad0df56e6972e5bbc1eb94ef55acaee4cb5d7e8a832bf5d",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/wiki-support-probe.json",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-support-probe.json",
+      "source_bytes": 85645,
+      "source_sha256": "81b498cd16e31c361c94db571856a6131669b66e2621be0a0305a71acff1f97c",
+      "published_bytes": 32633,
+      "published_sha256": "965789d90575bb2130282296bac290175c3fd9b93093275712636e2bfe879a5d",
+      "transformation": "Repeated successful preflight metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "native-original-observation.json",
+      "source": "/private/tmp/noye-phase8-20261017/native-original-observation.json",
+      "source_bytes": 2497,
+      "source_sha256": "873d28c85b17b4e917e82657443fc33354151662c3ca9edf3ded214caaf513c2",
+      "published_bytes": 2497,
+      "published_sha256": "873d28c85b17b4e917e82657443fc33354151662c3ca9edf3ded214caaf513c2",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "relation-wire-v7.json",
+      "source": "/private/tmp/noye-phase8-20261017/relation-wire-v7.json",
+      "source_bytes": 351,
+      "source_sha256": "b27283a4d0c781731c955cb4a0384d840930daf2285a7f92336bc73c550d21d6",
+      "published_bytes": 351,
+      "published_sha256": "b27283a4d0c781731c955cb4a0384d840930daf2285a7f92336bc73c550d21d6",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "sampling-comparison-review.json",
+      "source": "/private/tmp/noye-phase8-20261017/sampling-comparison-review.json",
+      "source_bytes": 1500,
+      "source_sha256": "7ffb75d29a0326935be7150441ff813d613a6d44436b0bb916ca6262528e6d0f",
+      "published_bytes": 1500,
+      "published_sha256": "7ffb75d29a0326935be7150441ff813d613a6d44436b0bb916ca6262528e6d0f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-collection-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-collection-manual.json",
+      "source_bytes": 580,
+      "source_sha256": "b22390f78c73e937cf4a643a9d713df9c62ca9ad456c63a30fd8da83e45edab7",
+      "published_bytes": 580,
+      "published_sha256": "b22390f78c73e937cf4a643a9d713df9c62ca9ad456c63a30fd8da83e45edab7",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-comparison-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-comparison-manual.json",
+      "source_bytes": 1284,
+      "source_sha256": "6a5e43f643698f5839cb0cc03dbd910b969048e0aa80791cdb94b910a249607a",
+      "published_bytes": 1284,
+      "published_sha256": "6a5e43f643698f5839cb0cc03dbd910b969048e0aa80791cdb94b910a249607a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-empty-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-empty-manual.json",
+      "source_bytes": 239,
+      "source_sha256": "4505bd4ea4fdb8803976fe4dceda63a6e8c6d3eb464add675c2fc6845421acab",
+      "published_bytes": 239,
+      "published_sha256": "4505bd4ea4fdb8803976fe4dceda63a6e8c6d3eb464add675c2fc6845421acab",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-partial-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-partial-manual.json",
+      "source_bytes": 919,
+      "source_sha256": "814b2453633590ab533611a0ae44f73a742f99c6769c27df158d619a543f79e2",
+      "published_bytes": 919,
+      "published_sha256": "814b2453633590ab533611a0ae44f73a742f99c6769c27df158d619a543f79e2",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-report-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-report-manual.json",
+      "source_bytes": 1082,
+      "source_sha256": "57f002cb6b72a9a26397d8a568c2d70e7c1cdb7b3bb96c7a64f6a61fff58dce4",
+      "published_bytes": 1082,
+      "published_sha256": "57f002cb6b72a9a26397d8a568c2d70e7c1cdb7b3bb96c7a64f6a61fff58dce4",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-scenarios.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-scenarios.json",
+      "source_bytes": 2247,
+      "source_sha256": "258fcbd62110ad351f6a30369d664cc1a13db8722f03e4e7700c6719bf916fca",
+      "published_bytes": 2247,
+      "published_sha256": "258fcbd62110ad351f6a30369d664cc1a13db8722f03e4e7700c6719bf916fca",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v23-wiki-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v23-wiki-manual.json",
+      "source_bytes": 1336,
+      "source_sha256": "175242c738d737fa9a9dc7eee515e2e86eca75971b0c67f9bb72bcfb33d4fa2b",
+      "published_bytes": 1336,
+      "published_sha256": "175242c738d737fa9a9dc7eee515e2e86eca75971b0c67f9bb72bcfb33d4fa2b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7-final/backend-product-coverage.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/backend-product-coverage.json",
+      "source_bytes": 743032,
+      "source_sha256": "464ab9bd64a31e24ae89fa02a94916294c7c238c6c031684a6fada1aaa78f090",
+      "published_bytes": 743032,
+      "published_sha256": "464ab9bd64a31e24ae89fa02a94916294c7c238c6c031684a6fada1aaa78f090",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7-final/build-review.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/build-review.json",
+      "source_bytes": 2076,
+      "source_sha256": "712770e69ca06872b7e6af47cb3d0994dfc26ce667d8944bf06e095d5f075a34",
+      "published_bytes": 2076,
+      "published_sha256": "712770e69ca06872b7e6af47cb3d0994dfc26ce667d8944bf06e095d5f075a34",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7-final/checks.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/checks.json",
+      "source_bytes": 1682,
+      "source_sha256": "a86d354fdb4b936ab8b883da2d9bd444db4840268f71e9ac396119a7cdeeac9e",
+      "published_bytes": 1682,
+      "published_sha256": "a86d354fdb4b936ab8b883da2d9bd444db4840268f71e9ac396119a7cdeeac9e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7-final/manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7-final/manual.json",
+      "source_bytes": 998,
+      "source_sha256": "0cc1625d708c87e7cd9883992c91f197e6c03bc647e6ce4a1f0917868130792d",
+      "published_bytes": 998,
+      "published_sha256": "0cc1625d708c87e7cd9883992c91f197e6c03bc647e6ce4a1f0917868130792d",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7/backend-product-coverage.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7/backend-product-coverage.json",
+      "source_bytes": 742938,
+      "source_sha256": "ee0b0ce7c5b48a8a6cad58ad5d98af11f6f460b89267ab5f6a8151802a0e3bc7",
+      "published_bytes": 742938,
+      "published_sha256": "ee0b0ce7c5b48a8a6cad58ad5d98af11f6f460b89267ab5f6a8151802a0e3bc7",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v7/checks.json",
+      "source": "/private/tmp/noye-phase8-20261017/v7/checks.json",
+      "source_bytes": 652,
+      "source_sha256": "cfc111d69531e1fd6c4f8ec56aca1de8ea583ecfda2b2486b0025bc6f7960428",
+      "published_bytes": 652,
+      "published_sha256": "cfc111d69531e1fd6c4f8ec56aca1de8ea583ecfda2b2486b0025bc6f7960428",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "wiki-v6-whole-manual.json",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v6-whole-manual.json",
+      "source_bytes": 747,
+      "source_sha256": "5ea2f62e615ecbb19dc5af947726f60fc93e649151803faf588e5ffea7a67d8d",
+      "published_bytes": 747,
+      "published_sha256": "5ea2f62e615ecbb19dc5af947726f60fc93e649151803faf588e5ffea7a67d8d",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "wiki-v6-whole-review.json",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v6-whole-review.json",
+      "source_bytes": 568,
+      "source_sha256": "0f845ff57bca969c3ca073163c349c8b289ba1056f96f2d020ec1a4aa8aea137",
+      "published_bytes": 568,
+      "published_sha256": "0f845ff57bca969c3ca073163c349c8b289ba1056f96f2d020ec1a4aa8aea137",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "wiki-v7-quantity-replay.json",
+      "source": "/private/tmp/noye-phase8-20261017/wiki-v7-quantity-replay.json",
+      "source_bytes": 1836,
+      "source_sha256": "fa9b7a922af5af53349753d39ddb7c1910255f08e0718f6b607d0e596c3c348b",
+      "published_bytes": 1836,
+      "published_sha256": "fa9b7a922af5af53349753d39ddb7c1910255f08e0718f6b607d0e596c3c348b",
+      "transformation": "Byte-for-byte copy"
+    }
+  ]
+}

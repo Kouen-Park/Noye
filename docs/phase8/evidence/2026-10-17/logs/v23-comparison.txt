@@ -1,0 +1,5 @@
+{"ingestion": "02-English.txt", "state": "READY", "seconds": 1.409}
+{"ingestion": "01-\ud55c\uad6d\uc5b4.md", "state": "READY", "seconds": 0.059}
+{"ingestion": "Unrelated.txt", "state": "READY", "seconds": 0.04}
+{"scenario": "comparison", "job_id": "3702b589-4f25-401f-94ca-0fcf1e2b250f", "request_id": "054d959e-cd29-4f39-bed6-357b519b7f8a", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "complete", "artifact_id": "8f49c4f1-73cd-56dd-9a1d-42e605973797", "error": null, "seconds": 465.269, "report": "/private/tmp/noye-phase8-20261017/v23-documents/comparison-054d959e-cd29-4f39-bed6-357b519b7f8a.json"}

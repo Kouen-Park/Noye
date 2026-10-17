@@ -1,0 +1,73 @@
+{
+  "method": "Sequential local ad-hoc package checks after model unload; not trusted distribution.",
+  "stages": [
+    {
+      "name": "sidecar-build",
+      "argv": [
+        "npm",
+        "run",
+        "desktop:backend"
+      ],
+      "seconds": 32.181,
+      "exit_code": 0,
+      "log_sha256": "17e5f0f7ed428174dbb56473f5e2d024f4f9e882022b19991598753bff662158"
+    },
+    {
+      "name": "native-bundle",
+      "argv": [
+        "npx",
+        "tauri",
+        "build",
+        "--bundles",
+        "app",
+        "--config",
+        "/private/tmp/noye-phase8-20261016/tauri-qa.json"
+      ],
+      "seconds": 21.283,
+      "exit_code": 0,
+      "log_sha256": "d2156c63ec0ef1d8d0654c5b6ab71f047dc9ad15df6fc7384d8c9f8a7e4796e8"
+    },
+    {
+      "name": "native-signature",
+      "argv": [
+        "codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app"
+      ],
+      "seconds": 0.044,
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "frozen-bundled",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "app/tests/test_desktop.py",
+        "app/tests/test_native_folder_protocol.py"
+      ],
+      "seconds": 45.348,
+      "exit_code": 0,
+      "log_sha256": "5878eb6f54c37a837c57c15c10d8ba22d6cc631d072215d78a0662975ef44b55"
+    }
+  ],
+  "source_commit": "5a97f1202a0b5d867027c5774b3da80bd0b90ea8",
+  "files": {
+    "Contents/MacOS/noye-backend": {
+      "bytes": 57231744,
+      "sha256": "d4b995ee4b59962a169a97409ab37839577a376d58b6113c056999c7b9a1fa03"
+    },
+    "Contents/MacOS/noye-desktop": {
+      "bytes": 14270000,
+      "sha256": "8afbe92f6505c66e817f277e44b6478001eec753b6b1916bdccb94d8219d337f"
+    }
+  },
+  "bundled_prompt_versions": {
+    "app.services.source_documents.local": "source-document-v23",
+    "app.services.wiki.local": "wiki-grounded-v6"
+  }
+}

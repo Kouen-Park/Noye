@@ -1,0 +1,10 @@
+{
+  "method": "Primary-agent inspection of the recorded production refusal; not successful generation.",
+  "file": "collection-284ba6f8-4292-4af8-a438-c538281c6705.json",
+  "generation_seconds": 243.648,
+  "job_state": "failed",
+  "accepted_generation": false,
+  "artifact_id": null,
+  "refusal_correct": true,
+  "reason": "Korean extraction changes Backups run twice a day into Beta permits backup execution twice a day. Occurrence does not establish permission. The audit correctly refuses the changed modal claim. The selected requested Korean document remains undelivered."
+}

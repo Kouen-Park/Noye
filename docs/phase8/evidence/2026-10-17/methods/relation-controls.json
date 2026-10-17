@@ -1,0 +1,56 @@
+{
+  "method": "Frozen before the first actual v4 relation call. Allowed kinds distinguish unsafe contradictions from legitimate optional topical links. Component test uses production infer with real Ollama; only candidate lookup is fixed, not an end-to-end discovery or Wiki summarization result.",
+  "cases": [
+    {
+      "id": "different-subject-rules",
+      "origin": "Cypress permits writes on Saturdays.",
+      "target": "Hazel stops writes on Saturdays.",
+      "origin_summary": "Cypress permits Saturday writes.",
+      "target_summary": "Hazel stops Saturday writes.",
+      "allowed": ["shared_subject", "alternative"]
+    },
+    {
+      "id": "absence-is-not-denial",
+      "origin": "This note describes Indigo backup schedules. It makes no statement about Indigo's memory limit.",
+      "target": "Indigo has a memory limit of 64 megabytes.",
+      "origin_summary": "No memory limit is recorded in this note.",
+      "target_summary": "Indigo has a 64 megabyte memory limit.",
+      "allowed": ["shared_subject"]
+    },
+    {
+      "id": "same-subject-opposite-condition",
+      "origin": "During maintenance, Juniper permits imports.",
+      "target": "During maintenance, Juniper prohibits imports.",
+      "origin_summary": "Juniper permits imports during maintenance.",
+      "target_summary": "Juniper prohibits imports during maintenance.",
+      "allowed": ["contradiction"],
+      "required": true
+    },
+    {
+      "id": "exception-in-original",
+      "origin": "Maple permits exports on Fridays. This rule does not apply during inspections, when exports are prohibited.",
+      "target": "During inspections, Maple prohibits exports on Fridays.",
+      "origin_summary": "Maple permits Friday exports.",
+      "target_summary": "Maple prohibits Friday exports during inspections.",
+      "allowed": ["shared_subject", "supporting_evidence"],
+      "required": true
+    },
+    {
+      "id": "different-property",
+      "origin": "Saffron has a capacity of 41 litres.",
+      "target": "Saffron currently stores 17 litres.",
+      "origin_summary": "Saffron's capacity is 41 litres.",
+      "target_summary": "Saffron stores 17 litres.",
+      "allowed": ["shared_subject"]
+    },
+    {
+      "id": "translated-same-rule",
+      "origin": "Orchid는 점검 중에는 가져오기를 금지한다.",
+      "target": "Orchid prohibits imports during inspections.",
+      "origin_summary": "Orchid는 점검 중 가져오기를 금지한다.",
+      "target_summary": "Orchid prohibits imports during inspections.",
+      "allowed": ["shared_subject", "supporting_evidence"],
+      "required": true
+    }
+  ]
+}
