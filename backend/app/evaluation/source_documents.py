@@ -59,9 +59,20 @@ class MeasuredClient:
     def post(self, url, *, json):
         endpoint = httpx.URL(url).path
         task = "model_preflight" if endpoint.endswith("/api/show") else "unknown"
-        if "prompt" in json:
+        prompt = json.get("prompt")
+        messages = json.get("messages")
+        if prompt is None and isinstance(messages, list):
+            prompt = next(
+                (
+                    m.get("content")
+                    for m in reversed(messages)
+                    if isinstance(m, dict) and m.get("role") == "user"
+                ),
+                None,
+            )
+        if prompt is not None:
             try:
-                task = loads(json["prompt"]).get("task", "unknown")
+                task = loads(prompt).get("task", "unknown")
             except (ValueError, TypeError, AttributeError):
                 pass  # Measurement must not change the model request or validation.
         call = {

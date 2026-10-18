@@ -169,3 +169,36 @@ def test_wiki_failure_also_retains_measurements_and_report(workspace, monkeypatc
     assert saved["state"] == "failed"
     assert saved["error"]["source_id"] == source.id
     assert saved["model_calls"][0]["response"] == "Exact rejected Wiki response"
+
+
+@pytest.mark.parametrize(
+    "content,task",
+    [
+        ('{"task":"verify_support","claims":["원문"]}', "verify_support"),
+        ("not JSON", "unknown"),
+        ([{"text": "multimodal content"}], "unknown"),
+    ],
+)
+def test_chat_measurements_classify_the_actual_user_task_without_mutating_requests(content, task):
+    received = []
+
+    def respond(request):
+        received.append(json.loads(request.content))
+        return httpx.Response(200, json={"done": True, "message": {"content": '{"audits":[]}'}})
+
+    payload = {
+        "model": "test",
+        "think": True,
+        "messages": [
+            {"role": "system", "content": '{"task":"not the user task"}'},
+            {"role": "user", "content": content},
+        ],
+    }
+    with closing(
+        evaluation.MeasuredClient(httpx.Client(transport=httpx.MockTransport(respond)))
+    ) as client:
+        response = client.post("http://127.0.0.1/api/chat", json=payload)
+        assert received == [payload]
+        assert client.calls[0]["task"] == task
+        assert client.calls[0]["endpoint"] == "/api/chat"
+        assert client.calls[0]["raw_response"] == response.text
