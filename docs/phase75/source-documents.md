@@ -258,3 +258,13 @@ test to document data; both consume the same source/version and durable-job cont
 A has integrated these contracts and feature commits in PR #60. This branch
 is a focused document review surface; integrate through that combined branch and
 avoid applying its shared migration/router/job/backup commits a second time.
+
+When configured thinking is enabled, structured stages use Ollama's chat endpoint
+and validate only final `message.content`. Non-thinking requests keep the existing
+generate endpoint and the same model/system/prompt/schema/options. This handles an
+observed Qwen3.5/Ollama 0.34.2 generate incompatibility where final JSON is empty
+while reasoning contains JSON. Reasoning is never promoted to an accepted answer;
+empty/malformed/truncated final responses still fail without automatic retry or
+fallback. The prompt identity changes to v24 so explicit retries cannot reuse a
+previous stage under the changed transport contract. This compatibility fix does
+not establish semantic correctness or change the default thinking setting.
