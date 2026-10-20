@@ -575,6 +575,23 @@ def provenance_markdown(metadata):
     return "\n\n".join(parts) + "\n"
 
 
+def citation_labels(supports, evidence, citations):
+    labels = []
+    for support in supports:
+        passage = evidence[support["evidence_id"]]
+        start = passage["start"] + passage["text"].index(support["quote"])
+        citation = {
+            **passage,
+            "quote": support["quote"],
+            "quote_start": start,
+            "quote_end": start + len(support["quote"]),
+        }
+        if citation not in citations:
+            citations.append(citation)
+        labels.append(f"E{citations.index(citation) + 1}")
+    return list(dict.fromkeys(labels))
+
+
 def generate(context, *, settings=None, client=None):
     settings = settings or get_settings()
     started, db = time.monotonic(), context.connection
@@ -818,6 +835,7 @@ def generate(context, *, settings=None, client=None):
                 "replaced with a neutral title.",
             }
         )
+    comparison_requested = presentation.is_comparison(req["request"]["instruction"], intent)
     compared_sources = False
     for heading in outline.sections:
         relevant = [c for c in all_claims if c["section_id"] == heading.id]
@@ -847,6 +865,29 @@ def generate(context, *, settings=None, client=None):
         by_source = defaultdict(list)
         for claim in relevant:
             by_source[claim["source_id"]].append(claim)
+        if comparison_requested:
+            # These assertions already passed original-evidence verification.
+            # Juxtaposition compares their recorded properties without asking a
+            # second generator to invent links between otherwise independent facts.
+            rows = [
+                (
+                    evidence[group[0]["supports"][0]["evidence_id"]]["source"]["name"],
+                    [
+                        (c["text"], citation_labels(c["supports"], evidence, citations))
+                        for c in group
+                    ],
+                )
+                for group in by_source.values()
+            ]
+            rendered.append(
+                "## "
+                + heading_title
+                + "\n\n"
+                + presentation.comparison_table(rows, intent["language"])
+            )
+            report["comparison_format"] = "source_table"
+            compared_sources |= len(by_source) > 1
+            continue
         interleaved = [
             group[n]
             for n in range(max(map(len, by_source.values()), default=0))
@@ -925,20 +966,8 @@ def generate(context, *, settings=None, client=None):
                         "original_passages": [evidence[s["evidence_id"]]["text"] for s in supports],
                     }
                 )
-                labels = []
-                for support in supports:
-                    passage = evidence[support["evidence_id"]]
-                    start = passage["start"] + passage["text"].index(support["quote"])
-                    citation = {
-                        **passage,
-                        "quote": support["quote"],
-                        "quote_start": start,
-                        "quote_end": start + len(support["quote"]),
-                    }
-                    if citation not in citations:
-                        citations.append(citation)
-                    labels.append(f"E{citations.index(citation) + 1}")
-                outputs.append(claim.text + " [" + ", ".join(dict.fromkeys(labels)) + "]")
+                labels = citation_labels(supports, evidence, citations)
+                outputs.append(claim.text + " [" + ", ".join(labels) + "]")
             verdicts = verify(
                 context,
                 req,
@@ -997,12 +1026,12 @@ def generate(context, *, settings=None, client=None):
     if synthesis_limits:
         report["partial"] = True
         report["synthesis_limits"] = synthesis_limits
-    if presentation.is_comparison(req["request"]["instruction"], intent) and not compared_sources:
+    if comparison_requested and not compared_sources:
         presentation_limits.append(
             {
                 "code": "comparison_unresolved",
-                "reason": "The requested comparison has no verified synthesis supported by "
-                "multiple sources; separate source notes are not a completed comparison.",
+                "reason": "The requested comparison has no section with verified notes from "
+                "multiple sources; separate source sections are not a completed comparison.",
             }
         )
     if presentation_limits:

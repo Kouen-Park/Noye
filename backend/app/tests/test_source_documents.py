@@ -249,6 +249,81 @@ def test_relevant_discovery_uses_scoped_wiki_relations_not_wiki_as_evidence(work
     assert metadata["coverage"]["inventory_mode"] == "relevant"
 
 
+def test_comparison_preserves_verified_facts_without_a_second_factual_rewrite(workspace):
+    db, *_ = workspace
+    alpha = discover(
+        workspace,
+        "Course/[Alpha]|notes.txt",
+        "Project Alpha has a capacity of 37 litres. Alpha uses SQLite.",
+    )
+    beta = discover(
+        workspace,
+        "Course/Beta.txt",
+        "Project Beta stores 92 litres. Beta uses append-only log files.",
+    )
+
+    def facts_only(payload, result):
+        if payload["task"] == "cross_source_synthesis":
+            pytest.fail("Verified comparison facts reached the unsafe rewrite stage")
+        if payload["task"] == "process_original_sections":
+            p = payload["passages"][0]
+            facts = (
+                ["Project Alpha has a capacity of 37 litres.", "Alpha uses SQLite."]
+                if "Alpha" in p["text"]
+                else ["Project Beta stores 92 litres.", "Beta uses append-only log files."]
+            )
+            result["claims"] = [
+                {"section_id": "design", "text": text, "evidence_ids": [p["evidence_id"]]}
+                for text in facts
+            ]
+
+    client, calls = model(transform=facts_only)
+    identifier = run(
+        db,
+        enqueue(
+            db,
+            WikiScope(mode="chosen", source_ids=[alpha.id, beta.id]),
+            instruction="Write an English comparison of Alpha and Beta.",
+        ),
+        client,
+    )
+    revision = store.current(db, identifier)
+    body = revision["content"].split("## Source and coverage report")[0]
+    assert "| Source | Recorded facts |" in body
+    assert "37 litres." in body and "92 litres." in body
+    assert "stores 92 litres using" not in body
+    assert "[Alpha](" not in body
+    assert r"\[Alpha\]\|notes.txt" in body
+    assert "Project Beta stores 92 litres. [E" in body
+    assert "Beta uses append-only log files. [E" in body
+    assert not revision["metadata"]["coverage"]["partial"]
+    assert revision["metadata"]["coverage"]["comparison_format"] == "source_table"
+    assert len(revision["metadata"]["citations"]) == 2
+    assert any(c["task"] == "verify_support" for c in calls)
+    assert all(c["task"] != "cross_source_synthesis" for c in calls)
+    for citation in revision["metadata"]["citations"]:
+        assert citation["quote"] == citation["text"]
+        assert citation["quote_end"] - citation["quote_start"] == len(citation["quote"])
+
+
+def test_comparison_still_refuses_unverified_source_facts(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    client, _ = model(invalid="unsupported")
+    with pytest.raises(pipeline.local.DocumentError, match="unsupported"):
+        run(db, enqueue(db, instruction="Write an English comparison."), client)
+    assert documents.count_documents(db) == 0
+
+
+def test_comparison_with_only_one_source_remains_partial(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    identifier = run(db, enqueue(db, instruction="Write an English comparison."))
+    coverage = store.current(db, identifier)["metadata"]["coverage"]
+    assert coverage["partial"]
+    assert any(p["code"] == "comparison_unresolved" for p in coverage["presentation_limits"])
+
+
 def test_unverified_per_source_gap_is_not_a_published_collection_conclusion(workspace):
     db, *_ = workspace
     original = discover(workspace)

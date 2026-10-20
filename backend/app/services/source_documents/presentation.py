@@ -6,6 +6,20 @@ from app.services import quantity_properties
 from app.services.source_documents.local import DocumentError
 
 
+def comparison_table(rows, language):
+    """Compare verified source notes without generating connecting assertions."""
+    headers = ("자료", "기록된 내용") if language == "Korean" else ("Source", "Recorded facts")
+
+    def cell(text):
+        return re.sub(r"([\\`*_{}\[\]()<>#!|~])", r"\\\1", " ".join(text.split()))
+
+    lines = [f"| {headers[0]} | {headers[1]} |", "| --- | --- |"]
+    for name, claims in rows:
+        notes = " ".join(cell(text) + " [" + ", ".join(labels) + "]" for text, labels in claims)
+        lines.append(f"| {cell(name)} | {notes} |")
+    return "\n".join(lines)
+
+
 def language_name(value):
     aliases = {
         "en": "English",

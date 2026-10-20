@@ -40,12 +40,17 @@ passages as evidence of reviewing a collection.
 ## Original processing and publication
 
 The stages are intent/discovery → outline → paginated original reads → bounded
-per-source sections → cross-source synthesis → final source verification → save.
+per-source sections → source comparison tables or cross-source synthesis → save.
 Every extracted character from each selected readable source is supplied to a
 bounded original-processing batch. UTF-8 byte size conservatively bounds model
 input; fragments cover the whole passage, including Korean text. Oversized
 indivisible prompts fail explicitly instead of clipping input. Synthesis visits all
-supported claims in bounded section groups and interleaves sources for comparison.
+supported claims in bounded section groups and verifies the resulting wording against
+originals. Comparison requests instead retain verified per-source assertions in
+source-attributed tables under each topical section; they do not invoke another
+factual rewrite. This removes the observed late synthesis path that joined a stored
+amount to an independently reported technology with an unsupported instrumental link.
+It does not prove that extraction or its fallible model audit is always faithful.
 
 All expanded context uses configured loopback Ollama and an installed model whose
 `/api/show` metadata is checked before source context is sent. Ollama cloud aliases
@@ -169,9 +174,12 @@ result partial. The semantic heading check is fallible and its real latency/qual
 remains Phase 8 acceptance, rather than a guarantee of factual accuracy.
 
 For a comparison request, separate source notes are not a completed comparison.
-Without an accepted synthesized paragraph whose validated references span multiple
-sources, the result is explicitly partial. This is a structural minimum, not proof
-of sound comparative reasoning. These limits persist in
+With `source-document-v25`, at least one topical comparison table must contain
+verified notes from multiple sources. Separate one-source sections remain partial.
+The application preserves each assertion's words and original citations, escapes
+table text and source names, and records `coverage.comparison_format: source_table`.
+It adds no inferred cause, difference calculation or evaluation of the designs.
+This is a structural comparison, not proof of sound comparative reasoning. These limits persist in
 `coverage.presentation_limits[]` (`code`, optional `section_id`, `reason`), appear
 in the chat artifact card, document details and Markdown coverage/provenance report.
 `metadata.output_contract` records the resolved requested language and the limited

@@ -331,26 +331,33 @@ def test_foreign_language_literal_fallback_is_preserved_as_partial(workspace):
 
 
 @pytest.mark.parametrize("joint", [False, True])
-def test_comparison_requires_supported_multiple_source_synthesis(workspace, joint):
+def test_comparison_requires_a_section_with_multiple_verified_sources(workspace, joint):
     db, *_ = workspace
     discover(workspace, "alpha.txt", "Reservoir Alpha stores 37 litres.")
     discover(workspace, "beta.txt", "Reservoir Beta stores 92 litres.")
 
     def combine(payload, result):
-        if joint and payload["task"] == "cross_source_synthesis":
-            result["claims"] = [
-                {
-                    "text": "Alpha stores 37 litres; Beta stores 92 litres.",
-                    "claim_ids": [c["id"] for c in payload["claims"]],
-                }
+        if payload["task"] == "cross_source_synthesis":
+            pytest.fail("Comparison notes must not be rewritten into new factual claims")
+        if not joint and payload["task"] == "outline":
+            result["sections"] = [
+                {"id": "alpha", "title": "Alpha"},
+                {"id": "beta", "title": "Beta"},
             ]
+        if not joint and payload["task"] == "process_original_sections":
+            for claim in result["claims"]:
+                claim["section_id"] = "alpha" if "Alpha" in claim["text"] else "beta"
 
     artifact = run(
         db,
         enqueue(db, instruction="Compare the reservoir designs in English."),
         model(transform=combine)[0],
     )
-    coverage = store.current(db, artifact)["metadata"]["coverage"]
+    revision = store.current(db, artifact)
+    coverage = revision["metadata"]["coverage"]
+    assert "| Source | Recorded facts |" in revision["content"]
+    assert "Reservoir Alpha stores 37 litres." in revision["content"]
+    assert "Reservoir Beta stores 92 litres." in revision["content"]
     limits = {item["code"] for item in coverage.get("presentation_limits", [])}
     assert ("comparison_unresolved" in limits) is not joint
     assert coverage["partial"] is not joint
