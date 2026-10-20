@@ -2,6 +2,7 @@
 
 import json
 import re
+import unicodedata
 from collections import Counter
 
 from app.models.wiki import Passage, SectionSummary
@@ -48,6 +49,26 @@ def prompt_for(batch, categories, topics=()):
         },
         ensure_ascii=False,
     )
+
+
+def source_topics(passages, topics):
+    """Only offer reusable names that occur in this source's original text.
+
+    Hints are optional spelling reuse, not semantic evidence. A translated or
+    paraphrased topic can still be proposed without exposing unrelated names.
+    """
+    texts = [unicodedata.normalize("NFKC", p.text).casefold() for p in passages]
+    selected = []
+    for topic in topics:
+        words = re.findall(r"[^\W_]+", unicodedata.normalize("NFKC", topic["title"]).casefold())
+        if not words:
+            continue
+        name = re.compile(
+            r"(?<![a-z0-9])" + r"[\W_]*".join(map(re.escape, words)) + r"(?![a-z0-9])"
+        )
+        if any(name.search(text) for text in texts):
+            selected.append(topic)
+    return selected
 
 
 def make_batches(passages, categories, settings, topics=()):
@@ -109,6 +130,7 @@ def summarize(
     manual_category=None,
     topics=(),
 ):
+    topics = source_topics(passages, topics)
     batches = list(make_batches(passages, categories, settings, topics))
     sections, consumed = [], []
     for position, batch in enumerate(batches):

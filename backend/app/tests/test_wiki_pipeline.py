@@ -237,6 +237,45 @@ def test_taxonomy_hints_are_in_every_complete_bounded_prompt():
         assert all(p["text"] for p in prompt["passages"])
 
 
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Project Beta stores 92 litres.", ["Project Beta", "Beta"]),
+        ("Ｐｒｏｊｅｃｔ Ｂｅｔａ stores 92 litres.", ["Project Beta", "Beta"]),
+        ("Beta는 92리터를 저장합니다.", ["Beta"]),
+        ("Project Betamax stores 92 litres.", []),
+    ],
+)
+def test_source_generation_does_not_receive_another_subjects_topic_hints(text, expected):
+    sent = []
+    topics = [
+        {"kind": "project", "title": title}
+        for title in ["저수지 Alpha", "Project Beta", "Beta", "---"]
+    ]
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        sent.append(payload)
+        p = payload["passages"][0]
+        return httpx.Response(
+            200, json={"done": True, "response": json.dumps(summary(p["evidence_id"], p["text"]))}
+        )
+
+    with httpx.Client(transport=httpx.MockTransport(reply)) as client:
+        pipeline.summarize(
+            [passage(text)],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+            topics=topics,
+        )
+    assert sent
+    assert all([t["title"] for t in p["existing_topics"]] == expected for p in sent)
+    assert "".join(p["text"] for call in sent for p in call["passages"]) == text
+
+
 @pytest.mark.parametrize("field", ["summary", "key_points"])
 @pytest.mark.parametrize(
     "original,generated",
