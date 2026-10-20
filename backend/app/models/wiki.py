@@ -45,9 +45,19 @@ class Passage(StrictModel):
 
 
 class Claim(StrictModel):
-    text: str = Field(min_length=1, max_length=1200)
-    evidence_id: str = Field(min_length=1)
-    quote: str = Field(min_length=1, max_length=1200)
+    evidence_id: str = Field(min_length=1, description="Select a supplied original passage first.")
+    quote: str = Field(
+        min_length=1,
+        max_length=1200,
+        description="Copy the supporting original words exactly before writing the interpretation.",
+    )
+    text: str = Field(
+        min_length=1,
+        max_length=1200,
+        description="Summarize the selected original in its language. Preserve subjects, "
+        "quantity properties, conditions and exceptions. State independent facts separately; "
+        "do not turn their co-occurrence into a cause, purpose or means relationship.",
+    )
 
 
 class Topic(StrictModel):
