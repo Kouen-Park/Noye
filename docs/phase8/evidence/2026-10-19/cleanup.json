@@ -1,0 +1,29 @@
+{
+  "method": "Remove only the newly downloaded QA model and stop the two dedicated services created for this run. Personal 11434 and personal weights are untouched.",
+  "services": [
+    {
+      "port": 11439,
+      "pid": 54538,
+      "loaded_before": {
+        "models": []
+      },
+      "comm": "/opt/homebrew/bin/ollama",
+      "sigterm_sent": true,
+      "no_listener_after": true
+    },
+    {
+      "port": 11459,
+      "pid": 55202,
+      "loaded_before": {
+        "models": []
+      },
+      "comm": "/opt/homebrew/bin/ollama",
+      "qa_model_delete_http_status": 200,
+      "models_after_delete": {
+        "models": []
+      },
+      "sigterm_sent": true,
+      "no_listener_after": true
+    }
+  ]
+}

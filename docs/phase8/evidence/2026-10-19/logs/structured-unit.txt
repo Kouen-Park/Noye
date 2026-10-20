@@ -1,0 +1,782 @@
+.........EEEEEEEE...............F....................................... [ 69%]
+................................                                         [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[False-wiki] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112fa3690>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x10ae8f8c0>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[False-question] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112fa3d90>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112fb1a90>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[False-embedding] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112ff5b20>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112fb1f90>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[False-index_identity] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112ffa450>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112f26d70>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[True-wiki] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112ffa690>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112f27820>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[True-question] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x113098d60>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112f66e70>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[True-embedding] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x113099390>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112fb7130>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+_ ERROR at setup of test_owned_original_clients_bypass_proxy_and_reject_redirects[True-index_identity] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x113083ed0>
+
+    @pytest.fixture
+    def poisoned_proxy(monkeypatch):
+        received, options = [], {"redirect": False}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.respond()
+
+            def do_POST(self):
+                self.respond()
+
+            def do_DELETE(self):
+                self.respond()
+
+            def respond(self):
+                length = int(self.headers.get("Content-Length", 0))
+                payload = json.loads(self.rfile.read(length)) if length else None
+                received.append((self.server.server_port, self.path, payload))
+                if (
+                    options["redirect"]
+                    and self.server is direct
+                    and not self.path.endswith("/api/show")
+                ):
+                    self.send_response(307)
+                    self.send_header("Location", f"http://127.0.0.1:{proxy.server_port}{self.path}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
+                if self.path.endswith("/api/show"):
+                    data = {"model_info": {"general.architecture": "mock-local"}}
+                elif self.path.endswith("/api/embed"):
+                    data = {"embeddings": [[1.0, 0.0]]}
+                elif self.path.endswith("/api/tags"):
+                    data = {"models": [{"name": "mock-local-embed:latest", "digest": "direct-digest"}]}
+                else:
+                    data = {"done": True, "response": json.dumps({"answer": "37 litres."})}
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as direct,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_local_ollama.py:115:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x112fb6690>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+=================================== FAILURES ===================================
+___ test_owned_local_client_bypasses_environment_proxy_for_original_context ____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x112ca5400>
+
+    def test_owned_local_client_bypasses_environment_proxy_for_original_context(monkeypatch):
+        received = []
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                received.append((self.server.server_port, self.path, body))
+                data = (
+                    {"model_info": {"general.architecture": "mock-local"}}
+                    if self.path.endswith("/api/show")
+                    else {"done": True, "response": json.dumps({"source_ids": ["local-only"]})}
+                )
+                encoded = json.dumps(data).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(encoded)))
+                self.end_headers()
+                self.wfile.write(encoded)
+
+            def log_message(self, *args):
+                pass
+
+        with (
+>           ThreadingHTTPServer(("127.0.0.1", 0), Handler) as original_server,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ThreadingHTTPServer(("127.0.0.1", 0), Handler) as proxy,
+        ):
+
+backend/app/tests/test_source_documents.py:332:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:457: in __init__
+    self.server_bind()
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py:148: in server_bind
+    socketserver.TCPServer.server_bind(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <http.server.ThreadingHTTPServer object at 0x113029650>
+
+    def server_bind(self):
+        """Called by constructor to bind the socket.
+
+        May be overridden.
+
+        """
+        if self.allow_reuse_address and hasattr(socket, "SO_REUSEADDR"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Since Linux 6.12.9, SO_REUSEPORT is not allowed
+        # on other address families than AF_INET/AF_INET6.
+        if (
+            self.allow_reuse_port and hasattr(socket, "SO_REUSEPORT")
+            and self.address_family in (socket.AF_INET, socket.AF_INET6)
+        ):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+>       self.socket.bind(self.server_address)
+E       PermissionError: [Errno 1] Operation not permitted
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py:478: PermissionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+app/tests/test_source_documents.py::test_missing_and_indexing_failure_are_partial_coverage
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/app/tests/test_source_documents.py::test_owned_local_client_bypasses_environment_proxy_for_original_context
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[False-wiki]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[False-question]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[False-embedding]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[False-index_identity]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[True-wiki]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[True-question]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[True-embedding]
+ERROR backend/app/tests/test_local_ollama.py::test_owned_original_clients_bypass_proxy_and_reject_redirects[True-index_identity]
+1 failed, 95 passed, 8 warnings, 8 errors in 3.07s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

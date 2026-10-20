@@ -1,0 +1,8 @@
+{"id": "fresh-explicit-means", "expected": true, "valid": true, "actual": true, "correct": true, "seconds": 15.878}
+{"id": "fresh-independent-purpose", "expected": false, "valid": true, "actual": false, "correct": true, "seconds": 4.837}
+{"id": "fresh-translated-interval", "expected": true, "valid": true, "actual": true, "correct": true, "seconds": 3.607}
+{"id": "fresh-observed-budget", "expected": false, "valid": true, "actual": false, "correct": true, "seconds": 4.276}
+{"id": "known-unsafe-comparison", "expected": false, "valid": true, "actual": true, "correct": false, "seconds": 7.604}
+{"id": "known-unsafe-wiki-summary", "expected": false, "valid": true, "actual": true, "correct": false, "seconds": 5.715}
+{"id": "known-four-day-translation", "expected": true, "valid": true, "actual": true, "correct": true, "seconds": 4.318}
+{"id": "known-adjoining-backups", "expected": true, "valid": true, "actual": true, "correct": true, "seconds": 3.434}

@@ -1,0 +1,403 @@
+{
+  "method": "Manual semantic labels were fixed before calls. This reports validity separately from correctness, checks paired wire identity, and retains failures; model explanations/confidence are not independent evidence.",
+  "paired_wire_identity": {
+    "cases": 8,
+    "equal_system_user_schema_model_options": true,
+    "differences": "thinking false/generate versus thinking true/chat only; JSON object order does not affect the comparison"
+  },
+  "results": [
+    {
+      "thinking": false,
+      "completed": 8,
+      "valid": 8,
+      "correct": 4,
+      "false_approvals": [
+        "known-unsafe-comparison",
+        "known-unsafe-wiki-summary"
+      ],
+      "false_rejections": [
+        "known-four-day-translation",
+        "known-adjoining-backups"
+      ],
+      "invalid": [],
+      "new_controls_correct": 4,
+      "new_controls_total": 4,
+      "known_regressions_correct": 0,
+      "known_regressions_total": 4,
+      "sum_completed_row_seconds": 153.321
+    },
+    {
+      "thinking": true,
+      "completed": 8,
+      "valid": 7,
+      "correct": 5,
+      "false_approvals": [
+        "known-unsafe-comparison"
+      ],
+      "false_rejections": [
+        "known-adjoining-backups"
+      ],
+      "invalid": [
+        "known-unsafe-wiki-summary"
+      ],
+      "new_controls_correct": 4,
+      "new_controls_total": 4,
+      "known_regressions_correct": 1,
+      "known_regressions_total": 4,
+      "sum_completed_row_seconds": 652.821
+    }
+  ],
+  "review": {
+    "known-unsafe-comparison": "Both modes approve an unsupported instrumental connection between independently reported stored volume and log-file use. The full compound statement is not entailed.",
+    "known-unsafe-wiki-summary": "Off approves SQLite as the means for capacity. On reaches the output limit; a refused incomplete answer is not a correct negative classification.",
+    "known-four-day-translation": "Off misreads faithful four-day translation. On returns the expected positive.",
+    "known-adjoining-backups": "Both reject normal adjoining-sentence subject continuity despite no competing subject in the supplied passage.",
+    "conclusion": "No default thinking change is adopted: the known unsafe comparison remains falsely approved and Wiki reasoning fails to finish. The fresh subset is too small to establish general quality.",
+    "latency_limit": "Paired order is counterbalanced but load/cache and external download effects were not controlled. Summed row times are observed work only, not a causal latency benchmark. Original interrupted in-flight work is excluded."
+  },
+  "alternative": {
+    "model": "gemma4:e2b-it-qat",
+    "method": "Same fixed controls, unchanged production v24 non-thinking generate contract; inherited model sampling differs; diagnostic, not new holdouts or full workflow acceptance.",
+    "valid": 8,
+    "correct": 6,
+    "rows": [
+      {
+        "id": "fresh-explicit-means",
+        "expected": true,
+        "valid": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 15.878
+      },
+      {
+        "id": "fresh-independent-purpose",
+        "expected": false,
+        "valid": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 4.837
+      },
+      {
+        "id": "fresh-translated-interval",
+        "expected": true,
+        "valid": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 3.607
+      },
+      {
+        "id": "fresh-observed-budget",
+        "expected": false,
+        "valid": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 4.276
+      },
+      {
+        "id": "known-unsafe-comparison",
+        "expected": false,
+        "valid": true,
+        "actual": true,
+        "correct": false,
+        "seconds": 7.604
+      },
+      {
+        "id": "known-unsafe-wiki-summary",
+        "expected": false,
+        "valid": true,
+        "actual": true,
+        "correct": false,
+        "seconds": 5.715
+      },
+      {
+        "id": "known-four-day-translation",
+        "expected": true,
+        "valid": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 4.318
+      },
+      {
+        "id": "known-adjoining-backups",
+        "expected": true,
+        "valid": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 3.434
+      }
+    ],
+    "seconds": 49.7,
+    "acceptance": "No adoption follows from component scores alone."
+  },
+  "examples": {
+    "model": "gemma4:e2b-it-qat",
+    "valid": 16,
+    "correct": 14,
+    "prior_correct": 6,
+    "fresh_correct": 8,
+    "rows": [
+      {
+        "id": "fresh-explicit-means",
+        "expected": true,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": true,
+        "seconds": 14.521
+      },
+      {
+        "id": "fresh-independent-purpose",
+        "expected": false,
+        "valid": true,
+        "fresh": false,
+        "actual": false,
+        "correct": true,
+        "seconds": 4.129
+      },
+      {
+        "id": "fresh-translated-interval",
+        "expected": true,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": true,
+        "seconds": 4.361
+      },
+      {
+        "id": "fresh-observed-budget",
+        "expected": false,
+        "valid": true,
+        "fresh": false,
+        "actual": false,
+        "correct": true,
+        "seconds": 4.34
+      },
+      {
+        "id": "known-unsafe-comparison",
+        "expected": false,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": false,
+        "seconds": 8.974
+      },
+      {
+        "id": "known-unsafe-wiki-summary",
+        "expected": false,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": false,
+        "seconds": 6.126
+      },
+      {
+        "id": "known-four-day-translation",
+        "expected": true,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": true,
+        "seconds": 5.758
+      },
+      {
+        "id": "known-adjoining-backups",
+        "expected": true,
+        "valid": true,
+        "fresh": false,
+        "actual": true,
+        "correct": true,
+        "seconds": 6.256
+      },
+      {
+        "id": "new-independent-means",
+        "expected": false,
+        "valid": true,
+        "fresh": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 6.953
+      },
+      {
+        "id": "new-explicit-means",
+        "expected": true,
+        "valid": true,
+        "fresh": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 5.69
+      },
+      {
+        "id": "new-adjoining-subject",
+        "expected": true,
+        "valid": true,
+        "fresh": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 3.156
+      },
+      {
+        "id": "new-competing-subject",
+        "expected": false,
+        "valid": true,
+        "fresh": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 3.397
+      },
+      {
+        "id": "new-korean-independent",
+        "expected": false,
+        "valid": true,
+        "fresh": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 6.214
+      },
+      {
+        "id": "new-korean-explicit",
+        "expected": true,
+        "valid": true,
+        "fresh": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 4.222
+      },
+      {
+        "id": "new-exception-dropped",
+        "expected": false,
+        "valid": true,
+        "fresh": true,
+        "actual": false,
+        "correct": true,
+        "seconds": 3.323
+      },
+      {
+        "id": "new-conjunctive-facts",
+        "expected": true,
+        "valid": true,
+        "fresh": true,
+        "actual": true,
+        "correct": true,
+        "seconds": 3.062
+      }
+    ],
+    "seconds": 90.72,
+    "decision": "Not adopted: both prior unsupported relationship claims remain falsely approved. Fresh controls do not have paired baseline calls."
+  },
+  "link_focus": {
+    "valid": 4,
+    "correct": 3,
+    "rows": [
+      {
+        "id": "fresh-explicit-means",
+        "expected": true,
+        "valid": false,
+        "error": {
+          "type": "DocumentError",
+          "message": "Local Ollama returned HTTP 500."
+        },
+        "seconds": 3.618
+      },
+      {
+        "id": "fresh-independent-purpose",
+        "expected": false,
+        "valid": true,
+        "result": {
+          "links": [
+            "Tern uses SQLite to achieve resilience."
+          ],
+          "comparison": "The original relationship is 'Tern is resilient' and 'Tern uses SQLite'. The proposed claim introduces a causal/instrumental relationship: 'Tern uses SQLite to achieve resilience'. This is a link.",
+          "all_links_established": false
+        },
+        "actual": false,
+        "correct": true,
+        "seconds": 31.471
+      },
+      {
+        "id": "known-unsafe-comparison",
+        "expected": false,
+        "valid": false,
+        "error": {
+          "type": "AssertionError",
+          "message": "Model link is not verbatim"
+        },
+        "seconds": 15.997
+      },
+      {
+        "id": "known-unsafe-wiki-summary",
+        "expected": false,
+        "valid": false,
+        "error": {
+          "type": "AssertionError",
+          "message": "Model link is not verbatim"
+        },
+        "seconds": 22.815
+      },
+      {
+        "id": "isolated-unsafe-comparison",
+        "expected": false,
+        "valid": true,
+        "result": {
+          "links": [
+            "Project Beta stores 92 litres using append-only log files."
+          ],
+          "comparison": "Project Beta stores 92 litres using append-only log files. Original 1 states: Alpha project storage capacity is 37 litres. Original 2 states: Project Beta stores 92 litres. Original 2 states: Beta uses append-only log files. Original 2 states: Beta permits writes on Sundays. The claim asserts that Project Beta stores 92 litres using append-only log files. Original 2 establishes that Project Beta stores 92 litres and uses append-only log files. Therefore, the link is established.",
+          "all_links_established": true
+        },
+        "actual": true,
+        "correct": false,
+        "seconds": 5.467
+      },
+      {
+        "id": "isolated-unsafe-wiki",
+        "expected": false,
+        "valid": true,
+        "result": {
+          "links": [
+            "저수지 Alpha는 SQLite를 사용하여 저장 용량 37리터를 가집니다."
+          ],
+          "comparison": "Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+          "all_links_established": false
+        },
+        "actual": false,
+        "correct": true,
+        "seconds": 3.025
+      },
+      {
+        "id": "new-korean-explicit",
+        "expected": true,
+        "valid": true,
+        "result": {
+          "links": [
+            "모래는 색인을 사용하여 저장된 기록을 찾습니다."
+          ],
+          "comparison": "모래는 저장된 기록을 찾는 수단으로 색인을 사용합니다.",
+          "all_links_established": true
+        },
+        "actual": true,
+        "correct": true,
+        "seconds": 2.699
+      },
+      {
+        "id": "new-conjunctive-facts",
+        "expected": true,
+        "valid": false,
+        "error": {
+          "type": "AssertionError",
+          "message": "Model link is not verbatim"
+        },
+        "seconds": 2.049
+      }
+    ],
+    "seconds": 87.196,
+    "decision": "Not adopted. One HTTP 500, three non-verbatim extracted-link failures, and one valid false approval of the isolated unsafe storage/log-file relationship. Four valid judgments, three correct, across eight intended cases; refusals are not successful factual generation."
+  },
+  "inputs_sha256": {
+    "support-v24-resumed.json": "b376978818f24e60197f83b1b136f86b0d06ae296e7ae6defa2f8ee78c20145f",
+    "alternative-support.json": "a88d66f86b3302a2a2dc4f52783fcb152809eeb00c5e270dc12716c0966ad584",
+    "support-v24-fresh-controls.json": "a2ab6b06e6a43da555487a39cb0a3e30625a258ef4a1868a0b1fbc5f37373e93",
+    "examples-gemma.json": "a45b78c29bc6998a152ef3f6c8e58d54acc930d831323ebe7f7ba563a7ff248b",
+    "examples-fresh-controls.json": "a0a7e3629dad73f73ddc824261e9b9c4cb31c032a54a741b4efd983e9a27ff80",
+    "link-focus.json": "d6da9bbf188a3351d9e17b75201585eaa146fabeb20e2cf4fd5adee97e0c1db6"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "cases": [
+    [
+      "fresh-explicit-means",
+      true,
+      "Nightingale retains 45 records using a queue.",
+      [
+        "A queue is the mechanism Nightingale uses to retain 45 records."
+      ]
+    ],
+    [
+      "fresh-independent-purpose",
+      false,
+      "Tern uses SQLite to achieve resilience.",
+      [
+        "Tern is resilient. Tern uses SQLite."
+      ]
+    ],
+    [
+      "fresh-translated-interval",
+      true,
+      "Ginkgo backups run every six days.",
+      [
+        "Ginkgo\uc758 \ubc31\uc5c5\uc740 \uc5ff\uc0c8\ub9c8\ub2e4 \uc2e4\ud589\ub429\ub2c8\ub2e4."
+      ]
+    ],
+    [
+      "fresh-observed-budget",
+      false,
+      "Lark currently caches 41 items.",
+      [
+        "Lark has a cache budget of 41 items. It currently caches 5 items."
+      ]
+    ]
+  ]
+}

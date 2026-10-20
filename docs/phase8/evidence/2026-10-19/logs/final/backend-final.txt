@@ -1,0 +1,256 @@
+...................................s.................................... [  6%]
+..........s............................................................. [ 12%]
+........................................................................ [ 18%]
+........................................................................ [ 25%]
+...............s........................................................ [ 31%]
+...................ssss................................................. [ 37%]
+...........................s............................................ [ 44%]
+.................................................................sss.... [ 50%]
+..................................................................ss.... [ 56%]
+..................s..................................................... [ 63%]
+........................................................................ [ 69%]
+.....................................................................sss [ 75%]
+s....................................s.................................. [ 82%]
+........................................................................ [ 88%]
+........................................................................ [ 94%]
+.............................................................            [100%]
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+app/tests/test_desktop_services.py::test_command_plan_is_pinned_local_persistent_and_shell_free
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112327c40>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_evidence.py::test_qdrant_results_carry_the_revision_that_was_actually_indexed
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/copy.py:110: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112325b70>
+    def deepcopy(x, memo=None, _nil=[]):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_folder_foundation.py::test_resume_and_reconnected_ready_events_do_not_reembed
+app/tests/test_logging.py::TestReadability::test_a_pageless_format_logs_no_page_count
+app/tests/test_source_documents.py::test_missing_and_indexing_failure_are_partial_coverage
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1123257b0>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112326890>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112324a90>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1123263e0>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112325990>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1123264d0>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112326980>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_model_management.py::test_model_routes_require_desktop_capability[POST-/models/cancel-None]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/utils.py:347: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1123265c0>
+    return tuple(dict.fromkeys(alias_names)), is_alias_path_only
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_rebuild.py::TestTheOrdinaryRebuild::test_does_not_drop_the_collection
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/base.py:348: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1128dbc40>
+    matchable_names = list(match_alias_names)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/base.py:348: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112718c70>
+    matchable_names = list(match_alias_names)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/base.py:348: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1127195d0>
+    matchable_names = list(match_alias_names)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/pydantic_settings/sources/base.py:348: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112719b70>
+    matchable_names = list(match_alias_names)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_desktop_api_download_restore_and_capability
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/datastructures.py:505: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1123266b0>
+    def __init__(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_desktop_api_download_restore_and_capability
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/datastructures.py:505: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112327100>
+    def __init__(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_desktop_api_download_restore_and_capability
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/datastructures.py:505: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1128db1f0>
+    def __init__(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.14.7-final-0 _______________
+
+Name                                            Stmts   Miss Branch BrPart  Cover
+---------------------------------------------------------------------------------
+app/__init__.py                                     0      0      0      0   100%
+app/api/__init__.py                                 0      0      0      0   100%
+app/api/ai.py                                       9      0      0      0   100%
+app/api/chat.py                                   178      3     24      0    99%
+app/api/deps.py                                    16      1      0      0    94%
+app/api/desktop_services.py                        23      3      0      0    87%
+app/api/documents.py                              121      0      8      0   100%
+app/api/files.py                                  254     21     30      2    92%
+app/api/folders.py                                111     36     24      2    64%
+app/api/index.py                                  101      6     12      1    92%
+app/api/jobs.py                                    32      2      6      2    89%
+app/api/knowledge_jobs.py                          20     11      4      0    38%
+app/api/models.py                                  30      5      4      1    82%
+app/api/runtime.py                                 21      0      0      0   100%
+app/api/search.py                                  43      0      4      0   100%
+app/api/source_documents.py                        63     14      6      2    77%
+app/api/wiki.py                                    99     22     20      6    73%
+app/api/workspace.py                               50     11      4      1    78%
+app/config.py                                      94      0     14      0   100%
+app/db/__init__.py                                  0      0      0      0   100%
+app/db/conversations.py                           100      0     20      0   100%
+app/db/database.py                                 40      5      6      0    89%
+app/db/documents.py                                66      0     14      0   100%
+app/db/files.py                                   114      3     32      3    96%
+app/db/jobs.py                                     54      1     18      1    97%
+app/db/knowledge.py                                18      2      8      0    92%
+app/db/migrations.py                               74      0     24      1    99%
+app/db/source_documents.py                         80      9     20      5    86%
+app/db/sources.py                                  11      0      0      0   100%
+app/db/wiki.py                                     71      1     18      1    98%
+app/desktop_data.py                                45      5     22      5    85%
+app/evaluation/__init__.py                          0      0      0      0   100%
+app/evaluation/context.py                          61     61     12      0     0%
+app/evaluation/dataset.py                          31      5     22      5    81%
+app/evaluation/knowledge.py                       124    124     32      0     0%
+app/evaluation/metrics.py                          43      2     18      2    93%
+app/evaluation/review.py                           39     15     16      5    60%
+app/evaluation/run.py                             163     58     42      5    64%
+app/evaluation/source_documents.py                193    102     52      3    40%
+app/evaluation/wiki.py                            122    122     30      0     0%
+app/logging_config.py                              56      8      6      1    85%
+app/main.py                                        70      0      0      0   100%
+app/models/__init__.py                              0      0      0      0   100%
+app/models/conversations.py                        59      0      8      1    99%
+app/models/documents.py                            36      0      6      1    98%
+app/models/evidence.py                             19      1      4      1    91%
+app/models/files.py                                63      0      2      0   100%
+app/models/source_documents.py                     44      0      0      0   100%
+app/models/wiki.py                                 50      1      4      1    96%
+app/services/__init__.py                            0      0      0      0   100%
+app/services/chunking.py                           50      0     22      0   100%
+app/services/citations.py                          29      0      6      0   100%
+app/services/cloud_generation.py                   43      4     20      2    90%
+app/services/conversation_context.py               24      0      8      0   100%
+app/services/derived_data.py                       30      2      8      2    89%
+app/services/desktop_services.py                  308     59     96     21    78%
+app/services/documents.py                          39      1     16      1    96%
+app/services/embeddings.py                         85      3     40      2    96%
+app/services/evidence.py                           59      6     22      4    88%
+app/services/extraction.py                         55      6     14      2    88%
+app/services/filing.py                            120     24     38     13    75%
+app/services/folder_backup.py                     117     16     44     10    83%
+app/services/folder_scanner.py                    228     32     84     13    83%
+app/services/folders.py                           156     24     62     11    81%
+app/services/generation.py                        120      4     48      4    95%
+app/services/hardware.py                           54      0     12      2    97%
+app/services/index_identity.py                     51      2     10      2    93%
+app/services/indexing.py                           85     11     18      1    88%
+app/services/ingestion.py                         249     24     64      6    90%
+app/services/integrity.py                         118      0     36      0   100%
+app/services/knowledge_jobs.py                    134     15     34      9    86%
+app/services/knowledge_maintenance.py              59      8     16      6    81%
+app/services/knowledge_query.py                   106      8     42      7    90%
+app/services/local_ollama.py                       30      4      8      2    84%
+app/services/model_manager.py                     101      8     36      8    88%
+app/services/model_recommendations.py              31      0     12      0   100%
+app/services/model_usage.py                        47      1     12      2    95%
+app/services/native_exports.py                     32      1      8      1    95%
+app/services/native_folders.py                     34     34     10      0     0%
+app/services/quantity_properties.py                23      0     12      0   100%
+app/services/rebuild.py                            67      0     12      0   100%
+app/services/retrieval.py                          49      2     12      0    97%
+app/services/runtime_checks.py                     55      0     18      0   100%
+app/services/source_catalog.py                    135     13     60     10    87%
+app/services/source_documents/__init__.py           0      0      0      0   100%
+app/services/source_documents/discovery.py         20      0     12      0   100%
+app/services/source_documents/jobs.py              71      6     20      5    88%
+app/services/source_documents/local.py             79      3     26      2    95%
+app/services/source_documents/pipeline.py         405     20    172     22    93%
+app/services/source_documents/presentation.py      42      2     12      2    93%
+app/services/wiki/__init__.py                       0      0      0      0   100%
+app/services/wiki/jobs.py                          34      3     12      5    78%
+app/services/wiki/local.py                         61      4     20      2    93%
+app/services/wiki/observer.py                      97     15     40      4    82%
+app/services/wiki/pipeline.py                      85      3     38      5    93%
+app/services/wiki/publication.py                   95     12     18      5    85%
+app/services/wiki/relations.py                    101      4     58      6    94%
+app/services/wiki/service.py                      161     12     66      7    91%
+app/services/wiki/sources.py                       50      2     18      3    93%
+app/services/workspace_access.py                   34      0      6      1    98%
+app/services/workspace_backup.py                  214     25    102     20    86%
+---------------------------------------------------------------------------------
+TOTAL                                            7583   1083   2176    288    84%
+Coverage JSON written to file /private/tmp/noye-phase8-20261019/final/backend-product-coverage.json
+1122 passed, 19 skipped, 27 warnings in 23.25s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

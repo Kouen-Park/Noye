@@ -1,0 +1,9 @@
+{
+  "method": "Exact dedicated QA server log lines for the retained HTTP 500. No OOM or product startup root cause is inferred.",
+  "source_sha256": "840362ff0abf934c180fc9622baf4adae29d6363afecb77a4ffff33ef48823eb",
+  "source_bytes": 217310,
+  "selected_lines": [
+    "time=2026-10-20T00:00:42.862+13:00 level=INFO source=sched.go:646 msg=\"Load failed\" model=/private/tmp/noye-phase8-models-20261019/blobs/sha256-3646b4c147cd235a44d91df1546d3b7d8e29b547dbe4e1f80856419aa455e6fd error=\"timed out waiting for llama-server to start - \"",
+    "[GIN] 2026/10/20 - 00:00:43 | 500 |    3.4859945s |       127.0.0.1 | POST     \"/api/generate\""
+  ]
+}

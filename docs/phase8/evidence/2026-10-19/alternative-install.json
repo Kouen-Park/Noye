@@ -1,0 +1,35 @@
+{
+  "method": "Official public local-model download into a new QA-only store on port 11459; personal model store unchanged; no inference or document upload during installation.",
+  "model": "gemma4:e2b-it-qat",
+  "manifest_sha256": "07ea59a474013479c8b6b802bef095c40e964a1d776ba02f264c0e30e1aede0c",
+  "manifest_bytes": 900,
+  "layers": [
+    {
+      "mediaType": "application/vnd.ollama.image.projector",
+      "digest": "sha256:58c187648007cab392bd5678b87e862c3e8794017deb945feea2cf256195e96a",
+      "size": 986833312,
+      "from": "gemma-4-E2B-it-mmproj.gguf"
+    },
+    {
+      "mediaType": "application/vnd.ollama.image.model",
+      "digest": "sha256:3646b4c147cd235a44d91df1546d3b7d8e29b547dbe4e1f80856419aa455e6fd",
+      "size": 3349514112
+    },
+    {
+      "mediaType": "application/vnd.ollama.image.license",
+      "digest": "sha256:0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "size": 10174
+    },
+    {
+      "mediaType": "application/vnd.ollama.image.params",
+      "digest": "sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3",
+      "size": 42
+    }
+  ],
+  "downloaded_layer_bytes": 4336357640,
+  "sources": [
+    "https://ollama.com/library/gemma4:e2b-it-qat",
+    "https://ai.google.dev/gemma/docs/core"
+  ],
+  "limitations": "Official size and license inspected; model quality and actual memory/latency not inferred from catalogue claims."
+}

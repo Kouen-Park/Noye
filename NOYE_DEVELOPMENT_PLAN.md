@@ -3658,7 +3658,7 @@ actual certificate signing/notarization remains unvalidated. Native Original-but
 keyboard execution received OS handoff acknowledgment, but browser loading remains
 unconfirmed. Keep the final acceptance and merge conditions open.
 
-**Latest acceptance progress, 2026-10-17:**
+**Further acceptance progress, 2026-10-17:**
 [`docs/phase8/acceptance-2026-10-17.md`](docs/phase8/acceptance-2026-10-17.md)
 records source-document v23 and Wiki v4–v7 checks. Evidence audits now compare
 assertions before deciding and use application-owned exact rejection text. Wiki
@@ -3680,6 +3680,23 @@ load complete and exact QA text after explicitly authorized inspection; screensh
 pixels remain unconfirmed. These findings do not close the remaining P1 quality,
 physical-device, cloud, calibration or trusted-distribution checks. Keep Phase 8,
 MVP acceptance and the conditional final merge open.
+
+**Latest acceptance progress, 2026-10-19:**
+[`docs/phase8/acceptance-2026-10-19.md`](docs/phase8/acceptance-2026-10-19.md)
+records an actual Ollama 0.34.2 structured-thinking compatibility matrix and
+production source-document v24/Wiki v8 transport fixes. Configured thinking uses
+chat final content; non-thinking retains generate. Separate reasoning is never
+accepted as a final answer, and no retry/provider fallback was introduced. The
+default remains non-thinking. Eight fixed support cases compared both usable
+configurations: non-thinking matched 4/8, thinking 5/8 with one incomplete answer.
+Both matched all four new controls, but both falsely approved the known unsafe
+comparison; thinking corrected a translation while exceeding the output limit on
+the unsafe Wiki summary. This does not justify changing the default. At `c714e79`,
+full backend tests passed 1,122/19 skipped; the rebuilt v24/v8 bundled backend
+passed all 12 desktop/folder checks and strict local signature integrity under
+the development QA profile. The separate alternative-model and prompt experiments
+are diagnostic only. Known factual-quality and remaining native/cloud/calibration/
+trusted-distribution checks keep Phase 8/MVP and conditional merge open.
 
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves

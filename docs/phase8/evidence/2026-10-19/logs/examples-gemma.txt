@@ -1,0 +1,16 @@
+{"id": "fresh-explicit-means", "expected": true, "valid": true, "fresh": false, "actual": true, "correct": true, "seconds": 14.521}
+{"id": "fresh-independent-purpose", "expected": false, "valid": true, "fresh": false, "actual": false, "correct": true, "seconds": 4.129}
+{"id": "fresh-translated-interval", "expected": true, "valid": true, "fresh": false, "actual": true, "correct": true, "seconds": 4.361}
+{"id": "fresh-observed-budget", "expected": false, "valid": true, "fresh": false, "actual": false, "correct": true, "seconds": 4.34}
+{"id": "known-unsafe-comparison", "expected": false, "valid": true, "fresh": false, "actual": true, "correct": false, "seconds": 8.974}
+{"id": "known-unsafe-wiki-summary", "expected": false, "valid": true, "fresh": false, "actual": true, "correct": false, "seconds": 6.126}
+{"id": "known-four-day-translation", "expected": true, "valid": true, "fresh": false, "actual": true, "correct": true, "seconds": 5.758}
+{"id": "known-adjoining-backups", "expected": true, "valid": true, "fresh": false, "actual": true, "correct": true, "seconds": 6.256}
+{"id": "new-independent-means", "expected": false, "valid": true, "fresh": true, "actual": false, "correct": true, "seconds": 6.953}
+{"id": "new-explicit-means", "expected": true, "valid": true, "fresh": true, "actual": true, "correct": true, "seconds": 5.69}
+{"id": "new-adjoining-subject", "expected": true, "valid": true, "fresh": true, "actual": true, "correct": true, "seconds": 3.156}
+{"id": "new-competing-subject", "expected": false, "valid": true, "fresh": true, "actual": false, "correct": true, "seconds": 3.397}
+{"id": "new-korean-independent", "expected": false, "valid": true, "fresh": true, "actual": false, "correct": true, "seconds": 6.214}
+{"id": "new-korean-explicit", "expected": true, "valid": true, "fresh": true, "actual": true, "correct": true, "seconds": 4.222}
+{"id": "new-exception-dropped", "expected": false, "valid": true, "fresh": true, "actual": false, "correct": true, "seconds": 3.323}
+{"id": "new-conjunctive-facts", "expected": true, "valid": true, "fresh": true, "actual": true, "correct": true, "seconds": 3.062}
