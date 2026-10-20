@@ -63,14 +63,27 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v8` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v11` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
-root and frozen scope. The response schema enumerates only the supplied evidence and
+root and frozen scope. Since v10, reuse hints must also occur as names in this source's
+original text, with Unicode/case/spacing normalization and Latin word boundaries.
+Unrelated names are excluded before batching; translated or paraphrased topics can
+still be proposed independently. This is a narrow hint-isolation rule, not semantic
+topic validation. v9 orders each claim as evidence ID, exact quote, then interpretation,
+and explicitly preserves quantity properties and independent facts.
+The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
 quotes, including responses from a server that ignores the requested schema.
 Every summary/key point also runs the shared narrow litre-property guard against
 its own cited original: an explicit capacity/currently-stored swap fails before
 revision or file publication. It does not borrow quantities from other passages.
+Since v11, this specific validation failure permits one local wording-revision stage
+for the batch, asking for original numeric sentences. The complete replacement still
+passes all ID, quote and quantity checks before publication. Its second failure is
+terminal; unavailable/invalid responses and forged references do not trigger revision.
+Original passages are not trimmed to make a revision fit. Cancellation checkpoints
+surround the additional call, and successful repairs are counted in revision metadata.
+This is a bounded draft stage inside the current job; job retry remains explicit.
 This is the same check used by source documents, not a general entailment proof.
 The v7-and-later cache identity prevents reusing a prior generated result without this check;
 existing historical revisions and user writing are preserved.
@@ -81,7 +94,7 @@ With configured thinking enabled, structured requests use Ollama's chat endpoint
 and validate only the final `message.content`. The default non-thinking generate
 request remains unchanged. This avoids an observed Qwen3.5/Ollama 0.34.2 generate
 response that puts JSON in reasoning and leaves the final answer empty. Endpoint
-selection happens before the single inference call; there is no automatic retry,
+selection happens before each inference call; there is no transport retry,
 provider fallback or promotion of reasoning into accepted output.
 Exact Unicode-normalized topic identities prevent duplicate pages
 for the same kind/root/name. Semantic aliases can still form separate concepts; there is

@@ -276,6 +276,106 @@ def test_source_generation_does_not_receive_another_subjects_topic_hints(text, e
     assert "".join(p["text"] for call in sent for p in call["passages"]) == text
 
 
+@pytest.mark.parametrize("second", ["correct", "quantity_again", "forged_quote", "unavailable"])
+def test_numeric_wording_gets_one_validated_local_revision(second):
+    original = "Project Beta stores 92 litres. Beta uses append-only log files."
+    sent = []
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        sent.append(payload)
+        if len(sent) == 2 and second == "unavailable":
+            return httpx.Response(503)
+        p = payload["passages"][0]
+        value = summary(p["evidence_id"], p["text"])
+        value["summary"]["text"] = (
+            original
+            if len(sent) == 2 and second != "quantity_again"
+            else "Project Beta has a storage capacity of 92 litres."
+        )
+        if len(sent) == 2 and second == "forged_quote":
+            value["summary"]["quote"] = "A fabricated original quotation."
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with httpx.Client(transport=httpx.MockTransport(reply)) as client:
+        if second == "correct":
+            result, evidence = pipeline.summarize(
+                [passage(original)], categories=[], settings=Settings(_env_file=None), client=client
+            )
+            assert result["sections"][0]["summary"]["text"] == original
+            assert result["wording_repairs"] == [{"batch": 1, "reason": "quantity_property"}]
+            assert evidence[0].text == original
+        else:
+            with pytest.raises(WikiError):
+                pipeline.summarize(
+                    [passage(original)],
+                    categories=[],
+                    settings=Settings(_env_file=None),
+                    client=client,
+                )
+    assert [p["task"] for p in sent] == ["summarize_section", "revise_section"]
+    assert sent[0]["passages"] == sent[1]["passages"]
+    assert "storage capacity" in sent[1]["rejected_wording"]
+
+
+def test_forged_original_quote_does_not_enter_wording_revision():
+    calls = []
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        calls.append(payload)
+        value = summary(payload["passages"][0]["evidence_id"], "fabricated original")
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(reply)) as client,
+        pytest.raises(WikiError, match="unknown"),
+    ):
+        pipeline.summarize(
+            [passage("Project Beta stores 92 litres.")],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+        )
+    assert len(calls) == 1
+
+
+def test_cancellation_before_wording_revision_prevents_the_second_call():
+    calls, checkpoints = [], []
+
+    def checkpoint():
+        checkpoints.append(True)
+        if len(checkpoints) == 2:
+            raise RuntimeError("Cancelled before revision")
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        calls.append(payload)
+        p = payload["passages"][0]
+        value = summary(p["evidence_id"], p["text"])
+        value["summary"]["text"] = "The capacity is 92 litres."
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(reply)) as client,
+        pytest.raises(RuntimeError, match="Cancelled"),
+    ):
+        pipeline.summarize(
+            [passage("Project Beta stores 92 litres.")],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+            checkpoint=checkpoint,
+        )
+    assert len(calls) == 1
+
+
 @pytest.mark.parametrize("field", ["summary", "key_points"])
 @pytest.mark.parametrize(
     "original,generated",

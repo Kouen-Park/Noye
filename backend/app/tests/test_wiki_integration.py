@@ -31,7 +31,7 @@ def model(kind="shared_subject", bad_target=False, callback=None, claim_text=Non
         prompt = json.loads(json.loads(request.content)["prompt"])
         if callback:
             callback(prompt)
-        if prompt["task"] == "summarize_section":
+        if prompt["task"] in {"summarize_section", "revise_section"}:
             p = prompt["passages"][0]
             result = summary(p["evidence_id"], p["text"][:40])
             result["summary"]["text"] = claim_text or p["text"][:80]
@@ -387,8 +387,17 @@ def test_refused_quantity_drift_preserves_authored_revision_and_file(workspace):
     count = len(store.revisions(db, identifier))
     changed = discover(workspace, "beta.txt", "Project Beta stores 92 litres. New source detail.")
     assert changed.id == record.id
+    tasks = []
     with pytest.raises(WikiError, match="No Wiki revision was published"):
-        generate(db, record.id, model(claim_text="The system has a storage capacity of 92 litres."))
+        generate(
+            db,
+            record.id,
+            model(
+                claim_text="The system has a storage capacity of 92 litres.",
+                callback=lambda prompt: tasks.append(prompt["task"]),
+            ),
+        )
+    assert tasks == ["summarize_section", "revise_section"]
     assert store.page(db, identifier)["current_revision"] == prior
     assert len(store.revisions(db, identifier)) == count
     assert path.read_bytes() == before
