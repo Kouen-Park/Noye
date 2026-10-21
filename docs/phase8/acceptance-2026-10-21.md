@@ -246,6 +246,22 @@ verified owned PID. Existing model weights were not pulled or deleted, and the
 personal Ollama service was not changed. Earlier interrupted request evidence is
 retained separately from completed results.
 
+## Post-publication format check
+
+The final format check flagged the wrapped relationship-system literal. Splitting
+its first physical line from the multiline literal satisfies both Ruff formatting
+and line length without changing any string bytes. A full `local.py` AST comparison
+excluding source locations is identical before/after, so the `48fcf9d` full-suite,
+package and exact-wire results retain their behavioral scope. All three changed
+Python files now pass Ruff lint and format checks; no additional inference or
+behavioral test run is claimed for this formatting-only follow-up.
+
+A whole-commit whitespace check also reports one trailing blank line in the
+byte-for-byte published `methods/replay-current-guards.py` copy. That frozen evidence
+and its hash remain unchanged. Product-code/current prose whitespace checks pass;
+the evidence warning is retained explicitly rather than described as a universal
+clean diff check.
+
 ## Remaining acceptance
 
 The known-corpus unsupported comparison rewrite and unsafe Wiki summary were
