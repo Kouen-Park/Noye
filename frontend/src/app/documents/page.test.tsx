@@ -297,3 +297,72 @@ it("a pending reload after conflict review cannot replace the next acknowledged 
   expect(screen.getByRole("combobox", { name: "Revision" })).toHaveValue("r3");
   expect(screen.getByLabelText(/Document content/)).toHaveValue(saved.content);
 });
+
+it('shows pending documents instead of an empty library while the first list is loading', async () => {
+  nav.query = '';
+  const pending = deferred<docs.DocumentSummary[]>();
+  vi.mocked(docs.listDocuments).mockReturnValueOnce(pending.promise);
+  render(<DocumentsPage />);
+  expect(screen.getByText('Loading documents…')).toBeInTheDocument();
+  expect(screen.queryByText('Nothing written yet.')).not.toBeInTheDocument();
+  await act(async () => pending.resolve(summaries));
+  expect(screen.getByRole('button', { name: 'Open Document a' })).toBeInTheDocument();
+  expect(screen.queryByText('Loading documents…')).not.toBeInTheDocument();
+});
+it('retries a failed initial list without calling it an empty workspace', async () => {
+  nav.query = '';
+  vi.mocked(docs.listDocuments).mockRejectedValueOnce(new docs.ApiError(503, 'Library temporarily unavailable')).mockResolvedValueOnce([]);
+  render(<DocumentsPage />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('Library temporarily unavailable');
+  expect(screen.queryByText('Nothing written yet.')).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole('button', { name: 'Retry documents' }));
+  await screen.findByText('Nothing written yet.');
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+it('creates only one document for repeated clicks while creation is pending', async () => {
+  nav.query = '';
+  const pending = deferred<docs.NoyeDocument>();
+  vi.mocked(docs.createDocument).mockReturnValueOnce(pending.promise);
+  render(<DocumentsPage />);
+  const button = screen.getByRole('button', { name: 'New' });
+  act(() => { fireEvent.click(button); fireEvent.click(button); });
+  expect(docs.createDocument).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole('button', { name: 'Creating…' })).toBeDisabled();
+  await act(async () => pending.resolve(makeDoc('new')));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'New' })).toBeEnabled());
+  expect(nav.push).toHaveBeenCalledExactlyOnceWith('/documents?d=new');
+});
+it('keeps the refreshed new document when an older initial list returns later', async () => {
+  nav.query = '';
+  const initial = deferred<docs.DocumentSummary[]>();
+  const newSummary = { ...summaries[0], id: 'new', title: 'Document new' };
+  vi.mocked(docs.listDocuments).mockReturnValueOnce(initial.promise).mockResolvedValueOnce([newSummary]);
+  vi.mocked(docs.createDocument).mockResolvedValueOnce(makeDoc('new'));
+  render(<DocumentsPage />);
+  await userEvent.click(screen.getByRole('button', { name: 'New' }));
+  await screen.findByRole('button', { name: 'Open Document new' });
+  await act(async () => initial.resolve(summaries));
+  expect(screen.getByRole('button', { name: 'Open Document new' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Open Document a' })).not.toBeInTheDocument();
+});
+it('reports an opening document while its known URL is still loading', async () => {
+  const pending = deferred<docs.NoyeDocument>();
+  vi.mocked(docs.readDocument).mockReturnValueOnce(pending.promise);
+  render(<DocumentsPage />);
+  expect(screen.getByText('Opening document…')).toBeInTheDocument();
+  expect(screen.queryByText('Nothing open')).not.toBeInTheDocument();
+  await act(async () => pending.resolve(makeDoc('a')));
+  await screen.findByDisplayValue('Body a');
+  expect(screen.queryByText('Opening document…')).not.toBeInTheDocument();
+});
+it('enables another explicit creation attempt after a failed request', async () => {
+  nav.query = '';
+  vi.mocked(docs.createDocument).mockRejectedValueOnce(new docs.ApiError(503, 'Creation unavailable')).mockResolvedValueOnce(makeDoc('retry'));
+  render(<DocumentsPage />);
+  await userEvent.click(screen.getByRole('button', { name: 'New' }));
+  await screen.findByText('Creation unavailable');
+  expect(screen.getByRole('button', { name: 'New' })).toBeEnabled();
+  await userEvent.click(screen.getByRole('button', { name: 'New' }));
+  await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/documents?d=retry'));
+  expect(docs.createDocument).toHaveBeenCalledTimes(2);
+});

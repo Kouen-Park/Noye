@@ -18,6 +18,10 @@ interface DocumentListProps {
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
   onNew: () => void;
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  creating?: boolean;
 }
 
 export function DocumentList({
@@ -26,6 +30,10 @@ export function DocumentList({
   onOpen,
   onDelete,
   onNew,
+  loading = false,
+  error = null,
+  onRetry,
+  creating = false,
 }: DocumentListProps) {
   const [confirming, setConfirming] = useState<string | null>(null);
 
@@ -38,15 +46,22 @@ export function DocumentList({
         <button
           type="button"
           onClick={onNew}
+          disabled={creating}
           className="noye-button"
         >
-          New
+          {creating ? "Creating…" : "New"}
         </button>
       </div>
 
-      {documents.length === 0 ? (
+      {loading && <p role="status" className="mt-2 text-sm text-ink-soft">Loading documents…</p>}
+      {error && <div className="mt-2">
+        <p role="alert" className="text-sm text-fail">{error}</p>
+        {onRetry && <button type="button" className="noye-button mt-2" onClick={onRetry}>Retry documents</button>}
+      </div>}
+      {documents.length === 0 ? (!loading && !error && (
+
         <p className="mt-2 text-[12.5px] text-ink-soft">Nothing written yet.</p>
-      ) : (
+      )) : (
         <ul className="mt-2 space-y-1">
           {documents.map((document) => {
             if (confirming === document.id) {
