@@ -6,18 +6,52 @@ from app.services import quantity_properties
 from app.services.source_documents.local import DocumentError
 
 
+def literal_text(text):
+    return re.sub(r"([\\`*_{}\[\]()<>#!|~])", r"\\\1", " ".join(text.split()))
+
+
 def comparison_table(rows, language):
     """Compare verified source notes without generating connecting assertions."""
     headers = ("자료", "기록된 내용") if language == "Korean" else ("Source", "Recorded facts")
-
-    def cell(text):
-        return re.sub(r"([\\`*_{}\[\]()<>#!|~])", r"\\\1", " ".join(text.split()))
-
     lines = [f"| {headers[0]} | {headers[1]} |", "| --- | --- |"]
     for name, claims in rows:
-        notes = " ".join(cell(text) + " [" + ", ".join(labels) + "]" for text, labels in claims)
-        lines.append(f"| {cell(name)} | {notes} |")
+        notes = " ".join(
+            literal_text(text) + " [" + ", ".join(labels) + "]" for text, labels in claims
+        )
+        lines.append(f"| {literal_text(name)} | {notes} |")
     return "\n".join(lines)
+
+
+def source_notes_requested(instruction, intent):
+    kind = intent["document_type"].replace("_", " ").casefold()
+    return (
+        intent["inventory_mode"] == "collection"
+        and bool(re.search(r"\b(?:notes?|summary)\b|요약|노트", kind))
+        and not re.search(
+            r"\bsynthesi[sz]|\bintegrat|\bcommon\s+(?:themes?|ideas?)|\bcross.source\b"
+            r"|공통|통합|종합|연결",
+            instruction,
+            re.IGNORECASE,
+        )
+    )
+
+
+def source_notes(rows):
+    sections = []
+    for name, claims in rows:
+        notes = {}
+        for text, labels in claims:
+            notes.setdefault(text, []).extend(labels)
+        sections.append(
+            "## "
+            + literal_text(name)
+            + "\n\n"
+            + "\n\n".join(
+                "- " + literal_text(text) + " [" + ", ".join(dict.fromkeys(labels)) + "]"
+                for text, labels in notes.items()
+            )
+        )
+    return sections
 
 
 def language_name(value):

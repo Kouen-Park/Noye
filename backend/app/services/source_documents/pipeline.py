@@ -636,6 +636,10 @@ def generate(context, *, settings=None, client=None):
             req["request"]["instruction"], plan["intent"]["language"]
         ),
     }
+    comparison_requested = presentation.is_comparison(req["request"]["instruction"], intent)
+    source_notes_requested = not comparison_requested and presentation.source_notes_requested(
+        req["request"]["instruction"], intent
+    )
     outline = _call(
         context,
         req,
@@ -657,6 +661,16 @@ def generate(context, *, settings=None, client=None):
         settings,
         client,
     )
+    if source_notes_requested:
+        outline = Outline(
+            title=outline.title,
+            sections=[
+                {
+                    "id": "source-notes",
+                    "title": "자료별 요약" if intent["language"] == "Korean" else "Source notes",
+                }
+            ],
+        )
     section_ids = [s.id for s in outline.sections]
     if len(set(section_ids)) != len(section_ids):
         raise local.DocumentError("The model returned duplicate outline section IDs.")
@@ -867,9 +881,37 @@ def generate(context, *, settings=None, client=None):
                 "replaced with a neutral title.",
             }
         )
-    comparison_requested = presentation.is_comparison(req["request"]["instruction"], intent)
     compared_sources = False
-    for heading in outline.sections:
+    if source_notes_requested:
+        by_source = defaultdict(list)
+        for claim in all_claims:
+            by_source[claim["source_id"]].append(claim)
+        rows = []
+        for source_id in plan["selected_ids"]:
+            group = by_source[source_id]
+            if group:
+                rows.append(
+                    (
+                        evidence[group[0]["supports"][0]["evidence_id"]]["source"]["name"],
+                        [
+                            (c["text"], citation_labels(c["supports"], evidence, citations))
+                            for c in group
+                        ],
+                    )
+                )
+            elif coverage[source_id]["state"] == "processed":
+                presentation_limits.append(
+                    {
+                        "code": "empty_source_notes",
+                        "section_id": "source:" + source_id,
+                        "reason": "No verified notes were produced for "
+                        + coverage[source_id]["relative_path"]
+                        + ".",
+                    }
+                )
+        rendered.extend(presentation.source_notes(rows))
+        report["notes_format"] = "source_grouped"
+    for heading in [] if source_notes_requested else outline.sections:
         relevant = [c for c in all_claims if c["section_id"] == heading.id]
         if not relevant:
             presentation_limits.append(
@@ -1087,7 +1129,7 @@ def generate(context, *, settings=None, client=None):
         "uncertainties": gaps,
         "model": settings.ollama_model,
         "prompt_version": local.PROMPT_VERSION,
-        "render_version": "source-document-markdown-v4",
+        "render_version": "source-document-markdown-v5",
         "output_contract": {
             "requested_language": intent["language"],
             "language_check": "script_only"

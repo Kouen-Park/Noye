@@ -324,6 +324,115 @@ def test_comparison_with_only_one_source_remains_partial(workspace):
     assert any(p["code"] == "comparison_unresolved" for p in coverage["presentation_limits"])
 
 
+def test_collection_notes_keep_every_verified_item_once_under_its_source(workspace):
+    db, *_ = workspace
+    discover(workspace, "A|[notes].txt", "Alpha stores 20 litres. Alpha uses a pump.")
+    discover(workspace, "B.txt", "Beta stores 33 litres. Beta uses a queue.")
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "summary_notes"
+        elif payload["task"] == "outline":
+            result["title"] = "Source summary notes"
+            result["sections"] = [{"id": "unused", "title": "Unsupported architecture"}]
+        elif payload["task"] == "process_original_sections":
+            p = payload["passages"][0]
+            facts = p["text"].split(". ")
+            facts = [text if text.endswith(".") else text + "." for text in facts]
+            result["claims"] = [
+                {
+                    "section_id": payload["outline"]["sections"][0]["id"],
+                    "text": text,
+                    "evidence_ids": [p["evidence_id"]],
+                }
+                for text in [*facts, facts[0]]
+            ]
+        elif payload["task"] == "cross_source_synthesis":
+            pytest.fail("Verified collection notes reached the rewrite stage")
+
+    client, calls = model(transform=notes)
+    artifact = run(
+        db, enqueue(db, instruction="Write summary notes for all selected sources."), client
+    )
+    revision = store.current(db, artifact)
+    body = revision["content"].split("## Source and coverage report")[0]
+    for fact in [
+        "Alpha stores 20 litres.",
+        "Alpha uses a pump.",
+        "Beta stores 33 litres.",
+        "Beta uses a queue.",
+    ]:
+        assert body.count(fact) == 1
+    assert r"## A\|\[notes\].txt" in body and "## B.txt" in body
+    assert "Unsupported architecture" not in body
+    assert revision["metadata"]["coverage"]["notes_format"] == "source_grouped"
+    assert not revision["metadata"]["coverage"]["partial"]
+    assert len(revision["metadata"]["citations"]) == 2
+    assert sum(c["task"] == "verify_heading" for c in calls) == 1
+    assert any(c["task"] == "verify_support" for c in calls)
+
+
+def test_a_processed_source_without_verified_notes_remains_partial(workspace):
+    db, *_ = workspace
+    discover(workspace, "A.txt", "Alpha stores 20 litres.")
+    discover(workspace, "B.txt", "Beta stores 33 litres.")
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+        elif payload["task"] == "process_original_sections":
+            for c in result["claims"]:
+                c["section_id"] = payload["outline"]["sections"][0]["id"]
+            if "Beta" in payload["passages"][0]["text"]:
+                result["claims"] = []
+
+    artifact = run(db, enqueue(db, instruction="Write summary notes."), model(transform=notes)[0])
+    coverage = store.current(db, artifact)["metadata"]["coverage"]
+    assert all(s["state"] == "processed" for s in coverage["sources"])
+    assert coverage["partial"]
+    assert any(p["code"] == "empty_source_notes" for p in coverage["presentation_limits"])
+
+
+@pytest.mark.parametrize("invalid", ["unsupported", "number"])
+def test_collection_notes_do_not_bypass_original_checks(workspace, invalid):
+    db, *_ = workspace
+    discover(workspace)
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+        elif payload["task"] == "process_original_sections":
+            for c in result["claims"]:
+                c["section_id"] = payload["outline"]["sections"][0]["id"]
+
+    with pytest.raises(local.DocumentError):
+        run(db, enqueue(db), model(invalid=invalid, transform=notes)[0])
+    assert documents.count_documents(db) == 0
+
+
+@pytest.mark.parametrize(
+    "mode,instruction",
+    [
+        ("collection", "Synthesize common themes in the summary notes."),
+        ("relevant", "Write summary notes about the designs."),
+    ],
+)
+def test_explicit_synthesis_and_relevant_reports_retain_factual_synthesis(
+    workspace, mode, instruction
+):
+    db, *_ = workspace
+    discover(workspace)
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+
+    client, calls = model(transform=notes)
+    artifact = run(db, enqueue(db, mode=mode, instruction=instruction), client)
+    assert any(c["task"] == "cross_source_synthesis" for c in calls)
+    assert "notes_format" not in store.current(db, artifact)["metadata"]["coverage"]
+
+
 def test_explicit_quantity_retry_guides_only_the_rejected_original_stage(workspace, monkeypatch):
     db, *_ = workspace
     cedar = discover(workspace, "cedar.txt", "Cedar stores 18 litres.")

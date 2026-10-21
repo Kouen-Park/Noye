@@ -40,7 +40,7 @@ passages as evidence of reviewing a collection.
 ## Original processing and publication
 
 The stages are intent/discovery → outline → paginated original reads → bounded
-per-source sections → source comparison tables or cross-source synthesis → save.
+per-source sections → grouped source notes, comparison tables or cross-source synthesis → save.
 Every extracted character from each selected readable source is supplied to a
 bounded original-processing batch. UTF-8 byte size conservatively bounds model
 input; fragments cover the whole passage, including Korean text. Oversized
@@ -51,6 +51,15 @@ source-attributed tables under each topical section; they do not invoke another
 factual rewrite. This removes the observed late synthesis path that joined a stored
 amount to an independently reported technology with an unsupported instrumental link.
 It does not prove that extraction or its fallible model audit is always faithful.
+Since v27, a plain whole-collection summary/notes request also retains every
+verified extracted assertion instead of rewriting it. The model may propose the
+title, but the application replaces speculative section headings with one neutral
+extraction section and renders notes under literal source filenames. Exact duplicate
+assertions are displayed once with all matching citation labels. A processed source
+that produced no verified notes is named as a partial-result limitation. These
+requests record `coverage.notes_format: source_grouped`.
+Explicit synthesis/integration/common-theme requests and relevant-source reports
+retain the existing synthesis path; comparison requests retain their topical tables.
 
 All expanded context uses configured loopback Ollama and an installed model whose
 `/api/show` metadata is checked before source context is sent. Ollama cloud aliases
@@ -88,7 +97,7 @@ Each original-processing call sees only one source batch; it must not draw
 collection-wide conclusions about other sources being absent. Unverified model
 observations are retained only in audit metadata with source/batch/evidence IDs.
 They are excluded from published document prose. `render_version`
-`source-document-markdown-v4` identifies new drafts with source-comparison tables;
+`source-document-markdown-v5` identifies new drafts with source tables/grouped notes;
 completed artifacts and user revisions are never rewritten.
 The entailment pass is a model check, not independent proof; source review remains
 necessary. The numeral guard checks verified cited original passages and recognizes explicit
