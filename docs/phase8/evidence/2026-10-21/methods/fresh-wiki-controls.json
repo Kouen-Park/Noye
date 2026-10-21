@@ -1,0 +1,6 @@
+[
+  {"id":"fresh-ko-independent","text":"호수 Marina의 저장 용량은 46리터입니다. Marina는 SQLite를 사용합니다. 점검 중에는 쓰기를 중지하며 백업은 하루에 세 번 실행됩니다."},
+  {"id":"fresh-en-stored","text":"Project Cobalt stores 28 litres. Cobalt uses a ring buffer. Writes are permitted except during inspection. Backups run every five days."},
+  {"id":"fresh-en-explicit-means","text":"A pump is the mechanism Plover uses to store 17 litres. Plover pauses writes on Saturdays."},
+  {"id":"fresh-ko-conditions","text":"Birch는 점검 중 읽기를 허용하지만 쓰기는 중지합니다. 백업은 엿새마다 실행됩니다."}
+]

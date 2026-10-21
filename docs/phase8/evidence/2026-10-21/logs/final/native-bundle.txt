@@ -1,0 +1,20 @@
+npm notice run noye-frontend@0.1.0 npx
+npm notice run 'tauri' build --bundles app --config /private/tmp/noye-phase8-20261021/tauri-qa.json
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling noye-desktop v0.1.0 (/Users/gavinpark/Projects/Noye/frontend/src-tauri)
+    Finished `release` profile [optimized] target(s) in 22.70s
+       Built application at: /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/noye-desktop
+    Bundling Noye Phase8 QA.app (/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app)
+     Signing with identity "-"
+Signing with identity "-"
+Signing /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-backend
+/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-backend: replacing existing signature
+Signing with identity "-"
+Signing /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-desktop
+/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-desktop: replacing existing signature
+Signing with identity "-"
+Signing /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app
+/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app: replacing existing signature
+        Warn skipping app notarization, no APPLE_ID & APPLE_PASSWORD & APPLE_TEAM_ID or APPLE_API_KEY & APPLE_API_ISSUER & APPLE_API_KEY_PATH environment variables found
+    Finished 1 bundle at:
+        /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app (68.24 MiB)

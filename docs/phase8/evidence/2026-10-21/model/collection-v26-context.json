@@ -1,0 +1,12 @@
+{
+  "method": "Source snapshot for the v26 Korean acceptance attempt; captured while source files remain unchanged from this commit.",
+  "source_commit": "5e407dc37fe81cfbc4887fabb6c33324da6786b2",
+  "runtime_sha256": {
+    "app/services/quantity_properties.py": "fec5863967e6f1ed1f5d45eb5617a3389064457032463e62e24dd2fbb1e0fcf6",
+    "app/services/source_documents/local.py": "2a650e4c59a3a41e64e6ec3ed14fe1ffc687e60af5f3b427ab77b8ae3f8a00f0",
+    "app/services/source_documents/jobs.py": "8840d1c36423012e7f3c90ab456f8ad3053b3fe891f9be303c87b428d21cde63",
+    "app/services/source_documents/pipeline.py": "c11ddf5656d82dc7d2236012be62620d70dd3a86523920290d92d8759c748925",
+    "app/services/source_documents/presentation.py": "419a8488ab0402376185422c2b219a49e4f0c089fb351e765e7419c25a56de0d",
+    "app/services/wiki/local.py": "2a54d16eb1b6295840e41c9d1b72ead59a0493b94d7d371f2db1e4e7c6be95bf"
+  }
+}

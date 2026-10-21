@@ -1,0 +1,11 @@
+{
+  "method": "Source snapshot captured before the fresh v27 collection-notes attempt.",
+  "source_commit": "c0ec3447fe46e8e844767ef5af024f19aa414fd5",
+  "runtime_sha256": {
+    "app/services/quantity_properties.py": "fec5863967e6f1ed1f5d45eb5617a3389064457032463e62e24dd2fbb1e0fcf6",
+    "app/services/source_documents/local.py": "2b1c18fd47b3ae19f4f629e8068e79df4e5ca944be80e4018a2a4cf33e955033",
+    "app/services/source_documents/jobs.py": "8840d1c36423012e7f3c90ab456f8ad3053b3fe891f9be303c87b428d21cde63",
+    "app/services/source_documents/pipeline.py": "446467b2473a3cf21181ceeedb9b4d5d395ac44f6ef94afb8f7009df3bf690b4",
+    "app/services/source_documents/presentation.py": "ff49d5cd76a0316734229b4f12e8b785bb56f41aa583dddf297ec5526c124efc"
+  }
+}

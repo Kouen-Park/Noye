@@ -1,0 +1,80 @@
+{
+  "method": "No-inference comparison of all retained candidate requests against the adopted production transport, schema, prompt and byte budget. Exact final JSON is replayed only for parsing; it is not another semantic judgment.",
+  "candidate_report_sha256": "872b1bb9334b5ef313bfe05769653c7cb517a58f970b85dbad87302e8fd08b20",
+  "production_prompt_version": "wiki-grounded-v13",
+  "source_commit": "48fcf9db085a61023f2cfd8817735f73694e7d19",
+  "working_tree_source_hashes": {
+    "backend/app/models/wiki.py": "11e57d860ba491e1d3029141a0259ede66d41582d7dd73a3b1da96dfbf98f485",
+    "backend/app/services/wiki/local.py": "eeff1bb2f8b26544e337e5d73717a984d4e3e17a10cb887e0f5c552c40a1c544"
+  },
+  "rows": [
+    {
+      "request_sha256": "90d48dd57e1c43f47069e5ab9b0653822228b4c785489cdf3fa73c3e1bbca350",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "c0df476bca1ee22487c935f75645fc10e44fb1a0df6669d939c6b7a7b25cb668",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "a7af895fb6c5ef056556860b42a08b6fcd5209e679cb1930e5b8868025520137",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "8934cd163fa04ac16650788a47ca36a1844200f937d5ccba9dffd5f060ccfeaa",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "f8ce602cef23436b68acb9259ab31797bec20eb5457b79d1d5c199a02006b107",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "24defd27091fb8fe3ea09a8553c2b6a7c3f4e7b7b8c97c11d8094d5478472ba8",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "3ea3cd7a9d6afaa88b5ffa4d8a60fba81817a19dfc6852a763dd7e230cb2a3e3",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "3523ec09916dce4c21ad4a1d24cf5e48e27cd7fd189f1c9e9ba687635c986299",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "973cc91ac55842c396144f82db4b9d35ee255c88dad1c80cdff00ba6cf93834d",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "59b6bfb340d2b652e8952c89fb55326db1c047cb086d215b41c095c0ab1e51da",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "109c39c72579fc97e0781ce988acab737f3347371b4de992f7be3a505959edb3",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "13d09fa884e6b5c3134960c575888889b7ea8f662bafa09aaede88c31eb32788",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "2187a6c690fef34023fc91c553dcbd2e94696e466a25086296400f56cb15ab7e",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "b6a3960d0ea701e62451f5931716970d8c25afb675a040059a1bf5e6e37eba47",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "30a2eee71297310b97a47bf4149aa0cdb5674a0c36c14f392ec622374db067b5",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "818fdfdf5521d74f9b0eaa83b40197117bb4d66ecdd95f1d83e7c9245fae58ae",
+      "exact_wire_and_budget": true
+    },
+    {
+      "request_sha256": "26eba02fc8ee5b0d1a61c417a9ff15fe1d3279f72cd1b55dc7e23468d802afaf",
+      "exact_wire_and_budget": true
+    }
+  ]
+}

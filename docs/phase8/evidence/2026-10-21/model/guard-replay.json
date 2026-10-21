@@ -1,0 +1,272 @@
+{
+  "method": "No-inference replay of current numeric/reference guards over retained final outputs. This checks compatibility and the recorded postfix refusal, not general semantic quality or a new generation attempt.",
+  "source_commit": "5e407dc37fe81cfbc4887fabb6c33324da6786b2",
+  "rows": [
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Alpha has a storage capacity of 37 liters and uses SQLite.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Alpha stops writing on Sundays.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Alpha performs backups once per day.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Beta stores 92 litres.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Beta uses append-only log files.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Beta permits writes on Sundays.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v25-comparison-extraction",
+      "text": "Project Beta backups run twice a day.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "저수지 Alpha 프로젝트의 저장 용량은 37 리터입니다. Alpha 는 SQLite 를 사용합니다. Alpha 는 일요일에 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "저수지 Alpha 프로젝트의 저장 용량은 37 리터입니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "저수지 Alpha 는 SQLite 를 사용합니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "저수지 Alpha 는 일요일에 쓰기를 중지합니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "저수지 Alpha 의 백업은 하루에 한 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "Project Beta stores 92 litres.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "Beta uses append-only log files.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "Beta permits writes on Sundays.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "accepted-v11-wiki",
+      "text": "Backups run twice a day.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-independent",
+      "text": "호수 Marina의 저장 용량은 46리터입니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-independent",
+      "text": "Marina는 SQLite를 사용합니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-independent",
+      "text": "점검 중에는 쓰기를 중지하며 백업은 하루에 세 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-stored",
+      "text": "Project Cobalt stores 28 litres.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-stored",
+      "text": "Cobalt uses a ring buffer.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-stored",
+      "text": "Writes are permitted except during inspection.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-stored",
+      "text": "Backups run every five days.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-explicit-means",
+      "text": "Plover stores 17 litres using a pump.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-explicit-means",
+      "text": "Plover stores 17 litres using a pump.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-en-explicit-means",
+      "text": "Plover pauses writing on Saturdays.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-conditions",
+      "text": "Birch는 점검 기간 동안 읽기 작업을 허용하고 쓰기 작업을 중지합니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-conditions",
+      "text": "Birch는 점검 기간 동안 읽기 작업을 허용하고 쓰기 작업을 중지합니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "fresh-ko-conditions",
+      "text": "백업 작업은 6 일마다 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": false
+    },
+    {
+      "case": "unaccepted-v25-korean-synthesis",
+      "text": "프로젝트 베타는 92 리터의 용량을 저장합니다.",
+      "accepted": false,
+      "expected": false,
+      "error": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.",
+      "source_numeral_check": true
+    },
+    {
+      "case": "unaccepted-v25-korean-synthesis",
+      "text": "저수지 Alpha 의 저장 용량은 37 리터이며, SQLite 를 사용하고 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "unaccepted-v25-korean-synthesis",
+      "text": "베타 프로젝트는 일요일에 쓰기 작성을 허용하며, 백업은 하루에 두 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    },
+    {
+      "case": "unaccepted-v25-korean-synthesis",
+      "text": "저수지 Alpha 프로젝트는 일요일에 쓰기를 중지하며, 백업은 하루에 한 번 실행됩니다.",
+      "accepted": true,
+      "expected": true,
+      "error": null,
+      "source_numeral_check": true
+    }
+  ],
+  "recorded_bad_korean_claims_refused": 1,
+  "loaded_model_calls": 0
+}

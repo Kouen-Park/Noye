@@ -1,0 +1,67 @@
+{
+  "method": "Primary-agent direct review of all three source comparison tables against the invented Alpha/Beta originals. Known-corpus result, not general extraction/heading correctness.",
+  "report": "/private/tmp/noye-phase8-20261021/current-comparison/comparison-e1ffb414-9dc5-43f9-84b8-8c5dc4b8c806.json",
+  "report_sha256": "672d5e6c98d506c69068ea544985f90fe2f225661dcdd07877bb36be67ada415",
+  "state": "complete",
+  "seconds": 215.591,
+  "body_sha256": "d7d9d76cd84644f685f1561f164d5eb6d34e1e8466745a007d866befa2b19ef4",
+  "accepted_on_this_corpus": true,
+  "facts": "Alpha capacity 37 litres and SQLite use; Beta stores 92 litres and uses append-only log files; Sunday write pause versus permission; once- versus twice-daily backup. Independent facts stay independent, with no unsupported numerical difference, instrumental link or changed quantity property.",
+  "format": "Three source-attributed topical tables; header terminology is organization, not a causal claim.",
+  "coverage": {
+    "comparison_format": "source_table",
+    "inventory_count": 2,
+    "inventory_mode": "relevant",
+    "partial": false,
+    "sources": [
+      {
+        "availability": "available",
+        "characters_processed": 120,
+        "characters_read": 120,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/02-English.txt",
+        "root_id": "2c8987d9-a511-4616-b5dc-a17e06867220",
+        "source_id": "db1b5c75-7a61-4cb5-8ccf-2e4cb1528b1e",
+        "state": "processed",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      {
+        "availability": "available",
+        "characters_processed": 95,
+        "characters_read": 95,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/01-한국어.md",
+        "root_id": "2c8987d9-a511-4616-b5dc-a17e06867220",
+        "source_id": "c047ab4a-b2f8-4f40-8ba6-d10c3fa4aa0b",
+        "state": "processed",
+        "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      }
+    ]
+  },
+  "model_calls": 26,
+  "synthesis_calls": 0,
+  "citation_review": [
+    {
+      "source": "01-한국어.md",
+      "quote_sha256": "22cdcd71e57dd9635fbcfdcc5cf0b79294a62b53ae5b815b1a830c75baf6fdc2",
+      "quote_start": 0,
+      "quote_end": 95,
+      "literal_original": true
+    },
+    {
+      "source": "02-English.txt",
+      "quote_sha256": "bcbd8356d1233b1443ac4b130dc8c7800e3a68bef27c4f98b868ee10ca34d463",
+      "quote_start": 0,
+      "quote_end": 120,
+      "literal_original": true
+    }
+  ]
+}

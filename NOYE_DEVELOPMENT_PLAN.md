@@ -3681,7 +3681,7 @@ pixels remain unconfirmed. These findings do not close the remaining P1 quality,
 physical-device, cloud, calibration or trusted-distribution checks. Keep Phase 8,
 MVP acceptance and the conditional final merge open.
 
-**Latest acceptance progress, 2026-10-19:**
+**Further acceptance progress, 2026-10-19:**
 [`docs/phase8/acceptance-2026-10-19.md`](docs/phase8/acceptance-2026-10-19.md)
 records an actual Ollama 0.34.2 structured-thinking compatibility matrix and
 production source-document v24/Wiki v8 transport fixes. Configured thinking uses
@@ -3697,6 +3697,27 @@ passed all 12 desktop/folder checks and strict local signature integrity under
 the development QA profile. The separate alternative-model and prompt experiments
 are diagnostic only. Known factual-quality and remaining native/cloud/calibration/
 trusted-distribution checks keep Phase 8/MVP and conditional merge open.
+
+**Latest acceptance progress, 2026-10-21:**
+[`docs/phase8/acceptance-2026-10-21.md`](docs/phase8/acceptance-2026-10-21.md)
+records Wiki evidence/quote-before-interpretation, source-local topic hints and one
+bounded quantity-wording revision. English comparison now renders verified facts
+in attributed tables; plain collection notes retain verified items under literal
+source names without a second factual rewrite. A postfix litre-property gap and
+explicit retry feedback leaking across batches are corrected. The known whole
+Wiki and English comparison passed direct review; Korean source-grouped notes
+passed after one explicit resume following a correctly refused draft. Missing
+extracted detail and awkward translation are retained limits, not exhaustive
+summarization acceptance. Four fresh Wiki component controls passed direct review.
+The dedicated relation protocol compares original conditions/exceptions before
+choosing a kind: actual fixed controls improved from 11/17 to 16/17, correcting
+four false contradictions while missing one required shared-fact link. All 17
+candidate requests exactly match the adopted production wire/budget; this is not
+a new semantic benchmark. At `48fcf9d`, full backend tests passed 1,162/19 skipped
+and lint passed. Latest package results and publication are retained in the ledger.
+Default thinking remains off. General model-audit false approvals, incomplete
+relationship recall and remaining native/cloud/calibration/trusted-distribution
+checks keep Phase 8/MVP and the conditional final merge open.
 
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves

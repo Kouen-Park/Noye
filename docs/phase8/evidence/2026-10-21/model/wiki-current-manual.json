@@ -1,0 +1,50 @@
+{
+  "method": "Primary-agent direct review of all published summaries/key points against both invented originals. Exact quote membership and hashes are provenance only. Known-corpus whole Wiki acceptance, not fresh holdouts or relation accuracy.",
+  "report": "/private/tmp/noye-phase8-20261021/current-wiki/wiki-fc3a59ef-3a26-470e-83a7-ca7c948921ce.json",
+  "report_sha256": "dd5ae1ccaf8df6cdf756cb0ecab9edd887af081a9fe528c5672c3e35cb0b8a2b",
+  "state": "complete",
+  "seconds": 101.209,
+  "revisions": [
+    {
+      "source_name": "01-한국어.md",
+      "body_sha256": "4c2e192f8cf3baa8d067413a16a61a5eb991bc19f21786199a44de426ca88c55",
+      "wording_repairs": [],
+      "topics": [
+        {
+          "kind": "project",
+          "title": "저수지 Alpha"
+        }
+      ],
+      "review": "Alpha: capacity 37 litres, SQLite use, Sunday write pause and once-daily backup are independent and faithful. Beta: stores 92 litres, append-only log-file use, Sunday write permission and twice-daily backup are faithful; no capacity or instrumental link remains.",
+      "accepted_on_this_corpus": true
+    },
+    {
+      "source_name": "02-English.txt",
+      "body_sha256": "0c1130586142aefaee22b74eae3644122ba4716abdf380c452b0d44617437ff0",
+      "wording_repairs": [
+        {
+          "batch": 1,
+          "reason": "quantity_property"
+        }
+      ],
+      "topics": [
+        {
+          "kind": "project",
+          "title": "Project Beta"
+        }
+      ],
+      "review": "Alpha: capacity 37 litres, SQLite use, Sunday write pause and once-daily backup are independent and faithful. Beta: stores 92 litres, append-only log-file use, Sunday write permission and twice-daily backup are faithful; no capacity or instrumental link remains.",
+      "accepted_on_this_corpus": true
+    }
+  ],
+  "model_tasks": [
+    "model_preflight",
+    "summarize_section",
+    "model_preflight",
+    "summarize_section",
+    "model_preflight",
+    "revise_section"
+  ],
+  "relation_calls": 0,
+  "relation_limit": "No relation call was selected on this corpus; known false contradictions remain unclosed."
+}

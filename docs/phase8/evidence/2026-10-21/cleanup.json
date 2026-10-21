@@ -1,0 +1,13 @@
+{
+  "method": "Stop only the owned, unloaded QA Ollama listener on 127.0.0.1:11439. Existing weights are never modified; personal services are outside this check.",
+  "version": {
+    "version": "0.34.2"
+  },
+  "loaded_before": {
+    "models": []
+  },
+  "owned_pid": 68260,
+  "command": "/opt/homebrew/bin/ollama serve",
+  "no_weights_pulled_or_deleted": true,
+  "listener_absent": true
+}
