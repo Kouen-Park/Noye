@@ -6,7 +6,7 @@ import pytest
 from app.config import Settings
 from app.models.wiki import Passage, RelationsOutput, SectionSummary, SourceRef, WikiScope
 from app.services.wiki import pipeline
-from app.services.wiki.local import SYSTEM, WikiError, request_size, structured
+from app.services.wiki.local import RELATION_SYSTEM, SYSTEM, WikiError, request_size, structured
 
 
 def passage(text, page=None):
@@ -101,9 +101,38 @@ def test_wiki_model_sees_the_constrained_schema_with_original_fields_and_exact_b
     assert fields["target_id"]["enum"] == ["known-target"]
     assert fields["origin_evidence_id"]["enum"] == ["known-original"]
     assert "comparable conditions" in fields["kind"]["description"]
+    assert list(fields) == [
+        "target_id",
+        "origin_evidence_id",
+        "target_evidence_id",
+        "reason",
+        "kind",
+        "confidence",
+    ]
+    assert body["system"] == RELATION_SYSTEM
     assert request_size(prompt, RelationsOutput, constraints) == len(
-        (SYSTEM + body["prompt"]).encode("utf-8")
+        (body["system"] + body["prompt"]).encode("utf-8")
     )
+
+
+@pytest.mark.parametrize(
+    "prompt", ["Test", "[]", '{"task":"summarize_section"}', '{"task":"revise_section"}']
+)
+def test_summary_and_wording_revision_keep_their_own_system_and_budget(prompt):
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        body = json.loads(request.content)
+        sent.append(body)
+        return httpx.Response(200, json={"done": True, "response": json.dumps(summary())})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        structured(prompt, SectionSummary, client=client, settings=Settings(_env_file=None))
+    body = sent[0]
+    assert body["system"] == SYSTEM
+    assert request_size(prompt, SectionSummary) == len((SYSTEM + body["prompt"]).encode("utf-8"))
 
 
 def test_remote_local_url_never_receives_evidence():

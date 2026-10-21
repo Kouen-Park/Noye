@@ -80,6 +80,14 @@ RelationType = Literal["shared_subject", "supporting_evidence", "alternative", "
 
 class RelationProposal(StrictModel):
     target_id: str
+    origin_evidence_id: str
+    target_evidence_id: str
+    reason: str = Field(
+        min_length=1,
+        max_length=800,
+        description="Compare the original outcomes under the same conditions, applying every "
+        "exception before deciding whether they agree or conflict.",
+    )
     kind: RelationType = Field(
         description="shared_subject: a specific shared topic, not vocabulary alone; "
         "supporting_evidence: compatible assertions or details that establish the same fact; "
@@ -87,10 +95,7 @@ class RelationProposal(StrictModel):
         "assertions about the same subject and property under comparable conditions. "
         "A missing statement does not deny a fact.",
     )
-    reason: str = Field(min_length=1, max_length=800)
     confidence: float = Field(ge=0, le=1)
-    origin_evidence_id: str
-    target_evidence_id: str
 
 
 class RelationsOutput(StrictModel):

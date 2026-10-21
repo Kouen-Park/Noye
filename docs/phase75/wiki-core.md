@@ -63,7 +63,7 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v12` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v13` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. Since v10, reuse hints must also occur as names in this source's
 original text, with Unicode/case/spacing normalization and Latin word boundaries.
@@ -110,6 +110,15 @@ and verified evidence IDs on both sides. There are at most eight candidates, fou
 comparisons per candidate and six accepted links. Confidence below 0.8 creates no link.
 Each comparison now receives both complete bounded original fragments and their source
 identities, rather than summary text and a short quote alone.
+Since v13, relationship calls use a dedicated system instruction rather than the
+summary/category/tag instruction. The model selects both evidence IDs, compares
+outcomes under the same conditions and applies exceptions in its explanation
+before choosing a relation kind. Capacity/current amount and explicit translated
+aliases are addressed separately. Summary and wording-revision calls retain their
+existing system; the byte budget counts the selected system exactly. This reduces
+observed false contradictions but does not establish complete semantic accuracy
+or guarantee that every supported link is found. Existing saved links are unchanged.
+
 Only original text reaches relation inference: unverified summary wording is excluded,
 so a summary that omitted a condition cannot become the comparison premise. Repeated
 claims referring to the same pair of original fragments cause one comparison, not
