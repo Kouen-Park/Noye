@@ -1,0 +1,111 @@
+{
+  "method": "Read-only liveness and runner-progress observation for a native OS force quit. Signal zero only; no process is killed by this observer, and model payloads are unchanged.",
+  "started_at": 1792568761.977399,
+  "native_pid": 77971,
+  "sidecar_pids": [
+    77984,
+    77990
+  ],
+  "pid_gone_at": {
+    "77971": 1792568855.8963358,
+    "77990": 1792568861.959431,
+    "77984": 1792568862.1810062
+  },
+  "events": [
+    {
+      "at": 1792568812.966642,
+      "state": "generated_tokens",
+      "count": 100,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    100, tg =   9.14 t/s, tg_3s =   9.24 t/s"
+    },
+    {
+      "at": 1792568816.4518452,
+      "state": "generated_tokens",
+      "count": 111,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    111, tg =   7.69 t/s, tg_3s =   3.17 t/s"
+    },
+    {
+      "at": 1792568820.385557,
+      "state": "generated_tokens",
+      "count": 126,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    126, tg =   7.53 t/s, tg_3s =   3.87 t/s"
+    },
+    {
+      "at": 1792568823.3421319,
+      "state": "generated_tokens",
+      "count": 189,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    189, tg =   8.86 t/s, tg_3s =  20.74 t/s"
+    },
+    {
+      "at": 1792568826.290865,
+      "state": "generated_tokens",
+      "count": 240,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    240, tg =   9.86 t/s, tg_3s =  16.90 t/s"
+    },
+    {
+      "at": 1792568829.334993,
+      "state": "generated_tokens",
+      "count": 295,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    295, tg =  10.80 t/s, tg_3s =  18.33 t/s"
+    },
+    {
+      "at": 1792568836.618589,
+      "state": "generated_tokens",
+      "count": 303,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    303, tg =   8.74 t/s, tg_3s =   1.09 t/s"
+    },
+    {
+      "at": 1792568840.34373,
+      "state": "generated_tokens",
+      "count": 313,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    313, tg =   8.27 t/s, tg_3s =   3.14 t/s"
+    },
+    {
+      "at": 1792568842.997269,
+      "state": "generated_tokens",
+      "count": 366,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    366, tg =   8.95 t/s, tg_3s =  17.34 t/s"
+    },
+    {
+      "at": 1792568845.897998,
+      "state": "generated_tokens",
+      "count": 422,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    422, tg =   9.61 t/s, tg_3s =  18.57 t/s"
+    },
+    {
+      "at": 1792568848.927252,
+      "state": "generated_tokens",
+      "count": 475,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    475, tg =  10.12 t/s, tg_3s =  17.63 t/s"
+    },
+    {
+      "at": 1792568851.909457,
+      "state": "generated_tokens",
+      "count": 534,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    534, tg =  10.70 t/s, tg_3s =  19.62 t/s"
+    },
+    {
+      "at": 1792568855.047381,
+      "state": "generated_tokens",
+      "count": 588,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    588, tg =  11.10 t/s, tg_3s =  17.44 t/s"
+    },
+    {
+      "at": 1792568857.992158,
+      "state": "generated_tokens",
+      "count": 636,
+      "line": "slot print_timing: id  0 | task 0 | n_gen =    636, tg =  11.36 t/s, tg_3s =  16.00 t/s"
+    },
+    {
+      "at": 1792568860.287969,
+      "state": "runner_complete_or_idle",
+      "line": "srv  update_slots: all slots are idle"
+    },
+    {
+      "at": 1792568861.74094,
+      "state": "runner_complete_or_idle",
+      "line": "[GIN] 2026/10/21 - 20:47:41 | 200 |         1m31s |       127.0.0.1 | POST     \"/api/generate\""
+    }
+  ],
+  "finished_at": 1792568862.190321
+}

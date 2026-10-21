@@ -1,0 +1,99 @@
+{
+  "method": "Derived from read-only native process observations. Native parent death and runner progress establish active-generation interruption; the post-fix run completed its model request before the 15-second deadline, so no causal speedup or real-runtime timer firing is claimed. The indefinitely blocked AnyIO regression separately validates the deadline.",
+  "source_commit": "aa9335f68c6ff924c7f8bfb1b32930149f2871c7",
+  "runs": {
+    "before": {
+      "native_pid": 76228,
+      "native_gone_at": 1792557884.6569102,
+      "latest_sidecar_exit_seconds_after_native": 22.0338077545166,
+      "latest_token_before_native_exit": {
+        "at": 1792557882.0558982,
+        "state": "generated_tokens",
+        "count": 159,
+        "line": "slot print_timing: id  0 | task 0 | n_gen =    159, tg =  19.19 t/s, tg_3s =  19.50 t/s"
+      },
+      "tokens_observed_after_native_exit": [
+        {
+          "at": 1792557885.184145,
+          "state": "generated_tokens",
+          "count": 218,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    218, tg =  19.23 t/s, tg_3s =  19.34 t/s"
+        },
+        {
+          "at": 1792557888.207497,
+          "state": "generated_tokens",
+          "count": 278,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    278, tg =  19.36 t/s, tg_3s =  19.85 t/s"
+        },
+        {
+          "at": 1792557891.146744,
+          "state": "generated_tokens",
+          "count": 342,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    342, tg =  19.68 t/s, tg_3s =  21.19 t/s"
+        },
+        {
+          "at": 1792557894.1636531,
+          "state": "generated_tokens",
+          "count": 410,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    410, tg =  20.11 t/s, tg_3s =  22.60 t/s"
+        },
+        {
+          "at": 1792557897.278513,
+          "state": "generated_tokens",
+          "count": 477,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    477, tg =  20.38 t/s, tg_3s =  22.19 t/s"
+        },
+        {
+          "at": 1792557900.3095949,
+          "state": "generated_tokens",
+          "count": 547,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    547, tg =  20.69 t/s, tg_3s =  23.07 t/s"
+        },
+        {
+          "at": 1792557903.239525,
+          "state": "generated_tokens",
+          "count": 615,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    615, tg =  20.88 t/s, tg_3s =  22.55 t/s"
+        }
+      ],
+      "runner_idle_seconds_after_native": 20.78768277168274
+    },
+    "after": {
+      "native_pid": 77971,
+      "native_gone_at": 1792568855.8963358,
+      "latest_sidecar_exit_seconds_after_native": 6.284670352935791,
+      "latest_token_before_native_exit": {
+        "at": 1792568855.047381,
+        "state": "generated_tokens",
+        "count": 588,
+        "line": "slot print_timing: id  0 | task 0 | n_gen =    588, tg =  11.10 t/s, tg_3s =  17.44 t/s"
+      },
+      "tokens_observed_after_native_exit": [
+        {
+          "at": 1792568857.992158,
+          "state": "generated_tokens",
+          "count": 636,
+          "line": "slot print_timing: id  0 | task 0 | n_gen =    636, tg =  11.36 t/s, tg_3s =  16.00 t/s"
+        }
+      ],
+      "runner_idle_seconds_after_native": 4.3916332721710205
+    }
+  },
+  "coverage_scope": "app only; root desktop.py and subprocess execution are not covered by this instrument",
+  "app_coverage": {
+    "covered_lines": 6594,
+    "num_statements": 7676,
+    "percent_covered": 84.1626213592233,
+    "percent_covered_display": "84",
+    "missing_lines": 1082,
+    "excluded_lines": 0,
+    "percent_statements_covered": 85.90411672746222,
+    "percent_statements_covered_display": "86",
+    "num_branches": 2212,
+    "num_partial_branches": 288,
+    "covered_branches": 1728,
+    "missing_branches": 484,
+    "percent_branches_covered": 78.11934900542495,
+    "percent_branches_covered_display": "78"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "method": "Read-only native backend API comparison after real active-token OS force quit and restart. The native UI also shows the full literal body and Saved. No generation was resumed by this check.",
+  "document": {
+    "id": "98af4d13-dd6a-4cdd-a840-2fec53d76e06",
+    "title": "Phase 8 native interruption QA",
+    "content": "# 보존 확인\n\n이 문서는 네이티브 종료·복구 검증용입니다.\n\n원문 그대로: `x -> y`, 37 리터, café, [문장](literal).\n\nSENTINEL-NATIVE-INTERRUPTION-20261021\n",
+    "source_conversation_id": null,
+    "source_message_id": null,
+    "source_instruction": null,
+    "citations": [],
+    "created_at": "2026-10-21T01:14:47.084931+00:00",
+    "updated_at": "2026-10-21T01:15:55.035784+00:00",
+    "provenance_markdown": ""
+  },
+  "before_after_exact_json_equal": true,
+  "sha256": "94911980fa07c9eeee0b901f92e379bc36513e99e6f742cee7d1a097006e5cfe",
+  "external_QA_services_survived": {
+    "ollama": 200,
+    "qdrant": 200
+  },
+  "observed_at": 1792569351.640278
+}

@@ -3733,6 +3733,23 @@ omission but reintroduced an exception false contradiction; it was rejected afte
 blocking the revised QA relay launch; reviewed execution and QA-service cleanup
 remain pending. No quality/merge acceptance condition is waived.
 
+**October 21 native interruption follow-up:**
+[`docs/phase8/acceptance-2026-10-21-native.md`](docs/phase8/acceptance-2026-10-21-native.md)
+records `aa9335f`: a parent-EOF deadline bounds a managed backend held alive by a
+blocked AnyIO worker, while saved SQLite writing survives rollback/reopen. Full
+backend tests passed 1,163/19 skipped; all twelve actual bundled-backend checks
+passed. Frozen-entry inspection confirms the 15-second self-exit code. Read-only
+PID/token observation proves actual native force quit during generation; the
+rebuilt sidecars exited within the bound, and saved document JSON exactly matched
+after restart. The native sample completed its model request before the deadline,
+so timer firing and causal speedup are not claimed. Reviewed execution returned;
+the rejected relay was abandoned in favor of the official direct QA server.
+Owned QA services were verified unloaded/stopped. A thinking-only four-case
+diagnostic completed one matching judgment and hit three read timeouts; it was
+not adopted, and normal RAG/default generation remains non-thinking.
+Known P1 factual/relation quality and remaining physical-device/cloud/calibration/
+trusted-distribution acceptance still keep Phase 8/MVP and conditional merge open.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite

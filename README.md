@@ -274,11 +274,13 @@ stability/quality and validates the packaged workflow before MVP release. Releva
 tests, lint, types and builds run throughout implementation.
 
 Current packaged-app observations and remaining failures are recorded in
-[`docs/phase8/acceptance-2026-10-21-followup.md`](docs/phase8/acceptance-2026-10-21-followup.md),
+[`docs/phase8/acceptance-2026-10-21-native.md`](docs/phase8/acceptance-2026-10-21-native.md),
 which links the earlier records.
 The native PDF/first-run/model checks and automated suites do not close Phase 8:
 known-corpus comparison/notes and Wiki output now pass direct review, while broader
-factual quality, relationship recall and the remaining acceptance are open.
+factual quality, relationship classification/recall and the remaining acceptance
+are open. Active native termination now preserves saved writing; a bounded
+managed-backend shutdown and its actual bundled code are verified in that record.
 
 ## Privacy Philosophy
 

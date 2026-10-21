@@ -1,0 +1,16 @@
+{
+  "method": "Bounded diagnostic decision from four fixed difficult controls using unchanged production v13 relation system/schema with thinking true and 3072 output tokens. No product/default/RAG setting changed. This is not a representative benchmark.",
+  "source_commit": "aa9335f68c6ff924c7f8bfb1b32930149f2871c7",
+  "valid_semantic_judgments": 1,
+  "valid_rubric_matches": 1,
+  "attempted_cases": 4,
+  "read_timeout_cases": [
+    "new-v11-omitted-fact",
+    "fresh-v14-opposite-with-shared-extra",
+    "fresh-v14-disjoint-subjects"
+  ],
+  "seconds": 1185.647,
+  "decision": "Do not adopt: one matching judgment took 268.483 seconds; three attempted semantic requests hit the existing 300-second read timeout without a final judgment. Preserve all attempts. Known production relation failures remain unresolved. Do not relabel timeouts as semantic matches or enable default thinking.",
+  "limits": "The QA native app was still polling model tags until lifecycle cleanup during the final case. Inference was sequential; no heavy test/build ran during it. These wall times are observations on the 8 GiB M2, not an isolated performance comparison. The final call was canceled at read timeout; runner log confirms cancellation.",
+  "model_unloaded": true
+}
