@@ -1,0 +1,9 @@
+{
+  "commit": "900eb6d1342af27302bab30c93fc3fb9feeeab44",
+  "files": {
+    "backend/app/models/source_documents.py": "f0f1d78cc970e765a58c146dcf917e49d09c3cb4f6f369b511d4ec6c9236f070",
+    "backend/app/services/source_documents/local.py": "52ac01133a0ca057837e87f0b496c0d644c67593e580a7ac0eae8535c7310833",
+    "backend/app/services/source_documents/pipeline.py": "1f5d004441e757c43353ac96d22643dea40fc662b0e6dd6855b0677f4dd366d0",
+    "backend/app/services/source_documents/discovery.py": "a8bdc2849f6ce6e73f7ddba68f147d8a2275dd4c08b7d528af69e142cc88cf01"
+  }
+}

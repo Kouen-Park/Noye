@@ -1,0 +1,107 @@
+npm notice run noye-frontend@0.1.0 desktop:backend
+npm notice run node scripts/build-backend.mjs
+119 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.8
+119 INFO: Python: 3.14.7
+134 INFO: Platform: macOS-27.0.1-arm64-arm-64bit-Mach-O
+134 INFO: Python environment: /Users/gavinpark/Projects/Noye/backend/.venv
+134 INFO: wrote /Users/gavinpark/Projects/Noye/backend/build/noye-backend-aarch64-apple-darwin.spec
+145 INFO: Removing temporary files and cleaning cache in /Users/gavinpark/Projects/Noye/backend/build/pyinstaller-cache/pyinstaller
+1195 INFO: Module search paths (PYTHONPATH):
+['/Users/gavinpark/Projects/Noye/backend',
+ '/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python314.zip',
+ '/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14',
+ '/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload',
+ '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages',
+ '/Users/gavinpark/Projects/Noye/backend']
+1362 INFO: Appending 'binaries' from .spec
+1362 INFO: Appending 'datas' from .spec
+1363 INFO: checking Analysis
+1364 INFO: Building Analysis because Analysis-00.toc is non existent
+1364 INFO: Looking for Python shared library...
+1367 INFO: Using Python shared library: /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/Python
+1367 INFO: Running Analysis Analysis-00.toc
+1367 INFO: Target bytecode optimization level: 0
+1367 INFO: Initializing module dependency graph...
+1368 INFO: Initializing module graph hook caches...
+1383 INFO: Analyzing modules for base_library.zip ...
+1770 INFO: Processing standard module hook 'hook-heapq.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+2249 INFO: Processing standard module hook 'hook-encodings.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+2472 INFO: Processing standard module hook 'hook-pickle.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+2627 INFO: Processing standard module hook 'hook-math.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+2713 INFO: Processing standard module hook 'hook-difflib.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+4374 INFO: Caching module dependency graph...
+4390 INFO: Analyzing /Users/gavinpark/Projects/Noye/backend/desktop.py
+4506 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+4572 INFO: Processing standard module hook 'hook-xml.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+4765 INFO: Processing standard module hook 'hook-sysconfig.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+4776 INFO: Processing standard module hook 'hook-_osx_support.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+4779 INFO: Processing standard module hook 'hook-_ctypes.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+5111 INFO: Processing standard module hook 'hook-platform.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+5141 INFO: Processing standard module hook 'hook-pydantic.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+5305 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+5305 INFO: SetuptoolsInfo: initializing cached setuptools info...
+5919 INFO: Processing standard module hook 'hook-zoneinfo.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+6771 INFO: Processing pre-safe-import-module hook 'hook-tomli.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+6771 INFO: Setuptools: 'tomli' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.tomli'!
+6775 INFO: Processing standard module hook 'hook-setuptools.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+6784 INFO: Processing pre-safe-import-module hook 'hook-distutils.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+6806 INFO: Processing pre-safe-import-module hook 'hook-jaraco.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+6806 INFO: Setuptools: 'jaraco' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.jaraco'!
+6813 INFO: Processing pre-safe-import-module hook 'hook-more_itertools.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+6814 INFO: Setuptools: 'more_itertools' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.more_itertools'!
+6917 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+7142 INFO: Processing standard module hook 'hook-setuptools._vendor.jaraco.text.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+7142 INFO: Processing pre-safe-import-module hook 'hook-importlib_resources.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+7148 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+7148 INFO: Setuptools: 'backports' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.backports'!
+7894 INFO: Processing pre-safe-import-module hook 'hook-wheel.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/pre_safe_import_module'
+7894 INFO: Setuptools: 'wheel' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.wheel'!
+8242 INFO: Processing standard module hook 'hook-anyio.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+9174 INFO: Processing standard module hook 'hook-sqlite3.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+9476 INFO: Processing standard module hook 'hook-certifi.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+10344 INFO: Processing standard module hook 'hook-webbrowser.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+10368 INFO: Processing standard module hook 'hook-pygments.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+11031 INFO: Processing standard module hook 'hook-numpy.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks'
+13248 INFO: Processing standard module hook 'hook-grpc.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+14453 INFO: Processing standard module hook 'hook-urllib3.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+16963 INFO: Processing standard module hook 'hook-uvicorn.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+17311 INFO: Processing standard module hook 'hook-websockets.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+17996 INFO: Analyzing hidden import 'pymupdf.__main__'
+18023 INFO: Analyzing hidden import 'pymupdf.libmupdfcpp'
+18024 INFO: Processing module hooks (post-graph stage)...
+18214 INFO: Processing standard module hook 'hook-uvloop.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+20713 INFO: Performing binary vs. data reclassification (125 entries)
+20795 INFO: Looking for ctypes DLLs
+20853 INFO: Analyzing run-time hooks ...
+20859 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/rthooks'
+20861 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/rthooks'
+20863 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/rthooks'
+20865 INFO: Including run-time hook 'pyi_rth_setuptools.py' from '/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/hooks/rthooks'
+20882 INFO: Creating base_library.zip...
+20897 INFO: Looking for dynamic libraries
+21098 INFO: Warnings written to /Users/gavinpark/Projects/Noye/backend/build/desktop/noye-backend-aarch64-apple-darwin/warn-noye-backend-aarch64-apple-darwin.txt
+21142 INFO: Graph cross-reference written to /Users/gavinpark/Projects/Noye/backend/build/desktop/noye-backend-aarch64-apple-darwin/xref-noye-backend-aarch64-apple-darwin.html
+21223 INFO: checking PYZ
+21223 INFO: Building PYZ because PYZ-00.toc is non existent
+21223 INFO: Building PYZ (ZlibArchive) /Users/gavinpark/Projects/Noye/backend/build/desktop/noye-backend-aarch64-apple-darwin/PYZ-00.pyz
+22267 INFO: Building PYZ (ZlibArchive) /Users/gavinpark/Projects/Noye/backend/build/desktop/noye-backend-aarch64-apple-darwin/PYZ-00.pyz completed successfully.
+22282 INFO: EXE target arch: arm64
+22282 INFO: Code signing identity: None
+22285 INFO: checking PKG
+22285 INFO: Building PKG because PKG-00.toc is non existent
+22285 INFO: Building PKG (CArchive) noye-backend-aarch64-apple-darwin.pkg
+33012 INFO: Building PKG (CArchive) noye-backend-aarch64-apple-darwin.pkg completed successfully.
+33015 INFO: Bootloader /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/PyInstaller/bootloader/Darwin-64bit/run
+33015 INFO: checking EXE
+33016 INFO: Building EXE because EXE-00.toc is non existent
+33016 INFO: Building EXE from EXE-00.toc
+33016 INFO: Copying bootloader EXE to /Users/gavinpark/Projects/Noye/frontend/src-tauri/binaries/noye-backend-aarch64-apple-darwin
+33017 INFO: Converting EXE to target arch (arm64)
+33035 INFO: Removing signature(s) from EXE
+33047 INFO: Modifying Mach-O image UUID(s) in EXE
+33078 INFO: Appending PKG archive to EXE
+33105 INFO: Fixing EXE headers for code signing
+33108 INFO: Re-signing the EXE
+33186 INFO: Building EXE from EXE-00.toc completed successfully.
+33189 INFO: Build complete! The results are available in: /Users/gavinpark/Projects/Noye/frontend/src-tauri/binaries
+Built noye-backend-aarch64-apple-darwin

@@ -1,0 +1,58 @@
+{
+  "method": "Read-only extraction and rendering of two actual native QA exports.",
+  "short_first_panel": "Save enabled on initial observation; changed directory to a new QA-only destination to preserve existing PDF.",
+  "complex_second_panel": "Initial AX disabled Save; next screenshot and AX enabled it without any input. Save succeeded without modifying filename or directory. Transient delay, not a confirmed persistent regression.",
+  "reports": {
+    "short": {
+      "path": "/private/tmp/noye-phase8-20261016/exports/literal-final/Phase8 generated AT-201.pdf",
+      "bytes": 20639,
+      "sha256": "5f748d1573d32fb760a72a8dd00d352982bb829664012302b467c7098ec89aff",
+      "pages": 1,
+      "text": "AT-201 Experiment Results\nMeasured Runtime: 12 milliseconds\nMemory Usage: 37 megabytes\nPhase8 generated document edit · 생성 문서 편집 검증.\n<!-- Phase8 Markdown fidelity -->\nLiteral tokens: --, \"quoted\", -> , 37 litres.\nPhase8 native export · 저장 창에서 내보내기.\n",
+      "checks": {
+        "markdown_unchanged": true,
+        "no_toolbar": true,
+        "no_ligature_fi": true,
+        "one_page": true,
+        "literal_comment": true,
+        "literal_arrow": true,
+        "measures": true,
+        "korean": true
+      },
+      "renders": [
+        "/private/tmp/noye-phase8-20261016/native-literal-short-page-1.png"
+      ],
+      "visual_accepted": null,
+      "body_sha256": "72bd99d8ed1f742af07fd3cec14bb468ccccb39ffca889719cf6501d771d2008"
+    },
+    "complex": {
+      "path": "/private/tmp/noye-phase8-20261016/exports/literal-final/Phase 8 complex PDF QA.pdf",
+      "bytes": 57833,
+      "sha256": "2479f5757813928169e9a8a14785c1c73c654a08ef23ec69b90cb58325c7f7f3",
+      "pages": 7,
+      "text": "Phase 8 complex PDF QA\nSynthetic layout check. 한국어와 English, table rows, wrapped code and local image.\nTable / 긴 표\nID\nEnglish\n한국어\nMeasure\nCondition\nExact token\nT001\nRow 001\n표 001 보존\n1 ms\nSunday exception\nTOKEN-001-END\nT002\nRow 002\n표 002 보존\n2 ms\nSunday exception\nTOKEN-002-END\nT003\nRow 003\n표 003 보존\n3 ms\nSunday exception\nTOKEN-003-END\nT004\nRow 004\n표 004 보존\n4 ms\nSunday exception\nTOKEN-004-END\nT005\nRow 005\n표 005 보존\n5 ms\nSunday exception\nTOKEN-005-END\nT006\nRow 006\n표 006 보존\n6 ms\nSunday exception\nTOKEN-006-END\nT007\nRow 007\n표 007 보존\n7 ms\nSunday exception\nTOKEN-007-END\nT008\nRow 008\n표 008 보존\n8 ms\nSunday exception\nTOKEN-008-END\nT009\nRow 009\n표 009 보존\n9 ms\nSunday exception\nTOKEN-009-END\nT010\nRow 010\n표 010 보존\n10 ms\nSunday exception\nTOKEN-010-END\nT011\nRow 011\n표 011 보존\n11 ms\nSunday exception\nTOKEN-011-END\nT012\nRow 012\n표 012 보존\n12 ms\nSunday exception\nTOKEN-012-END\nT013\nRow 013\n표 013 보존\n13 ms\nSunday exception\nTOKEN-013-END\nT014\nRow 014\n표 014 보존\n14 ms\nSunday exception\nTOKEN-014-END\nT015\nRow 015\n표 015 보존\n15 ms\nSunday exception\nTOKEN-015-END\nT016\nRow 016\n표 016 보존\n16 ms\nSunday exception\nTOKEN-016-END\nT017\nRow 017\n표 017 보존\n17 ms\nSunday exception\nTOKEN-017-END\nT018\nRow 018\n표 018 보존\n18 ms\nSunday exception\nTOKEN-018-END\nT019\nRow 019\n표 019 보존\n19 ms\nSunday exception\nTOKEN-019-END\nT020\nRow 020\n표 020 보존\n20 ms\nSunday exception\nTOKEN-020-END\nT021\nRow 021\n표 021 보존\n21 ms\nSunday exception\nTOKEN-021-END\nT022\nRow 022\n표 022 보존\n22 ms\nSunday exception\nTOKEN-022-END\nT023\nRow 023\n표 023 보존\n23 ms\nSunday exception\nTOKEN-023-END\nT024\nRow 024\n표 024 보존\n24 ms\nSunday exception\nTOKEN-024-END\n\nT025\nRow 025\n표 025 보존\n25 ms\nSunday exception\nTOKEN-025-END\nT026\nRow 026\n표 026 보존\n26 ms\nSunday exception\nTOKEN-026-END\nT027\nRow 027\n표 027 보존\n27 ms\nSunday exception\nTOKEN-027-END\nT028\nRow 028\n표 028 보존\n28 ms\nSunday exception\nTOKEN-028-END\nT029\nRow 029\n표 029 보존\n29 ms\nSunday exception\nTOKEN-029-END\nT030\nRow 030\n표 030 보존\n30 ms\nSunday exception\nTOKEN-030-END\nT031\nRow 031\n표 031 보존\n31 ms\nSunday exception\nTOKEN-031-END\nT032\nRow 032\n표 032 보존\n32 ms\nSunday exception\nTOKEN-032-END\nT033\nRow 033\n표 033 보존\n33 ms\nSunday exception\nTOKEN-033-END\nT034\nRow 034\n표 034 보존\n34 ms\nSunday exception\nTOKEN-034-END\nT035\nRow 035\n표 035 보존\n35 ms\nSunday exception\nTOKEN-035-END\nT036\nRow 036\n표 036 보존\n36 ms\nSunday exception\nTOKEN-036-END\nT037\nRow 037\n표 037 보존\n37 ms\nSunday exception\nTOKEN-037-END\nT038\nRow 038\n표 038 보존\n38 ms\nSunday exception\nTOKEN-038-END\nT039\nRow 039\n표 039 보존\n39 ms\nSunday exception\nTOKEN-039-END\nT040\nRow 040\n표 040 보존\n40 ms\nSunday exception\nTOKEN-040-END\nCode / 긴 코드\nrow_001 = \"코드 001 / exact-001\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C001\nrow_002 = \"코드 002 / exact-002\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C002\nrow_003 = \"코드 003 / exact-003\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C003\nrow_004 = \"코드 004 / exact-004\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C004\nrow_005 = \"코드 005 / exact-005\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C005\nrow_006 = \"코드 006 / exact-006\"  # \n\nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C006\nrow_007 = \"코드 007 / exact-007\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C007\nrow_008 = \"코드 008 / exact-008\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C008\nrow_009 = \"코드 009 / exact-009\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C009\nrow_010 = \"코드 010 / exact-010\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C010\nrow_011 = \"코드 011 / exact-011\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C011\nrow_012 = \"코드 012 / exact-012\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C012\nrow_013 = \"코드 013 / exact-013\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C013\nrow_014 = \"코드 014 / exact-014\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C014\nrow_015 = \"코드 015 / exact-015\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C015\nrow_016 = \"코드 016 / exact-016\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C016\nrow_017 = \"코드 017 / exact-017\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C017\nrow_018 = \"코드 018 / exact-018\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C018\nrow_019 = \"코드 019 / exact-019\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C019\nrow_020 = \"코드 020 / exact-020\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n\n-C020\nrow_021 = \"코드 021 / exact-021\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C021\nrow_022 = \"코드 022 / exact-022\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C022\nrow_023 = \"코드 023 / exact-023\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C023\nrow_024 = \"코드 024 / exact-024\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C024\nrow_025 = \"코드 025 / exact-025\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C025\nrow_026 = \"코드 026 / exact-026\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C026\nrow_027 = \"코드 027 / exact-027\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C027\nrow_028 = \"코드 028 / exact-028\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C028\nrow_029 = \"코드 029 / exact-029\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C029\nrow_030 = \"코드 030 / exact-030\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C030\nrow_031 = \"코드 031 / exact-031\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C031\nrow_032 = \"코드 032 / exact-032\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C032\nrow_033 = \"코드 033 / exact-033\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C033\nrow_034 = \"코드 034 / exact-034\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C034\n\nrow_035 = \"코드 035 / exact-035\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C035\nrow_036 = \"코드 036 / exact-036\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C036\nrow_037 = \"코드 037 / exact-037\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C037\nrow_038 = \"코드 038 / exact-038\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C038\nrow_039 = \"코드 039 / exact-039\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C039\nrow_040 = \"코드 040 / exact-040\"  # \nlong_identifier_long_identifier_long_identifier_long_identifier_long_identifier_END\n-C040\n\nImage / 로컬 이미지\nImage caption: bundled asset, no external download. 로컬 파일 아이콘.\n\nLists and quotation\nL001: 한국어·English exact list value 1.\nL002: 한국어·English exact list value 2.\nL003: 한국어·English exact list value 3.\nL004: 한국어·English exact list value 4.\nL005: 한국어·English exact list value 5.\nL006: 한국어·English exact list value 6.\nL007: 한국어·English exact list value 7.\nL008: 한국어·English exact list value 8.\nL009: 한국어·English exact list value 9.\nL010: 한국어·English exact list value 10.\nL011: 한국어·English exact list value 11.\nL012: 한국어·English exact list value 12.\nL013: 한국어·English exact list value 13.\nL014: 한국어·English exact list value 14.\nL015: 한국어·English exact list value 15.\nL016: 한국어·English exact list value 16.\nQuote: literal punctuation — “keep”; 한글 인용문. Second line: 37 litres is capacity,\nnot actual stored volume.\nFinal sentinel\nFINAL-PDF-ALL-CONTENT-20261015 / 끝까지 보존.\n",
+      "checks": {
+        "markdown_unchanged": true,
+        "no_toolbar": true,
+        "no_ligature_fi": true,
+        "all_table_rows": true,
+        "all_code_lines": false,
+        "all_list_items": true,
+        "final_sentinel": true,
+        "korean": true,
+        "image_heading_and_caption_same_page": true
+      },
+      "renders": [
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-1.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-2.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-3.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-4.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-5.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-6.png",
+        "/private/tmp/noye-phase8-20261016/native-literal-complex-page-7.png"
+      ],
+      "visual_accepted": null,
+      "body_sha256": "a558d9a83942a6d02b5713846ff10bd8c985e111c32a619802c8248e8295bc5c"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "original": "/Users/gavinpark/Library/Application Support/com.noye.desktopphase8qa20261012",
+  "destination": "/Users/gavinpark/Library/Application Support/noye-restored-3265c255-c2f2-43d7-8714-0ba4eaecccd0",
+  "receipt": {
+    "format": "noye-restored-workspace",
+    "version": 1,
+    "id": "441350bb-7833-4be0-836f-6c228d1faebe",
+    "restored_at": "2026-10-12T22:28:19.901903+00:00",
+    "missing_sources": []
+  },
+  "integrity": [
+    [
+      "ok"
+    ]
+  ],
+  "files": [
+    [
+      "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+      "AT-201.pdf",
+      "/Users/gavinpark/Library/Application Support/noye-restored-3265c255-c2f2-43d7-8714-0ba4eaecccd0/sources/151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf",
+      "FAILED",
+      "Restored original. Rebuild the index before searching.",
+      0
+    ]
+  ],
+  "chunks": 0,
+  "external_roots": 0,
+  "document_columns": [
+    "id",
+    "title",
+    "content",
+    "source_conversation_id",
+    "source_message_id",
+    "source_instruction",
+    "created_at",
+    "updated_at"
+  ],
+  "restored_document_count": 1,
+  "documents_match_original": true,
+  "original_file_statuses": [
+    [
+      "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+      "READY",
+      1
+    ]
+  ],
+  "source_sha256": {
+    "151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf": "66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af"
+  },
+  "source_bytes_match_original": true,
+  "environment_excluded": true,
+  "root_entries": [
+    "app.db",
+    "app.db-shm",
+    "app.db-wal",
+    "documents",
+    "noye-workspace.json",
+    "sources",
+    "wiki"
+  ],
+  "backup_entries": [
+    "app.db",
+    "sources/151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf",
+    "manifest.json"
+  ]
+}

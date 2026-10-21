@@ -1,0 +1,71 @@
+{
+  "method": "Six fresh fixed controls before any v14 calls. A shared fact may survive additional independent detail; a shared side detail must not hide an actual same-condition contradiction. The exact same rubric will be used for baseline and candidate.",
+  "cases": [
+    {
+      "id": "fresh-v14-extra-origin-detail",
+      "origin": "Heather has a green status lamp. Its archive rotates every eight days.",
+      "target": "Heather has a green status lamp.",
+      "origin_summary": "Heather archives rotate every eight days.",
+      "target_summary": "Heather has a green status lamp.",
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "required": true
+    },
+    {
+      "id": "fresh-v14-extra-target-detail",
+      "origin": "Myrtle blocks exports during calibration.",
+      "target": "Myrtle blocks exports during calibration. Its log format is JSON.",
+      "origin_summary": "Myrtle blocks calibration exports.",
+      "target_summary": "Myrtle uses JSON logs.",
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "required": true
+    },
+    {
+      "id": "fresh-v14-korean-overlap",
+      "origin": "개망초는 점검 중 읽기를 허용한다. 백업은 사흘마다 실행한다.",
+      "target": "개망초는 점검 중 읽기를 허용한다.",
+      "origin_summary": "개망초의 백업은 사흘마다 실행된다.",
+      "target_summary": "개망초는 점검 중 읽기를 허용한다.",
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "required": true
+    },
+    {
+      "id": "fresh-v14-opposite-with-shared-extra",
+      "origin": "During servicing, Camellia permits imports. Its lamp is blue.",
+      "target": "During servicing, Camellia blocks imports. Its lamp is blue.",
+      "origin_summary": "Camellia permits servicing imports and has a blue lamp.",
+      "target_summary": "Camellia blocks servicing imports and has a blue lamp.",
+      "allowed": [
+        "contradiction"
+      ],
+      "required": true
+    },
+    {
+      "id": "fresh-v14-disjoint-subjects",
+      "origin": "Astrantia records coolant volume in litres.",
+      "target": "Anemone stores exported reports as HTML.",
+      "origin_summary": "Astrantia records coolant volume.",
+      "target_summary": "Anemone exports HTML reports.",
+      "allowed": []
+    },
+    {
+      "id": "fresh-v14-different-conditions",
+      "origin": "Cyclamen permits writes during normal service.",
+      "target": "Cyclamen blocks writes during inspection.",
+      "origin_summary": "Cyclamen permits writes during normal service.",
+      "target_summary": "Cyclamen blocks writes during inspection.",
+      "allowed": [
+        "shared_subject",
+        "alternative"
+      ]
+    }
+  ]
+}

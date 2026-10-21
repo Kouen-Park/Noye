@@ -1,0 +1,4 @@
+Ingestion failed file=d577cee3-bf21-4095-a198-29d78b400638 reason=The file contains no text to index.
+{"ingestion": "empty.txt", "state": "FAILED", "seconds": 0.117}
+{"scenario": "partial", "job_id": "2236c614-9e68-48a9-bfe1-95d23fd4d87d", "request_id": "1565204f-35a7-43bc-bc5e-8e37b188a99f", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "A generated claim makes an unverified missing-evidence assertion. Missing material belongs in the coverage report. No document was saved.", "seconds": 257.397, "report": "/private/tmp/noye-phase8-20261016/v16-documents/partial-1565204f-35a7-43bc-bc5e-8e37b188a99f.json"}

@@ -1,0 +1,8 @@
+Ingestion failed file=2ee1fa6d-d783-4566-9ec3-9a4195abf8e2 reason=No extractable text found.
+Extracted failed after 0.00s file=e5abd42a-fa3e-4c38-902a-f77fceed193c error=ExtractionError: Could not open PDF: e5abd42a-fa3e-4c38-902a-f77fceed193c__41b3c4f456b32b5a9e313163e784c3c9faabaddc55a188697495da0954395d64.pdf
+Ingestion failed file=e5abd42a-fa3e-4c38-902a-f77fceed193c reason=Could not open PDF: e5abd42a-fa3e-4c38-902a-f77fceed193c__41b3c4f456b32b5a9e313163e784c3c9faabaddc55a188697495da0954395d64.pdf
+Traceback (most recent call last):
+  File "/private/tmp/noye-phase8-20261014/pdf-input-controls.py", line 96, in <module>
+    assert report['source_reads']['valid.pdf']['final_sentinel_retained']
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'final_sentinel_retained'

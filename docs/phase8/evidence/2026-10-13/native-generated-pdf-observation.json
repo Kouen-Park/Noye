@@ -1,0 +1,16 @@
+{
+  "document_id": "203a96a8-83f9-4ae3-8b69-0026373a3a7e",
+  "route": "Noye Export PDF -> macOS print PDF menu -> Open in Preview",
+  "observed_pdf_url": "file:///Users/gavinpark/Library/Group Containers/group.com.apple.printtool/TemporaryItems/printing.51311.1/Noye.pdf",
+  "native_preview_pages": 1,
+  "native_accessibility_text": "AT-201 Experiment Results Measured Runtime: 12 milliseconds Memory Usage: 37 megabytes Phase8 generated document edit · 생성 문서 편집 검증.",
+  "visual_screenshot_observation": "Actual Preview PDF page displayed both measured values and Korean marker with readable glyphs, no application navigation in the page. Screenshot displayed in this conversation, no local image copy claimed.",
+  "direct_save_as_pdf": "Save disabled, cancelled; repeated on short generated document after prior three-page manual case",
+  "preview_save_as": "Save disabled after explicit QA outputs directory and actual key input; cancelled",
+  "raw_pdf_read": "OS PermissionError (operation not permitted) for printtool Group Container, even with sandbox escalation; no ACL/permission bypass",
+  "not_validated": [
+    "PDF byte hash and retained standalone file",
+    "complete long-document glyph/pagination contents",
+    "direct native Save as PDF completion"
+  ]
+}

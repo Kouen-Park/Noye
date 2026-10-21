@@ -14,10 +14,17 @@ if (host !== expected || (process.env.TAURI_ENV_TARGET_TRIPLE && process.env.TAU
   throw new Error("Build the Python sidecar and Tauri app on the same native architecture; cross-compilation is not supported.");
 }
 const name = `noye-backend-${host}`;
+// Tauri's later signature cannot reach libraries compressed inside onefile.
+// A real distribution identity must sign those libraries during PyInstaller.
+const signingIdentity = process.env.APPLE_SIGNING_IDENTITY?.trim();
+const signingArgs = signingIdentity && signingIdentity !== "-"
+  ? ["--codesign-identity", signingIdentity]
+  : [];
 execFileSync(python, ["-m", "PyInstaller", "--onefile", "--noconfirm", "--clean",
   "--name", name, "--distpath", resolve(frontend, "src-tauri/binaries"),
   "--workpath", resolve(backend, "build/desktop"), "--specpath", resolve(backend, "build"),
   "--paths", backend, "--collect-all", "pymupdf",
+  ...signingArgs,
   "--exclude-module", "pytest", "--exclude-module", "app.tests", "--exclude-module", "IPython",
   resolve(backend, "desktop.py"),
 ], { cwd: backend, stdio: "inherit", env: {

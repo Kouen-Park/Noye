@@ -1,0 +1,301 @@
+{
+  "method": "Primary-agent comparison of actual final relation labels and explanations against both original passages and the fixed, pre-call rubric. No new inference or independent external review. A valid empty list still fails when the original pair requires a positive link.",
+  "baseline": {
+    "valid": 17,
+    "matches": 11,
+    "cases": 17,
+    "seconds": 274.193
+  },
+  "adopted": {
+    "valid": 17,
+    "matches": 16,
+    "cases": 17,
+    "fresh_matches": 4,
+    "fresh_cases": 5,
+    "historical_matches": 12,
+    "historical_cases": 12,
+    "completed_case_seconds_sum": 330.974,
+    "resume_only_seconds": 27.776
+  },
+  "known_limit": "Sedum originals share the amber indicator fact, while one contains independent hourly backups. Empty output misses the required shared/support link. Do not count as accepted. This optional relationship recall failure remains.",
+  "changes": "All four baseline false contradictions on exception cases are replaced with compatible links. Four genuine same-condition opposites retain contradiction. Both translated-rule controls link. Current-versus-limit and unrelated facts do not gain false contradiction.",
+  "files": {
+    "relations-current.json": "c71e8cb976ed32e785f5b6710f5b0a041f79d5555b013a70a9240c90f5c7d439",
+    "relations-candidate.json": "98e5a1b95dd8e887c981db5f920cb8e5145e3efa6f777b3dafe7e25004407d62",
+    "relations-candidate-resumed.json": "872b1bb9334b5ef313bfe05769653c7cb517a58f970b85dbad87302e8fd08b20",
+    "relation-fresh-controls.json": "90332f733653d8e826cd786b6bae701cd7636709aabb15201c4c9cff2e4044fb",
+    "relation-wire-equivalence.json": "a8acd32cf095aa7b922baff999796286b8b9c50bf50048261b3d9af975e6ffef"
+  },
+  "rows": [
+    {
+      "id": "new-v11-same-condition-opposite",
+      "origin": "During maintenance, Vervain permits exports.",
+      "target": "During maintenance, Vervain forbids exports.",
+      "required_positive": true,
+      "allowed": [
+        "contradiction"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "contradiction"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "new-v11-compatible-exception",
+      "origin": "Nasturtium accepts imports except during recovery.",
+      "target": "Nasturtium refuses imports during recovery.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "supporting_evidence"
+      ],
+      "baseline_matches": false,
+      "adopted_matches": true
+    },
+    {
+      "id": "new-v11-limit-versus-current",
+      "origin": "Azalea currently stores 4 items.",
+      "target": "Azalea has a storage limit of 9 items.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject"
+      ],
+      "baseline": [],
+      "adopted": [
+        "shared_subject"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "new-v11-omitted-fact",
+      "origin": "Sedum has an amber status indicator. Its backups run hourly.",
+      "target": "Sedum has an amber status indicator.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": false,
+      "adopted_matches": false
+    },
+    {
+      "id": "new-v11-translated-same-rule",
+      "origin": "시계초는 점검 중 내보내기를 차단합니다.",
+      "target": "Passionflower blocks exports during inspection. 시계초 means Passionflower.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [],
+      "adopted": [
+        "shared_subject"
+      ],
+      "baseline_matches": false,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-v6-same-condition-negation",
+      "origin": "During reindexing, Poppy does not accept imports.",
+      "target": "During reindexing, Poppy accepts imports.",
+      "required_positive": true,
+      "allowed": [
+        "contradiction"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "contradiction"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-v6-compatible-exception",
+      "origin": "Linden runs backups every day. During upgrades, Linden stops all backups.",
+      "target": "Linden blocks all backups while upgrades are active.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "shared_subject"
+      ],
+      "baseline_matches": false,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-v6-distinct-properties",
+      "origin": "Jasmine had an observed temperature of 14 degrees Celsius.",
+      "target": "Jasmine has a rated temperature limit of 48 degrees Celsius.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-condition-in-original",
+      "origin": "Willow permits exports on Mondays. During an inspection, exports are prohibited instead.",
+      "target": "During an inspection, Willow prohibits Monday exports.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "supporting_evidence"
+      ],
+      "baseline_matches": false,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-same-condition-opposite",
+      "origin": "At night, Fir permits launches.",
+      "target": "At night, Fir prohibits launches.",
+      "required_positive": true,
+      "allowed": [
+        "contradiction"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "contradiction"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "fresh-separate-subjects",
+      "origin": "Teal permits imports on Sundays.",
+      "target": "Wren blocks imports on Sundays.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject",
+        "alternative"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "different-subject-rules",
+      "origin": "Cypress permits writes on Saturdays.",
+      "target": "Hazel stops writes on Saturdays.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject",
+        "alternative"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "absence-is-not-denial",
+      "origin": "This note describes Indigo backup schedules. It makes no statement about Indigo's memory limit.",
+      "target": "Indigo has a memory limit of 64 megabytes.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "same-subject-opposite-condition",
+      "origin": "During maintenance, Juniper permits imports.",
+      "target": "During maintenance, Juniper prohibits imports.",
+      "required_positive": true,
+      "allowed": [
+        "contradiction"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "contradiction"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "exception-in-original",
+      "origin": "Maple permits exports on Fridays. This rule does not apply during inspections, when exports are prohibited.",
+      "target": "During inspections, Maple prohibits exports on Fridays.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [
+        "contradiction"
+      ],
+      "adopted": [
+        "supporting_evidence"
+      ],
+      "baseline_matches": false,
+      "adopted_matches": true
+    },
+    {
+      "id": "different-property",
+      "origin": "Saffron has a capacity of 41 litres.",
+      "target": "Saffron currently stores 17 litres.",
+      "required_positive": false,
+      "allowed": [
+        "shared_subject"
+      ],
+      "baseline": [],
+      "adopted": [],
+      "baseline_matches": true,
+      "adopted_matches": true
+    },
+    {
+      "id": "translated-same-rule",
+      "origin": "Orchid는 점검 중에는 가져오기를 금지한다.",
+      "target": "Orchid prohibits imports during inspections.",
+      "required_positive": true,
+      "allowed": [
+        "shared_subject",
+        "supporting_evidence"
+      ],
+      "baseline": [
+        "shared_subject"
+      ],
+      "adopted": [
+        "supporting_evidence"
+      ],
+      "baseline_matches": true,
+      "adopted_matches": true
+    }
+  ]
+}

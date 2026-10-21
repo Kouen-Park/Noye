@@ -1,0 +1,120 @@
+{
+  "method": "Fixed disjoint and shared original controls for multi-claim audits, authored before global original numbering and collective-support prompt changes. Gold labels and batch IDs are evaluator-only.",
+  "batches": [
+    [
+      "separate-positive",
+      [
+        [
+          true,
+          "Gull permits exports on Mondays.",
+          [
+            "Gull permits exports on Mondays."
+          ]
+        ],
+        [
+          true,
+          "Kittiwake permits exports on Thursdays.",
+          [
+            "Kittiwake permits exports on Thursdays."
+          ]
+        ]
+      ]
+    ],
+    [
+      "separate-negative",
+      [
+        [
+          false,
+          "Gull permits exports on Thursdays.",
+          [
+            "Gull permits exports on Mondays."
+          ]
+        ],
+        [
+          false,
+          "Kittiwake permits exports on Mondays.",
+          [
+            "Kittiwake permits exports on Thursdays."
+          ]
+        ]
+      ]
+    ],
+    [
+      "translated-positive",
+      [
+        [
+          true,
+          "Junco permits writes on Fridays unless maintenance is active.",
+          [
+            "Junco는 유지보수 중이 아닐 때 금요일에 쓰기를 허용합니다."
+          ]
+        ],
+        [
+          true,
+          "Curlew keeps backups once a day.",
+          [
+            "Curlew는 하루에 한 번 백업합니다."
+          ]
+        ]
+      ]
+    ],
+    [
+      "separate-relationship",
+      [
+        [
+          false,
+          "Skua encrypts reports using a map.",
+          [
+            "Skua stores encrypted reports. Skua uses a map."
+          ]
+        ],
+        [
+          true,
+          "Siskin encrypts reports using a map.",
+          [
+            "Siskin encrypts reports using a map."
+          ]
+        ]
+      ]
+    ],
+    [
+      "separate-properties",
+      [
+        [
+          false,
+          "Merlin had an observed temperature of 18 degrees Celsius.",
+          [
+            "Merlin has a rated temperature limit of 18 degrees Celsius."
+          ]
+        ],
+        [
+          true,
+          "Puffin had an observed temperature of 18 degrees Celsius.",
+          [
+            "Puffin had an observed temperature of 18 degrees Celsius."
+          ]
+        ]
+      ]
+    ],
+    [
+      "shared-duplicate",
+      [
+        [
+          true,
+          "Gannet pauses writes on Saturdays.",
+          [
+            "Gannet pauses writes on Saturdays. Backups run daily.",
+            "Gannet pauses writes on Saturdays. Backups run daily."
+          ]
+        ],
+        [
+          true,
+          "Gannet runs backups daily.",
+          [
+            "Gannet pauses writes on Saturdays. Backups run daily."
+          ]
+        ]
+      ]
+    ]
+  ]
+}

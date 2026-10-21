@@ -1,0 +1,6 @@
+{
+  "report_sha256": "3a434601efadd608fa1b1021ae49a96dc712c73e4d4076e84f6f8cf7c5bc5a42",
+  "measured_token_to_kill_seconds": 1.7411202080111252,
+  "nominal_sleep_seconds": 0.5,
+  "clarification": "The raw report note describes the nominal sleep, not actual elapsed time. Parent scheduling/polling made the measured token-to-kill interval longer. Only this QA transport used stream=True to observe output tokens; production remains stream=False."
+}

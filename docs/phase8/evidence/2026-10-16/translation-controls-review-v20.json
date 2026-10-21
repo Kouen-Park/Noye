@@ -1,0 +1,222 @@
+{
+  "method": "Review retained synthetic outputs; no new model call, retry or document publication.\n\nPrimary-agent semantic judgments compare each output with its fixed original.\nWire comparisons reconstruct the current schema/system/prompt, not model behavior.\nGuard replay reuses exact recorded prose; it is not another live extraction run.\n",
+  "report_sha256": "f44c2aaad40c98640acf857ead08b4d3d934752dce81c0e94a0be7f0248fe623",
+  "prompt_version_current": "source-document-v20",
+  "presentation_code_sha256": "31ce99be5407ba5b81e46614ebba90ac3f9712b1b0ab1b976e8093d86f1934b9",
+  "original_presentation_code_sha256_at_e738de2": "b955f3f934ce191f66bb3b5bed902d3793da17576ba27851ab5d3bbc12aaded6",
+  "semantic_accepted": 6,
+  "count": 8,
+  "full_document_acceptance": false,
+  "rows": [
+    {
+      "id": "magpie",
+      "semantic_accepted": true,
+      "manual_note": "Correct capacity 29 and current amount 8; old guard carried capacity across the first quantity.",
+      "original_guards_passed": false,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "heron",
+      "semantic_accepted": true,
+      "manual_note": "Rated limit 80 and observed temperature 23 remain distinct; the name is transliterated.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "cormorant",
+      "semantic_accepted": true,
+      "manual_note": "Tuesday-only permission and inactive-maintenance condition retained.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "robin",
+      "semantic_accepted": false,
+      "manual_note": "Falcon is corrupted to 페이커ン; the approval states are retained but entity naming fails.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "swift",
+      "semantic_accepted": true,
+      "manual_note": "Queue use and measured first-job runtime 17 ms remain independent statements.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "wren",
+      "semantic_accepted": true,
+      "manual_note": "2 failed and 11 successful messages retained; Korean wording is awkward.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "finch",
+      "semantic_accepted": false,
+      "manual_note": "Independent encryption and B-tree-index facts were linked by an unsupported using relationship.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    },
+    {
+      "id": "tern",
+      "semantic_accepted": true,
+      "manual_note": "Three daily backups and Friday write pause retained.",
+      "original_guards_passed": true,
+      "current_replayed_guards_passed": true,
+      "current_guard_error": null
+    }
+  ],
+  "wire_comparisons": [
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "process_original_sections",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    },
+    {
+      "task": "verify_support",
+      "system_equal": true,
+      "prompt_equal": true,
+      "format_equal": true
+    }
+  ]
+}

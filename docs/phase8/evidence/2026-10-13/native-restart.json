@@ -1,0 +1,11 @@
+{
+  "previous_port": 62699,
+  "current_port": 50369,
+  "files_unchanged": true,
+  "source_bytes_unchanged": true,
+  "document_body_unchanged": true,
+  "document_body_sha256": "7c13e1dbe9eb9f76ecacf2152db398f5e9085f8c648683625b2e0a390a280fe1",
+  "new_app_health": {
+    "status": "ok"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "error": "AssertionError",
+  "reason": "The initial archive check assumed literal 15 must occur in co_consts. Python 3.14 uses LOAD_SMALL_INT for this binding. The full executable-signature comparison had already passed. The corrected check verifies the instruction preceding STORE_NAME PARENT_SHUTDOWN_SECONDS is exactly 15, retaining the full signature comparison.",
+  "product_code_changed": false
+}

@@ -1,0 +1,73 @@
+{
+  "observation": "After normal Cmd-Q and adding Delta while closed, native Folders retained Processing paused; Delta physically visible as Waiting for discovery / unsupported format",
+  "root": {
+    "id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+    "name": "knowledge",
+    "path": "/private/tmp/noye-phase8-20261012/native-folder/knowledge",
+    "kind": "connected",
+    "device": 16777229,
+    "inode": 17629237,
+    "connected": 1,
+    "processing": 0,
+    "organization_prefix": "Course",
+    "availability": "available",
+    "error": null,
+    "created_at": "2026-10-13T02:39:02.304909+00:00",
+    "updated_at": "2026-10-13T03:19:49.952531+00:00"
+  },
+  "sources": [
+    {
+      "file_id": "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Beta.txt",
+      "device": 16777229,
+      "inode": 17629240,
+      "size": 121,
+      "mtime_ns": 1791859008579415654,
+      "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null
+    },
+    {
+      "file_id": "db415e88-8802-4cd6-8901-a3cc6ac11590",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Reviewed/Alpha-renamed.md",
+      "device": 16777229,
+      "inode": 17629239,
+      "size": 244,
+      "mtime_ns": 1791861243995293613,
+      "version": "c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154",
+      "availability": "disconnected",
+      "manual_category": "Course/Reviewed",
+      "error": null
+    },
+    {
+      "file_id": "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Course/Unclassified/Gamma.txt",
+      "device": 16777229,
+      "inode": 17632879,
+      "size": 88,
+      "mtime_ns": 1791859520721920842,
+      "version": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null
+    },
+    {
+      "file_id": "715329a0-e737-4e6a-880a-d886b1206cda",
+      "root_id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "relative_path": "Orchard.txt",
+      "device": 16777229,
+      "inode": 17629241,
+      "size": 58,
+      "mtime_ns": 1791859008579502654,
+      "version": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf",
+      "availability": "disconnected",
+      "manual_category": null,
+      "error": null
+    }
+  ],
+  "delta_discovered": false
+}

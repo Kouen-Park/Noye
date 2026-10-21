@@ -1,0 +1,52 @@
+{
+  "workspace": "/private/tmp/noye-phase8-20261014/model-lifecycle-aa99a929-d3b7-41bb-b8a9-1723eec2c242",
+  "model": "qwen3.5:0.8b",
+  "method": "Production ModelManager + actual isolated Ollama server and registry. Network failure uses an unreachable proxy only for the owned server; cancellation/retry uses a real pull. No UI acceptance or generation on this downloaded model is claimed.",
+  "steps": [
+    {
+      "case": "network_failure",
+      "seconds": 0.442,
+      "job": {
+        "state": "failed",
+        "model": "qwen3.5:0.8b",
+        "completed": 0,
+        "total": 0,
+        "error": "Download did not finish. Check Ollama, storage and connection, then retry."
+      }
+    },
+    {
+      "case": "actual_cancel",
+      "seconds": 3.597,
+      "before": {
+        "state": "downloading",
+        "model": "qwen3.5:0.8b",
+        "completed": 2006272,
+        "total": 207346304,
+        "error": null
+      },
+      "after": {
+        "state": "cancelled",
+        "model": "qwen3.5:0.8b",
+        "completed": 2006272,
+        "total": 207346304,
+        "error": null
+      }
+    },
+    {
+      "case": "explicit_retry",
+      "seconds": 67.621,
+      "job": {
+        "state": "failed",
+        "model": "qwen3.5:0.8b",
+        "completed": 0,
+        "total": 0,
+        "error": "Download did not finish. Check Ollama, storage and connection, then retry."
+      }
+    }
+  ],
+  "state": "failed",
+  "error": {
+    "type": "AssertionError",
+    "message": "Actual retry did not install the model."
+  }
+}

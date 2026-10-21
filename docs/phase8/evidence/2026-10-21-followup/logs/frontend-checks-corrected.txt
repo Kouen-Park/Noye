@@ -1,0 +1,4 @@
+{"name": "frontend-tests", "argv": ["npm", "test"], "exit_code": 0, "seconds": 10.433, "log_sha256": "2acd60c1a4cccc66ddade5832351f735d10948b4af1f19b73a8d14f5aaa8e27e"}
+{"name": "frontend-types", "argv": ["npx", "tsc", "--noEmit"], "exit_code": 0, "seconds": 1.601, "log_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36"}
+{"name": "frontend-lint", "argv": ["npm", "run", "lint"], "exit_code": 0, "seconds": 3.94, "log_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69"}
+{"name": "desktop-ui-build", "argv": ["npm", "run", "desktop:ui"], "exit_code": 0, "seconds": 40.607, "log_sha256": "4591265bf34187df2e2ed12b38cecee434a810924e1253064e8932de89081982"}

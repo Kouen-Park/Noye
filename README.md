@@ -129,8 +129,10 @@ A managed knowledge folder can file originals into category folders. Connected
 existing folders retain their structure by default; automatic filing is enabled
 separately. Wiki summaries stay separate from originals, and user edits are
 preserved. Original extraction and passage retrieval remain available for detail
-omitted from summaries. These are planned behaviors; today's document route still
-starts from a saved answer and PDF export uses the print dialog.
+omitted from summaries. Phase 7.5 implements these workflows; complete packaged-app
+and generated-content quality acceptance remains open in Phase 8. Documents can
+start from a saved answer or a general prompt. Web PDF export uses the print dialog;
+macOS PDF export saves the preview through a native save panel.
 
 ## Project Structure
 
@@ -201,7 +203,7 @@ noye/
 - [x] Generate documents from retrieved knowledge
 - [x] Markdown editor and preview
 - [x] Markdown export
-- [x] PDF export *(via your browser's print dialog)*
+- [x] PDF export *(browser printing; native save panel on macOS)*
 
 ### Phase 6 — Desktop Application
 
@@ -270,6 +272,15 @@ out the desktop app; Phase 7 implements the twelve improvements; Phase 7.5 adds
 the folder/wiki and prompt-driven source-document workflow. Phase 8 then refines
 stability/quality and validates the packaged workflow before MVP release. Relevant
 tests, lint, types and builds run throughout implementation.
+
+Current packaged-app observations and remaining failures are recorded in
+[`docs/phase8/acceptance-2026-10-21-native.md`](docs/phase8/acceptance-2026-10-21-native.md),
+which links the earlier records.
+The native PDF/first-run/model checks and automated suites do not close Phase 8:
+known-corpus comparison/notes and Wiki output now pass direct review, while broader
+factual quality, relationship classification/recall and the remaining acceptance
+are open. Active native termination now preserves saved writing; a bounded
+managed-backend shutdown and its actual bundled code are verified in that record.
 
 ## Privacy Philosophy
 
@@ -490,10 +501,11 @@ naming its file and page, with a link that opens the original at that page.
 answer, say what it should become, and edit the draft as Markdown with a rendered
 preview beside it.
 
-Phase 7.5 plans a second entry point: describe the desired document in chat, let
+Phase 7.5 adds a second entry point: describe the desired document in chat, let
 AI discover and inspect relevant files in the permitted knowledge folders, and
 open the resulting artifact in this editor. Study notes are one example; reports
-and comparisons follow the same prompt-driven workflow. This is not implemented yet.
+and comparisons follow the same prompt-driven workflow. This path is implemented;
+complete multi-source comparison quality remains under Phase 8 acceptance.
 
 A document is stored text, not a cached generation — nothing regenerates behind
 you, and the citations shown describe the first draft rather than what you have
@@ -505,11 +517,13 @@ rather than incremental and one firing mid-thought would make undo your problem.
 The editor's Markdown and PDF exports both use the current text, including
 unsaved edits. **Include provenance** appends saved source labels, revisions and
 literal excerpts; it does not certify later edits. Direct API Markdown export
-uses the saved body. PDF export uses your browser's
-own print dialog — choose *Save as PDF* — so Noye needs no extra system libraries
-to produce one. A print stylesheet hides the application so the page that reaches
-the PDF is the document; it is available from the Preview tab, since printing the
-raw Markdown you are editing is not what anyone wants on paper.
+uses the saved body. PDF export uses the existing browser/WebKit engine. In web
+mode, choose *Save as PDF* in the browser print dialog; the packaged macOS app
+uses a native save panel and publishes the completed PDF without replacing an
+existing file. Cancellation and saving are reported separately. A print
+stylesheet hides the application and keeps headings with their first content
+block; PDF export is available from the Preview tab. The Phase 8 record contains
+actual one-page and three-page synthetic exports; broader layouts remain untested.
 
 Search and chat cover files that have finished indexing, so a half-processed
 document is never presented as a whole one. The query or open conversation is kept

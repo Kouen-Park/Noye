@@ -1,0 +1,57 @@
+{
+  "workspace": "/private/tmp/noye-phase8-20261014/model-lifecycle-aa99a929-d3b7-41bb-b8a9-1723eec2c242",
+  "model": "qwen3.5:0.8b",
+  "method": "Production ModelManager + actual isolated Ollama server and registry. Network failure uses an unreachable proxy only for the owned server; cancellation/retry uses a real pull. No UI acceptance or generation on this downloaded model is claimed.",
+  "steps": [],
+  "lines": [
+    "{\"status\":\"pulling manifest\"}",
+    "{\"status\":\"pulling 5ba2eb9bf28c\",\"digest\":\"sha256:5ba2eb9bf28c5b5ff7a705f07bd9269f0f2dbd6cb2b4c46d5f98ed8d15d18883\",\"total\":207346304,\"completed\":207346304}",
+    "{\"status\":\"pulling 889ea3b9143c\",\"digest\":\"sha256:889ea3b9143cdc32146c7d530ce5f3d452ec18069086f6f4167ce9ae72a9691f\",\"total\":811843520,\"completed\":811843520}",
+    "{\"status\":\"pulling b0108ebdcf5a\",\"digest\":\"sha256:b0108ebdcf5adea94899909c0cd6c12565f079f819991e68e464cb2e69a5d93d\",\"total\":302867776,\"completed\":302867776}",
+    "{\"status\":\"pulling b507b9c2f6ca\",\"digest\":\"sha256:b507b9c2f6ca642bffcd06665ea7c91f235fd32daeefdf875a0f938db05fb315\",\"total\":13,\"completed\":13}",
+    "{\"status\":\"pulling 50cbab8a892c\",\"digest\":\"sha256:50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32\",\"total\":11343,\"completed\":11343}",
+    "{\"status\":\"pulling 3cfce0087eaa\",\"digest\":\"sha256:3cfce0087eaaa51070eb51ea44b80e6ccfb89d08ce58f4aeb0e48261aa9da329\",\"total\":87,\"completed\":87}",
+    "{\"status\":\"pulling 1226d1a5284a\",\"digest\":\"sha256:1226d1a5284ac9844d3cac42321227d361d4417af63515132495e5afaf9c2462\",\"total\":234,\"completed\":234}",
+    "{\"status\":\"verifying sha256 digest\"}",
+    "{\"status\":\"writing manifest\"}",
+    "{\"status\":\"success\"}"
+  ],
+  "job": {
+    "state": "complete",
+    "model": "qwen3.5:0.8b",
+    "completed": 0,
+    "total": 0,
+    "error": null
+  },
+  "seconds": 1.259,
+  "tags": {
+    "models": [
+      {
+        "name": "qwen3.5:0.8b",
+        "model": "qwen3.5:0.8b",
+        "modified_at": "2026-10-15T11:00:27.519093514+13:00",
+        "size": 1322069277,
+        "digest": "de63045f29755d4721c09d54c9b45c2dadb644f4fd7d604d4cac90d96049971c",
+        "details": {
+          "parent_model": "qwen35-validation-20260930:0.8b-stock-q8_0-q8draft2",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "752.39M",
+          "quantization_level": "Q8_0",
+          "context_length": 262144,
+          "embedding_length": 1024
+        },
+        "capabilities": [
+          "completion",
+          "vision",
+          "tools",
+          "thinking"
+        ]
+      }
+    ]
+  },
+  "state": "complete"
+}

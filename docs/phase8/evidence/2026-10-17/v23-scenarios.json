@@ -1,0 +1,83 @@
+{
+  "method": "Five fresh production document attempts and Wiki generation, sequential without retry.\n\nUses only the evaluation CLI's invented originals and real local embeddings.\nThe CLI's Qdrant is explicitly in-memory; no personal collection is accessed.\nEach scenario unloads generation/embedding models before the next one. Cold\nloads affect latency, so these are whole-attempt measurements, not a benchmark.\n",
+  "rows": [
+    {
+      "scenario": "comparison",
+      "exit_code": 0,
+      "wall_seconds": 471.091,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "collection",
+      "exit_code": 0,
+      "wall_seconds": 247.294,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "report",
+      "exit_code": 0,
+      "wall_seconds": 707.004,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "partial",
+      "exit_code": 0,
+      "wall_seconds": 645.628,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "empty",
+      "exit_code": 0,
+      "wall_seconds": 3.602,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "wiki",
+      "exit_code": 0,
+      "wall_seconds": 78.118,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    }
+  ],
+  "runtime_hashes": {
+    "local.py": "6eece30bb17d445852ff9bd0ce01850e8b6ec98b8962d2467d511f34c3ee060f",
+    "pipeline.py": "c60c86fdfe5452dcd36fec9296c2ca330393aed192cf535554667b4a095c4fc1",
+    "presentation.py": "31ce99be5407ba5b81e46614ebba90ac3f9712b1b0ab1b976e8093d86f1934b9",
+    "discovery.py": "a8bdc2849f6ce6e73f7ddba68f147d8a2275dd4c08b7d528af69e142cc88cf01"
+  }
+}

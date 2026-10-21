@@ -1,0 +1,19 @@
+{
+  "method": "API-seeded invented Markdown regression fixture in the already isolated restored QA workspace; native preview/export tested separately. No existing document was changed.",
+  "base_url": "http://127.0.0.1:58115",
+  "source_id": "151d52e3-3c5a-44aa-963d-4afbde8ee0fb",
+  "document": {
+    "id": "79cf76fb-20e2-4272-9acc-b33170fb5faf",
+    "title": "Phase 8 original command print QA",
+    "content": "# Original command print QA\n\n한국어 원문 링크 인쇄 검증.\n\nMeasured runtime: 12 milliseconds. Memory usage: 37 megabytes.\n\n[Open AT-201 original](http://127.0.0.1:58115/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1)\n\nFINAL-ORIGINAL-PRINT-20261016\n",
+    "source_conversation_id": null,
+    "source_message_id": null,
+    "source_instruction": null,
+    "citations": [],
+    "created_at": "2026-10-16T03:32:44.068272+00:00",
+    "updated_at": "2026-10-16T03:32:44.068274+00:00",
+    "provenance_markdown": ""
+  },
+  "content_sha256": "2536cd9edee348b2aa18c1126a6305dbec5e906d30c6e8a8b8aebe4b718780f9",
+  "original_url": "http://127.0.0.1:58115/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1"
+}

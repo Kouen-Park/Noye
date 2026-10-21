@@ -1,0 +1,17 @@
+{"id": "fresh-same-source-counts", "regression": false, "expected": [true, false], "valid": true, "actual": [true, false], "matches": [true, true], "seconds": 28.676}
+{"id": "fresh-two-faithful-assertions", "regression": false, "expected": [true, true], "valid": true, "actual": [true, true], "matches": [true, true], "seconds": 17.802}
+{"id": "fresh-two-unsupported-assertions", "regression": false, "expected": [false, false], "valid": true, "actual": [false, false], "matches": [true, true], "seconds": 15.666}
+{"id": "count-subjects-true", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 11.256}
+{"id": "count-subjects-false", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 12.329}
+{"id": "limit-observation-true", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 11.717}
+{"id": "limit-observation-false", "regression": true, "expected": [false], "valid": true, "actual": [true], "matches": [false], "seconds": 16.626}
+{"id": "independent-purpose-true", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 13.513}
+{"id": "independent-purpose-false", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 19.426}
+{"id": "translated-adjoining-true", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 13.087}
+{"id": "translated-adjoining-false", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 14.717}
+{"id": "temperature-properties-unsupported", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 13.435}
+{"id": "translated-conditions-supported", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 12.234}
+{"id": "separate-relationship", "regression": true, "expected": [false, true], "valid": true, "actual": [false, true], "matches": [true, true], "seconds": 21.13}
+{"id": "shared-duplicate", "regression": true, "expected": [true, true], "valid": true, "actual": [true, false], "matches": [true, false], "seconds": 17.902}
+{"id": "known-count-counterfactual-not-previously-run", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 13.502}
+{"id": "recorded-unsafe-comparison", "regression": true, "expected": [false], "valid": true, "actual": [true], "matches": [false], "seconds": 16.246}

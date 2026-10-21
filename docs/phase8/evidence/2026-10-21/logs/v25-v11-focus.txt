@@ -1,0 +1,183 @@
+........................................................................ [ 40%]
+........................................................................ [ 81%]
+.........................F......                                         [100%]
+=================================== FAILURES ===================================
+_______ test_refused_quantity_drift_preserves_authored_revision_and_file _______
+
+passages = [Passage(id='0319032b7456f46974396324', source=SourceRef(source_id='e9040b14-d07d-4d9a-a279-c7b5918d5e2c', root_id='96...READY'), page_number=None, passage_index=0, start=0, end=49, text='Project Beta stores 92 litres. New source detail.')]
+categories = ['Learning']
+settings = Settings(backend_host='127.0.0.1', backend_port=8000, frontend_origins='http://localhost:3000,http://127.0.0.1:3000', ...t-of-gavinpark/pytest-132/test_refused_quantity_drift_pr0/app'), log_level='INFO', log_to_file=True, max_upload_mb=100)
+client = <httpx.Client object at 0x113443dd0>
+checkpoint = <function <lambda> at 0x11336eb90>
+progress = <function <lambda> at 0x11336ec40>, manual_category = None
+topics = []
+
+    def summarize(
+        passages,
+        *,
+        categories,
+        settings,
+        client=None,
+        checkpoint=lambda: None,
+        progress=lambda completed, total, stage: None,
+        manual_category=None,
+        topics=(),
+    ):
+        topics = source_topics(passages, topics)
+        batches = list(make_batches(passages, categories, settings, topics))
+        sections, consumed, repairs = [], [], []
+        for position, batch in enumerate(batches):
+            checkpoint()
+            result = structured(
+                prompt_for(batch, categories, topics),
+                SectionSummary,
+                settings=settings,
+                client=client,
+                constraints={"evidence_id": [p.id for p in batch]},
+            )
+            evidence = {p.id: p for p in batch}
+            try:
+                for claim in [result.summary, *result.key_points]:
+>                   verify_claim(claim, evidence)
+
+app/services/wiki/pipeline.py:152:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+claim = Claim(evidence_id='0319032b7456f46974396324:0:49', quote='Project Beta stores 92 litres. New sourc', text='The system has a storage capacity of 92 litres.')
+evidence = {'0319032b7456f46974396324:0:49': Passage(id='0319032b7456f46974396324:0:49', source=SourceRef(source_id='e9040b14-d07...READY'), page_number=None, passage_index=0, start=0, end=49, text='Project Beta stores 92 litres. New source detail.')}
+
+    def verify_claim(claim, evidence):
+        passage = evidence.get(claim.evidence_id)
+        if passage is None or claim.quote not in passage.text:
+            raise WikiError("The model returned an unknown passage or non-verbatim quote.")
+        try:
+            quantity_properties.check_volume_properties(claim.text, [passage.text])
+        except quantity_properties.QuantityPropertyError as error:
+>           raise QuantityClaimError(f"{error} No Wiki revision was published.") from None
+E           app.services.wiki.pipeline.QuantityClaimError: A generated claim changes capacity into an amount stored, or vice versa. No Wiki revision was published.
+
+app/services/wiki/pipeline.py:111: QuantityClaimError
+
+During handling of the above exception, another exception occurred:
+
+workspace = (<sqlite3.Connection object at 0x1134f0d60>, PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytes...15', <function folder.<locals>.scan at 0x11393ba00>, <app.services.folder_scanner.FolderScanner object at 0x10b2f2270>)
+
+    def test_refused_quantity_drift_preserves_authored_revision_and_file(workspace):
+        db, *_ = workspace
+        record = discover(workspace, "beta.txt", "Project Beta stores 92 litres.")
+        first = generate(db, record.id)
+        identifier = first["wiki_id"]
+        service.edit(
+            db,
+            identifier,
+            EditWiki(
+                expected_revision=first["revision_id"],
+                title="My Beta notes",
+                content="My authored notes must survive.",
+            ),
+        )
+        prior = store.page(db, identifier)["current_revision"]
+        path = publication.disk_path(db, identifier)
+        before = path.read_bytes()
+        count = len(store.revisions(db, identifier))
+        changed = discover(workspace, "beta.txt", "Project Beta stores 92 litres. New source detail.")
+        assert changed.id == record.id
+        with pytest.raises(WikiError, match="No Wiki revision was published"):
+>           generate(db, record.id, model(claim_text="The system has a storage capacity of 92 litres."))
+
+app/tests/test_wiki_integration.py:391:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app/tests/test_wiki_integration.py:70: in generate
+    return service.generate_source(
+app/services/wiki/service.py:94: in generate_source
+    result, evidence = pipeline.summarize(
+app/services/wiki/pipeline.py:169: in summarize
+    result = structured(
+app/services/wiki/local.py:97: in structured
+    response = post_structured(
+app/services/local_ollama.py:76: in post_structured
+    return client.post(settings.ollama_base_url.rstrip("/") + endpoint, json=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.14/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.14/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.14/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_transports/mock.py:24: in handle_request
+    response = self.handler(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = <Request('POST', 'http://localhost:11434/api/generate')>
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        prompt = json.loads(json.loads(request.content)["prompt"])
+        if callback:
+            callback(prompt)
+        if prompt["task"] == "summarize_section":
+            p = prompt["passages"][0]
+            result = summary(p["evidence_id"], p["text"][:40])
+            result["summary"]["text"] = claim_text or p["text"][:80]
+            result["tags"] = ["reservoir", "capacity"]
+            result["topics"] = [
+                {"title": "Reservoir", "kind": "concept"},
+                {"title": "Water Plan", "kind": "project"},
+            ]
+        else:
+            result = {
+                "relations": [
+                    {
+>                       "target_id": "invented" if bad_target else prompt["target_id"],
+                                                                   ^^^^^^^^^^^^^^^^^^^
+                        "kind": kind,
+                        "reason": "Both sources specify reservoir capacity and conditions.",
+                        "confidence": 0.9,
+                        "origin_evidence_id": prompt["origin"]["evidence_id"],
+                        "target_evidence_id": prompt["target"]["evidence_id"],
+                    }
+                ]
+            }
+E           KeyError: 'target_id'
+
+app/tests/test_wiki_integration.py:47: KeyError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+app/tests/test_source_documents.py::test_missing_and_indexing_failure_are_partial_coverage
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_wiki_integration.py::test_refused_quantity_drift_preserves_authored_revision_and_file
+1 failed, 175 passed, 8 warnings in 4.27s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

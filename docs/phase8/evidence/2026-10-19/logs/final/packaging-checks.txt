@@ -1,0 +1,8 @@
+{"starting": "sidecar-build"}
+{"name": "sidecar-build", "argv": ["npm", "run", "desktop:backend"], "seconds": 31.784, "exit_code": 0, "log_sha256": "dbc6ce2c7503f86a0f54e86f3246f993b2e737ef0cfb887e15609d4c75de048d"}
+{"starting": "native-bundle"}
+{"name": "native-bundle", "argv": ["npx", "tauri", "build", "--bundles", "app", "--config", "/private/tmp/noye-phase8-20261016/tauri-qa.json"], "seconds": 21.165, "exit_code": 0, "log_sha256": "0f31a3b5806d57ee133883b3aa553cf2ee216e628ab156ce34c136d47924f034"}
+{"starting": "native-signature"}
+{"name": "native-signature", "argv": ["codesign", "--verify", "--deep", "--strict", "/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app"], "seconds": 0.045, "exit_code": 0, "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+{"starting": "frozen-bundled"}
+{"name": "frozen-bundled", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "-m", "pytest", "-q", "app/tests/test_desktop.py", "app/tests/test_native_folder_protocol.py"], "seconds": 45.873, "exit_code": 0, "log_sha256": "667a388d0b73204ce488ff5eba8d36127f145d06c42bcddba49aac6eb4bb022d"}

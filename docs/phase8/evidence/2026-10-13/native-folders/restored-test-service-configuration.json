@@ -1,0 +1,12 @@
+{
+  "observation": "No environment was present after restore. This test-only configuration was explicitly written later, before normal app restart, to use the isolated loopback services and a separate rebuild collection. It is not native service-settings acceptance or an automatic restore behavior.",
+  "settings": {
+    "OLLAMA_BASE_URL": "http://127.0.0.1:11439",
+    "QDRANT_URL": "http://127.0.0.1:6339",
+    "QDRANT_COLLECTION": "noye_phase8_qa_restore_20261013",
+    "GENERATION_CONTEXT_TOKENS": "8192",
+    "GENERATION_OUTPUT_TOKENS": "2048",
+    "OLLAMA_THINKING": "false"
+  },
+  "cloud_credentials": false
+}

@@ -1,0 +1,56 @@
+{
+  "method": "Primary-agent direct review of the saved v25 Korean collection against both invented originals. Job completion and honest partial coverage are not factual acceptance.",
+  "report": "/private/tmp/noye-phase8-20261021/current-collection/collection-54104fe2-aab7-4318-aa5a-a51d88598c53.json",
+  "report_sha256": "1b4e0871f9e5f10e6029b301c925a39284536ea5be4219fc8f2a65dc04036080",
+  "state": "complete",
+  "seconds": 287.154,
+  "body_sha256": "0b66d7956b6f381662cb40d0c51ee3bcd1321bedb35f0ca79974accbb56d2cbe",
+  "accepted": false,
+  "priority": "P1",
+  "failure": "프로젝트 베타는 92 리터의 용량을 저장합니다. introduces capacity for an original amount stored. The old guard missed a property noun following the quantity; the model auditor also approved it.",
+  "coverage": {
+    "inventory_count": 2,
+    "inventory_mode": "collection",
+    "partial": true,
+    "presentation_limits": [
+      {
+        "code": "empty_section",
+        "reason": "A planned section had no supported claims and was omitted.",
+        "section_id": "sec-03"
+      }
+    ],
+    "sources": [
+      {
+        "availability": "available",
+        "characters_processed": 120,
+        "characters_read": 120,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/02-English.txt",
+        "root_id": "be4b3671-71d3-4c79-8c83-a6fa708587d6",
+        "source_id": "e4932ce4-4ff4-4e75-9cc7-be26cfbf113c",
+        "state": "processed",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      {
+        "availability": "available",
+        "characters_processed": 95,
+        "characters_read": 95,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/01-한국어.md",
+        "root_id": "be4b3671-71d3-4c79-8c83-a6fa708587d6",
+        "source_id": "f19545c4-a755-44c0-9094-db50d0c400e8",
+        "state": "processed",
+        "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      }
+    ]
+  },
+  "other_limits": "An empty planned section is honestly marked partial; repeated Alpha schedule facts and weak definition/uncertainty headings remain presentation concerns. The older artifact is retained unchanged."
+}

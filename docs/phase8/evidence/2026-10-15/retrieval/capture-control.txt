@@ -1,0 +1,5 @@
+PX-660 was a four-page PDF with extracted text on all four pages. The associated Markdown note had no physical page numbers. PX-660 is not the eight-page PX-606 sample.
+
+PX-660은 4쪽 모두에서 텍스트를 추출한 PDF였다. 함께 저장된 Markdown 노트에는 실제 페이지 번호가 없다. 8쪽인 PX-606과 다른 샘플이다.
+
+PDF capture control procedure: record the run identifier PX-660 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

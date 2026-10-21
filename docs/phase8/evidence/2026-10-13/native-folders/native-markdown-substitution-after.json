@@ -1,0 +1,15 @@
+{
+  "observation": "Packaged WKWebView, same CUA setValue as baseline, HTML correction attributes disabled, native Save changes and Preview",
+  "wiki": {
+    "id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "current_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c",
+    "origin": "user",
+    "title": "Phase8 Alpha user writing",
+    "content": "<!-- Wiki ID: 052487ea-e541-5cce-a3b8-267f6b2dff3e; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-13T02:40:00.003422+00:00; processing seconds: 51.560 -->\n\n# Alpha.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: SQLite, 백업, 쓰기 중지, 저수지 Alpha\n\n## Summary\n\n저수지 Alpha 프로젝트는 SQLite를 사용하여 37리터의 저장 용량을 가지며, 일요일에는 쓰기를 중지하고 하루에 한 번 백업이 실행됩니다. [E1]\n\n- 저수지 Alpha 프로젝트의 저장 용량은 37리터입니다. [E1]\n\n- 저수지 Alpha는 SQLite를 사용합니다. [E1]\n\n- 저수지 Alpha는 일요일에 쓰기를 중지합니다. [E1]\n\n- 저수지 Alpha의 백업은 하루에 한 번 실행됩니다. [E1]\n\n## Original evidence\n\n### E1: Alpha.md\nSource ID: `db415e88-8802-4cd6-8901-a3cc6ac11590`; version: `9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5`\n\nPassage 0, characters 0–95\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n\n## 사용자 메모\n\nPhase8 user edit · 원문 변경 후에도 보존할 검증 메모.\n"
+  },
+  "expected_sha256": "61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12",
+  "saved_sha256": "61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12",
+  "exact_match": true,
+  "comment_close_preserved": true,
+  "comment_close_corrupted": false
+}

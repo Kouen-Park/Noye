@@ -63,11 +63,42 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v3` explicitly requests reusable subject tags, source-language
+Prompt `wiki-grounded-v13` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
-root and frozen scope. The response schema enumerates only the supplied evidence and
+root and frozen scope. Since v10, reuse hints must also occur as names in this source's
+original text, with Unicode/case/spacing normalization and Latin word boundaries.
+Unrelated names are excluded before batching; translated or paraphrased topics can
+still be proposed independently. This is a narrow hint-isolation rule, not semantic
+topic validation. v9 orders each claim as evidence ID, exact quote, then interpretation,
+and explicitly preserves quantity properties and independent facts.
+The response schema enumerates only the supplied evidence and
 relation target IDs; application validation still rejects forged IDs and non-verbatim
 quotes, including responses from a server that ignores the requested schema.
+Every summary/key point also runs the shared narrow litre-property guard against
+its own cited original: an explicit capacity/currently-stored swap fails before
+revision or file publication. It does not borrow quantities from other passages.
+Since v11, this specific validation failure permits one local wording-revision stage
+for the batch, asking for original numeric sentences. The complete replacement still
+passes all ID, quote and quantity checks before publication. Its second failure is
+terminal; unavailable/invalid responses and forged references do not trigger revision.
+Original passages are not trimmed to make a revision fit. Cancellation checkpoints
+surround the additional call, and successful repairs are counted in revision metadata.
+This is a bounded draft stage inside the current job; job retry remains explicit.
+This is the same check used by source documents, not a general entailment proof.
+v12 also recognizes property nouns after a litre quantity, including Korean
+`92리터의 용량` and English `92 litres of capacity`; following labels cannot
+leak into the next quantity or across a line break.
+The v7-and-later cache identity prevents reusing a prior generated result without this check;
+existing historical revisions and user writing are preserved.
+The model sees that same constrained output schema in the prompt, including the
+meaning of each relation kind. The input byte budget counts this actual prompt
+once; the decoder grammar alone does not explain the contract to the model.
+With configured thinking enabled, structured requests use Ollama's chat endpoint
+and validate only the final `message.content`. The default non-thinking generate
+request remains unchanged. This avoids an observed Qwen3.5/Ollama 0.34.2 generate
+response that puts JSON in reasoning and leaves the final answer empty. Endpoint
+selection happens before each inference call; there is no transport retry,
+provider fallback or promotion of reasoning into accepted output.
 Exact Unicode-normalized topic identities prevent duplicate pages
 for the same kind/root/name. Semantic aliases can still form separate concepts; there is
 no automatic destructive merge of authored pages.
@@ -77,6 +108,26 @@ shortlists them. Local inference must confirm one of `shared_subject`,
 `supporting_evidence`, `alternative` or `contradiction`, with a reason, known target ID
 and verified evidence IDs on both sides. There are at most eight candidates, four claim
 comparisons per candidate and six accepted links. Confidence below 0.8 creates no link.
+Each comparison now receives both complete bounded original fragments and their source
+identities, rather than summary text and a short quote alone.
+Since v13, relationship calls use a dedicated system instruction rather than the
+summary/category/tag instruction. The model selects both evidence IDs, compares
+outcomes under the same conditions and applies exceptions in its explanation
+before choosing a relation kind. Capacity/current amount and explicit translated
+aliases are addressed separately. Summary and wording-revision calls retain their
+existing system; the byte budget counts the selected system exactly. This reduces
+observed false contradictions but does not establish complete semantic accuracy
+or guarantee that every supported link is found. Existing saved links are unchanged.
+
+Only original text reaches relation inference: unverified summary wording is excluded,
+so a summary that omitted a condition cannot become the comparison premise. Repeated
+claims referring to the same pair of original fragments cause one comparison, not
+repeated inference calls. The comparison explicitly distinguishes
+different subjects/conditions and missing information from contradiction. Missing or
+non-verbatim evidence fails before inference. A pair exceeding the input budget is skipped
+without trimming conditions or aborting the source summary; no relation is inferred for
+that pair. Existing saved relations and user revisions are not rewritten. These are
+model suggestions; reference validation and confidence do not prove semantic correctness.
 Backlinks are queried from published edges; historical target revisions remain immutable.
 The API supplies `target_revision` and `target_current_revision`; the UI identifies earlier
 targets. Traversal stops at two levels and twenty eligible pages. Stale edges do not drive discovery.

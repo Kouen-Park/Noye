@@ -1,0 +1,6 @@
+{"starting": "backend-final"}
+{"name": "backend-final", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "-m", "pytest", "-q", "--cov=app", "--cov-branch", "--cov-config=/private/tmp/noye-phase8-20261019/final/coverage.ini", "--cov-report=json:/private/tmp/noye-phase8-20261019/final/backend-product-coverage.json", "--cov-report=term"], "seconds": 23.907, "exit_code": 0}
+{"starting": "backend-lint"}
+{"name": "backend-lint", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/ruff", "check", "app"], "seconds": 0.074, "exit_code": 0}
+{"starting": "packaging-checks"}
+{"name": "packaging-checks", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "/private/tmp/noye-phase8-20261019/build-native.py"], "seconds": 99.052, "exit_code": 0}

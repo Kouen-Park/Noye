@@ -1,0 +1,50 @@
+{
+  "method": "Explicit fresh production attempts, sequential; never retry a failed job.\n\nThe QA runner unloads its own model between scenarios to limit retained memory.\nThis affects warm-cache latency and is not a product behavior change.\n",
+  "rows": [
+    {
+      "scenario": "comparison",
+      "process_exit_code": 0,
+      "wall_seconds": 375.259,
+      "unload_http_status": 200,
+      "remaining_loaded_models": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "collection",
+      "process_exit_code": 0,
+      "wall_seconds": 158.209,
+      "unload_http_status": 200,
+      "remaining_loaded_models": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "report",
+      "process_exit_code": 0,
+      "wall_seconds": 841.607,
+      "unload_http_status": 200,
+      "remaining_loaded_models": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "partial",
+      "process_exit_code": 0,
+      "wall_seconds": 273.312,
+      "unload_http_status": 200,
+      "remaining_loaded_models": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "empty",
+      "process_exit_code": 0,
+      "wall_seconds": 2.303,
+      "unload_http_status": 200,
+      "remaining_loaded_models": {
+        "models": []
+      }
+    }
+  ]
+}

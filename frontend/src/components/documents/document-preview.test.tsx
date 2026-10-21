@@ -17,6 +17,19 @@ describe("DocumentPreview", () => {
     expect(screen.getByRole("columnheader", { name: "a" })).toBeInTheDocument();
   });
 
+  it("retains a standalone image, its heading and following caption in print content", () => {
+    render(<DocumentPreview content={
+      "## Figure / 그림\n\n![Local diagram](/file.svg)\n\nExact caption 37.\n\n" +
+      "## Next section\n\nText and ![Inline diagram](/globe.svg) remain together."
+    } />);
+    expect(screen.getAllByRole("heading").map(h => h.textContent)).toEqual(
+      ["Figure / 그림", "Next section"]);
+    expect(screen.getByRole("img", { name: "Local diagram" })).toHaveAttribute("src", "/file.svg");
+    expect(screen.getByRole("img", { name: "Inline diagram" })).toHaveAttribute("src", "/globe.svg");
+    expect(screen.getByText("Exact caption 37.")).toBeInTheDocument();
+    expect(screen.getByText(/remain together/)).toBeInTheDocument();
+  });
+
   it("does NOT render raw HTML", () => {
     // The whole reason for react-markdown over a string-to-HTML renderer: the
     // content is model-generated, user-edited, and derived from the user's own
@@ -53,5 +66,21 @@ describe("DocumentPreview", () => {
     const link = screen.getByRole("link", { name: "link" });
     expect(link).toHaveAttribute("target", "_blank");
     expect(link.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("preserves consecutive headings, paragraphs, lists, code and quoted originals when grouping for print", () => {
+    render(<DocumentPreview content={
+      "# Title\n\nIntro 한국어.\n\n## Conditions\n\nSaturday is **read-only**.\n\n" +
+      "## Counts\n\n- 37 litres capacity\n- 92 litres stored\n\n" +
+      "### Original\n\n> Exact original -- quote.\n\n## Next\n\n## Last\n\n```\nliteral ->\n```"
+    } />);
+    expect(screen.getAllByRole("heading").map(h => h.textContent)).toEqual(
+      ["Title", "Conditions", "Counts", "Original", "Next", "Last"]);
+    expect(screen.getByText("Intro 한국어.")).toBeInTheDocument();
+    expect(screen.getByText("read-only")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem").map(li => li.textContent)).toEqual(
+      ["37 litres capacity", "92 litres stored"]);
+    expect(screen.getByText("Exact original -- quote.")).toBeInTheDocument();
+    expect(screen.getByText("literal ->")).toBeInTheDocument();
   });
 });

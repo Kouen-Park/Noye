@@ -1,0 +1,21 @@
+{
+  "observations": [
+    "Native Download workspace backup caused CUA noWindowsAvailable; getApp later timed out",
+    "Owned backend on 55221 remained healthy",
+    "No new QA ZIP in Downloads",
+    "1-second process sample retained in native-backup-app-sample.txt; all 711 main-thread samples waited in WebKit destination sandbox extension issue, reached through wry download_policy",
+    "No active knowledge jobs; all editor changes saved before recovery"
+  ],
+  "qa_app_pid": 58289,
+  "user_wiki_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c",
+  "recovery": "SIGTERM only verified owned QA app; no unrelated process stopped",
+  "download_inventory_after_stall": [
+    {
+      "name": "noye-workspace.noye.zip",
+      "size": 11417,
+      "mtime_ns": 1791842067089000456
+    }
+  ],
+  "new_download_files": [],
+  "inventory_pattern": "noye-workspace*.zip (includes WebKit duplicate suffixes)"
+}

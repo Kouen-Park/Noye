@@ -1,0 +1,2 @@
+{"scenario": "empty", "job_id": "696ac446-5806-4adc-be59-c6e2f2230ee8", "request_id": "4f6a7bd1-f05c-42e2-9b1e-1710e6164a64", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "No sources are allowed. Choose files or a collection to create a document.", "seconds": 0.001, "report": "/private/tmp/noye-phase8-20261016/v20-documents/empty-4f6a7bd1-f05c-42e2-9b1e-1710e6164a64.json"}

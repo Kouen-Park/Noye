@@ -1,0 +1,2 @@
+{"scenario": "report", "job_id": "0303bbf9-02e6-451d-92d9-276a83e8296f", "request_id": "c9549e2c-ac6a-4165-9994-f3ba5ce49659", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "complete", "artifact_id": "a0d32d90-2b5d-5d08-b896-e789faa68a2a", "error": null, "seconds": 465.976, "report": "/private/tmp/noye-phase8-20261016/v20-documents/report-c9549e2c-ac6a-4165-9994-f3ba5ce49659.json"}

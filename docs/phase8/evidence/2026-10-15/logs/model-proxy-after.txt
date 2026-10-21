@@ -1,0 +1,58 @@
+....................F.................                                   [100%]
+=================================== FAILURES ===================================
+______________ test_model_writes_bypass_environment_proxy[delete] ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x11566d150>
+configured = PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-64/test_model_writes_bypass_envir1')
+poisoned_proxy = ('http://127.0.0.1:57293', 57293, [(57294, 'http://127.0.0.1:57293/api/tags', None), (57294, 'http://127.0.0.1:57293/healthz', None), (57293, '/api/delete', {'model': 'mock-local-embed:latest'})], {'redirect': False})
+operation = 'delete'
+
+    @pytest.mark.parametrize("operation", ["pull", "delete"])
+    def test_model_writes_bypass_environment_proxy(monkeypatch, configured, poisoned_proxy, operation):
+        url, direct_port, received, _ = poisoned_proxy
+        settings = get_settings().model_copy(update={"ollama_base_url": url, "qdrant_url": url})
+        monkeypatch.setattr(module, "get_settings", lambda: settings)
+
+        async def run():
+            manager = ModelManager()
+            if operation == "pull":
+                await manager.pull("qwen3.5:0.8b", str(configured))
+                await manager.task
+                # This fake server intentionally has no complete model stream.
+                assert manager.job["state"] == "failed"
+            else:
+                await manager.delete("mock-local-embed:latest")
+
+        asyncio.run(run())
+        expected = "/api/pull" if operation == "pull" else "/api/delete"
+        assert any(path == expected for _, path, _ in received)
+>       assert all(port == direct_port for port, _, _ in received)
+E       assert False
+E        +  where False = all(<generator object test_model_writes_bypass_environment_proxy.<locals>.<genexpr> at 0x1158d57b0>)
+
+app/tests/test_model_management.py:247: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_model_management.py::test_model_writes_bypass_environment_proxy[delete]
+1 failed, 37 passed, 7 warnings in 0.84s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

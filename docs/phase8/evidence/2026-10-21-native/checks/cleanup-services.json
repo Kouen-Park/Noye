@@ -1,0 +1,40 @@
+{
+  "method": "Stop only the verified owned, unloaded QA Ollama server and the exact QA Qdrant container restarted for this validation. Preserve weights, data, personal Ollama, unrelated containers and Docker Desktop.",
+  "started_at": 1792570770.58554,
+  "ollama": {
+    "pid": 76109,
+    "verified_command": "/opt/homebrew/bin/ollama serve",
+    "models_before": {
+      "models": []
+    },
+    "process_gone": true
+  },
+  "qdrant": {
+    "name": "noye-phase8-qa-20261012",
+    "id": "e77fea448f1df24962292653699f3b39424c94f23f5fcb3a252a5ef92d045a24",
+    "port_binding": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "6339"
+      }
+    ],
+    "storage": "/private/tmp/noye-phase8-20261012/qdrant",
+    "running_before": true,
+    "running_after": false
+  },
+  "endpoints_after": {
+    "11439": {
+      "error": "URLError",
+      "message": "<urlopen error [Errno 61] Connection refused>"
+    },
+    "11440": {
+      "error": "URLError",
+      "message": "<urlopen error [Errno 61] Connection refused>"
+    },
+    "6339": {
+      "error": "URLError",
+      "message": "<urlopen error [Errno 61] Connection refused>"
+    }
+  },
+  "finished_at": 1792570771.703709
+}

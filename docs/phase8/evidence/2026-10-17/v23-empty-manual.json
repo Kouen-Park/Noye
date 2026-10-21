@@ -1,0 +1,8 @@
+{
+  "method": "Inspect actual empty-scope production refusal before inference.",
+  "file": "empty-6dc090a9-2877-4bdc-a969-ed9671b9f88b.json",
+  "seconds": 0.003,
+  "expected_refusal": true,
+  "artifact_id": null,
+  "generation_calls": 0
+}

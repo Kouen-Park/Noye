@@ -1,0 +1,23 @@
+[GIN] 2026/10/21 - 21:03:02 | 200 |         4m27s |       127.0.0.1 | POST     "/api/chat"
+[GIN] 2026/10/21 - 21:08:05 | 500 |          5m0s |       127.0.0.1 | POST     "/api/chat"
+[GIN] 2026/10/21 - 21:13:09 | 500 |          5m1s |       127.0.0.1 | POST     "/api/chat"
+[GIN] 2026/10/21 - 21:18:19 | 500 |          5m4s |       127.0.0.1 | POST     "/api/chat"
+[GIN] 2026/10/21 - 21:18:26 | 200 |  1.556195667s |       127.0.0.1 | POST     "/api/generate"
+slot print_timing: id  0 | task 6270 | n_gen =   1119, tg =   5.50 t/s, tg_3s =  19.41 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1171, tg =   5.67 t/s, tg_3s =  17.01 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1218, tg =   5.81 t/s, tg_3s =  15.43 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1267, tg =   5.96 t/s, tg_3s =  16.10 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1320, tg =   6.12 t/s, tg_3s =  17.39 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1368, tg =   6.26 t/s, tg_3s =  15.68 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1419, tg =   6.40 t/s, tg_3s =  16.99 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1463, tg =   6.51 t/s, tg_3s =  14.52 t/s
+slot print_timing: id  0 | task 6270 | n_gen =   1473, tg =   6.41 t/s, tg_3s =   1.93 t/s
+srv          stop: cancel task, id_task = 6270
+[GIN] 2026/10/21 - 21:18:19 | 500 |          5m4s |       127.0.0.1 | POST     "/api/chat"
+slot print_timing: id  0 | task 6270 | n_gen =   1474, tg =   6.05 t/s, tg_3s =   0.07 t/s
+slot      release: id  0 | task 6270 | stop processing: n_tokens = 2614, truncated = 0
+srv  update_slots: all slots are idle
+[GIN] 2026/10/21 - 21:18:26 | 200 |  1.556195667s |       127.0.0.1 | POST     "/api/generate"
+[GIN] 2026/10/21 - 21:18:26 | 200 |    4.090625ms |       127.0.0.1 | GET      "/api/ps"
+[GIN] 2026/10/21 - 21:18:29 | 200 |   58.216125ms |       127.0.0.1 | GET      "/api/tags"
+[GIN] 2026/10/21 - 21:19:30 | 200 |   13.838042ms |       127.0.0.1 | GET      "/api/ps"

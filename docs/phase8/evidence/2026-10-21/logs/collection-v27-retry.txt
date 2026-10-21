@@ -1,0 +1,2 @@
+{"scenario": "collection", "job_id": "d205a0ca-9a8c-4448-bd9a-f878be78473a", "request_id": "8f4dd570-2c6b-495a-9c57-68cf42874830", "retry_of": "5fad1e9d-dfb0-4a0a-99a0-4acf5d96285a", "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "complete", "artifact_id": "ceefaafe-db77-53c2-a669-b26eb25b67ac", "error": null, "seconds": 90.803, "report": "/private/tmp/noye-phase8-20261021/collection-v27/collection-8f4dd570-2c6b-495a-9c57-68cf42874830-retry-2.json"}

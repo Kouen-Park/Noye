@@ -1,0 +1,5 @@
+{
+  "method": "After inference unload, stop the owned QA server on 11439 so a byte-preserving relay can occupy the unchanged application endpoint; restart the same runtime/weights at upstream 11440. No product preference changes or model downloads.",
+  "old_owned_pid": 70191,
+  "models_before": []
+}

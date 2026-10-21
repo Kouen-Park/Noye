@@ -1,0 +1,6 @@
+{"id": "different-subject-rules", "valid": true, "actual": [], "matches_rubric": true, "seconds": 16.887}
+{"id": "absence-is-not-denial", "valid": true, "actual": [], "matches_rubric": true, "seconds": 6.28}
+{"id": "same-subject-opposite-condition", "valid": true, "actual": [], "matches_rubric": false, "seconds": 11.855}
+{"id": "exception-in-original", "valid": true, "actual": [{"target_id": "target-wiki", "kind": "contradiction", "reason": "The origin text states that Maple permits exports on Fridays, but the target text explicitly states that during inspections, Maple prohibits exports on Fridays. These are mutually incompatible assertions regarding the same subject (Maple exports) and condition (Fridays), as the origin text clarifies its rule does not apply during inspections.", "confidence": 0.95, "origin_evidence_id": "origin", "target_evidence_id": "target", "target_revision": "target-revision"}], "matches_rubric": false, "seconds": 21.887}
+{"id": "different-property", "valid": true, "actual": [], "matches_rubric": true, "seconds": 23.85}
+{"id": "translated-same-rule", "valid": true, "actual": [], "matches_rubric": false, "seconds": 10.602}

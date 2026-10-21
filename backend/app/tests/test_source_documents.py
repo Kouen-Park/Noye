@@ -16,7 +16,15 @@ from app.config import Settings
 from app.db import conversations, documents
 from app.db import source_documents as store
 from app.models.conversations import Role
-from app.models.source_documents import GenerateRequest, Selection
+from app.models.source_documents import (
+    Extraction,
+    GenerateRequest,
+    Outline,
+    Selection,
+    SupportVerification,
+    Synthesis,
+    Verification,
+)
 from app.models.wiki import WikiScope
 from app.services import knowledge_jobs
 from app.services.source_documents import jobs, local, pipeline
@@ -84,17 +92,14 @@ def model(
                     {
                         "section_id": "design",
                         "text": p["text"][:100],
-                        "supports": [
-                            {
-                                "evidence_id": "invented" if invalid == "id" else p["evidence_id"],
-                                "quote": "made up" if invalid == "quote" else p["text"][:100],
-                            }
-                        ],
+                        "evidence_ids": ["invented" if invalid == "id" else p["evidence_id"]],
                     }
                     for p in payload["passages"]
                 ],
                 "gaps": ["The other project does not exist."] if invalid == "gap" else [],
             }
+            if invalid == "quote":
+                result["claims"][0]["quote"] = "made up"
             if invalid == "number":
                 result["claims"][0]["text"] = "Capacity is 999999 litres."
             if invalid == "label":
@@ -102,7 +107,6 @@ def model(
             if invalid == "synthesis_support":
                 result["claims"][0]["text"] = "An earlier overconfident paraphrase."
                 other = json.loads(json.dumps(result["claims"][0]))
-                other["supports"][0]["quote"] = other["supports"][0]["quote"][1:]
                 result["claims"].append(other)
         elif task == "cross_source_synthesis":
             synthesized[0] = True
@@ -116,12 +120,19 @@ def model(
         elif task == "verify_heading":
             result = {"supported": [True] * len(payload["passages"])}
         elif task == "verify_support":
+            supported = invalid != "unsupported" and not (
+                invalid == "synthesis_support" and synthesized[0]
+            )
             result = {
-                "supported": [
-                    invalid != "unsupported"
-                    and not (invalid == "synthesis_support" and synthesized[0])
+                "audits": [
+                    {
+                        "claim_index": claim["claim_index"],
+                        "original_indexes": claim["original_indexes"][:1],
+                        "analysis": "Synthetic evidence comparison for this assertion.",
+                        "supported": supported,
+                    }
+                    for claim in payload["claims"]
                 ]
-                * len(payload["claims"])
             }
         else:
             raise AssertionError(task)
@@ -170,7 +181,10 @@ def run(db, job, client=None, settings=None):
 def test_real_originals_full_collection_bilingual_evidence_and_legacy_editor(workspace):
     db, root, *_ = workspace
     first = discover(
-        workspace, "Course/lecture1.txt", "Reservoir Alpha stores 37 litres except on Sundays."
+        workspace,
+        "Course/lecture1.txt",
+        "Reservoir Alpha stores 37 litres except on Sundays. "
+        + "Preserve this exact original context even beyond the model's assertion. " * 3,
     )
     second = discover(
         workspace, "Course/lecture2.md", "저수지 Beta는 92리터를 저장하고 일요일에도 작동합니다."
@@ -195,7 +209,9 @@ def test_real_originals_full_collection_bilingual_evidence_and_legacy_editor(wor
     assert "37" in head["content"] and "92" in head["content"]
     for citation in head["metadata"]["citations"]:
         passage = next(p for p in head["metadata"]["evidence"] if p["id"] == citation["id"])
-        assert citation["quote"] in passage["text"]
+        assert citation["quote"] == passage["text"]
+        assert citation["quote_start"] == passage["start"]
+        assert citation["quote_end"] == passage["end"]
         assert citation["page_number"] is None
         assert citation["source"]["source_version"] in {first.content_hash, second.content_hash}
     documents.update_document(db, identifier, content="# 사용자 편집\nKeep my changes.")
@@ -233,6 +249,274 @@ def test_relevant_discovery_uses_scoped_wiki_relations_not_wiki_as_evidence(work
     assert metadata["coverage"]["inventory_mode"] == "relevant"
 
 
+def test_comparison_preserves_verified_facts_without_a_second_factual_rewrite(workspace):
+    db, *_ = workspace
+    alpha = discover(
+        workspace,
+        "Course/[Alpha]|notes.txt",
+        "Project Alpha has a capacity of 37 litres. Alpha uses SQLite.",
+    )
+    beta = discover(
+        workspace,
+        "Course/Beta.txt",
+        "Project Beta stores 92 litres. Beta uses append-only log files.",
+    )
+
+    def facts_only(payload, result):
+        if payload["task"] == "cross_source_synthesis":
+            pytest.fail("Verified comparison facts reached the unsafe rewrite stage")
+        if payload["task"] == "process_original_sections":
+            p = payload["passages"][0]
+            facts = (
+                ["Project Alpha has a capacity of 37 litres.", "Alpha uses SQLite."]
+                if "Alpha" in p["text"]
+                else ["Project Beta stores 92 litres.", "Beta uses append-only log files."]
+            )
+            result["claims"] = [
+                {"section_id": "design", "text": text, "evidence_ids": [p["evidence_id"]]}
+                for text in facts
+            ]
+
+    client, calls = model(transform=facts_only)
+    identifier = run(
+        db,
+        enqueue(
+            db,
+            WikiScope(mode="chosen", source_ids=[alpha.id, beta.id]),
+            instruction="Write an English comparison of Alpha and Beta.",
+        ),
+        client,
+    )
+    revision = store.current(db, identifier)
+    body = revision["content"].split("## Source and coverage report")[0]
+    assert "| Source | Recorded facts |" in body
+    assert "37 litres." in body and "92 litres." in body
+    assert "stores 92 litres using" not in body
+    assert "[Alpha](" not in body
+    assert r"\[Alpha\]\|notes.txt" in body
+    assert "Project Beta stores 92 litres. [E" in body
+    assert "Beta uses append-only log files. [E" in body
+    assert not revision["metadata"]["coverage"]["partial"]
+    assert revision["metadata"]["coverage"]["comparison_format"] == "source_table"
+    assert len(revision["metadata"]["citations"]) == 2
+    assert any(c["task"] == "verify_support" for c in calls)
+    assert all(c["task"] != "cross_source_synthesis" for c in calls)
+    for citation in revision["metadata"]["citations"]:
+        assert citation["quote"] == citation["text"]
+        assert citation["quote_end"] - citation["quote_start"] == len(citation["quote"])
+
+
+def test_comparison_still_refuses_unverified_source_facts(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    client, _ = model(invalid="unsupported")
+    with pytest.raises(pipeline.local.DocumentError, match="unsupported"):
+        run(db, enqueue(db, instruction="Write an English comparison."), client)
+    assert documents.count_documents(db) == 0
+
+
+def test_comparison_with_only_one_source_remains_partial(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    identifier = run(db, enqueue(db, instruction="Write an English comparison."))
+    coverage = store.current(db, identifier)["metadata"]["coverage"]
+    assert coverage["partial"]
+    assert any(p["code"] == "comparison_unresolved" for p in coverage["presentation_limits"])
+
+
+def test_collection_notes_keep_every_verified_item_once_under_its_source(workspace):
+    db, *_ = workspace
+    discover(workspace, "A|[notes].txt", "Alpha stores 20 litres. Alpha uses a pump.")
+    discover(workspace, "B.txt", "Beta stores 33 litres. Beta uses a queue.")
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "summary_notes"
+        elif payload["task"] == "outline":
+            result["title"] = "Source summary notes"
+            result["sections"] = [{"id": "unused", "title": "Unsupported architecture"}]
+        elif payload["task"] == "process_original_sections":
+            p = payload["passages"][0]
+            facts = p["text"].split(". ")
+            facts = [text if text.endswith(".") else text + "." for text in facts]
+            result["claims"] = [
+                {
+                    "section_id": payload["outline"]["sections"][0]["id"],
+                    "text": text,
+                    "evidence_ids": [p["evidence_id"]],
+                }
+                for text in [*facts, facts[0]]
+            ]
+        elif payload["task"] == "cross_source_synthesis":
+            pytest.fail("Verified collection notes reached the rewrite stage")
+
+    client, calls = model(transform=notes)
+    artifact = run(
+        db, enqueue(db, instruction="Write summary notes for all selected sources."), client
+    )
+    revision = store.current(db, artifact)
+    body = revision["content"].split("## Source and coverage report")[0]
+    for fact in [
+        "Alpha stores 20 litres.",
+        "Alpha uses a pump.",
+        "Beta stores 33 litres.",
+        "Beta uses a queue.",
+    ]:
+        assert body.count(fact) == 1
+    assert r"## A\|\[notes\].txt" in body and "## B.txt" in body
+    assert "Unsupported architecture" not in body
+    assert revision["metadata"]["coverage"]["notes_format"] == "source_grouped"
+    assert not revision["metadata"]["coverage"]["partial"]
+    assert len(revision["metadata"]["citations"]) == 2
+    assert sum(c["task"] == "verify_heading" for c in calls) == 1
+    assert any(c["task"] == "verify_support" for c in calls)
+
+
+def test_a_processed_source_without_verified_notes_remains_partial(workspace):
+    db, *_ = workspace
+    discover(workspace, "A.txt", "Alpha stores 20 litres.")
+    discover(workspace, "B.txt", "Beta stores 33 litres.")
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+        elif payload["task"] == "process_original_sections":
+            for c in result["claims"]:
+                c["section_id"] = payload["outline"]["sections"][0]["id"]
+            if "Beta" in payload["passages"][0]["text"]:
+                result["claims"] = []
+
+    artifact = run(db, enqueue(db, instruction="Write summary notes."), model(transform=notes)[0])
+    coverage = store.current(db, artifact)["metadata"]["coverage"]
+    assert all(s["state"] == "processed" for s in coverage["sources"])
+    assert coverage["partial"]
+    assert any(p["code"] == "empty_source_notes" for p in coverage["presentation_limits"])
+
+
+@pytest.mark.parametrize("invalid", ["unsupported", "number"])
+def test_collection_notes_do_not_bypass_original_checks(workspace, invalid):
+    db, *_ = workspace
+    discover(workspace)
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+        elif payload["task"] == "process_original_sections":
+            for c in result["claims"]:
+                c["section_id"] = payload["outline"]["sections"][0]["id"]
+
+    with pytest.raises(local.DocumentError):
+        run(db, enqueue(db), model(invalid=invalid, transform=notes)[0])
+    assert documents.count_documents(db) == 0
+
+
+@pytest.mark.parametrize(
+    "mode,instruction",
+    [
+        ("collection", "Synthesize common themes in the summary notes."),
+        ("relevant", "Write summary notes about the designs."),
+    ],
+)
+def test_explicit_synthesis_and_relevant_reports_retain_factual_synthesis(
+    workspace, mode, instruction
+):
+    db, *_ = workspace
+    discover(workspace)
+
+    def notes(payload, result):
+        if payload["task"] == "interpret_intent":
+            result["document_type"] = "notes"
+
+    client, calls = model(transform=notes)
+    artifact = run(db, enqueue(db, mode=mode, instruction=instruction), client)
+    assert any(c["task"] == "cross_source_synthesis" for c in calls)
+    assert "notes_format" not in store.current(db, artifact)["metadata"]["coverage"]
+
+
+def test_explicit_quantity_retry_guides_only_the_rejected_original_stage(workspace, monkeypatch):
+    db, *_ = workspace
+    cedar = discover(workspace, "cedar.txt", "Cedar stores 18 litres.")
+    discover(workspace, "other.txt", "Other project makes daily backups.")
+    job = enqueue(db)
+    generate = pipeline.generate
+    bad = "Cedar stores 18 litres of capacity."
+
+    def invalid(payload, result):
+        if (
+            payload["task"] == "process_original_sections"
+            and "Cedar" in payload["passages"][0]["text"]
+        ):
+            result["claims"][0]["text"] = bad
+
+    monkeypatch.setattr(
+        pipeline, "generate", lambda context: generate(context, client=model(transform=invalid)[0])
+    )
+    jobs.register()
+    worker = knowledge_jobs.KnowledgeWorker()
+    worker.run_one(db, job["id"])
+    assert knowledge_jobs.get(db, job["id"])["state"] == "failed"
+    request = store.request(db, job["subject_id"])
+    stage = request["report"]["rejected_numeric_claim"]["stage"]
+    assert stage.startswith(f"source:{cedar.id}:")
+    assert any(k.startswith("outline:") for k in request["cache"])
+    assert not any(k.startswith(stage + ":") for k in request["cache"])
+    assert documents.count_documents(db) == 0
+
+    guided = []
+
+    def corrected(payload, result):
+        feedback = payload.get("validation_feedback")
+        if (
+            payload["task"] == "process_original_sections"
+            and "Cedar" in payload["passages"][0]["text"]
+        ):
+            guided.append(feedback)
+            assert feedback["previous_claims"] == [{"text": bad, "supported": False}]
+        else:
+            assert feedback is None
+
+    resumed = knowledge_jobs.resume(db, job["id"])
+    monkeypatch.setattr(
+        pipeline,
+        "generate",
+        lambda context: generate(context, client=model(transform=corrected)[0]),
+    )
+    worker.run_one(db, resumed["id"])
+    final = knowledge_jobs.get(db, resumed["id"])
+    assert final["state"] == "complete"
+    assert len(guided) == 1
+    assert bad not in store.current(db, final["artifact_id"])["content"]
+
+
+def test_numeric_retry_feedback_does_not_expose_an_original_outside_the_batch(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    req = store.request(db, job["subject_id"])
+    req["report"] = {
+        "rejected_numeric_claim": {
+            "stage": "source:known:0",
+            "text": "PREVIOUS_BATCH_PRIVATE_CLAIM",
+            "originals": ["PREVIOUS_BATCH_PRIVATE_ORIGINAL"],
+        }
+    }
+    client, calls = model()
+    pipeline._call(
+        knowledge_jobs.WorkContext(db, job),
+        req,
+        "source:known:0",
+        {
+            "task": "process_original_sections",
+            "passages": [{"evidence_id": "known", "text": "A safe fact."}],
+        },
+        Extraction,
+        Settings(_env_file=None),
+        client,
+    )
+    assert "PREVIOUS_BATCH_PRIVATE" not in json.dumps(calls)
+    assert all("validation_feedback" not in call for call in calls)
+
+
 def test_unverified_per_source_gap_is_not_a_published_collection_conclusion(workspace):
     db, *_ = workspace
     original = discover(workspace)
@@ -254,6 +538,40 @@ def test_empty_scope_requires_sources_without_model_call(workspace):
     with pytest.raises(pipeline.ClarificationRequired, match="No sources"):
         run(db, job, client)
     assert calls == [] and documents.count_documents(db) == 0
+
+
+def test_discovery_sees_scoped_bounded_originals_without_shared_query_words(workspace):
+    db, *_ = workspace
+    korean = discover(workspace, "first.txt", "저수지 Alpha의 용량은 37리터입니다. " * 30)
+    english = discover(workspace, "second.txt", "Reservoir Beta stores 92 litres.")
+    excluded = discover(workspace, "private.txt", "OUTSIDE_SCOPE_PRIVATE_CONTEXT")
+    job = enqueue(db, WikiScope(mode="chosen", source_ids=[korean.id, english.id]), mode="relevant")
+    previews = {}
+
+    def choose_from_originals(payload, result):
+        if payload["task"] == "discover_sources":
+            for item in payload["inventory"]:
+                previews[item["source_id"]] = item["text_search"]
+            result["source_ids"] = [
+                item["source_id"]
+                for item in payload["inventory"]
+                if any(word in item["text_search"]["preview"] for word in ("저수지", "Reservoir"))
+            ]
+
+    client, calls = model(transform=choose_from_originals)
+    plan = pipeline.discover(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        Settings(_env_file=None),
+        client,
+    )
+    assert set(plan["selected_ids"]) == {korean.id, english.id}
+    assert previews[korean.id]["matching_passages"] == 0
+    assert len(previews[korean.id]["preview"]) == 360
+    assert previews[korean.id]["preview"].startswith("저수지 Alpha")
+    assert excluded.id not in previews
+    assert "OUTSIDE_SCOPE_PRIVATE_CONTEXT" not in json.dumps(calls)
+    assert documents.count_documents(db) == 0  # Discovery is not publication/coverage.
 
 
 def test_owned_local_client_bypasses_environment_proxy_for_original_context(monkeypatch):
@@ -547,6 +865,313 @@ def test_local_only_and_array_schema_constraints():
     assert calls == []
 
 
+@pytest.mark.parametrize(
+    "task,field", [("verify_support", "claims"), ("verify_heading", "passages")]
+)
+def test_verification_transport_bounds_the_verdict_count(task, field):
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "qwen3"}})
+        sent.append(json.loads(request.content))
+        return httpx.Response(200, json={"done": True, "response": '{"supported":[true,false]}'})
+
+    payload = {"task": task, field: [{"text": "A recorded fact"}, {"text": "Another fact"}]}
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        result = local.structured(payload, Verification, client=client)
+    assert result.supported == [True, False]
+    counts = sent[0]["format"]["properties"]["supported"]
+    assert counts["minItems"] == counts["maxItems"] == 2
+    assert counts["items"]["type"] == "boolean"
+
+
+def test_endpoint_ignoring_verdict_count_cannot_publish_a_document(workspace):
+    db, *_ = workspace
+    discover(workspace)
+
+    def ignore_schema(payload, result):
+        if payload["task"] == "verify_support":
+            result["audits"] = []
+
+    with pytest.raises(local.DocumentError, match="invalid verdict count"):
+        run(db, enqueue(db), model(transform=ignore_schema)[0])
+    assert documents.count_documents(db) == 0
+
+
+def test_grounding_schema_in_prompt_matches_wire_format_and_budget():
+    payload = {"task": "verify_support", "claims": [{"text": "A recorded fact"}]}
+    constraint = {"claim_index": [0]}
+    text = local.prompt(payload, SupportVerification, constraint)
+    body = json.loads(text)
+    schema = local.output_schema(SupportVerification, constraint, payload=payload)
+    assert body["output_schema"] == schema
+    assert body["task"] == "verify_support"
+    assert schema["properties"]["audits"]["minItems"] == 1
+    assert schema["properties"]["audits"]["maxItems"] == 1
+    assert schema["$defs"]["SupportAudit"]["properties"]["claim_index"]["enum"] == [0]
+    assert local.size(payload, SupportVerification, constraint) == len(
+        (local.system(payload) + text).encode("utf-8")
+    )
+
+
+@pytest.mark.parametrize("language", ["English", "Korean"])
+@pytest.mark.parametrize(
+    "task,schema,definition,field",
+    [
+        ("outline", Outline, "Heading", "title"),
+        ("process_original_sections", Extraction, "Claim", "text"),
+        ("cross_source_synthesis", Synthesis, "SynthesizedClaim", "text"),
+    ],
+)
+def test_generation_binds_the_concrete_language_without_translating_references(
+    language, task, schema, definition, field
+):
+    payload = {"task": task, "output_language": language}
+    constraints = {"evidence_ids": ["original-한국어"], "claim_ids": ["claim-한국어"]}
+    body = json.loads(local.prompt(payload, schema, constraints))
+    output = local.output_schema(schema, constraints, payload=payload)
+    assert body["output_schema"] == output
+    assert f'"{language}"' in local.system(payload)
+    properties = output["$defs"][definition]["properties"]
+    assert f'"{language}"' in properties[field]["description"]
+    for name in ("evidence_ids", "claim_ids"):
+        if name in properties:
+            assert properties[name]["items"]["enum"] == constraints[name]
+    assert local.size(payload, schema, constraints) == len(
+        (local.system(payload) + local.prompt(payload, schema, constraints)).encode("utf-8")
+    )
+    # Generating a schema for another language must not mutate the prior request.
+    local.output_schema(schema, payload={**payload, "output_language": "French"})
+    assert '"French"' not in properties[field]["description"]
+
+
+def test_language_binding_does_not_change_literal_evidence_audits():
+    payload = {"task": "verify_support", "claims": [{"text": "원문"}]}
+    assert local.system({**payload, "output_language": "English"}) == local.SUPPORT_SYSTEM
+    assert local.output_schema(
+        SupportVerification, payload={**payload, "output_language": "English"}
+    ) == local.output_schema(SupportVerification, payload=payload)
+
+
+@pytest.mark.parametrize(
+    "change,error",
+    [
+        ({"claim_index": 99}, "invalid claim indexes"),
+        ({"original_indexes": [99]}, "selected an unknown original"),
+        ({"original_indexes": [-1]}, "Invalid local model JSON"),
+        ({"original_indexes": ["0"]}, "Invalid local model JSON"),
+        ({"original_quotes": ["invented evidence"]}, "Invalid local model JSON"),
+        ({"unestablished": ["invented fragment"], "supported": False}, "Invalid local model JSON"),
+        ({"original_indexes": []}, "inconsistent audit"),
+        ({"analysis": ""}, "Invalid local model JSON"),
+        ({"analysis": " "}, "inconsistent audit"),
+        ({"analysis": 42}, "Invalid local model JSON"),
+    ],
+)
+def test_invalid_evidence_audit_cannot_publish(workspace, change, error):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres.")
+
+    def invalid_audit(payload, result):
+        if payload["task"] == "verify_support":
+            result["audits"][0].update(change)
+
+    with pytest.raises(local.DocumentError, match=error):
+        run(db, enqueue(db), model(transform=invalid_audit)[0])
+    assert documents.count_documents(db) == 0
+
+
+def test_duplicate_audit_indexes_cannot_attest_another_claim(workspace):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres. Backups run daily.")
+
+    def duplicate(payload, result):
+        if payload["task"] == "process_original_sections":
+            result["claims"].append({**result["claims"][0], "text": "Backups run daily."})
+        elif payload["task"] == "verify_support":
+            result["audits"][1]["claim_index"] = 0
+
+    with pytest.raises(local.DocumentError, match="invalid claim indexes"):
+        run(db, enqueue(db), model(transform=duplicate)[0])
+    assert documents.count_documents(db) == 0
+
+
+def test_audit_indexes_preserve_identity_when_response_order_changes(workspace):
+    db, *_ = workspace
+    discover(workspace, content="Reservoir capacity is 37 litres. Backups run daily.")
+
+    def reordered(payload, result):
+        if payload["task"] == "process_original_sections":
+            result["claims"].append({**result["claims"][0], "text": "Backups run daily."})
+        elif payload["task"] == "verify_support":
+            result["audits"].reverse()
+
+    artifact = run(db, enqueue(db), model(transform=reordered)[0])
+    assert "Backups run daily." in store.current(db, artifact)["content"]
+
+
+def test_audit_original_index_is_bounded_to_its_own_claim(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {"text": "First fact", "quotes": ["First fact"], "original_passages": ["First fact"]},
+        {
+            "text": "Second fact",
+            "quotes": ["Second fact"],
+            "original_passages": ["Second fact", "Other context"],
+        },
+    ]
+
+    def cross_claim(payload, result):
+        if payload["task"] == "verify_support":
+            # The other claim's evidence is absent from this call; an ignored
+            # decoder constraint still cannot attest it by returning index 1.
+            result["audits"][0]["original_indexes"] = [1]
+
+    with pytest.raises(local.DocumentError, match="selected an unknown original"):
+        pipeline.verify(
+            knowledge_jobs.WorkContext(db, job),
+            store.request(db, job["subject_id"]),
+            "test",
+            claims,
+            Settings(_env_file=None),
+            model(transform=cross_claim)[0],
+        )
+    assert documents.count_documents(db) == 0
+
+
+def test_audit_uses_stable_batch_indexes_and_deduplicates_text_without_mutating_claims(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {
+            "text": "First fact and second fact",
+            "quotes": ["First fact", "Second fact"],
+            "original_passages": ["First fact", "Second fact", "Second fact"],
+        },
+        {
+            "text": "Second fact",
+            "quotes": ["Second fact"],
+            "original_passages": ["Second fact", "First fact"],
+        },
+    ]
+    client, calls = model()
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        "test",
+        claims,
+        Settings(_env_file=None),
+        client,
+    ) == [True, True]
+    audit = next(c for c in calls if c["task"] == "verify_support")
+    assert audit["original_passages"] == [
+        {"original_index": 0, "text": "First fact"},
+        {"original_index": 1, "text": "Second fact"},
+    ]
+    assert [c["original_indexes"] for c in audit["claims"]] == [[0, 1], [1, 0]]
+    assert claims[0]["original_passages"] == ["First fact", "Second fact", "Second fact"]
+
+
+def test_other_claim_evidence_cannot_influence_support_and_verdicts_keep_order(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {
+            "text": "Gull permits exports on Thursdays.",
+            "quotes": ["Gull permits exports on Mondays."],
+            "original_passages": ["Gull permits exports on Mondays."],
+        },
+        {
+            "text": "Kittiwake permits exports on Thursdays.",
+            "quotes": ["Kittiwake permits exports on Thursdays."],
+            "original_passages": ["Kittiwake permits exports on Thursdays."],
+        },
+        {
+            "text": "Gull permits exports on Mondays.",
+            "quotes": ["Gull permits exports on Mondays."],
+            "original_passages": ["Gull permits exports on Mondays."],
+        },
+    ]
+
+    def borrows_visible_fact(payload, result):
+        if payload["task"] != "verify_support":
+            return
+        visible = " ".join(p["text"] for p in payload["original_passages"])
+        for claim, audit in zip(payload["claims"], result["audits"], strict=True):
+            day = "Thursdays" if "Thursdays" in claim["text"] else "Mondays"
+            audit["supported"] = day in visible
+
+    client, calls = model(transform=borrows_visible_fact)
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        store.request(db, job["subject_id"]),
+        "isolated",
+        claims,
+        Settings(_env_file=None),
+        client,
+        strict=False,
+    ) == [False, True, True]
+    audits = [c for c in calls if c["task"] == "verify_support"]
+    assert len(audits) == 3
+    for audit in audits:
+        visible = {p["text"] for p in audit["original_passages"]}
+        for claim in audit["claims"]:
+            original = next(c for c in claims if c["text"] == claim["text"])
+            assert visible == set(original["original_passages"])
+    assert claims[0]["original_passages"] == ["Gull permits exports on Mondays."]
+
+
+def test_evidence_analysis_reserves_output_space_without_dropping_claims(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claims = [
+        {"text": f"Fact {n}", "original_passages": ["One shared original."]} for n in range(5)
+    ]
+    client, calls = model()
+    assert (
+        pipeline.verify(
+            knowledge_jobs.WorkContext(db, job),
+            store.request(db, job["subject_id"]),
+            "output-budget",
+            claims,
+            Settings(_env_file=None, generation_output_tokens=2048),
+            client,
+        )
+        == [True] * 5
+    )
+    batches = [p["claims"] for p in calls if p["task"] == "verify_support"]
+    assert [len(batch) for batch in batches] == [2, 2, 1]
+    assert [c["text"] for batch in batches for c in batch] == [c["text"] for c in claims]
+
+
+def test_rejected_audit_records_exact_application_owned_claim_and_original(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    claim = "Both projects were approved."
+    original = "One project was approved; the other is only proposed."
+    req = store.request(db, job["subject_id"])
+    assert pipeline.verify(
+        knowledge_jobs.WorkContext(db, job),
+        req,
+        "rejection",
+        [{"text": claim, "original_passages": [original]}],
+        Settings(_env_file=None),
+        model(invalid="unsupported")[0],
+        strict=False,
+    ) == [False]
+    audit = store.request(db, job["subject_id"])["report"]["rejected_support_check"]["audits"][0]
+    assert audit["unestablished"] == [claim]
+    assert audit["original_quotes"] == [original]
+    assert audit["analysis"] == "Synthetic evidence comparison for this assertion."
+
+
 def test_translated_explicit_counts_are_supported_but_unstated_numerals_are_rejected():
     pipeline.verify_numbers("백업은 하루 2번 실행됩니다.", "Backups run twice a day.")
     pipeline.verify_numbers("Backups run 1 time daily.", "백업은 하루에 한 번 실행됩니다.")
@@ -579,7 +1204,11 @@ def test_loopback_cloud_alias_is_rejected_before_source_context_is_sent():
 def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(workspace):
     db, *_ = workspace
     discover(workspace)
-    artifact = run(db, enqueue(db), model(invalid="synthesis_support")[0])
+    # Distinct source IDs with the same original bytes must share retained prose
+    # while preserving both citations. Models no longer supply subquote text.
+    discover(workspace, "duplicate.txt")
+    client, calls = model(invalid="synthesis_support")
+    artifact = run(db, enqueue(db), client)
     revision = store.current(db, artifact)
     assert "unsupported universal guarantee" not in revision["content"]
     assert "earlier overconfident paraphrase" not in revision["content"]
@@ -590,3 +1219,8 @@ def test_unverified_synthesis_retains_verbatim_originals_as_explicit_partial(wor
     assert revision["metadata"]["coverage"]["partial"]
     assert revision["metadata"]["coverage"]["synthesis_limits"]
     assert "comparative conclusions" in revision["content"]
+    assert len(revision["metadata"]["citations"]) == 2
+    assert len({c["source"]["source_id"] for c in revision["metadata"]["citations"]}) == 2
+    for call in calls:
+        if call["task"] == "verify_support":
+            assert len(call["original_passages"]) == 1

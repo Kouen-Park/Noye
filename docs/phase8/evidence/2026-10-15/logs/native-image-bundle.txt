@@ -1,0 +1,9 @@
+npm notice run noye-frontend@0.1.0 npx
+npm notice run 'tauri' build --bundles app --config /private/tmp/noye-phase8-20261012/tauri-native-config.json
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling noye-desktop v0.1.0 (/Users/gavinpark/Projects/Noye/frontend/src-tauri)
+    Finished `release` profile [optimized] target(s) in 18.80s
+       Built application at: /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/noye-desktop
+    Bundling Noye Phase8 QA.app (/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app)
+    Finished 1 bundle at:
+        /Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app (68.31 MiB)

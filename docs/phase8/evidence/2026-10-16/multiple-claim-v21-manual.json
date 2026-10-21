@@ -1,0 +1,12 @@
+{
+  "method": "Primary-agent review of the fixed original/claim pairs and exact audits; not independent review or document generation.",
+  "raw_report_sha256": "8bcdb7590928654bde8623e130db7a9579622062a04c655072653bc3944ecbb1",
+  "batches": 6,
+  "claims": 12,
+  "matches": 10,
+  "valid_semantic_batches": 6,
+  "seconds": 242.503,
+  "false_approval": "Skua stores encrypted reports and separately uses a map; this does not establish encrypting reports using a map. The neighboring Siskin original explicitly establishes that relationship for Siskin only. The returned Skua index remains 0, so allowed-index validation does not detect possible semantic borrowing. The cause is not established.",
+  "false_rejection": "Gannet daily backups follow from the adjoining second sentence of its original. Both claims reference the same allowed original; the returned false audit is structurally valid but semantically wrong.",
+  "evidence_isolation_decision": "Do not expose a different claim's originals in the same verifier call. This removes an avoidable channel for semantic borrowing; it does not establish correctness on one claim's own evidence."
+}

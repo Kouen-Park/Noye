@@ -1,0 +1,40 @@
+{
+  "method": "Current v27/v13 full backend, lint and frozen/native rebuild after dedicated inference unload. No new whole-generation acceptance is implied.",
+  "stages": [
+    {
+      "name": "backend-final",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--cov=app",
+        "--cov-branch",
+        "--cov-config=/private/tmp/noye-phase8-20261021-native/final/coverage.ini",
+        "--cov-report=json:/private/tmp/noye-phase8-20261021-native/final/backend-product-coverage.json",
+        "--cov-report=term"
+      ],
+      "seconds": 40.853,
+      "exit_code": 0
+    },
+    {
+      "name": "backend-lint",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/ruff",
+        "check",
+        "app"
+      ],
+      "seconds": 0.051,
+      "exit_code": 0
+    },
+    {
+      "name": "packaging-checks",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "/private/tmp/noye-phase8-20261021-native/build-native.py"
+      ],
+      "seconds": 99.685,
+      "exit_code": 0
+    }
+  ]
+}

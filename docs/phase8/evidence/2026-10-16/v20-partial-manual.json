@@ -1,0 +1,26 @@
+{
+  "method": "Primary-agent manual source comparison. Factual acceptance of inspected prose and expected partial-scope behavior is separate from complete presentation/quality acceptance. No independent review is claimed.",
+  "scenario": "partial",
+  "report_sha256": "ba71d7692202e6849e46ad92bdef67f587832b0633e592bbf27b869a2f012572",
+  "revision_body_sha256": "408b9ad313e51ae604f0f9189753f14c2a29f138bf9b257276318b2d0d7a3bbd",
+  "artifact_id": "47cbfa7f-6717-5b6e-9162-47f882547394",
+  "job_state": "complete",
+  "partial": true,
+  "inspected_factual_prose_accepted": true,
+  "complete_presentation_accepted": false,
+  "seconds": 340.849,
+  "expected_partial_scope_control_accepted": true,
+  "findings": [
+    {
+      "priority": "P2",
+      "issue": "Generic repeated presentation",
+      "observation": "A neutral title/heading remains, three empty planned sections were omitted and five paragraphs repeat facts."
+    }
+  ],
+  "preserved": [
+    "Both readable sources processed; empty and missing sources reported separately with zero processed passages.",
+    "Initial inventory 4, selected 4, processed 2; partial warning explicit.",
+    "Inspected comparisons preserve capacity versus stored amount without inventing a numeric capacity difference, source technology, Sunday conditions and backup frequencies.",
+    "No unverified synthesis fallback was required for the saved factual prose."
+  ]
+}

@@ -1,0 +1,95 @@
+{"name": "restart-days-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.005}
+{"name": "restart-days-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "approval-states-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "approval-states-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "temperature-properties-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "temperature-properties-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "translated-conditions-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "translated-conditions-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "independent-facts-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "independent-facts-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "measurement-subjects-supported", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "measurement-subjects-unsupported", "known": true, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "second-original-only", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "first-original-only", "known": true, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "mixed-power-true", "known": false, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "mixed-power-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "independent-tool-true", "known": false, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "independent-tool-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "adjoining-true", "known": false, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "adjoining-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "translated-exception-true", "known": false, "expected": true, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+{"name": "translated-exception-false", "known": false, "expected": false, "actual": null, "valid": false, "error": {"type": "DocumentError", "message": "Could not confirm that the Ollama model is local."}, "seconds": 0.001}
+Traceback (most recent call last):
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/tmp/noye-phase8-20261017/probe-analysis.py", line 106, in <module>
+    report['unload_status'] = client.post(settings.ollama_base_url+'/api/generate',
+                              ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        json={'model': settings.ollama_model, 'keep_alive': 0}).status_code
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1144, in post
+    return self.request(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 61] Connection refused

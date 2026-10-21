@@ -1,0 +1,30 @@
+{
+  "method": "Primary-agent manual inspection of exact two saved Wiki summaries against originals; not independent review.",
+  "file": "wiki-1cab8e3d-14fe-45ac-b670-f0079e4792da.json",
+  "seconds": 76.606,
+  "job_complete": true,
+  "semantic_quality_accepted": false,
+  "revisions": [
+    {
+      "source_id": "5129df63-4678-49d6-9a32-76bd406be4f8",
+      "revision_id": "b0712897-e021-44ec-8c2c-924f45c6a7e2",
+      "body_sha256": "263fbdb69b49d4fcc45448f4f11283d1a4d3ed0eda365cc5e439102c8a4d2fdb"
+    },
+    {
+      "source_id": "e2fb92b4-150e-48e2-a06a-bc156f260d2e",
+      "revision_id": "f5c23203-700b-4635-8802-5daefc4da4d5",
+      "body_sha256": "b45f5761789544dca32751ae3a7c05154cc54589fc3377a6217a244f9fdcefba"
+    }
+  ],
+  "findings": [
+    {
+      "priority": 1,
+      "text": "Alpha summary links use of SQLite to having its recorded storage capacity through 사용하여; source states capacity and SQLite use independently."
+    },
+    {
+      "priority": 1,
+      "text": "Beta summary broadens uses append-only log files into is an append-only system. This architecture assertion is not established."
+    }
+  ],
+  "meaning": "Valid literal references and model-complete Wiki generation do not establish faithful interpretation. Actual generation produced no relation inference calls because no candidates qualified."
+}

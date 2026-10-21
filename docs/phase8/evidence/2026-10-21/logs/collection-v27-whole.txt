@@ -1,0 +1,5 @@
+{"ingestion": "02-English.txt", "state": "READY", "seconds": 1.394}
+{"ingestion": "01-\ud55c\uad6d\uc5b4.md", "state": "READY", "seconds": 0.063}
+{"ingestion": "Unrelated.txt", "state": "READY", "seconds": 0.053}
+{"scenario": "collection", "job_id": "5fad1e9d-dfb0-4a0a-99a0-4acf5d96285a", "request_id": "8f4dd570-2c6b-495a-9c57-68cf42874830", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.", "seconds": 39.926, "report": "/private/tmp/noye-phase8-20261021/collection-v27/collection-8f4dd570-2c6b-495a-9c57-68cf42874830.json"}

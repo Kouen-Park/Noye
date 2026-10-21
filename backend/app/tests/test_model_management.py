@@ -1,4 +1,4 @@
-"""All model operations mocked; never download/delete user's Ollama models."""
+"""Fake model APIs and real loopback/proxy checks; never touch user's models."""
 
 import asyncio
 from types import SimpleNamespace
@@ -12,6 +12,7 @@ from app.config import apply_desktop_configuration, get_settings
 from app.main import app
 from app.services import model_manager as module
 from app.services.model_manager import ModelManager
+from app.tests.test_local_ollama import poisoned_proxy
 
 
 @pytest.fixture
@@ -222,3 +223,25 @@ def test_model_management_refuses_remote_server(monkeypatch, configured):
         assert error.value.status_code == 400
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("operation", ["pull", "delete"])
+def test_model_writes_bypass_environment_proxy(monkeypatch, configured, poisoned_proxy, operation):
+    url, direct_port, received, _ = poisoned_proxy
+    settings = get_settings().model_copy(update={"ollama_base_url": url, "qdrant_url": url})
+    monkeypatch.setattr(module, "get_settings", lambda: settings)
+
+    async def run():
+        manager = ModelManager()
+        if operation == "pull":
+            await manager.pull("qwen3.5:0.8b", str(configured))
+            await manager.task
+            # This fake server intentionally has no complete model stream.
+            assert manager.job["state"] == "failed"
+        else:
+            await manager.delete("mock-local-embed:latest")
+
+    asyncio.run(run())
+    expected = "/api/pull" if operation == "pull" else "/api/delete"
+    assert any(path == expected for _, path, _ in received)
+    assert all(port == direct_port for port, _, _ in received)

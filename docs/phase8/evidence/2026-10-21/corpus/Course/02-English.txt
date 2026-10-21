@@ -1,0 +1,1 @@
+Project Beta stores 92 litres. Beta uses append-only log files. Beta permits writes on Sundays. Backups run twice a day.

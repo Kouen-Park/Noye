@@ -1,0 +1,16 @@
+srv  update_slots: all slots are idle
+srv  update_slots: all slots are idle
+srv  update_slots: all slots are idle
+slot print_timing: id  0 | task 0 | n_gen =    100, tg =  16.20 t/s, tg_3s =  16.36 t/s
+slot print_timing: id  0 | task 0 | n_gen =    162, tg =  17.64 t/s, tg_3s =  20.55 t/s
+slot print_timing: id  0 | task 0 | n_gen =    218, tg =  17.88 t/s, tg_3s =  18.62 t/s
+slot print_timing: id  0 | task 0 | n_gen =    279, tg =  18.31 t/s, tg_3s =  20.03 t/s
+slot print_timing: id  0 | task 0 | n_gen =    341, tg =  18.67 t/s, tg_3s =  20.48 t/s
+slot print_timing: id  0 | task 0 | n_gen =    401, tg =  18.86 t/s, tg_3s =  19.98 t/s
+slot print_timing: id  0 | task 0 | n_gen =    462, tg =  19.00 t/s, tg_3s =  19.99 t/s
+slot print_timing: id  0 | task 0 | n_gen =    509, tg =  18.62 t/s, tg_3s =  15.59 t/s
+slot print_timing: id  0 | task 0 | n_gen =    570, tg =  18.78 t/s, tg_3s =  20.20 t/s
+slot print_timing: id  0 | task 0 | n_gen =    623, tg =  18.67 t/s, tg_3s =  17.60 t/s
+slot print_timing: id  0 | task 0 |        eval time =   35309.19 ms /   663 tokens (   53.34 ms per token,    18.75 tokens per second)
+srv  update_slots: all slots are idle
+[GIN] 2026/10/21 - 14:28:06 | 200 | 52.610197625s |       127.0.0.1 | POST     "/api/generate"

@@ -71,6 +71,33 @@ def await_files(client, count):
     raise AssertionError("Stable files were not processed by the real sidecar watcher")
 
 
+def test_private_export_protocol_saves_backup_without_an_http_destination(tmp_path):
+    import zipfile
+
+    destination = tmp_path / "native.noye.zip"
+    with sidecar(tmp_path / "workspace") as (child, output, client):
+        assert (
+            client.post("/native-export", json={"destination": str(destination)}).status_code == 404
+        )
+        child.stdin.write(
+            json.dumps(
+                {
+                    "event": "native_export",
+                    "id": 83,
+                    "action": "backup",
+                    "values": {"destination": str(destination)},
+                }
+            )
+            + "\n"
+        )
+        child.stdin.flush()
+        reply = output.get(timeout=15)
+        assert reply == {"event": "native_export_result", "id": 83, "result": "saved"}
+        with zipfile.ZipFile(destination) as archive:
+            assert {"app.db", "manifest.json"}.issubset(archive.namelist())
+        assert client.get("/health").json() == {"status": "ok"}
+
+
 def test_private_folder_authorization_scans_and_recovers_on_real_sidecar_restart(tmp_path):
     workspace, folder = tmp_path / "workspace", tmp_path / "originals"
     folder.mkdir()

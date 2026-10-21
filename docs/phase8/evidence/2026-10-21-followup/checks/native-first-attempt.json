@@ -1,0 +1,17 @@
+{
+  "method": "OS native Command-Option-Shift-Escape held 3.5 seconds on the QA app. Old app and sidecar PIDs disappeared; observation reattached to a fresh app instance. This attempt is NOT accepted as an active-generation kill.",
+  "old_app_pid": 70414,
+  "old_sidecar_pids": [
+    70421,
+    70422
+  ],
+  "new_app_pid": 71545,
+  "new_sidecar_pids": [
+    71557,
+    71561
+  ],
+  "force_quit_requested_unix_ms": 1792546097743,
+  "ollama_log_generation_completed_local": "2026-10-21 14:28:06",
+  "force_quit_requested_local": "2026-10-21 14:28:17.743",
+  "reason": "Runner token count was observed, but generation finished before the later native shortcut. A new synchronized attempt is required. Non-streaming native chat did not create the relay first-token marker; its watcher cannot certify activity."
+}

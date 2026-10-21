@@ -149,6 +149,9 @@ pub async fn select_workspace(
     })
     .await
     .map_err(|e| e.to_string())??;
+    #[cfg(target_os = "macos")]
+    crate::relaunch::request(&app);
+    #[cfg(not(target_os = "macos"))]
     app.request_restart();
     Ok(())
 }

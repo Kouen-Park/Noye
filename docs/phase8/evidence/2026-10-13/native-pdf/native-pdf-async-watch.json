@@ -1,0 +1,9 @@
+{
+  "qa_pid": 68477,
+  "maximum_staged_bytes": 0,
+  "limit_bytes": 10485760,
+  "note": "Test-only watchdog for this one-page synthetic PDF; no product cap and no UI automation.",
+  "result": "published",
+  "final_bytes": 21946,
+  "seconds": 49.237
+}

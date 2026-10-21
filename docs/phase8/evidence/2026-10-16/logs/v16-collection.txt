@@ -1,0 +1,2 @@
+{"scenario": "collection", "job_id": "8f90e69a-f73e-4aa2-9cfe-f0f687ddab96", "request_id": "8e5a3be0-9158-4edd-af0c-f1045b86622d", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "The model invented an excerpt or evidence ID.", "seconds": 146.224, "report": "/private/tmp/noye-phase8-20261016/v16-documents/collection-8e5a3be0-9158-4edd-af0c-f1045b86622d.json"}

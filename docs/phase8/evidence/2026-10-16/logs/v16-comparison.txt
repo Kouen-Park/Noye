@@ -1,0 +1,5 @@
+{"ingestion": "02-English.txt", "state": "READY", "seconds": 2.026}
+{"ingestion": "01-\ud55c\uad6d\uc5b4.md", "state": "READY", "seconds": 0.074}
+{"ingestion": "Unrelated.txt", "state": "READY", "seconds": 0.053}
+{"scenario": "comparison", "job_id": "49882546-6d40-414a-959c-1f8540efc855", "request_id": "3274e9f7-24fe-41f7-92de-ae0a661ee0c5", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "The local evidence check rejected an unsupported conclusion. No artifact was saved.", "seconds": 367.305, "report": "/private/tmp/noye-phase8-20261016/v16-documents/comparison-3274e9f7-24fe-41f7-92de-ae0a661ee0c5.json"}

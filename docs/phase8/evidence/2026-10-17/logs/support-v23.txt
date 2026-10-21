@@ -1,0 +1,12 @@
+{"id": "count-subjects-true", "regression": false, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 29.661}
+{"id": "count-subjects-false", "regression": false, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 12.663}
+{"id": "limit-observation-true", "regression": false, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 17.276}
+{"id": "limit-observation-false", "regression": false, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 15.969}
+{"id": "independent-purpose-true", "regression": false, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 13.279}
+{"id": "independent-purpose-false", "regression": false, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 14.331}
+{"id": "translated-adjoining-true", "regression": false, "expected": [true], "valid": true, "actual": [false], "matches": [false], "seconds": 29.525}
+{"id": "translated-adjoining-false", "regression": false, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 26.909}
+{"id": "temperature-properties-unsupported", "regression": true, "expected": [false], "valid": true, "actual": [false], "matches": [true], "seconds": 42.388}
+{"id": "translated-conditions-supported", "regression": true, "expected": [true], "valid": true, "actual": [true], "matches": [true], "seconds": 25.485}
+{"id": "separate-relationship", "regression": true, "expected": [false, true], "valid": true, "actual": [false, true], "matches": [true, true], "seconds": 57.508}
+{"id": "shared-duplicate", "regression": true, "expected": [true, true], "valid": true, "actual": [true, false], "matches": [true, false], "seconds": 35.584}

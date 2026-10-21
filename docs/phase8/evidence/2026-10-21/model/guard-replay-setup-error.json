@@ -1,0 +1,9 @@
+{
+  "method": "Initial no-inference replay harness failure, corrected to use each production surface's actual checks. No product assertion was relaxed.",
+  "initial_script_sha256": "b2084d543b626a1dda61fafa5992a0dd1d1f0170d4d9cfff49f0ec630c7757cf",
+  "case": "fresh-ko-conditions",
+  "text": "백업 작업은 6 일마다 실행됩니다.",
+  "observed_error": "A generated claim contains a number absent from its evidence.",
+  "cause": "The harness incorrectly applied source-document verify_numbers to Wiki output. Production Wiki uses ID/quote and litre-property checks; the faithful 엿새-to-6 rendering is manually accepted.",
+  "correction": "Use source numeral checks only for source-document cases, and the actual Wiki verify_claim for Wiki cases."
+}

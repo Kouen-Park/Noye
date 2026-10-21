@@ -43,3 +43,39 @@ def require_installed_local_model(settings, client):
         raise LocalModelError(
             "Original evidence requires an installed local model, not a cloud alias."
         )
+
+
+def post_structured(client, settings, *, system, prompt, schema):
+    """Select one endpoint before inference; never retry or promote reasoning to output.
+
+    Observed Qwen3.5:4b/Ollama 0.34.2 generate/thinking requests can put JSON in the
+    reasoning field only. Chat separated reasoning and final JSON in the same control.
+    Preserve the existing generate request when thinking is disabled.
+    """
+    require_loopback(settings)
+    payload = {
+        "model": settings.ollama_model,
+        "stream": False,
+        "think": settings.ollama_thinking,
+        "format": schema,
+        "options": {
+            "num_ctx": settings.generation_context_tokens,
+            "num_predict": settings.generation_output_tokens,
+            "temperature": 0,
+        },
+    }
+    if settings.ollama_thinking:
+        endpoint = "/api/chat"
+        payload["messages"] = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ]
+    else:
+        endpoint = "/api/generate"
+        payload.update(system=system, prompt=prompt)
+    return client.post(settings.ollama_base_url.rstrip("/") + endpoint, json=payload)
+
+
+def structured_text(body, *, thinking):
+    # A valid JSON-shaped thinking field is still not a final answer.
+    return body["message"]["content"] if thinking else body["response"]

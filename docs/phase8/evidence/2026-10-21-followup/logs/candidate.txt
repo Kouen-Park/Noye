@@ -1,0 +1,93 @@
+{"id": "fresh-v14-extra-origin-detail", "regression": false, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin text states 'Heather has a green status lamp' and adds that 'Its archive rotates every eight days'. The target text states 'Heather has a green status lamp'. Both passages assert the same fact about Heather's lamp. The additional detail in the origin text regarding the archive rotation is an independent property of the lamp system, not a contradiction to the simple existence statement in the target text. A missing statement (the archive rotation) in the target does not deny it.", "kind": "shared_subject", "confidence": 0.9, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 23.672}
+{"id": "fresh-v14-extra-target-detail", "regression": false, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "Both passages explicitly state that 'Myrtle blocks exports during calibration.' The target passage adds an independent fact about the log format, which does not affect the shared assertion regarding export blocking. Since both texts assert the same rule under the same condition without any conflicting details, they establish a shared subject.", "kind": "shared_subject", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 17.047}
+{"id": "fresh-v14-korean-overlap", "regression": false, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin text states '개망초는 점검 중 읽기를 허용한다' (Gae-mang-cho permits reading during inspections). The target text is identical: '개망초는 점검 중 읽기를 허용한다'. Both passages assert the exact same fact regarding the subject (Gae-mang-cho), property (permits reading), and condition (during inspections). The additional sentence in the origin about backups ('백업은 사흘마다 실행한다') is independent and does not affect this shared assertion.", "kind": "shared_subject", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 17.761}
+{"id": "fresh-v14-opposite-with-shared-extra", "regression": false, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "Both passages assert the same subject (Camellia) under the same condition (during servicing). The origin states it 'permits imports' while the target states it 'blocks imports'. These are mutually incompatible outcomes regarding the property of import access during servicing. The shared detail about the blue lamp is incidental and does not resolve this conflict.", "kind": "contradiction", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 17.445}
+{"id": "fresh-v14-disjoint-subjects", "regression": false, "valid": true, "actual": [], "matches_rubric": true, "seconds": 12.49}
+{"id": "fresh-v14-different-conditions", "regression": false, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin states Cyclamen permits writes during normal service. The target states Cyclamen blocks writes during inspection. These are assertions about the same subject (Cyclamen) and property (write permission), but under different conditions (normal service vs inspection). A normal schedule plus an explicit exception is compatible; permitting during normal service does not contradict blocking during inspection.", "kind": "shared_subject", "confidence": 0.95, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 19.764}
+{"id": "new-v11-same-condition-opposite", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "Both passages assert the same subject (Vervain exports) under the exact same condition (during maintenance), but with mutually incompatible outcomes: one states it 'permits' while the other states it 'forbids'. This is a direct contradiction of the property allowed during that specific time.", "kind": "contradiction", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 19.848}
+{"id": "new-v11-compatible-exception", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin states Nasturtium 'accepts imports except during recovery', meaning it permits imports normally but blocks them specifically during the recovery phase. The target states Nasturtium 'refuses imports during recovery'. These are mutually incompatible assertions regarding the same subject (Nasturtium), property (import status), and condition (during recovery). The origin explicitly allows the action in the specified timeframe, while the target explicitly denies it.", "kind": "contradiction", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": false, "seconds": 24.092}
+{"id": "new-v11-limit-versus-current", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The original text states Azalea 'currently stores 4 items' (current state) while the target text states it 'has a storage limit of 9 items' (capacity/limit). A current inventory count is not mutually incompatible with a maximum capacity; storing 4 items does not contradict having a limit of 9. These are different properties.", "kind": "shared_subject", "confidence": 0.85, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 24.24}
+{"id": "new-v11-omitted-fact", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin text states 'Sedum has an amber status indicator' and adds that its backups run hourly. The target text states 'Sedum has an amber status indicator'. Both passages assert the same fact about Sedum's status indicator under no conflicting conditions. The additional detail in the origin text regarding backup frequency is independent of the status indicator property.", "kind": "shared_subject", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 22.924}
+{"id": "new-v11-translated-same-rule", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin text states that '시계초' (Passionflower) blocks exports during inspections. The target text explicitly states that 'Passionflower' blocks exports during inspections and defines '시계초' as an alias for Passionflower. Both passages assert the same rule: Passionflower blocks exports during inspection.", "kind": "shared_subject", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 23.25}
+{"id": "fresh-v6-same-condition-negation", "regression": true, "valid": true, "actual": [{"target_id": "target-wiki", "origin_evidence_id": "origin", "target_evidence_id": "target", "reason": "The origin text explicitly states that during reindexing, Poppy does not accept imports. The target text explicitly states the opposite: during reindexing, Poppy accepts imports. Both passages assert a property (acceptance of imports) under the exact same condition (during reindexing), resulting in mutually incompatible outcomes.", "kind": "contradiction", "confidence": 1.0, "target_revision": "target-revision"}], "matches_rubric": true, "seconds": 22.62}
+Traceback (most recent call last):
+  File "/private/tmp/noye-phase8-20261021-followup/probe-relations.py", line 81, in <module>
+    actual = relations.infer(None, 'origin-wiki', metadata(case, 'origin'),
+        [origin], WikiScope(), [], settings, client)
+  File "/Users/gavinpark/Projects/Noye/backend/app/services/wiki/relations.py", line 119, in infer
+    response = structured(
+        prompt,
+    ...<3 lines>...
+        constraints=constraints,
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/app/services/wiki/local.py", line 124, in structured
+    response = post_structured(
+        client,
+    ...<3 lines>...
+        schema=response_schema(schema, constraints),
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/app/services/local_ollama.py", line 76, in post_structured
+    return client.post(settings.ollama_base_url.rstrip("/") + endpoint, json=payload)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/noye-phase8-20261021-followup/probe-relations.py", line 23, in post
+    response=super().post(url,json=json)
+  File "/Users/gavinpark/Projects/Noye/docs/phase8/evidence/2026-10-19/methods/production_holdout_client.py", line 9, in post
+    return super().post(url, json=json)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/app/evaluation/source_documents.py", line 88, in post
+    response = self.client.post(url, json=json)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1144, in post
+    return self.request(
+           ~~~~~~~~~~~~^
+        "POST",
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "/Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/httpcore/_backends/sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyboardInterrupt

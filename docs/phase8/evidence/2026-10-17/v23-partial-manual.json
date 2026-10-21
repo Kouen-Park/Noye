@@ -1,0 +1,25 @@
+{
+  "method": "Primary-agent manual inspection of exact saved body and coverage.",
+  "file": "partial-89d078d9-e453-4a96-a59a-4482010e8d27.json",
+  "body_sha256": "408b9ad313e51ae604f0f9189753f14c2a29f138bf9b257276318b2d0d7a3bbd",
+  "generation_seconds": 637.127,
+  "job_complete": true,
+  "scope_control_accepted": true,
+  "inspected_body_facts_faithful": true,
+  "complete_presentation_accepted": false,
+  "coverage": {
+    "inventory": 4,
+    "selected": 4,
+    "processed": 2,
+    "empty": "indexing_failed",
+    "missing": "missing",
+    "reported_partial": true
+  },
+  "findings": [
+    {
+      "priority": 2,
+      "text": "Five paragraphs repeat capacity, technology and Sunday facts under one neutral heading. Document title and heading were neutralized; three empty sections were omitted."
+    }
+  ],
+  "meaning": "Accepted expected partial-scope behavior for this fixture, not full document presentation."
+}

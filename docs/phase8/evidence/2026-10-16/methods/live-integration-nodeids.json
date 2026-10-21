@@ -1,0 +1,21 @@
+[
+  "app/tests/test_retrieval.py::test_real_search_finds_the_relevant_page",
+  "app/tests/test_retrieval.py::test_real_search_matches_by_meaning_not_keywords",
+  "app/tests/test_retrieval.py::test_real_search_answers_a_korean_question_about_english_text",
+  "app/tests/test_retrieval.py::test_real_search_ranks_the_unrelated_passage_last",
+  "app/tests/test_search_api.py::test_search_finds_a_real_passage_end_to_end",
+  "app/tests/test_embeddings.py::test_real_ollama_returns_the_configured_dimension",
+  "app/tests/test_embeddings.py::test_real_ollama_embeds_korean_text",
+  "app/tests/test_embeddings.py::test_related_texts_are_closer_than_unrelated_ones",
+  "app/tests/test_embeddings.py::test_real_ollama_matches_korean_question_to_korean_passage",
+  "app/tests/test_documents_api.py::test_a_real_draft_is_markdown_and_editable",
+  "app/tests/test_indexing.py::test_real_server_round_trip",
+  "app/tests/test_indexing.py::test_real_server_delete_is_scoped_to_the_file",
+  "app/tests/test_files_api.py::test_real_upload_ingests_and_becomes_ready",
+  "app/tests/test_ingestion.py::test_real_ingestion_makes_a_document_searchable_and_citable",
+  "app/tests/test_citations.py::test_full_pipeline_cites_the_page_the_fact_was_written_on",
+  "app/tests/test_chat_api.py::test_a_real_question_is_answered_and_cited_end_to_end",
+  "app/tests/test_generation.py::test_real_answer_uses_the_retrieved_passage",
+  "app/tests/test_generation.py::test_real_answer_declines_when_the_excerpts_do_not_contain_it",
+  "app/tests/test_generation.py::test_real_answer_replies_in_korean_to_a_korean_question"
+]

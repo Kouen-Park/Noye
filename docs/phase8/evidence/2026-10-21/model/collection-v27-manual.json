@@ -1,0 +1,67 @@
+{
+  "method": "Direct review of the final v27 Korean collection notes against both frozen invented originals. Faithful summary is distinct from exhaustive fact inclusion.",
+  "report": "/private/tmp/noye-phase8-20261021/collection-v27/collection-8f4dd570-2c6b-495a-9c57-68cf42874830-retry-2.json",
+  "report_sha256": "816dbbfdddc7f8dd45f39f8ea53e4a3bf66cd5d1afb7db4dfc9b77d70a178083",
+  "seconds": 90.803,
+  "state": "complete",
+  "body_sha256": "9f7e9b5180653315843fc757de139be31ee1f39896fafc2dffb7cdc6b5b5eaff",
+  "accepted_on_this_corpus": true,
+  "facts": "Beta stores 92 litres, uses append-only log files, permits Sunday writes and has twice-daily backups. Alpha capacity 37 litres, Sunday write pause and once-daily backups are faithful and separately attributed. No capacity/stored swap or unsupported instrumental link remains.",
+  "limits": "Alpha SQLite detail was not extracted into these notes; summary coverage does not prove inclusion of every original fact. Append-only translation is awkward. Native rendering is not observed in this CLI check.",
+  "coverage": {
+    "inventory_count": 2,
+    "inventory_mode": "collection",
+    "notes_format": "source_grouped",
+    "partial": false,
+    "sources": [
+      {
+        "availability": "available",
+        "characters_processed": 120,
+        "characters_read": 120,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/02-English.txt",
+        "root_id": "b4bdf589-0b6c-48e6-810c-849775d875a3",
+        "source_id": "50038ce5-27c1-4b0d-b962-8f48e6663c71",
+        "state": "processed",
+        "version": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      {
+        "availability": "available",
+        "characters_processed": 95,
+        "characters_read": 95,
+        "fragments_processed": 1,
+        "no_text_pages": [],
+        "passages_read": 1,
+        "processing_state": "READY",
+        "reason": null,
+        "relative_path": "Course/01-한국어.md",
+        "root_id": "b4bdf589-0b6c-48e6-810c-849775d875a3",
+        "source_id": "f44b9f36-6129-40ae-85f8-5b8e69131821",
+        "state": "processed",
+        "version": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      }
+    ]
+  },
+  "prompt_version": "source-document-v27",
+  "render_version": "source-document-markdown-v5",
+  "synthesis_calls": 0,
+  "model_tasks": [
+    "model_preflight",
+    "process_original_sections",
+    "model_preflight",
+    "verify_support",
+    "model_preflight",
+    "process_original_sections",
+    "model_preflight",
+    "verify_support",
+    "model_preflight",
+    "verify_support",
+    "model_preflight",
+    "verify_heading"
+  ],
+  "initial_failure": "First attempt refused a capacity swap before publication in 39.926 s. One explicit QA resume used the same original inventory; no automatic product job replay."
+}

@@ -1,0 +1,56 @@
+{
+  "files": [
+    {
+      "path": "Course/Reviewed/Alpha-renamed.md",
+      "sha256": "c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154"
+    },
+    {
+      "path": "Course/Unclassified/Beta.txt",
+      "sha256": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+    },
+    {
+      "path": "Course/Unclassified/Gamma.txt",
+      "sha256": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd"
+    },
+    {
+      "path": "Delta.txt",
+      "sha256": "a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280"
+    },
+    {
+      "path": "Orchard.txt",
+      "sha256": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf"
+    },
+    {
+      "path": "wiki/projects/27f25ea8-eb87-52a9-b0b0-b4d823df35f7.md",
+      "sha256": "a9fe7f9c7aff72a2d4bab2a4703130381f2e54296fcf0df24f19dbf7cf47172a"
+    },
+    {
+      "path": "wiki/sources/020d3379-3c37-5870-aacf-4642e9f7b440.md",
+      "sha256": "eed9543ce6f2d3c87de2e6a9edf5f0a5e4963a54d60cb7e0039b8c79c43972f9"
+    },
+    {
+      "path": "wiki/sources/052487ea-e541-5cce-a3b8-267f6b2dff3e.md",
+      "sha256": "61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12"
+    },
+    {
+      "path": "wiki/sources/5770fabb-4f91-5b24-b89a-799b38cc17ae.md",
+      "sha256": "864b9c471a5ce96571b2533dcb1e7929f0b87ba7e1b6aa35dd17f7989b670cbd"
+    },
+    {
+      "path": "wiki/sources/585ef39e-fd08-5ff0-908e-81dc0310aeb9.md",
+      "sha256": "d3ecea13d996096e5ac704e17a55b66cc9dee599625b328d357476332efe1928"
+    },
+    {
+      "path": "wiki/sources/d698851b-60af-5aa3-81df-f683cc9182bb.md",
+      "sha256": "37865988e729551147a5278f07845e18400236fceb8c7b01b09565503f334981"
+    }
+  ],
+  "source_ids": [
+    "db415e88-8802-4cd6-8901-a3cc6ac11590",
+    "c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa",
+    "66f8cb98-4c8c-44f2-94c5-ae3615c40df0",
+    "84f43e04-ec92-45c6-9343-c566c0a9b082",
+    "715329a0-e737-4e6a-880a-d886b1206cda"
+  ],
+  "user_wiki_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c"
+}

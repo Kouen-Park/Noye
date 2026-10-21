@@ -1,0 +1,66 @@
+[
+  [
+    "new-independent-means",
+    false,
+    "Dahlia supports 20 sessions using a ceramic housing.",
+    [
+      "Dahlia supports 20 sessions. Dahlia uses a ceramic housing."
+    ]
+  ],
+  [
+    "new-explicit-means",
+    true,
+    "Juniper locates saved entries using an index.",
+    [
+      "Juniper uses an index to locate saved entries."
+    ]
+  ],
+  [
+    "new-adjoining-subject",
+    true,
+    "Mistral creates snapshots every Thursday.",
+    [
+      "Mistral pauses writes during inspection. Snapshots are created every Thursday."
+    ]
+  ],
+  [
+    "new-competing-subject",
+    false,
+    "Nacre creates daily backups.",
+    [
+      "Nacre pauses writes on Saturdays. Sol creates daily backups."
+    ]
+  ],
+  [
+    "new-korean-independent",
+    false,
+    "하늘은 TLS를 사용하여 요청 처리 한도 34건을 달성합니다.",
+    [
+      "하늘의 요청 처리 한도는 34건입니다. 하늘은 TLS를 사용합니다."
+    ]
+  ],
+  [
+    "new-korean-explicit",
+    true,
+    "모래는 색인을 사용하여 저장된 기록을 찾습니다.",
+    [
+      "모래는 저장된 기록을 찾는 수단으로 색인을 사용합니다."
+    ]
+  ],
+  [
+    "new-exception-dropped",
+    false,
+    "Fennel permits writes every day.",
+    [
+      "Fennel permits writes except on Sundays."
+    ]
+  ],
+  [
+    "new-conjunctive-facts",
+    true,
+    "Violet stores 18 records and uses a ring buffer.",
+    [
+      "Violet stores 18 records. Violet uses a ring buffer."
+    ]
+  ]
+]

@@ -1,0 +1,5 @@
+DB-318 copied the database with its write-ahead log committed through the backup API. The result contained 87 conversations and 14 edited notes. Vector files were excluded.
+
+DB-318은 백업 API로 WAL의 커밋된 내용을 함께 복사했다. 결과에는 대화 87개와 편집된 노트 14개가 들어 있었다. 벡터 파일은 제외했다.
+
+Database experiment procedure: record the run identifier DB-318 before beginning. Keep the raw log separately from discussion notes. Review missing measurements, disagreements and units during the next study meeting. A procedure sheet is not the measured result.

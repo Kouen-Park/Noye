@@ -1,0 +1,128 @@
+{
+  "native_save_dialog_cancelled_once_then_saved": true,
+  "file": "noye-workspace.noye.zip",
+  "bytes": 53542,
+  "sha256": "af5065825656e12a508612778e4710c6fabc94be2b109b479579dbfd89e0ce6f",
+  "manifest": {
+    "format": "noye-workspace",
+    "version": 1,
+    "schema_version": 10,
+    "created_at": "2026-10-13T03:53:13.476010+00:00",
+    "files": {
+      "app.db": {
+        "size": 507904,
+        "sha256": "08cec61bea3b6e56610b0d6aae5a240efc7f0e42df97c0392ea9c7c989ad0d29"
+      },
+      "sources/db415e88-8802-4cd6-8901-a3cc6ac11590__c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154.md": {
+        "size": 244,
+        "sha256": "c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154"
+      },
+      "sources/84f43e04-ec92-45c6-9343-c566c0a9b082__1bb3cc58b9dd35ed735433116b2e2478c00aee55c8976319d6a1f6d13d2fe990.txt": {
+        "size": 87,
+        "sha256": "1bb3cc58b9dd35ed735433116b2e2478c00aee55c8976319d6a1f6d13d2fe990"
+      },
+      "sources/715329a0-e737-4e6a-880a-d886b1206cda__717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf.txt": {
+        "size": 58,
+        "sha256": "717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf"
+      },
+      "sources/151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf": {
+        "size": 1121,
+        "sha256": "66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af"
+      },
+      "sources/c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa__f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16.txt": {
+        "size": 121,
+        "sha256": "f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16"
+      },
+      "sources/db415e88-8802-4cd6-8901-a3cc6ac11590__9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5.md": {
+        "size": 196,
+        "sha256": "9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5"
+      },
+      "sources/66f8cb98-4c8c-44f2-94c5-ae3615c40df0__0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd.txt": {
+        "size": 88,
+        "sha256": "0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd"
+      },
+      "sources/84f43e04-ec92-45c6-9343-c566c0a9b082__a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280.txt": {
+        "size": 200,
+        "sha256": "a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/projects/27f25ea8-eb87-52a9-b0b0-b4d823df35f7.md": {
+        "size": 1186,
+        "sha256": "a9fe7f9c7aff72a2d4bab2a4703130381f2e54296fcf0df24f19dbf7cf47172a"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/052487ea-e541-5cce-a3b8-267f6b2dff3e.md": {
+        "size": 1331,
+        "sha256": "61850315a3c5f46430e665f5d9667cac7c6f3b174e98422942a6aac6a8904b12"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/020d3379-3c37-5870-aacf-4642e9f7b440.md": {
+        "size": 976,
+        "sha256": "eed9543ce6f2d3c87de2e6a9edf5f0a5e4963a54d60cb7e0039b8c79c43972f9"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/d698851b-60af-5aa3-81df-f683cc9182bb.md": {
+        "size": 1051,
+        "sha256": "37865988e729551147a5278f07845e18400236fceb8c7b01b09565503f334981"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/5770fabb-4f91-5b24-b89a-799b38cc17ae.md": {
+        "size": 833,
+        "sha256": "864b9c471a5ce96571b2533dcb1e7929f0b87ba7e1b6aa35dd17f7989b670cbd"
+      },
+      "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/585ef39e-fd08-5ff0-908e-81dc0310aeb9.md": {
+        "size": 1041,
+        "sha256": "d3ecea13d996096e5ac704e17a55b66cc9dee599625b328d357476332efe1928"
+      }
+    },
+    "missing_sources": [],
+    "external_originals": "not included; internal version byte snapshots are included",
+    "missing_knowledge_roots": [],
+    "reconnect_required": true
+  },
+  "entries": [
+    "app.db",
+    "sources/db415e88-8802-4cd6-8901-a3cc6ac11590__c8e55befc9df7d8cecabf06bd4102bb93860e5126118d7053d21db863a2e6154.md",
+    "sources/84f43e04-ec92-45c6-9343-c566c0a9b082__1bb3cc58b9dd35ed735433116b2e2478c00aee55c8976319d6a1f6d13d2fe990.txt",
+    "sources/715329a0-e737-4e6a-880a-d886b1206cda__717a0c1b4027f59b10d27c7ef052df6a9659d2cedb9c6f94a93812fceaac93bf.txt",
+    "sources/151d52e3-3c5a-44aa-963d-4afbde8ee0fb__AT-201.pdf",
+    "sources/c2547ac7-f7d3-4beb-9ef7-7aa9da4b5afa__f457fd31801503f503fa284884fdedb7d10f635adcfbec1beedcca6c92358d16.txt",
+    "sources/db415e88-8802-4cd6-8901-a3cc6ac11590__9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5.md",
+    "sources/66f8cb98-4c8c-44f2-94c5-ae3615c40df0__0f5316f05fef68cb13d081f6ca2bfeb45d814cfaedbeeee07fe2a59209b159fd.txt",
+    "sources/84f43e04-ec92-45c6-9343-c566c0a9b082__a0889e7160eb986dabb6760a0550653947f9b6a8117e4008ca2c988862eb4280.txt",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/projects/27f25ea8-eb87-52a9-b0b0-b4d823df35f7.md",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/052487ea-e541-5cce-a3b8-267f6b2dff3e.md",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/020d3379-3c37-5870-aacf-4642e9f7b440.md",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/d698851b-60af-5aa3-81df-f683cc9182bb.md",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/5770fabb-4f91-5b24-b89a-799b38cc17ae.md",
+    "knowledge/737724ae-d1b2-4c09-a1c9-c9308b70aa89/wiki/sources/585ef39e-fd08-5ff0-908e-81dc0310aeb9.md",
+    "manifest.json"
+  ],
+  "roots": [
+    {
+      "id": "737724ae-d1b2-4c09-a1c9-c9308b70aa89",
+      "name": "knowledge",
+      "path": "/private/tmp/noye-phase8-20261012/native-folder/knowledge",
+      "kind": "connected",
+      "device": 16777229,
+      "inode": 17629237,
+      "connected": 1,
+      "processing": 1,
+      "organization_prefix": "Course",
+      "availability": "available",
+      "error": null,
+      "created_at": "2026-10-13T02:39:02.304909+00:00",
+      "updated_at": "2026-10-13T03:22:24.235346+00:00"
+    }
+  ],
+  "user_wiki": {
+    "id": "052487ea-e541-5cce-a3b8-267f6b2dff3e",
+    "current_revision": "bb5e6f92-dbdf-44f5-9026-4b75f6eab91c",
+    "title": "Phase8 Alpha user writing",
+    "content": "<!-- Wiki ID: 052487ea-e541-5cce-a3b8-267f6b2dff3e; model: qwen3.5:4b; prompt: wiki-grounded-v3; generated: 2026-10-13T02:40:00.003422+00:00; processing seconds: 51.560 -->\n\n# Alpha.md\n\nWiki interpretation. Verify exact facts, numbers and exceptions against original passages.\n\nPrimary category (suggestion): Unclassified\n\nTags: SQLite, 백업, 쓰기 중지, 저수지 Alpha\n\n## Summary\n\n저수지 Alpha 프로젝트는 SQLite를 사용하여 37리터의 저장 용량을 가지며, 일요일에는 쓰기를 중지하고 하루에 한 번 백업이 실행됩니다. [E1]\n\n- 저수지 Alpha 프로젝트의 저장 용량은 37리터입니다. [E1]\n\n- 저수지 Alpha는 SQLite를 사용합니다. [E1]\n\n- 저수지 Alpha는 일요일에 쓰기를 중지합니다. [E1]\n\n- 저수지 Alpha의 백업은 하루에 한 번 실행됩니다. [E1]\n\n## Original evidence\n\n### E1: Alpha.md\nSource ID: `db415e88-8802-4cd6-8901-a3cc6ac11590`; version: `9be41e950295c9a0d329bc2abd9f0b1e5468fb25bc9b3a7847814abe19a6e9e5`\n\nPassage 0, characters 0–95\n\n> # 저수지 Alpha\n> Alpha 프로젝트의 저장 용량은 37리터입니다. Alpha는 SQLite를 사용하며 일요일에는 쓰기를 중지합니다. 백업은 하루에 한 번 실행됩니다.\n\n## 사용자 메모\n\nPhase8 user edit · 원문 변경 후에도 보존할 검증 메모.\n",
+    "origin": "user"
+  },
+  "checks": {
+    "all_manifest_hashes_match": true,
+    "one_external_root": true,
+    "user_wiki_exact": true,
+    "user_title_preserved": true,
+    "credentials_absent": true,
+    "native_saved_notice_observed": true
+  }
+}

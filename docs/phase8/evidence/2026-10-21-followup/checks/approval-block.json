@@ -1,0 +1,7 @@
+{
+  "action_not_executed": "Restart QA-only loopback relay native-proxy-observed.py on 11439",
+  "review_result": "Automatic approval review failed due usage limit; retry after 4:25 PM or resolve account limit. This is a review failure, not a determination that the action is unsafe.",
+  "workaround_rejected": "No unreviewed server launch, sandbox bypass, or private preference-file write. Native settings expose no custom endpoint editor; the existing upstream 11440 cannot be selected there.",
+  "unaffected_work_completed": "Full frontend checks, offline native bundle/signature check, native document UI recovery, documentation/evidence preparation.",
+  "still_required": "Restore reviewed QA service access for active-token native termination; complete quality/device/cloud/distribution acceptance before conditional merge."
+}

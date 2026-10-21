@@ -1,0 +1,9 @@
+{
+  "native_source_link": "http://127.0.0.1:55782/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+  "endpoint_bytes": 1121,
+  "endpoint_sha256": "66fd7bba55477564c302b71aaf6596cd539f0d8ec415c1939bb6e51da65a67af",
+  "endpoint_headers": "HTTP/1.1 200 OK\ndate: Wed, 14 Oct 2026 10:02:59 GMT\nserver: uvicorn\ncontent-type: application/pdf\naccept-ranges: bytes\ncontent-disposition: inline; filename=\"AT-201.pdf\"\ncontent-length: 1121\nlast-modified: Tue, 13 Oct 2026 03:55:32 GMT\netag: \"a5428178503d1b1bb650d18ae57c0ecd\"\n\n",
+  "native_actions": "Saved conversation reopened; Passage consulted opened; current original link clicked. No app error appeared.",
+  "browser_destination_accepted": false,
+  "automation_limitation": "Enabled browser inventory did not identify the synthetic source. Native pointer/screenshot operations repeatedly failed with Sky Computer Use service startup request failed. Kernel reset recovered AX observation but did not restore pointer/screenshot operations. No unrelated browser page was operated or retained."
+}

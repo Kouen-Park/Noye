@@ -2,7 +2,56 @@
 
 import re
 
+from app.services import quantity_properties
 from app.services.source_documents.local import DocumentError
+
+
+def literal_text(text):
+    return re.sub(r"([\\`*_{}\[\]()<>#!|~])", r"\\\1", " ".join(text.split()))
+
+
+def comparison_table(rows, language):
+    """Compare verified source notes without generating connecting assertions."""
+    headers = ("자료", "기록된 내용") if language == "Korean" else ("Source", "Recorded facts")
+    lines = [f"| {headers[0]} | {headers[1]} |", "| --- | --- |"]
+    for name, claims in rows:
+        notes = " ".join(
+            literal_text(text) + " [" + ", ".join(labels) + "]" for text, labels in claims
+        )
+        lines.append(f"| {literal_text(name)} | {notes} |")
+    return "\n".join(lines)
+
+
+def source_notes_requested(instruction, intent):
+    kind = intent["document_type"].replace("_", " ").casefold()
+    return (
+        intent["inventory_mode"] == "collection"
+        and bool(re.search(r"\b(?:notes?|summary)\b|요약|노트", kind))
+        and not re.search(
+            r"\bsynthesi[sz]|\bintegrat|\bcommon\s+(?:themes?|ideas?)|\bcross.source\b"
+            r"|공통|통합|종합|연결",
+            instruction,
+            re.IGNORECASE,
+        )
+    )
+
+
+def source_notes(rows):
+    sections = []
+    for name, claims in rows:
+        notes = {}
+        for text, labels in claims:
+            notes.setdefault(text, []).extend(labels)
+        sections.append(
+            "## "
+            + literal_text(name)
+            + "\n\n"
+            + "\n\n".join(
+                "- " + literal_text(text) + " [" + ", ".join(dict.fromkeys(labels)) + "]"
+                for text, labels in notes.items()
+            )
+        )
+    return sections
 
 
 def language_name(value):
@@ -41,6 +90,20 @@ def requested_language(instruction, inferred):
             re.IGNORECASE,
         )
     )
+    # "Source language: English" describes the input, even when its field comes
+    # after an explicit output directive. Bare/output language fields still apply.
+    directives = [
+        directive
+        for directive in directives
+        if not (
+            directive.group(3)
+            and re.search(
+                r"\b(?:sources?|originals?|input)[\s-]*$",
+                instruction[: directive.start()],
+                re.IGNORECASE,
+            )
+        )
+    ]
     return (
         language_name(next(g for g in directives[-1].groups() if g))
         if directives
@@ -70,12 +133,32 @@ def check_language(text, language):
 
 
 def check_shape(text, *, heading=False):
+    # Markdown recognizes LF, CRLF and lone CR as line endings. Normalize only
+    # the checked copy, so alternate line endings cannot hide a Setext heading.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     if (heading and ("\n" in text or "\r" in text or text.lstrip().startswith("#"))) or (
         not heading
         and re.search(r"(?m)^[ \t]{0,3}#{1,6}\s|^[^\n]+\n[ \t]{0,3}(?:=+|-+)[ \t]*$", text)
     ):
         raise DocumentError(
             "Generated text contains an unplanned Markdown heading. No document was saved."
+        )
+
+
+def check_volume_properties(text, originals):
+    try:
+        quantity_properties.check_volume_properties(text, originals)
+    except quantity_properties.QuantityPropertyError as error:
+        raise DocumentError(f"{error} No document was saved.") from None
+
+
+def check_absence_claim(text, originals):
+    # Model batches cannot certify collection-wide missing information. The
+    # application owns that coverage report; literal original statements remain.
+    if is_absence_heading(text) and not any(text.strip() in original for original in originals):
+        raise DocumentError(
+            "A generated claim makes an unverified missing-evidence assertion. "
+            "Missing material belongs in the coverage report. No document was saved."
         )
 
 
@@ -98,6 +181,31 @@ def is_absence_heading(title):
             r"|\black\s+of\s+(?:information|evidence|data|sources?|material)\b"
             r"|(?:정보|자료|근거|데이터)(?:가|는|의)?(?:\s+대한\s+정보)?\s*(?:부족|없|누락)",
             title,
+            re.IGNORECASE,
+        )
+    )
+
+
+def has_performance_context(title, originals):
+    # A local model approved a combined policy/performance heading from Sunday
+    # permissions alone. Require a performance topic or measurement in the
+    # originals before asking that model to judge the remaining heading meaning.
+    if not re.search(
+        r"\b(?:performance|efficiency|throughput|latency|speed|benchmarks?)\b|"
+        r"성능|효율|처리량|지연|속도",
+        title,
+        re.IGNORECASE,
+    ):
+        return True
+    return bool(
+        re.search(
+            r"\b(?:performance|efficiency|throughput|latency|speed|benchmarks?|runtime|"
+            r"memory|elapsed)\b|\brun\s+time\b|"
+            r"\b(?:took|finished|completed|finishes|completes|duration|takes)\b"
+            r"[^.!?\n]{0,60}\d+(?:\.\d+)?\s*(?:seconds?|minutes?|hours?|s|min|h)\b|"
+            r"\d+(?:\.\d+)?\s*(?:ms|µs|ns|milliseconds?|microseconds?|nanoseconds?)\b|"
+            r"성능|효율|처리량|지연|속도|메모리|(?:실행|수행|처리|응답)\s*시간|소요",
+            originals,
             re.IGNORECASE,
         )
     )

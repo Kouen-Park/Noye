@@ -1,0 +1,7 @@
+{
+  "method": "Read-only hash after print/Wiki-UI-only rebundling; compare with exact bundled sidecar that passed 12 actual tests.",
+  "actual_sha256": "9e19ddb96a7e8c3e00d6570c621aafa5bd448a639f71ebcaff2f996bf41f29eb",
+  "tested_sha256": "9e19ddb96a7e8c3e00d6570c621aafa5bd448a639f71ebcaff2f996bf41f29eb",
+  "equal": true,
+  "bytes": 57230240
+}

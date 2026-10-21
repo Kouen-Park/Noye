@@ -1,0 +1,17 @@
+{"id": "rated-temperature-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 22.7}
+{"id": "rated-temperature-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 7.836}
+{"id": "named-allocation-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.602}
+{"id": "named-allocation-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.299}
+{"id": "exclusive-translation-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 5.77}
+{"id": "exclusive-translation-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 7.483}
+{"id": "conditional-exception-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.17}
+{"id": "conditional-exception-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 6.527}
+{"id": "unrecorded-cause-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 7.351}
+{"id": "unrecorded-cause-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 10.221}
+{"id": "labelled-counts-supported", "expected": true, "supported": false, "matches_rubric": false, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 9.041}
+{"id": "labelled-counts-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 10.583}
+{"id": "independent-instrument-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 19.01}
+{"id": "independent-instrument-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 21.641}
+{"id": "approval-state-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 7.572}
+{"id": "approval-state-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 7.955}
+{"matches": 15, "count": 16, "valid_semantic": 16, "seconds": 163.028, "error": null}

@@ -1,0 +1,164 @@
+{
+  "method": "Primary-agent review of exact original/claim pairs, full actual audits and preserved inputs. Not an independent review or end-to-end document run. Cases were fixed before the v21 correction; no labels or prompt changed after this run.",
+  "raw_report_sha256": "2c4112a633beac2d2e3b00ac4f0b210c7afe696c78116b6f4b54664ab36c1023",
+  "rubric_matches": 12,
+  "valid_semantic_decisions": 14,
+  "seconds": 349.561,
+  "false_approval": "Zenith rated limit 52 Celsius was approved as an observed temperature. Shared digits and correct Caldera observation do not establish that measurement property.",
+  "false_rejection": "Coda Thursday-only, not-under-maintenance export condition and Ember Monday permission were faithfully preserved but both literal clauses were marked unestablished.",
+  "inspector_note": "Initial inspection mistakenly read the HTTP response envelope as the structured audit; it failed before writing any review. The corrected read uses the recorded response field. No product/model/PDF changes or rerun.",
+  "rows": [
+    {
+      "id": "restart-days-supported",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "restart-days-unsupported",
+      "expected": false,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "approval-states-supported",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "approval-states-unsupported",
+      "expected": false,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "temperature-properties-supported",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "temperature-properties-unsupported",
+      "expected": false,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "translated-conditions-supported",
+      "expected": true,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "translated-conditions-unsupported",
+      "expected": false,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "independent-facts-supported",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "independent-facts-unsupported",
+      "expected": false,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "measurement-subjects-supported",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "measurement-subjects-unsupported",
+      "expected": false,
+      "actual": false,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0,
+        1
+      ],
+      "all_needed_originals_selected_if_supported": null
+    },
+    {
+      "id": "second-original-only",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        1
+      ],
+      "all_needed_originals_selected_if_supported": true
+    },
+    {
+      "id": "first-original-only",
+      "expected": true,
+      "actual": true,
+      "valid_semantic": true,
+      "selected_original_indexes": [
+        0
+      ],
+      "all_needed_originals_selected_if_supported": true
+    }
+  ]
+}

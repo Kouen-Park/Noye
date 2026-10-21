@@ -1,0 +1,26 @@
+Executable=/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-backend
+Identifier=noye-backend-55554944f8d0c271961be051d2af08d352b97451
+Format=Mach-O thin (arm64)
+CodeDirectory v=20500 size=111798 flags=0x10002(adhoc,runtime) hashes=3487+2 location=embedded
+VersionPlatform=1
+VersionMin=720896
+VersionSDK=1704448
+Hash type=sha256 size=32
+CandidateCDHash sha256=9ff7acb2f7ff6badb6d1fed4b6726d595ea99c30
+CandidateCDHashFull sha256=9ff7acb2f7ff6badb6d1fed4b6726d595ea99c3023d488912372f94db570ad42
+Hash choices=sha256
+CMSDigest=9ff7acb2f7ff6badb6d1fed4b6726d595ea99c3023d488912372f94db570ad42
+CMSDigestType=2
+Executable Segment base=0
+Executable Segment limit=49152
+Executable Segment flags=0x1
+Page size=16384
+CDHash=9ff7acb2f7ff6badb6d1fed4b6726d595ea99c30
+Signature=adhoc
+Info.plist=not bound
+TeamIdentifier=not set
+Runtime Version=26.2.0
+Sealed Resources=none
+Internal requirements count=0 size=12
+Total signatures=1
+Chosen signature=1

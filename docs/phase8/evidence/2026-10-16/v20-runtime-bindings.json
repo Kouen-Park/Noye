@@ -1,0 +1,30 @@
+{
+  "method": "Read-only comparison of every completed report against the recorded v20 pipeline hash.",
+  "rows": [
+    {
+      "scenario": "collection",
+      "prompt_version": "source-document-v20",
+      "pipeline_matches_v20": true
+    },
+    {
+      "scenario": "comparison",
+      "prompt_version": "source-document-v20",
+      "pipeline_matches_v20": true
+    },
+    {
+      "scenario": "empty",
+      "prompt_version": "source-document-v20",
+      "pipeline_matches_v20": true
+    },
+    {
+      "scenario": "partial",
+      "prompt_version": "source-document-v20",
+      "pipeline_matches_v20": true
+    },
+    {
+      "scenario": "report",
+      "prompt_version": "source-document-v20",
+      "pipeline_matches_v20": true
+    }
+  ]
+}

@@ -114,7 +114,15 @@ progress::-moz-progress-bar { background: var(--brand); }
    Elements opt in with data-print="document"; everything else is hidden. That way
    a new control added later is hidden by default rather than silently appearing
    in people's exports. */
+.noye-heading-block { display: contents; }
+.noye-print-prose > .noye-heading-block:first-child > :is(h1, h2),
+.noye-print-prose > :is(h1, h2):first-child { margin-top: 0; }
+
+.noye-original-print-link { display: none; }
+
 @media print {
+  .noye-original-print-link { display: inline; }
+  .noye-original-command, .noye-original-message { display: none !important; }
   /* Ink on white. The canvas tint is a screen choice and would either waste toner
      or be dropped by the driver, inconsistently. */
   :root {
@@ -160,6 +168,8 @@ progress::-moz-progress-bar { background: var(--brand); }
     max-width: none;
     border: none;
     box-shadow: none;
+    /* Keep literal text recoverable from WebKit's PDF glyph mapping too. */
+    font-variant-ligatures: none;
   }
 
   [data-print="document"] * {
@@ -182,11 +192,43 @@ progress::-moz-progress-bar { background: var(--brand); }
   /* Keep headings with their text; allow evidence to flow across pages. */
   [data-print="document"] :is(h1, h2, h3) {
     break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  [data-print="document"] :is(p, li, blockquote) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  [data-print="document"] .noye-heading-block {
+    display: block;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* WebKit can split a heading from a replaced image despite break-inside.
+     Bound standalone figures and keep that small group in one atomic box. */
+  [data-print="document"] img {
+    max-width: 100%;
+    max-height: 150mm;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  [data-print="document"] .noye-image-heading {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
   }
 
   /* Links print as text, so the destination has to be readable on paper. */
   [data-print="document"] a::after {
     content: " (" attr(href) ")";
+    /* A printed URL must also copy as its literal bytes. WebKit's PDF text
+       mapping can replace ligatures in the proportional interface face. */
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-ligatures: none;
     font-size: 0.85em;
     color: #555;
   }

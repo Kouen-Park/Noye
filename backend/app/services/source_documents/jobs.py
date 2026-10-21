@@ -25,8 +25,14 @@ def handler(context, payload):
     except pipeline.local.DocumentError as exc:
         # Valid JSON with invalid evidence must not become a permanently failing retry cache.
         req = store.request(context.connection, context.job["subject_id"])
-        stage = req["report"].get("rejected_support_check", {}).get("stage")
-        if stage and "local evidence check" in str(exc):
+        rejected = req["report"].get(
+            "rejected_support_check"
+            if "local evidence check" in str(exc)
+            else "rejected_numeric_claim",
+            {},
+        )
+        stage = rejected.get("stage")
+        if stage:
             cache = {
                 key: value
                 for key, value in req["cache"].items()

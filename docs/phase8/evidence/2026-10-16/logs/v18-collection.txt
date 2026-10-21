@@ -1,0 +1,2 @@
+{"scenario": "collection", "job_id": "6e52e501-fc2e-4abc-8662-06325b75f5d4", "request_id": "b7a9dde4-ddcf-4ef8-b883-b64d7354b007", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "A generated claim changes capacity into an amount stored, or vice versa. No document was saved.", "seconds": 54.201, "report": "/private/tmp/noye-phase8-20261016/v18-documents/collection-b7a9dde4-ddcf-4ef8-b883-b64d7354b007.json"}

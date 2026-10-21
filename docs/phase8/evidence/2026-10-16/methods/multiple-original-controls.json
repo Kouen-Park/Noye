@@ -1,0 +1,131 @@
+{
+  "method": "Fixed novel multi-original evidence controls, authored after the v20 whole comparison exposed a faithful union falsely rejected, before any collective-evidence instruction correction or run. Labels and case names are evaluator-only. Each claim has two originals; the last two need just one relevant original.",
+  "cases": [
+    [
+      "restart-days-supported",
+      true,
+      "Nereid restarts on Mondays, whereas Atlas restarts on Tuesdays.",
+      [
+        "Nereid restarts on Mondays.",
+        "Atlas restarts on Tuesdays."
+      ]
+    ],
+    [
+      "restart-days-unsupported",
+      false,
+      "Nereid and Atlas both restart on Mondays.",
+      [
+        "Nereid restarts on Mondays.",
+        "Atlas restarts on Tuesdays."
+      ]
+    ],
+    [
+      "approval-states-supported",
+      true,
+      "The Hemlock change was approved, while the Flint change is still proposed and unapproved.",
+      [
+        "The Hemlock change was approved.",
+        "The Flint change is proposed and has not been approved."
+      ]
+    ],
+    [
+      "approval-states-unsupported",
+      false,
+      "The Hemlock and Flint changes were both approved.",
+      [
+        "The Hemlock change was approved.",
+        "The Flint change is proposed and has not been approved."
+      ]
+    ],
+    [
+      "temperature-properties-supported",
+      true,
+      "Caldera had an observed temperature of 18 degrees Celsius; Zenith has a rated limit of 52 degrees Celsius.",
+      [
+        "Caldera had an observed temperature of 18 degrees Celsius.",
+        "Zenith has a rated temperature limit of 52 degrees Celsius."
+      ]
+    ],
+    [
+      "temperature-properties-unsupported",
+      false,
+      "Caldera and Zenith had observed temperatures of 18 and 52 degrees Celsius, respectively.",
+      [
+        "Caldera had an observed temperature of 18 degrees Celsius.",
+        "Zenith has a rated temperature limit of 52 degrees Celsius."
+      ]
+    ],
+    [
+      "translated-conditions-supported",
+      true,
+      "Coda allows exports only on Thursdays when not under maintenance, while Ember permits exports on Mondays.",
+      [
+        "Coda는 유지보수 중이 아닐 때 목요일에만 내보내기를 허용합니다.",
+        "Ember permits exports on Mondays."
+      ]
+    ],
+    [
+      "translated-conditions-unsupported",
+      false,
+      "Coda always allows exports on Thursdays, while Ember permits exports on Mondays.",
+      [
+        "Coda는 유지보수 중이 아닐 때 목요일에만 내보내기를 허용합니다.",
+        "Ember permits exports on Mondays."
+      ]
+    ],
+    [
+      "independent-facts-supported",
+      true,
+      "Moss uses a queue, and Nova stores encrypted reports.",
+      [
+        "Moss uses a queue.",
+        "Nova stores encrypted reports."
+      ]
+    ],
+    [
+      "independent-facts-unsupported",
+      false,
+      "Nova stores encrypted reports because Moss uses a queue.",
+      [
+        "Moss uses a queue.",
+        "Nova stores encrypted reports."
+      ]
+    ],
+    [
+      "measurement-subjects-supported",
+      true,
+      "Tanager had a measured runtime of 12 milliseconds, whereas Loon used 5 megabytes of memory.",
+      [
+        "Tanager had a measured runtime of 12 milliseconds.",
+        "Loon used 5 megabytes of memory."
+      ]
+    ],
+    [
+      "measurement-subjects-unsupported",
+      false,
+      "Loon had a measured runtime of 12 milliseconds, whereas Tanager used 5 megabytes of memory.",
+      [
+        "Tanager had a measured runtime of 12 milliseconds.",
+        "Loon used 5 megabytes of memory."
+      ]
+    ],
+    [
+      "second-original-only",
+      true,
+      "Aster keeps 7 successful messages.",
+      [
+        "Birch keeps 3 failed messages.",
+        "Aster keeps 7 successful messages."
+      ]
+    ],
+    [
+      "first-original-only",
+      true,
+      "Birch keeps 3 failed messages.",
+      [
+        "Birch keeps 3 failed messages.",
+        "Aster keeps 7 successful messages."
+      ]
+    ]
+  ]
+}

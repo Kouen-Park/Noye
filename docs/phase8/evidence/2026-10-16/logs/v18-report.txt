@@ -1,0 +1,2 @@
+{"scenario": "report", "job_id": "7ae3f5d5-ad9a-48d5-8e76-985ae4bb7f0b", "request_id": "c6797d1e-353b-41eb-8aeb-42a243c2a044", "retry_of": null, "model": "qwen3.5:4b", "context_tokens": 8192, "output_tokens": 2048}
+{"state": "failed", "artifact_id": null, "error": "Generated text does not match requested English. No document was saved.", "seconds": 104.198, "report": "/private/tmp/noye-phase8-20261016/v18-documents/report-c6797d1e-353b-41eb-8aeb-42a243c2a044.json"}

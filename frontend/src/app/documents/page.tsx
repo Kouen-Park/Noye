@@ -46,6 +46,11 @@ function DocumentsView() {
   const documentId = params.get("d");
 
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [listError, setListError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const listRequest = useRef(0);
+  const createPending = useRef(false);
   const [open, setOpen] = useState<NoyeDocument | SourceDocument | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,15 +67,27 @@ function DocumentsView() {
     setError(cause instanceof ApiError ? cause.message : fallback);
   }, []);
 
+  const loadList = useCallback(() => {
+    const request = ++listRequest.current;
+    listDocuments().then((items) => {
+      if (listRequest.current === request) setDocuments(items);
+    }, (cause: unknown) => {
+      if (listRequest.current === request) setListError(cause instanceof ApiError ? cause.message : "Could not load your documents.");
+    }).finally(() => {
+      if (listRequest.current === request) setLoadingList(false);
+    });
+  }, []);
+
   const refreshList = useCallback(() => {
-    listDocuments().then(setDocuments, (cause: unknown) =>
-      fail(cause, "Could not load your documents."),
-    );
-  }, [fail]);
+    setLoadingList(true);
+    setListError(null);
+    loadList();
+  }, [loadList]);
 
   useEffect(() => {
-    refreshList();
-  }, [refreshList]);
+    loadList();
+    return () => { listRequest.current += 1; };
+  }, [loadList]);
 
   useEffect(() => {
     activeDocument.current = documentId;
@@ -103,6 +120,9 @@ function DocumentsView() {
   );
 
   const startNew = useCallback(() => {
+    if (createPending.current) return;
+    createPending.current = true;
+    setCreating(true);
     setError(null);
     createDocument("Untitled document").then(
       (document) => {
@@ -110,7 +130,7 @@ function DocumentsView() {
         router.push(`/documents?d=${encodeURIComponent(document.id)}`);
       },
       (cause: unknown) => fail(cause, "Could not create a document."),
-    );
+    ).finally(() => { createPending.current = false; setCreating(false); });
   }, [fail, refreshList, router]);
 
   const save = useCallback(
@@ -173,6 +193,10 @@ function DocumentsView() {
           onOpen={openDocument}
           onDelete={remove}
           onNew={startNew}
+          loading={loadingList}
+          error={listError}
+          onRetry={refreshList}
+          creating={creating}
         />
       </aside>
 
@@ -188,7 +212,9 @@ function DocumentsView() {
           </div>
         )}
 
-        {shown === null ? (
+        {shown === null ? documentId && loadedFor !== documentId ? (
+          <p role="status" className="p-4 text-ink-soft">Opening document…</p>
+        ) : (
           <div
             className="rounded-lg border border-dashed border-edge-strong bg-card px-6 py-12 text-center"
           >

@@ -1,0 +1,14 @@
+{
+  "method": "Direct review of every final summary/key point against four controls fixed before calls. Production v11 summary stages only, no filesystem/catalog/native publication or broad quality claim.",
+  "report_sha256": "5917a790a9a2f60ad34d1eea08889830fbc497e6bf73c3b927d3e9d228fe79fa",
+  "seconds": 129.778,
+  "valid": 4,
+  "faithful_final_sections": 4,
+  "cases": {
+    "fresh-ko-independent": "46-litre capacity, independent SQLite use, inspection write pause and three daily backups preserved.",
+    "fresh-en-stored": "28 litres stored, ring-buffer use, inspection exception and five-day backup retained after one quantity revision.",
+    "fresh-en-explicit-means": "Plover stores 17 litres using a pump, explicitly established by the original. Genuine instrumental relationships remain allowed.",
+    "fresh-ko-conditions": "Inspection read permission/write pause and six-day backups preserved, including 엿새 → 6."
+  },
+  "limits": "Small fresh subset; does not validate relation classifications or general entailment."
+}

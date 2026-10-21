@@ -239,7 +239,9 @@ export function DocumentEditor({
                   save();
                 }
               }}
-              spellCheck
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
               placeholder="# Your document&#10;&#10;Markdown works here."
               className="noye-editor-input w-full rounded-md border border-edge-strong bg-card p-4 font-mono text-sm leading-relaxed placeholder:text-ink-soft"
             />

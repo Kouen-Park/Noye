@@ -1,0 +1,13 @@
+{
+  "method": "Read-only hashes after actual v21 bundled backend 12-test pass. Print CSS is still awaiting native verification and commit.",
+  "files": {
+    "Contents/MacOS/noye-backend": {
+      "bytes": 57230672,
+      "sha256": "06badf44d25056df456edebe9fedca05c7a62ea83cb41fe98ed8f41b44b7d83d"
+    },
+    "Contents/MacOS/noye-desktop": {
+      "bytes": 14270000,
+      "sha256": "5d4c7fca33caafb5ef58fe2e1e7c96ffd39eee19e55443b152240a08dddca735"
+    }
+  }
+}

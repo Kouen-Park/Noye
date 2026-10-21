@@ -1,0 +1,7 @@
+{
+  "method": "Stop only the owned, unloaded 11440 QA process. Restore the ordinary vendor Ollama server directly at the unchanged application endpoint 11439; no custom relay is launched. Native token progress will be observed in the existing runner log.",
+  "old_owned_pid": 71412,
+  "models_before": {
+    "models": []
+  }
+}

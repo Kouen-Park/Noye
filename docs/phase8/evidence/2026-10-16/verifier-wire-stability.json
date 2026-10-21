@@ -1,0 +1,125 @@
+{
+  "method": "Exact model input/schema/system comparison only; no new model run. v16 changed prose generation, not the support-verifier wire input tested by v15. Prompt-version cache invalidation does not enter the model request. These comparisons do not turn failed judgments into successes.",
+  "current_prompt_version": "source-document-v16",
+  "original_report_sha256": "b5bbe959439fb8202d2845578f37fda4ed949fb87d6d21147c1f07c4f0cdcd25",
+  "verify_function_sha256": "9ed52bff17fc3e20eb7704f3174203f89100408759b9ae219fba24f47f35de38",
+  "calls": 23,
+  "all_wire_components_equal": true,
+  "rows": [
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    },
+    {
+      "prompt_matches_current": true,
+      "system_matches_current": true,
+      "format_matches_current": true
+    }
+  ]
+}

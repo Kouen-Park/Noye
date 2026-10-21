@@ -1,0 +1,19 @@
+{
+  "observations": [
+    "Native PDF save panel cancellation and retry worked.",
+    "First direct-print candidate used newly initialized NSPrintInfo rather than initialized shared paper settings.",
+    "Saving timed out; the unpublished staging PDF grew past 538591232 bytes.",
+    "One-second sample showed NSConcretePrintOperation runOperation repeatedly rendering pages; QA backend health remained ok.",
+    "Only the saved QA app was SIGTERMed to stop runaway output; no final destination PDF was published."
+  ],
+  "partial_pdf": {
+    "bytes": 702255104,
+    "sha256": "e8ce5393609a778948aa5fec9307930983ebecfd175402585421940a0aca5a3e",
+    "retained": "Removed only this failed assistant-created staging directory after recording metadata; no originals or saved documents removed."
+  },
+  "sample": {
+    "full_local_original": "/private/tmp/noye-phase8-20261012/outputs/native-pdf-print-sample.txt",
+    "sha256": "34ce933fa475a7e30aa9df5267c1582bfdd20e9b332cfbb9f894ad9937e4c474"
+  },
+  "interpretation": "Invalid/uninitialized paper metrics are suspected; a follow-up uses validated A4 metrics. This observation alone is not exact-cause proof."
+}

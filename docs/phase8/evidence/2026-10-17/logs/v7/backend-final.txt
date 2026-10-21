@@ -1,0 +1,574 @@
+...................................s.................................... [  6%]
+..........s............................................................. [ 12%]
+...................................................F.................... [ 19%]
+.............FF...F...........F......................................... [ 25%]
+........................................................................ [ 32%]
+........................................................................ [ 38%]
+...........................s............................................ [ 44%]
+.....................F...........................................sss.... [ 51%]
+..................................................................ss.... [ 57%]
+..................s..................................................... [ 64%]
+........................................................................ [ 70%]
+.......................................................ssss............. [ 76%]
+.......................s................................................ [ 83%]
+........................................................................ [ 89%]
+......................................F................................. [ 96%]
+............................................/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ast.py:46: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a0b880>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ast.py:46: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a0a6b0>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ast.py:46: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f78310>
+  return compile(source, filename, mode, flags,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+                             [100%]
+=================================== FAILURES ===================================
+________________ test_desktop_does_not_read_repository_secrets _________________
+
+desktop_settings = PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-119/test_desktop_does_not_read_rep0')
+
+    def test_desktop_does_not_read_repository_secrets(desktop_settings):
+        (desktop_settings / ".env").write_text("OLLAMA_MODEL=desktop-test-model\n")
+        get_settings.cache_clear()
+>       assert get_settings().ollama_model == "desktop-test-model"
+E       AssertionError: assert 'qwen3.5:4b' == 'desktop-test-model'
+E
+E         - desktop-test-model
+E         + qwen3.5:4b
+
+app/tests/test_desktop.py:219: AssertionError
+____________ test_ready_external_services_are_reused_never_stopped _____________
+
+prepared = (<app.services.desktop_services.DesktopServices object at 0x112886490>, <app.tests.test_desktop_services.FakeHost obje...ivate/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-119/test_ready_external_services_a0'))
+
+    def test_ready_external_services_are_reused_never_stopped(prepared):
+        manager, host, _ = prepared
+
+        async def run():
+            host.running.update(["ollama", "qdrant"])
+            for service in ("ollama", "qdrant"):
+                await manager.start(service, True)
+                await manager.task
+            status = await manager.status()
+            assert status.ollama.ownership == status.qdrant.ownership == "external"
+            await manager.shutdown()
+            assert not host.calls
+            assert host.running == {"ollama", "qdrant"}
+
+>       asyncio.run(run())
+
+app/tests/test_desktop_services.py:224:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app/tests/test_desktop_services.py:216: in run
+    await manager.start(service, True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.desktop_services.DesktopServices object at 0x112886490>
+service = 'ollama', confirmed = True
+
+    async def start(self, service: Service, confirmed: bool) -> ServiceStatus:
+        if not confirmed:
+            raise HTTPException(400, "Confirm service preparation and any Qdrant image download.")
+        if self.closing or (self.task and not self.task.done()):
+            raise HTTPException(409, "A service operation is already running. Wait, then retry.")
+        settings = get_settings()
+        url, port = (
+            (settings.ollama_base_url, 11434)
+            if service == "ollama"
+            else (settings.qdrant_url, 6333)
+        )
+        if sys.platform != "darwin" or not managed_endpoint(url, port):
+>           raise HTTPException(
+                400, "Automatic preparation supports default local macOS services only."
+            )
+E           fastapi.exceptions.HTTPException: 400: Automatic preparation supports default local macOS services only.
+
+app/services/desktop_services.py:401: HTTPException
+______ test_owned_services_stop_by_handle_and_id_without_removing_storage ______
+
+prepared = (<app.services.desktop_services.DesktopServices object at 0x112ae4f50>, <app.tests.test_desktop_services.FakeHost obje...ivate/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-119/test_owned_services_stop_by_ha0'))
+
+    def test_owned_services_stop_by_handle_and_id_without_removing_storage(prepared):
+        manager, host, root = prepared
+
+        async def run():
+            for service in ("ollama", "qdrant"):
+                await manager.start(service, True)
+                await manager.task
+            status = await manager.status()
+            assert status.ollama.ownership == status.qdrant.ownership == "noye"
+            await manager.shutdown()
+            assert ["container", "stop", "--timeout", "2", CONTAINER] in host.calls
+            assert ["stop-own-ollama"] in host.calls
+            assert not host.running
+            assert (root / "qdrant/storage").is_dir()
+            assert not any(call[:2] in [["container", "rm"], ["volume", "rm"]] for call in host.calls)
+
+>       asyncio.run(run())
+
+app/tests/test_desktop_services.py:243:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app/tests/test_desktop_services.py:232: in run
+    await manager.start(service, True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.desktop_services.DesktopServices object at 0x112ae4f50>
+service = 'ollama', confirmed = True
+
+    async def start(self, service: Service, confirmed: bool) -> ServiceStatus:
+        if not confirmed:
+            raise HTTPException(400, "Confirm service preparation and any Qdrant image download.")
+        if self.closing or (self.task and not self.task.done()):
+            raise HTTPException(409, "A service operation is already running. Wait, then retry.")
+        settings = get_settings()
+        url, port = (
+            (settings.ollama_base_url, 11434)
+            if service == "ollama"
+            else (settings.qdrant_url, 6333)
+        )
+        if sys.platform != "darwin" or not managed_endpoint(url, port):
+>           raise HTTPException(
+                400, "Automatic preparation supports default local macOS services only."
+            )
+E           fastapi.exceptions.HTTPException: 400: Automatic preparation supports default local macOS services only.
+
+app/services/desktop_services.py:401: HTTPException
+_______________ test_busy_port_does_not_kill_an_unknown_process ________________
+
+prepared = (<app.services.desktop_services.DesktopServices object at 0x107a42030>, <app.tests.test_desktop_services.FakeHost obje...ivate/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-119/test_busy_port_does_not_kill_a0'))
+
+    def test_busy_port_does_not_kill_an_unknown_process(prepared):
+        manager, host, _ = prepared
+        host.free = False
+
+        async def run():
+            await manager.start("ollama", True)
+            await manager.task
+            assert "occupied" in manager.states["ollama"].detail
+            await manager.shutdown()
+            assert host.calls == [["port", 11434]]
+
+>       asyncio.run(run())
+
+app/tests/test_desktop_services.py:309:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app/tests/test_desktop_services.py:303: in run
+    await manager.start("ollama", True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.desktop_services.DesktopServices object at 0x107a42030>
+service = 'ollama', confirmed = True
+
+    async def start(self, service: Service, confirmed: bool) -> ServiceStatus:
+        if not confirmed:
+            raise HTTPException(400, "Confirm service preparation and any Qdrant image download.")
+        if self.closing or (self.task and not self.task.done()):
+            raise HTTPException(409, "A service operation is already running. Wait, then retry.")
+        settings = get_settings()
+        url, port = (
+            (settings.ollama_base_url, 11434)
+            if service == "ollama"
+            else (settings.qdrant_url, 6333)
+        )
+        if sys.platform != "darwin" or not managed_endpoint(url, port):
+>           raise HTTPException(
+                400, "Automatic preparation supports default local macOS services only."
+            )
+E           fastapi.exceptions.HTTPException: 400: Automatic preparation supports default local macOS services only.
+
+app/services/desktop_services.py:401: HTTPException
+________ test_cancellation_during_ollama_spawn_keeps_the_child_tracked _________
+
+prepared = (<app.services.desktop_services.DesktopServices object at 0x112b3a0b0>, <app.tests.test_desktop_services.FakeHost obje...ivate/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytest-of-gavinpark/pytest-119/test_cancellation_during_ollam0'))
+
+    def test_cancellation_during_ollama_spawn_keeps_the_child_tracked(prepared):
+        manager, host, _ = prepared
+
+        async def run():
+            entered, proceed = asyncio.Event(), asyncio.Event()
+            original = host.spawn_ollama
+
+            async def spawn(executable):
+                entered.set()
+                await proceed.wait()
+                return await original(executable)
+
+            host.spawn_ollama = spawn
+            await manager.start("ollama", True)
+            await entered.wait()
+            manager.task.cancel()
+            proceed.set()
+            await manager.shutdown()
+            assert host.children[0].returncode == 0
+            assert ["stop-own-ollama"] in host.calls
+
+>       asyncio.run(run())
+
+app/tests/test_desktop_services.py:517:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:205: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py:128: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py:720: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+app/tests/test_desktop_services.py:509: in run
+    await manager.start("ollama", True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.desktop_services.DesktopServices object at 0x112b3a0b0>
+service = 'ollama', confirmed = True
+
+    async def start(self, service: Service, confirmed: bool) -> ServiceStatus:
+        if not confirmed:
+            raise HTTPException(400, "Confirm service preparation and any Qdrant image download.")
+        if self.closing or (self.task and not self.task.done()):
+            raise HTTPException(409, "A service operation is already running. Wait, then retry.")
+        settings = get_settings()
+        url, port = (
+            (settings.ollama_base_url, 11434)
+            if service == "ollama"
+            else (settings.qdrant_url, 6333)
+        )
+        if sys.platform != "darwin" or not managed_endpoint(url, port):
+>           raise HTTPException(
+                400, "Automatic preparation supports default local macOS services only."
+            )
+E           fastapi.exceptions.HTTPException: 400: Automatic preparation supports default local macOS services only.
+
+app/services/desktop_services.py:401: HTTPException
+__________________ test_default_is_local_even_with_gemini_key __________________
+
+settings = Settings(backend_host='127.0.0.1', backend_port=8000, frontend_origins='http://localhost:3000,http://127.0.0.1:3000', ...50, database_url='sqlite:///./data/app.db', noye_data_dir=None, log_level='INFO', log_to_file=False, max_upload_mb=100)
+
+    def test_default_is_local_even_with_gemini_key(settings):
+        def handler(request):
+            assert request.url.host == "localhost"
+            assert "x-goog-api-key" not in request.headers
+            return httpx.Response(200, json={"response": "Local answer"})
+
+        with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+>           assert generate("prompt", client=client) == "Local answer"
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+app/tests/test_gemini.py:68:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app/services/generation.py:213: in generate
+    return request_generation(client, prompt, settings, system_prompt)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/generation.py:296: in _request_generation
+    response = client.post(url, json=payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.14/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.14/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.14/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/httpx/_transports/mock.py:24: in handle_request
+    response = self.handler(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = <Request('POST', 'http://127.0.0.1:11439/api/generate')>
+
+    def handler(request):
+>       assert request.url.host == "localhost"
+E       AssertionError: assert '127.0.0.1' == 'localhost'
+E
+E         - localhost
+E         + 127.0.0.1
+
+app/tests/test_gemini.py:63: AssertionError
+_______ test_generation_settings_change_has_a_distinct_revision_identity _______
+
+workspace = (<sqlite3.Connection object at 0x112a6ab60>, PosixPath('/private/var/folders/rw/khjr10hd3tjg801zlsyfdgp40000gn/T/pytes...c4', <function folder.<locals>.scan at 0x113695fe0>, <app.services.folder_scanner.FolderScanner object at 0x1135b91d0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1128a1470>
+
+    def test_generation_settings_change_has_a_distinct_revision_identity(workspace, monkeypatch):
+        db, *_ = workspace
+        record = discover(workspace)
+        first = generate(db, record.id)
+        settings = Settings(_env_file=None, generation_context_tokens=8192)
+        monkeypatch.setattr(service, "get_settings", lambda: settings)
+        second = generate(db, record.id)
+>       assert not second["reused"] and second["revision_id"] != first["revision_id"]
+E       assert (not True)
+
+app/tests/test_wiki_integration.py:227: AssertionError
+----------------------------- Captured stderr call -----------------------------
+2026-10-17T13:03:44 INFO    noye.ingestion         Ingestion started file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 type=txt size=50
+2026-10-17T13:03:44 INFO    noye.ingestion         Extracted in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8
+2026-10-17T13:03:44 INFO    noye.ingestion         Embedded in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 chunks=1 model=embeddinggemma
+2026-10-17T13:03:44 INFO    noye.ingestion         Indexed in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 points=1
+2026-10-17T13:03:44 INFO    noye.ingestion         Ingestion complete file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 chunks=1
+------------------------------ Captured log call -------------------------------
+INFO     noye.ingestion:ingestion.py:303 Ingestion started file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 type=txt size=50
+INFO     noye.ingestion:logging_config.py:172 Extracted in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8
+INFO     noye.ingestion:logging_config.py:172 Embedded in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 chunks=1 model=embeddinggemma
+INFO     noye.ingestion:logging_config.py:172 Indexed in 0.00s file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 points=1
+INFO     noye.ingestion:ingestion.py:378 Ingestion complete file=952b40d6-3632-4a6b-b5e5-e6fcb67aeab8 chunks=1
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+<frozen importlib._bootstrap>:491
+  <frozen importlib._bootstrap>:491: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv/lib/python3.14/site-packages/starlette/testclient.py:53
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+app/tests/test_evidence.py::test_qdrant_results_carry_the_revision_that_was_actually_indexed
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/copy.py:201: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a6b2e0>
+    for key, value in x.items():
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_folder_foundation.py::test_resume_and_reconnected_ready_events_do_not_reembed
+app/tests/test_logging.py::TestReadability::test_a_pageless_format_logs_no_page_count
+app/tests/test_source_documents.py::test_missing_and_indexing_failure_are_partial_coverage
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/qdrant_client/qdrant_remote.py:292: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+    show_warning(
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f7be20>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f7ba60>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f7b4c0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f78f40>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f7b3d0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f78d60>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f7bf10>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_migrations.py::TestInitSchemaOrdering::test_a_fresh_database_ends_where_a_migrated_one_does
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py:341: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112f788b0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_rebuild.py::TestTheOrdinaryRebuild::test_rebuilds_a_failed_file_too
+  /Users/gavinpark/Projects/Noye/backend/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py:31: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a6b790>
+    async def wrapped_app(scope: Scope, receive: Receive, send: Send) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:486: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a6be20>
+    self._exit_callbacks = deque()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:486: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a6ab60>
+    self._exit_callbacks = deque()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+app/tests/test_workspace_backup.py::test_invalid_manifest_metadata_is_a_recoverable_restore_rejection[schema_version-value0]
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:486: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x112a6b880>
+    self._exit_callbacks = deque()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.14.7-final-0 _______________
+
+Name                                            Stmts   Miss Branch BrPart  Cover
+---------------------------------------------------------------------------------
+app/__init__.py                                     0      0      0      0   100%
+app/api/__init__.py                                 0      0      0      0   100%
+app/api/ai.py                                       9      0      0      0   100%
+app/api/chat.py                                   178      3     24      0    99%
+app/api/deps.py                                    16      1      0      0    94%
+app/api/desktop_services.py                        23      3      0      0    87%
+app/api/documents.py                              121      0      8      0   100%
+app/api/files.py                                  254     21     30      2    92%
+app/api/folders.py                                111     36     24      2    64%
+app/api/index.py                                  101      6     12      1    92%
+app/api/jobs.py                                    32      2      6      2    89%
+app/api/knowledge_jobs.py                          20     11      4      0    38%
+app/api/models.py                                  30      5      4      1    82%
+app/api/runtime.py                                 21      0      0      0   100%
+app/api/search.py                                  43      0      4      0   100%
+app/api/source_documents.py                        63     14      6      2    77%
+app/api/wiki.py                                    99     22     20      6    73%
+app/api/workspace.py                               50     11      4      1    78%
+app/config.py                                      94      0     14      0   100%
+app/db/__init__.py                                  0      0      0      0   100%
+app/db/conversations.py                           100      0     20      0   100%
+app/db/database.py                                 40      5      6      0    89%
+app/db/documents.py                                66      0     14      0   100%
+app/db/files.py                                   114      3     32      3    96%
+app/db/jobs.py                                     54      1     18      1    97%
+app/db/knowledge.py                                18      2      8      0    92%
+app/db/migrations.py                               74      0     24      1    99%
+app/db/source_documents.py                         80      9     20      5    86%
+app/db/sources.py                                  11      0      0      0   100%
+app/db/wiki.py                                     71      1     18      1    98%
+app/desktop_data.py                                45      5     22      5    85%
+app/evaluation/__init__.py                          0      0      0      0   100%
+app/evaluation/context.py                          61     61     12      0     0%
+app/evaluation/dataset.py                          31      5     22      5    81%
+app/evaluation/knowledge.py                       124    124     32      0     0%
+app/evaluation/metrics.py                          43      2     18      2    93%
+app/evaluation/review.py                           39     15     16      5    60%
+app/evaluation/run.py                             163     58     42      5    64%
+app/evaluation/source_documents.py                189    104     50      3    38%
+app/evaluation/wiki.py                            122    122     30      0     0%
+app/logging_config.py                              56      8      6      1    85%
+app/main.py                                        70      0      0      0   100%
+app/models/__init__.py                              0      0      0      0   100%
+app/models/conversations.py                        59      0      8      1    99%
+app/models/documents.py                            36      0      6      1    98%
+app/models/evidence.py                             19      1      4      1    91%
+app/models/files.py                                63      0      2      0   100%
+app/models/source_documents.py                     44      0      0      0   100%
+app/models/wiki.py                                 50      1      4      1    96%
+app/services/__init__.py                            0      0      0      0   100%
+app/services/chunking.py                           50      0     22      0   100%
+app/services/citations.py                          29      0      6      0   100%
+app/services/cloud_generation.py                   43      4     20      2    90%
+app/services/conversation_context.py               24      0      8      0   100%
+app/services/derived_data.py                       30      2      8      2    89%
+app/services/desktop_services.py                  308     74     96     22    73%
+app/services/documents.py                          39      1     16      1    96%
+app/services/embeddings.py                         85      3     40      2    96%
+app/services/evidence.py                           59      6     22      4    88%
+app/services/extraction.py                         55      6     14      2    88%
+app/services/filing.py                            120     24     38     13    75%
+app/services/folder_backup.py                     117     16     44     10    83%
+app/services/folder_scanner.py                    228     32     84     13    83%
+app/services/folders.py                           156     24     62     11    81%
+app/services/generation.py                        120      4     48      3    96%
+app/services/hardware.py                           54      0     12      2    97%
+app/services/index_identity.py                     51      2     10      2    93%
+app/services/indexing.py                           85     11     18      1    88%
+app/services/ingestion.py                         249     24     64      6    90%
+app/services/integrity.py                         118      0     36      0   100%
+app/services/knowledge_jobs.py                    134     15     34      9    86%
+app/services/knowledge_maintenance.py              59      8     16      6    81%
+app/services/knowledge_query.py                   106      8     42      7    90%
+app/services/local_ollama.py                       19      4      6      2    76%
+app/services/model_manager.py                     101      8     36      8    88%
+app/services/model_recommendations.py              31      0     12      0   100%
+app/services/model_usage.py                        47      1     12      2    95%
+app/services/native_exports.py                     32      1      8      1    95%
+app/services/native_folders.py                     34     34     10      0     0%
+app/services/quantity_properties.py                23      0     12      0   100%
+app/services/rebuild.py                            67      0     12      0   100%
+app/services/retrieval.py                          49      2     12      0    97%
+app/services/runtime_checks.py                     55      0     18      0   100%
+app/services/source_catalog.py                    135     13     60     10    87%
+app/services/source_documents/__init__.py           0      0      0      0   100%
+app/services/source_documents/discovery.py         20      0     12      0   100%
+app/services/source_documents/jobs.py              71      6     20      5    88%
+app/services/source_documents/local.py             79      4     26      3    93%
+app/services/source_documents/pipeline.py         405     20    172     22    93%
+app/services/source_documents/presentation.py      42      2     12      2    93%
+app/services/wiki/__init__.py                       0      0      0      0   100%
+app/services/wiki/jobs.py                          34      3     12      5    78%
+app/services/wiki/local.py                         61      4     20      2    93%
+app/services/wiki/observer.py                      97     15     40      4    82%
+app/services/wiki/pipeline.py                      85      3     38      5    93%
+app/services/wiki/publication.py                   95     12     18      5    85%
+app/services/wiki/relations.py                    101      4     58      6    94%
+app/services/wiki/service.py                      161     12     66      7    91%
+app/services/wiki/sources.py                       50      2     18      3    93%
+app/services/workspace_access.py                   34      0      6      1    98%
+app/services/workspace_backup.py                  214     25    102     20    86%
+---------------------------------------------------------------------------------
+TOTAL                                            7568   1101   2172    289    84%
+Coverage JSON written to file /private/tmp/noye-phase8-20261017/v7/backend-product-coverage.json
+=========================== short test summary info ============================
+FAILED app/tests/test_desktop.py::test_desktop_does_not_read_repository_secrets
+FAILED app/tests/test_desktop_services.py::test_ready_external_services_are_reused_never_stopped
+FAILED app/tests/test_desktop_services.py::test_owned_services_stop_by_handle_and_id_without_removing_storage
+FAILED app/tests/test_desktop_services.py::test_busy_port_does_not_kill_an_unknown_process
+FAILED app/tests/test_desktop_services.py::test_cancellation_during_ollama_spawn_keeps_the_child_tracked
+FAILED app/tests/test_gemini.py::test_default_is_local_even_with_gemini_key
+FAILED app/tests/test_wiki_integration.py::test_generation_settings_change_has_a_distinct_revision_identity
+7 failed, 1103 passed, 14 skipped, 23 warnings in 42.63s
+<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

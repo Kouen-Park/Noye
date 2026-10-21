@@ -1,0 +1,10 @@
+{
+  "app": "com.noye.desktopphase8qa20261012",
+  "current_original_url": "http://127.0.0.1:49854/files/151d52e3-3c5a-44aa-963d-4afbde8ee0fb/source#page=1",
+  "actions": "Relaunched app; reopened retained conversation; Passage consulted; AX link click. Then real Tab/Shift+Tab confirmed focus on the link and Return activated it.",
+  "native_error_observed": false,
+  "qa_browser_destination_visible": false,
+  "inventory_scope": "Only QA loopback URLs and AT-201/source-ID browser-window matches emitted. No private browser page operated or retained.",
+  "accepted": false,
+  "owned_app_quit": true
+}

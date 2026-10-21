@@ -1,0 +1,15 @@
+{
+  "method": "Owned QA-app lifecycle cleanup only. CUA startup failed twice, so a verified exact native QA executable received SIGTERM. This is cleanup, not another UI or OS force-quit acceptance check. External inference services are left running for the current diagnostic.",
+  "at": 1792570714.76229,
+  "native_pid": 78524,
+  "managed_sidecar_pids": [
+    78534,
+    78540
+  ],
+  "expected_command": "/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app/Contents/MacOS/noye-desktop",
+  "alive_after": {
+    "78524": false,
+    "78534": false,
+    "78540": false
+  }
+}

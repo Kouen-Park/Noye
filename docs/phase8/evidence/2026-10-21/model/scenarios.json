@@ -1,0 +1,83 @@
+{
+  "method": "One fresh whole Wiki, English comparison and Korean collection attempt under production v11/v25. Sequential inference; no failed job retry, no provider fallback and no simultaneous heavy tests/builds. Semantic acceptance is reviewed separately from job completion.",
+  "source_commit": "9fc9347ccf6a7d124aaf462e53539f683be48a18",
+  "runtime_sha256": {
+    "app/models/wiki.py": "aefc81ff9b1625f1a038157ffab949a07810e872ba83d9a3678edd98102efb60",
+    "app/services/wiki/local.py": "34fc99eea59db5748a768585d82ad71b63463e79d302fa85c1cdae295f0e73e3",
+    "app/services/wiki/pipeline.py": "870e0216ef26b589d7fab5d8882536c3c0ea552c880d00b6210fa20081c06692",
+    "app/services/source_documents/local.py": "fbfcb878a62022178e3941f36525a8b22692f66163aef8ee2fd1867c33f5ce94",
+    "app/services/source_documents/pipeline.py": "d580b500c65e6ca1500614c39a039d79e2db046c5a90526996e6f07366f77156",
+    "app/services/source_documents/presentation.py": "419a8488ab0402376185422c2b219a49e4f0c089fb351e765e7419c25a56de0d"
+  },
+  "rows": [
+    {
+      "scenario": "wiki",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "/private/tmp/noye-phase8-20261021/recorded-current.py",
+        "--workspace",
+        "/private/tmp/noye-phase8-20261021/current-wiki",
+        "--scenario",
+        "wiki"
+      ],
+      "exit_code": 0,
+      "seconds": 104.101,
+      "report": "/private/tmp/noye-phase8-20261021/current-wiki/wiki-fc3a59ef-3a26-470e-83a7-ca7c948921ce.json",
+      "state": "complete",
+      "error": null,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "comparison",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "/private/tmp/noye-phase8-20261021/recorded-current.py",
+        "--workspace",
+        "/private/tmp/noye-phase8-20261021/current-comparison",
+        "--scenario",
+        "comparison"
+      ],
+      "exit_code": 0,
+      "seconds": 219.283,
+      "report": "/private/tmp/noye-phase8-20261021/current-comparison/comparison-e1ffb414-9dc5-43f9-84b8-8c5dc4b8c806.json",
+      "state": "complete",
+      "error": null,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    },
+    {
+      "scenario": "collection",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "/private/tmp/noye-phase8-20261021/recorded-current.py",
+        "--workspace",
+        "/private/tmp/noye-phase8-20261021/current-collection",
+        "--scenario",
+        "collection"
+      ],
+      "exit_code": 0,
+      "seconds": 291.537,
+      "report": "/private/tmp/noye-phase8-20261021/current-collection/collection-54104fe2-aab7-4318-aa5a-a51d88598c53.json",
+      "state": "complete",
+      "error": null,
+      "unload_status": {
+        "qwen3.5:4b": 200,
+        "embeddinggemma": 200
+      },
+      "loaded_after": {
+        "models": []
+      }
+    }
+  ]
+}

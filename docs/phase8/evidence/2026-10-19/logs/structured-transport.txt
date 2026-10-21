@@ -1,0 +1,4 @@
+{"endpoint": "generate", "thinking": false, "valid": true, "http_status": 200, "final_characters": 478, "thinking_characters": 0, "done_reason": "stop", "eval_count": 117, "verdicts": [true], "seconds": 28.926}
+{"endpoint": "chat", "thinking": false, "valid": true, "http_status": 200, "final_characters": 478, "thinking_characters": 0, "done_reason": "stop", "eval_count": 117, "verdicts": [true], "seconds": 5.44}
+{"endpoint": "chat", "thinking": true, "valid": true, "http_status": 200, "final_characters": 604, "thinking_characters": 6846, "done_reason": "stop", "eval_count": 1772, "verdicts": [true], "seconds": 89.837}
+{"endpoint": "generate", "thinking": true, "valid": false, "http_status": 200, "final_characters": 0, "thinking_characters": 685, "done_reason": "stop", "eval_count": 154, "seconds": 8.168}

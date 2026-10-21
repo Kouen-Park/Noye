@@ -1,0 +1,12 @@
+{
+  "productName": "Noye Phase8 QA",
+  "identifier": "com.noye.desktopphase8qa20261012",
+  "build": {
+    "beforeBuildCommand": ""
+  },
+  "bundle": {
+    "macOS": {
+      "hardenedRuntime": false
+    }
+  }
+}

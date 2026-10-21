@@ -1,0 +1,40 @@
+{
+  "method": "Build outputs plus read-only binary hashes. Strict codesign verify returned zero. This is local ad-hoc integrity, not trusted distribution.",
+  "bundle_mib_reported": 68.23,
+  "rust_build_seconds": 18.4,
+  "native_profile": {
+    "productName": "Noye Phase8 QA",
+    "identifier": "com.noye.desktopphase8qa20261012",
+    "build": {
+      "beforeBuildCommand": ""
+    },
+    "app": {
+      "windows": [
+        {
+          "label": "main",
+          "title": "Noye Phase8 QA",
+          "width": 1200,
+          "height": 800,
+          "minWidth": 760,
+          "minHeight": 560
+        }
+      ]
+    },
+    "bundle": {
+      "macOS": {
+        "signingIdentity": "-",
+        "hardenedRuntime": false
+      }
+    }
+  },
+  "files": {
+    "Contents/MacOS/noye-backend": {
+      "bytes": 57228576,
+      "sha256": "1fc900674b1b89e755851654a2cedb2107f4bdbfd07348999a37ff5a696d9610"
+    },
+    "Contents/MacOS/noye-desktop": {
+      "bytes": 14269696,
+      "sha256": "5249dc4571e41578a8bcbabfd8ac1223eea6f5f6682a3c8ea9db51b0a7fc91a6"
+    }
+  }
+}

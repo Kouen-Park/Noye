@@ -56,6 +56,23 @@ Cloud output limits and the local-only historical-excerpt drafting policy are
 unchanged. Durable ingestion progress/cancellation is described in
 [durable-jobs.md](durable-jobs.md).
 
+## Parent-exit shutdown bound
+
+The private stdin channel requests graceful shutdown on a shutdown line or parent
+EOF. Uvicorn gets its five-second request drain and owned-service cleanup can run.
+A daemon deadline exits only this backend after 15 seconds if a blocked executor
+or AnyIO request thread keeps Python alive. It remains active after the event loop
+returns, and disappears automatically when the process exits cleanly. This matches
+the native parent's existing 16-second fallback when that parent is itself gone.
+It does not kill a service by port/name or stop external Ollama/Docker/Qdrant.
+
+This is a last-resort process exit, so an unfinished edit is rolled back rather
+than reported as saved; committed writing and durable-job recovery remain the
+persistence boundary. A subprocess regression holds an uncommitted document edit
+in a real synchronous FastAPI/AnyIO request, closes parent stdin, checks the bound
+and reopens the workspace to verify the exact earlier saved document. Actual
+native model/force-quit results belong to Phase 8, separately from that regression.
+
 ## Validation and acceptance boundaries
 
 Fresh validation of integrated implementation bfc1d6d (later checkpoint commits

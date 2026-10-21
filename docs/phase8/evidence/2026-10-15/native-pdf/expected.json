@@ -1,0 +1,10 @@
+{
+  "id": "2b5622bc-5acd-4f84-bc57-e30748c7a3f6",
+  "content_sha256": "a558d9a83942a6d02b5713846ff10bd8c985e111c32a619802c8248e8295bc5c",
+  "utf8_bytes": 9635,
+  "table_rows": 40,
+  "code_lines": 40,
+  "list_items": 16,
+  "image": "bundled /file.svg",
+  "note": "API seeds invented editable Markdown; PDF export must be invoked and saved through native UI."
+}

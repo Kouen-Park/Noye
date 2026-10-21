@@ -45,9 +45,19 @@ class Passage(StrictModel):
 
 
 class Claim(StrictModel):
-    text: str = Field(min_length=1, max_length=1200)
-    evidence_id: str = Field(min_length=1)
-    quote: str = Field(min_length=1, max_length=1200)
+    evidence_id: str = Field(min_length=1, description="Select a supplied original passage first.")
+    quote: str = Field(
+        min_length=1,
+        max_length=1200,
+        description="Copy the supporting original words exactly before writing the interpretation.",
+    )
+    text: str = Field(
+        min_length=1,
+        max_length=1200,
+        description="Summarize the selected original in its language. Preserve subjects, "
+        "quantity properties, conditions and exceptions. State independent facts separately; "
+        "do not turn their co-occurrence into a cause, purpose or means relationship.",
+    )
 
 
 class Topic(StrictModel):
@@ -70,11 +80,22 @@ RelationType = Literal["shared_subject", "supporting_evidence", "alternative", "
 
 class RelationProposal(StrictModel):
     target_id: str
-    kind: RelationType
-    reason: str = Field(min_length=1, max_length=800)
-    confidence: float = Field(ge=0, le=1)
     origin_evidence_id: str
     target_evidence_id: str
+    reason: str = Field(
+        min_length=1,
+        max_length=800,
+        description="Compare the original outcomes under the same conditions, applying every "
+        "exception before deciding whether they agree or conflict.",
+    )
+    kind: RelationType = Field(
+        description="shared_subject: a specific shared topic, not vocabulary alone; "
+        "supporting_evidence: compatible assertions or details that establish the same fact; "
+        "alternative: comparable options or approaches; contradiction: incompatible original "
+        "assertions about the same subject and property under comparable conditions. "
+        "A missing statement does not deny a fact.",
+    )
+    confidence: float = Field(ge=0, le=1)
 
 
 class RelationsOutput(StrictModel):

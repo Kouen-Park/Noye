@@ -1,0 +1,4 @@
+{"ingestion": "02-English.txt", "state": "READY", "seconds": 1.404}
+{"ingestion": "01-\ud55c\uad6d\uc5b4.md", "state": "READY", "seconds": 0.056}
+{"ingestion": "Unrelated.txt", "state": "READY", "seconds": 0.043}
+{"state": "complete", "error": null, "seconds": 96.575, "report": "/private/tmp/noye-phase8-20261017/v6-wiki/wiki-b049b862-58fa-42ea-be8d-caa4d0390f4e.json"}

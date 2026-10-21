@@ -1,0 +1,73 @@
+{
+  "method": "Sequential local ad-hoc package checks after model unload; not trusted distribution.",
+  "stages": [
+    {
+      "name": "sidecar-build",
+      "argv": [
+        "npm",
+        "run",
+        "desktop:backend"
+      ],
+      "seconds": 31.309,
+      "exit_code": 0,
+      "log_sha256": "010a17a4fdcd4b0284a00436d946911c7c1c6cb0f21a5ce09172ba0fda8f2d32"
+    },
+    {
+      "name": "native-bundle",
+      "argv": [
+        "npx",
+        "tauri",
+        "build",
+        "--bundles",
+        "app",
+        "--config",
+        "/private/tmp/noye-phase8-20261021-native/tauri-qa.json"
+      ],
+      "seconds": 21.079,
+      "exit_code": 0,
+      "log_sha256": "004b94c7ec28b8f430980b8fa0c0163cdea76e45f1af20dc46f24b863d97e836"
+    },
+    {
+      "name": "native-signature",
+      "argv": [
+        "codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "/Users/gavinpark/Projects/Noye/frontend/src-tauri/target/release/bundle/macos/Noye Phase8 QA.app"
+      ],
+      "seconds": 0.045,
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "frozen-bundled",
+      "argv": [
+        "/Users/gavinpark/Projects/Noye/backend/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "app/tests/test_desktop.py",
+        "app/tests/test_native_folder_protocol.py"
+      ],
+      "seconds": 47.062,
+      "exit_code": 0,
+      "log_sha256": "2b6c20216d1563b9a7fef3c301f6ca973b1d5daa1de9cb352efb9a7fbfa2415f"
+    }
+  ],
+  "source_commit": "aa9335f68c6ff924c7f8bfb1b32930149f2871c7",
+  "files": {
+    "Contents/MacOS/noye-backend": {
+      "bytes": 57240784,
+      "sha256": "30a6eb28e93947f3fb3904069b9bd1c26f5c2eff79aad7d4cc674032867aa7e3"
+    },
+    "Contents/MacOS/noye-desktop": {
+      "bytes": 14270000,
+      "sha256": "63de67706134a5d47e924a8adaf237bf042ca9dfde3f03feff6f513ff5218479"
+    }
+  },
+  "bundled_prompt_versions": {
+    "app.services.source_documents.local": "source-document-v27",
+    "app.services.wiki.local": "wiki-grounded-v13"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "method":"Five new controls fixed before current v11 relation inference. Model sees original texts only; labels and IDs are evaluator-only.",
+  "cases":[
+    {"id":"new-v11-same-condition-opposite","origin":"During maintenance, Vervain permits exports.","target":"During maintenance, Vervain forbids exports.","origin_summary":"Vervain permits exports during maintenance.","target_summary":"Vervain forbids exports during maintenance.","allowed":["contradiction"],"required":true},
+    {"id":"new-v11-compatible-exception","origin":"Nasturtium accepts imports except during recovery.","target":"Nasturtium refuses imports during recovery.","origin_summary":"Nasturtium accepts imports.","target_summary":"Nasturtium refuses imports during recovery.","allowed":["shared_subject","supporting_evidence"],"required":true},
+    {"id":"new-v11-limit-versus-current","origin":"Azalea currently stores 4 items.","target":"Azalea has a storage limit of 9 items.","origin_summary":"Azalea currently stores 4 items.","target_summary":"Azalea's storage limit is 9 items.","allowed":["shared_subject"]},
+    {"id":"new-v11-omitted-fact","origin":"Sedum has an amber status indicator. Its backups run hourly.","target":"Sedum has an amber status indicator.","origin_summary":"Sedum runs hourly backups.","target_summary":"Sedum has an amber status indicator.","allowed":["shared_subject","supporting_evidence"],"required":true},
+    {"id":"new-v11-translated-same-rule","origin":"시계초는 점검 중 내보내기를 차단합니다.","target":"Passionflower blocks exports during inspection. 시계초 means Passionflower.","origin_summary":"시계초는 점검 중 내보내기를 차단합니다.","target_summary":"Passionflower blocks exports during inspection.","allowed":["shared_subject","supporting_evidence"],"required":true}
+  ]
+}

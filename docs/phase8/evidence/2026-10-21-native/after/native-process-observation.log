@@ -1,0 +1,4 @@
+{"at": 1792568812.966642, "state": "generated_tokens", "count": 100, "line": "slot print_timing: id  0 | task 0 | n_gen =    100, tg =   9.14 t/s, tg_3s =   9.24 t/s"}
+{"at": 1792568855.8963358, "pid_gone": 77971}
+{"at": 1792568861.959431, "pid_gone": 77990}
+{"at": 1792568862.1810062, "pid_gone": 77984}

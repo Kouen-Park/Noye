@@ -1,0 +1,20 @@
+{
+  "method": "First PDF panel after a fresh native QA launch with configured filename plus validateVisibleColumns. CUA observed Save enabled immediately, clicked it with unchanged default filename/directory, then observed PDF saved. No filename edit, Tab validation or directory reselection was used.",
+  "default_name": "Phase8 generated AT-201.pdf",
+  "directory": "/private/tmp/noye-phase8-20261016/exports",
+  "save_initially_enabled": true,
+  "default_saved": true,
+  "bytes": 21946,
+  "sha256": "46e7b753bc32a0196527455da08318fe97e8929e4b0430aaab5d44077e578c4a",
+  "pages": 1,
+  "text": "AT-201 Experiment Results\nMeasured Runtime: 12 milliseconds\nMemory Usage: 37 megabytes\nPhase8 generated document edit · 생성 문서 편집 검증.\n<!-- Phase8 Markdown ﬁdelity !\nLiteral tokens: --, \"quoted\", -> , 37 litres.\nPhase8 native export · 저장 창에서 내보내기.\n",
+  "checks": {
+    "pdf_created": true,
+    "runtime_retained": true,
+    "memory_retained": true,
+    "korean_retained": true
+  },
+  "visual_accepted": true,
+  "scope": "One fresh-launch default-save observation; broader OS/destination acceptance remains open.",
+  "visual_observation": "One-page render retains heading, measured values and Korean without overlap/clipping. Extracted ordinary prose still contains font ligature mappings (fi and literal comment terminator); literal code arrow itself extracts as ->. This separate PDF text fidelity limitation remains recorded."
+}

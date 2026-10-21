@@ -1,0 +1,15 @@
+{"id": "restart-days-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 32.956}
+{"id": "restart-days-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 9.941}
+{"id": "approval-states-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 13.953}
+{"id": "approval-states-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 12.95}
+{"id": "temperature-properties-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 17.079}
+{"id": "temperature-properties-unsupported", "expected": false, "supported": true, "matches_rubric": false, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 52.798}
+{"id": "translated-conditions-supported", "expected": true, "supported": false, "matches_rubric": false, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 28.49}
+{"id": "translated-conditions-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 30.143}
+{"id": "independent-facts-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 24.056}
+{"id": "independent-facts-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 32.256}
+{"id": "measurement-subjects-supported", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 25.304}
+{"id": "measurement-subjects-unsupported", "expected": false, "supported": false, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 21.207}
+{"id": "second-original-only", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 19.505}
+{"id": "first-original-only", "expected": true, "supported": true, "matches_rubric": true, "valid_semantic_decision": true, "decision_stage": "semantic", "reason": null, "model_calls": 2, "seconds": 26.78}
+{"matches": 12, "count": 14, "valid_semantic": 14, "seconds": 349.561, "error": null}

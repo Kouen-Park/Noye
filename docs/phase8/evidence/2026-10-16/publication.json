@@ -1,0 +1,2524 @@
+{
+  "method": "Publish only explicit synthetic evidence; never runtime folders or credentials.",
+  "files": [
+    {
+      "file": "backend-product-coverage.json",
+      "source": "/private/tmp/noye-phase8-20261016/backend-product-coverage.json",
+      "source_bytes": 254,
+      "source_sha256": "bbc94070831933165d28a022c1f5892eab7bb7dd5963e2d3ec90745ce3050c5c",
+      "published_bytes": 254,
+      "published_sha256": "bbc94070831933165d28a022c1f5892eab7bb7dd5963e2d3ec90745ce3050c5c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "backend-v18-product-coverage.json",
+      "source": "/private/tmp/noye-phase8-20261016/backend-v18-product-coverage.json",
+      "source_bytes": 253,
+      "source_sha256": "f8036a4269db6658887334567966fc880f807213e64f7fac451b33332fceb846",
+      "published_bytes": 253,
+      "published_sha256": "f8036a4269db6658887334567966fc880f807213e64f7fac451b33332fceb846",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "bundled-sidecar-failure.json",
+      "source": "/private/tmp/noye-phase8-20261016/bundled-sidecar-failure.json",
+      "source_bytes": 2248,
+      "source_sha256": "6df903dea205d2be957f756c622236af96d08b8882c5eefd471da79eb9b45d54",
+      "published_bytes": 2248,
+      "published_sha256": "6df903dea205d2be957f756c622236af96d08b8882c5eefd471da79eb9b45d54",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "live-integration-corrected.json",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected.json",
+      "source_bytes": 2864,
+      "source_sha256": "f42507ffa4475dfa30c200acf33bec96307049769239a0ba5c2e33932a5176a8",
+      "published_bytes": 2864,
+      "published_sha256": "f42507ffa4475dfa30c200acf33bec96307049769239a0ba5c2e33932a5176a8",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "live-integration-review.json",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-review.json",
+      "source_bytes": 8346,
+      "source_sha256": "b3e8f2cb4349e1a67abc9f3b8dcf0717b2d52619cf192e02f2d1fa11eaa581be",
+      "published_bytes": 8346,
+      "published_sha256": "b3e8f2cb4349e1a67abc9f3b8dcf0717b2d52619cf192e02f2d1fa11eaa581be",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "live-integration-v22.json",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-v22.json",
+      "source_bytes": 7827,
+      "source_sha256": "2d247291572d30410f9697620a569a14bc743dbc4f8f8a582461331fdb50f87f",
+      "published_bytes": 7827,
+      "published_sha256": "2d247291572d30410f9697620a569a14bc743dbc4f8f8a582461331fdb50f87f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "logs/audit-calibration.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/audit-calibration.log",
+      "source_bytes": 4063,
+      "source_sha256": "c5fe6c4159f86fdfc66b4e85e7e81be78acaa578bce7b66a13ac89bbe9a365f6",
+      "published_bytes": 4063,
+      "published_sha256": "c5fe6c4159f86fdfc66b4e85e7e81be78acaa578bce7b66a13ac89bbe9a365f6",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/audit-regressions-loopback.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/audit-regressions-loopback.log",
+      "source_bytes": 2012,
+      "source_sha256": "7b91a0ab53ba851dcf470f4d605bad8adc5fba511df500f43171aa66d37a3ad7",
+      "published_bytes": 2012,
+      "published_sha256": "7b91a0ab53ba851dcf470f4d605bad8adc5fba511df500f43171aa66d37a3ad7",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/audit-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/audit-regressions.log",
+      "source_bytes": 5178,
+      "source_sha256": "4d4e837c3e9773acc1fea373e4858b33dfe47cd18af9c607fb944f5d13d115dc",
+      "published_bytes": 5155,
+      "published_sha256": "04fdc12d32fc55e62aa7ffdd37286fb1f45fc8bec2f80c352fa0cbd37812b7bc",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-build.log",
+      "source_bytes": 11586,
+      "source_sha256": "c5c77e62526c0c67b11a1b719da7682714ab93c4006dcef7da5f3dfd767c26ac",
+      "published_bytes": 11586,
+      "published_sha256": "c5c77e62526c0c67b11a1b719da7682714ab93c4006dcef7da5f3dfd767c26ac",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-full.log",
+      "source_bytes": 29505,
+      "source_sha256": "9c64eb28c6600c8fe63cc797e82c999fc564b83932b49548f1cc0b78f84d7997",
+      "published_bytes": 29505,
+      "published_sha256": "9c64eb28c6600c8fe63cc797e82c999fc564b83932b49548f1cc0b78f84d7997",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v18-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v18-build.log",
+      "source_bytes": 11584,
+      "source_sha256": "d070095f44d1d68309d34de4fbc1b321451eb6b6398fdd832447d63b3a4b4b28",
+      "published_bytes": 11584,
+      "published_sha256": "d070095f44d1d68309d34de4fbc1b321451eb6b6398fdd832447d63b3a4b4b28",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v18-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v18-full.log",
+      "source_bytes": 29193,
+      "source_sha256": "de2095957e4f4762221e24f543d9b291b6e431c2cb60b1ee9f6b54c8d07a7c28",
+      "published_bytes": 29193,
+      "published_sha256": "de2095957e4f4762221e24f543d9b291b6e431c2cb60b1ee9f6b54c8d07a7c28",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v19-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v19-full.log",
+      "source_bytes": 3326,
+      "source_sha256": "714ea9de760c791ab148613ffd0f16421b23621fbab4063ee044b824f088cab4",
+      "published_bytes": 3326,
+      "published_sha256": "714ea9de760c791ab148613ffd0f16421b23621fbab4063ee044b824f088cab4",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v20-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v20-build.log",
+      "source_bytes": 11604,
+      "source_sha256": "076d17d25da37bc8c67aad59692b92c90a6c20e03f1e5f910904dfab052eee0f",
+      "published_bytes": 11604,
+      "published_sha256": "076d17d25da37bc8c67aad59692b92c90a6c20e03f1e5f910904dfab052eee0f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v20-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v20-full.log",
+      "source_bytes": 3326,
+      "source_sha256": "b9d2e421c9f9b1a4361fdaba556a590f904bf9f0232e7e5b5a64648eff54076b",
+      "published_bytes": 3326,
+      "published_sha256": "b9d2e421c9f9b1a4361fdaba556a590f904bf9f0232e7e5b5a64648eff54076b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v21-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v21-build.log",
+      "source_bytes": 11583,
+      "source_sha256": "b0dfcb46f9e16d415492ca594b64fff47012f86118090d4e02e2ea769e64eec5",
+      "published_bytes": 11583,
+      "published_sha256": "b0dfcb46f9e16d415492ca594b64fff47012f86118090d4e02e2ea769e64eec5",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v21-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v21-full.log",
+      "source_bytes": 3326,
+      "source_sha256": "7849e1b9bf1ea26191e23082f14e7edfb6a4b55d8d9a0895842037947ee351d9",
+      "published_bytes": 3326,
+      "published_sha256": "7849e1b9bf1ea26191e23082f14e7edfb6a4b55d8d9a0895842037947ee351d9",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v22-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v22-build.log",
+      "source_bytes": 11586,
+      "source_sha256": "eca6c84a5199625812385b03b9f734d76675c600164959a03a2911ac12d43758",
+      "published_bytes": 11586,
+      "published_sha256": "eca6c84a5199625812385b03b9f734d76675c600164959a03a2911ac12d43758",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/backend-v22-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/backend-v22-full.log",
+      "source_bytes": 3326,
+      "source_sha256": "3fb69b55793c66d4df05a337f35966f8e05746728984e56685fad08a20012d9b",
+      "published_bytes": 3326,
+      "published_sha256": "3fb69b55793c66d4df05a337f35966f8e05746728984e56685fad08a20012d9b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/chat-thinking-diagnostic.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/chat-thinking-diagnostic.log",
+      "source_bytes": 4933,
+      "source_sha256": "32722cd8f82771f5f278808ece48d6b6dd03ce445811e40a352a618acb787d37",
+      "published_bytes": 4933,
+      "published_sha256": "32722cd8f82771f5f278808ece48d6b6dd03ce445811e40a352a618acb787d37",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-literal-print-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-literal-print-build.log",
+      "source_bytes": 866,
+      "source_sha256": "e93d00a63f2e9527b45f397b726d0421e92a7ee7d974b9ef371621318c2f03e8",
+      "published_bytes": 859,
+      "published_sha256": "11c51ef53b61889492f8fdeaf9b4e188ab36952538ceb71b2ce4816fca81d153",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-original-command-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-original-command-build.log",
+      "source_bytes": 864,
+      "source_sha256": "54fc9f673525c55ad845ce46cc5ba133f42069cb50a9ae1d975c4ad43112ce70",
+      "published_bytes": 857,
+      "published_sha256": "494c0a32c69d979f15e937df905dc4cc6ae78030406e0155656952b82080bbef",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-original-command-full.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-original-command-full.log",
+      "source_bytes": 598,
+      "source_sha256": "eec2029aa3354738e14db3bc607164500270080256677dc55b311d8aa941400f",
+      "published_bytes": 597,
+      "published_sha256": "7792d1cc81d0e85c744fdcf71fd7c0581db1a407db430be688b6f0fc36a2f841",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-original-command-lint.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-original-command-lint.log",
+      "source_bytes": 62,
+      "source_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "published_bytes": 62,
+      "published_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-original-command-types.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-original-command-types.log",
+      "source_bytes": 69,
+      "source_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "published_bytes": 69,
+      "published_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-print-url-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-print-url-build.log",
+      "source_bytes": 864,
+      "source_sha256": "2f972e49e981aaa9c2b9fd9dd3fb0326addeef021c753a191711c9b9a6d2309f",
+      "published_bytes": 857,
+      "published_sha256": "3e91b0f363a4e2074286ad560ceef5d622960c95dfe9063c7332a41b360a376f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frontend-wiki-suggestion-build.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frontend-wiki-suggestion-build.log",
+      "source_bytes": 865,
+      "source_sha256": "e317774cea80d06615ab4312bfb3524345002c7102de3c53f153c76ec6c1303c",
+      "published_bytes": 858,
+      "published_sha256": "49f56eed375305e26500d6c29c5ad604062dd992ef0e51f6512ec38c4e9df3e8",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-original-command-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-original-command-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "2c41322cdc4d1f05df65e176b186507f9ac41944530de80fe7f90a84b9af4016",
+      "published_bytes": 1566,
+      "published_sha256": "2c41322cdc4d1f05df65e176b186507f9ac41944530de80fe7f90a84b9af4016",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-original-command-folder.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-original-command-folder.log",
+      "source_bytes": 851,
+      "source_sha256": "b339e8f809c00f0a0b5dc871056c5b1134473784ee429fc453064a20f4d259ed",
+      "published_bytes": 851,
+      "published_sha256": "b339e8f809c00f0a0b5dc871056c5b1134473784ee429fc453064a20f4d259ed",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-v16.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-v16.log",
+      "source_bytes": 1566,
+      "source_sha256": "9055683fa3cd5c48cfa918b839fd514d3a487bf786985e7e3b80a6f23c2a7181",
+      "published_bytes": 1566,
+      "published_sha256": "9055683fa3cd5c48cfa918b839fd514d3a487bf786985e7e3b80a6f23c2a7181",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-v18.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-v18.log",
+      "source_bytes": 1566,
+      "source_sha256": "f22130808138dacfe3929e09b5e02ef1ccb54bd0abe7d2712cdcec972caeae5c",
+      "published_bytes": 1566,
+      "published_sha256": "f22130808138dacfe3929e09b5e02ef1ccb54bd0abe7d2712cdcec972caeae5c",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-v20-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-v20-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "53a12df340c51477fabcbaf8e951f7970b3c95ea07695aaa1d58d67a5591bed2",
+      "published_bytes": 1566,
+      "published_sha256": "53a12df340c51477fabcbaf8e951f7970b3c95ea07695aaa1d58d67a5591bed2",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-v21-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-v21-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "1dcb3b33d5b72f534000194a707e7b72da2cd710129e173c22839f240be4f912",
+      "published_bytes": 1566,
+      "published_sha256": "1dcb3b33d5b72f534000194a707e7b72da2cd710129e173c22839f240be4f912",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/frozen-v22-bundled.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/frozen-v22-bundled.log",
+      "source_bytes": 1566,
+      "source_sha256": "ad744d1bd96c733d3e9f60c069cb4111f0997ce2e042d90888e0914c2931fb33",
+      "published_bytes": 1566,
+      "published_sha256": "ad744d1bd96c733d3e9f60c069cb4111f0997ce2e042d90888e0914c2931fb33",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/import-profile.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/import-profile.log",
+      "source_bytes": 65443,
+      "source_sha256": "a1a20c9797dd9807d8b007b2c5102854aed84aa7b235662a62927f7e0a278a76",
+      "published_bytes": 65443,
+      "published_sha256": "a1a20c9797dd9807d8b007b2c5102854aed84aa7b235662a62927f7e0a278a76",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/isolated-evidence-v22.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/isolated-evidence-v22.log",
+      "source_bytes": 726,
+      "source_sha256": "cc6ee52c1e00744dda7d7751ecf635d967572994167f14c4242e6b30583c3ae1",
+      "published_bytes": 726,
+      "published_sha256": "cc6ee52c1e00744dda7d7751ecf635d967572994167f14c4242e6b30583c3ae1",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-fixture-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/live-fixture-regressions.log",
+      "source_bytes": 862,
+      "source_sha256": "e39d019bf0cfc5372f52f9327dfbe99e10b8e4cd435645a2e81dcb86543ac9df",
+      "published_bytes": 862,
+      "published_sha256": "e39d019bf0cfc5372f52f9327dfbe99e10b8e4cd435645a2e81dcb86543ac9df",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/live-integration-corrected.log",
+      "source_bytes": 1753,
+      "source_sha256": "c0227c4d5544f0c9529b09c869e5a426bb6819487d6955e8016c4a3570c26f88",
+      "published_bytes": 1753,
+      "published_sha256": "c0227c4d5544f0c9529b09c869e5a426bb6819487d6955e8016c4a3570c26f88",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-15.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-15.log",
+      "source_bytes": 1107,
+      "source_sha256": "ef8a47723d06979ea70b8cde6ba9b9aa03dd275466d90b84d638c2b9850ef607",
+      "published_bytes": 1107,
+      "published_sha256": "ef8a47723d06979ea70b8cde6ba9b9aa03dd275466d90b84d638c2b9850ef607",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-15.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-15.xml",
+      "source_bytes": 389,
+      "source_sha256": "495216e97ec022fb3752ee8a8ae026e4629e136bb5ad3416f8bc70310feac113",
+      "published_bytes": 390,
+      "published_sha256": "c73445af9d6b003c928c66dac5048be6a13713a10405f819db4ad0ca7b9c4bc3",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-17.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-17.log",
+      "source_bytes": 1094,
+      "source_sha256": "ebf569ad64f6552d44c433ffcece6ceec5d7154fa690c388146f71189a8ff5c8",
+      "published_bytes": 1094,
+      "published_sha256": "ebf569ad64f6552d44c433ffcece6ceec5d7154fa690c388146f71189a8ff5c8",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-17.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-17.xml",
+      "source_bytes": 376,
+      "source_sha256": "a87882968c1625174d91d0a6d3321a216ca1d8e4b7e7ffc775ba59738a7d858b",
+      "published_bytes": 377,
+      "published_sha256": "932e5db366b26bb7c30c05de07abd95b2e670920b0e728afbe27873f6f0bfdcd",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-18.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-18.log",
+      "source_bytes": 1112,
+      "source_sha256": "7d320fecc4dcaa2d073349c3a417c8abc2c7a25c3278ab13e72cae16a2d9b94a",
+      "published_bytes": 1112,
+      "published_sha256": "7d320fecc4dcaa2d073349c3a417c8abc2c7a25c3278ab13e72cae16a2d9b94a",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-18.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-18.xml",
+      "source_bytes": 394,
+      "source_sha256": "4aaa6f79c6661906cf5acf438d6de589cfa983c30081a839c7eefff981828101",
+      "published_bytes": 395,
+      "published_sha256": "be55dfe0259b1f5959df4502fa978b892d8172d47c56474e06bac2fadcfa6121",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-19.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-19.log",
+      "source_bytes": 1106,
+      "source_sha256": "80a336f1eb33c9dfddd379d51d4756243e6ff9b0b4cf0ebe63cff0ed30d42228",
+      "published_bytes": 1106,
+      "published_sha256": "80a336f1eb33c9dfddd379d51d4756243e6ff9b0b4cf0ebe63cff0ed30d42228",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration-corrected/case-19.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-corrected/case-19.xml",
+      "source_bytes": 388,
+      "source_sha256": "7f2267a5811349b13ff46bbd082fb06b0e20c7613a98576e3fb0280ca636359d",
+      "published_bytes": 389,
+      "published_sha256": "02d412d9ba94f2046489faad177753abafc451a3649361677b84bab5a60d9c50",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration-v22.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/live-integration-v22.log",
+      "source_bytes": 7640,
+      "source_sha256": "764aac406a87ddfec51d12fdabb15bd636db6859113ed806aa14e540819284f2",
+      "published_bytes": 7640,
+      "published_sha256": "764aac406a87ddfec51d12fdabb15bd636db6859113ed806aa14e540819284f2",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-01.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-01.log",
+      "source_bytes": 1089,
+      "source_sha256": "4e0903b6772b03457a1272b9025bcb16822d245ba177a6ed156fb2ee9d2998d3",
+      "published_bytes": 1089,
+      "published_sha256": "4e0903b6772b03457a1272b9025bcb16822d245ba177a6ed156fb2ee9d2998d3",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-01.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-01.xml",
+      "source_bytes": 370,
+      "source_sha256": "64120491b725bf52726dd1bca876814f952afd6119e61120583af13f8e146a10",
+      "published_bytes": 371,
+      "published_sha256": "7f0ee006c626693a8e617071a9015768601d6918657a09f162351950e8be4c81",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-02.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-02.log",
+      "source_bytes": 1097,
+      "source_sha256": "f9a28d7c48ec085a4f089418105c22b479c306a3a71990a21f8ec12a13cecd61",
+      "published_bytes": 1097,
+      "published_sha256": "f9a28d7c48ec085a4f089418105c22b479c306a3a71990a21f8ec12a13cecd61",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-02.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-02.xml",
+      "source_bytes": 378,
+      "source_sha256": "83f370cc1bf2d36a789d3fc9083703413c201e71893e1b90dd042c64657fbe2e",
+      "published_bytes": 379,
+      "published_sha256": "5b102c64981dc4101112c2d531bb72273e1e78f82138926c66e208586d084560",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-03.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-03.log",
+      "source_bytes": 1110,
+      "source_sha256": "75e68ed84a195e10587f7b22f5ea3c8676cc0726b1b6e885cff5467e3612e172",
+      "published_bytes": 1110,
+      "published_sha256": "75e68ed84a195e10587f7b22f5ea3c8676cc0726b1b6e885cff5467e3612e172",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-03.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-03.xml",
+      "source_bytes": 391,
+      "source_sha256": "8c31f13817cae5601ecbaac311084deecfe14d36b92df291beb06f638d643492",
+      "published_bytes": 392,
+      "published_sha256": "7f94e15c919bf187a6db0060287edc1b4a57a3f684321855caeb06af80f2712d",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-04.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-04.log",
+      "source_bytes": 1098,
+      "source_sha256": "93516d016cf44c1d57a20805f18b1af1d480b7a6dbbdf5c6a41698d93a5e0540",
+      "published_bytes": 1098,
+      "published_sha256": "93516d016cf44c1d57a20805f18b1af1d480b7a6dbbdf5c6a41698d93a5e0540",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-04.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-04.xml",
+      "source_bytes": 379,
+      "source_sha256": "c38fa24d167119f2aacc12d9a0470f1fd6423471c06114b8487a680ba2b18eb5",
+      "published_bytes": 380,
+      "published_sha256": "148be9029617b68c674d14ab0a17e1c3920589b620ec9b08b15d12f5efebd1ed",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-05.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-05.log",
+      "source_bytes": 3257,
+      "source_sha256": "d2d1a88bdd8305d8fba2caf3f3457eac5bd851a9e7cccfd6d7ac6b8acc44682e",
+      "published_bytes": 3257,
+      "published_sha256": "d2d1a88bdd8305d8fba2caf3f3457eac5bd851a9e7cccfd6d7ac6b8acc44682e",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-05.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-05.xml",
+      "source_bytes": 374,
+      "source_sha256": "5691940b76e3cd4222bc032946136babf94a7a89bc778421d40dde95fb3afd21",
+      "published_bytes": 375,
+      "published_sha256": "806f9ad828c2b28cda276e20b257e9351c652ade8f7c6b32df1d8e47246ace21",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-06.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-06.log",
+      "source_bytes": 1099,
+      "source_sha256": "9f01dc36131300819af958186854dcaaaf7a1f111d1428e018bdb65c3519abfb",
+      "published_bytes": 1099,
+      "published_sha256": "9f01dc36131300819af958186854dcaaaf7a1f111d1428e018bdb65c3519abfb",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-06.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-06.xml",
+      "source_bytes": 380,
+      "source_sha256": "f33662ddc6380fa11addb1abc90c8357d17240c37f03395630fff3108cf2b6a8",
+      "published_bytes": 381,
+      "published_sha256": "750e33fbb4255afb9c2443b9d346efa136407877397aceeacb11f04a962fc916",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-07.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-07.log",
+      "source_bytes": 1085,
+      "source_sha256": "e891140471f30762e60741c4c5e4a8ef55c3a1e96c3f399c863c4350631cc3a7",
+      "published_bytes": 1085,
+      "published_sha256": "e891140471f30762e60741c4c5e4a8ef55c3a1e96c3f399c863c4350631cc3a7",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-07.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-07.xml",
+      "source_bytes": 366,
+      "source_sha256": "89372a97d708aa12b5ec2a41c754da453f48e6348969ff7051fce4e376b588da",
+      "published_bytes": 367,
+      "published_sha256": "2f4226340235fa77f3fdc0730bb870b46b69b19efa476385d1dcae77e8722cb8",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-08.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-08.log",
+      "source_bytes": 1099,
+      "source_sha256": "77b4600c9cf3e9a83c5d126f79a54109b94c2e300b59b1498b7db0fa449c2b68",
+      "published_bytes": 1099,
+      "published_sha256": "77b4600c9cf3e9a83c5d126f79a54109b94c2e300b59b1498b7db0fa449c2b68",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-08.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-08.xml",
+      "source_bytes": 380,
+      "source_sha256": "319d62a6c3b5fac09005d67067f357bec6510d60c2cbbfee050b17404f2d256c",
+      "published_bytes": 381,
+      "published_sha256": "553520671980f8b93818e0f96e2fabdd3315621000cf09d45ec7fe21f962bfb3",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-09.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-09.log",
+      "source_bytes": 1108,
+      "source_sha256": "4a6d6297e1082eaf8faae5550a95c632f294910ca947794e4563079aa26a7e96",
+      "published_bytes": 1108,
+      "published_sha256": "4a6d6297e1082eaf8faae5550a95c632f294910ca947794e4563079aa26a7e96",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-09.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-09.xml",
+      "source_bytes": 389,
+      "source_sha256": "8e582b2aff5cfcb0e1a8d428028cd71296e73b54657c566af4a7def22df9824c",
+      "published_bytes": 390,
+      "published_sha256": "54b147157623e2361b4b7568aa5792063a56c539f7c2f01d6d7e66b6267c25aa",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-10.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-10.log",
+      "source_bytes": 1810,
+      "source_sha256": "acd86589ef8f6f858f7c5a03bc4519fc9fb9dc0514bb2c813dcec4037285e369",
+      "published_bytes": 1810,
+      "published_sha256": "acd86589ef8f6f858f7c5a03bc4519fc9fb9dc0514bb2c813dcec4037285e369",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-10.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-10.xml",
+      "source_bytes": 378,
+      "source_sha256": "b254287131ec6fd5872664bbe6d1548971ae40a394a1e5b3ce1c85a5f78c5bbe",
+      "published_bytes": 379,
+      "published_sha256": "44a6582c45a5b7b6d00e933c910215df98137660acadca40146e37ee64228d8b",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-11.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-11.log",
+      "source_bytes": 1075,
+      "source_sha256": "efe1e1d788dfb16b4b9d3a7041439712dc86f1d460bf3ee3c8dd762cb8c0eddc",
+      "published_bytes": 1075,
+      "published_sha256": "efe1e1d788dfb16b4b9d3a7041439712dc86f1d460bf3ee3c8dd762cb8c0eddc",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-11.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-11.xml",
+      "source_bytes": 356,
+      "source_sha256": "57cc30ef9eb1991ffe6673c603bf37e39e009c1b8641c2fe20b3e6601d1857ff",
+      "published_bytes": 357,
+      "published_sha256": "52cab722d1ebcc41bd96830385da148206a6eefa5d4263912532a2a944145c8e",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-12.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-12.log",
+      "source_bytes": 1093,
+      "source_sha256": "44378965e7066dca09c59b5c8c21d9fbd08d0e97b4e26cb37650c5fdd89f4c29",
+      "published_bytes": 1093,
+      "published_sha256": "44378965e7066dca09c59b5c8c21d9fbd08d0e97b4e26cb37650c5fdd89f4c29",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-12.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-12.xml",
+      "source_bytes": 374,
+      "source_sha256": "728a095e2d45a4bee96785e58753ca9776f6f6d48250eae2256745f773667e3a",
+      "published_bytes": 375,
+      "published_sha256": "bc81d4af4e8e7fdb90bc7d4c1a6d8535a5f605a17e3fc03fdfdec8abfa106f4b",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-13.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-13.log",
+      "source_bytes": 3275,
+      "source_sha256": "8efe7e791f9797c6542a8277a1c481498e700cf2f91b6940cf0bf3e07917fe49",
+      "published_bytes": 3275,
+      "published_sha256": "8efe7e791f9797c6542a8277a1c481498e700cf2f91b6940cf0bf3e07917fe49",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-13.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-13.xml",
+      "source_bytes": 372,
+      "source_sha256": "1f0450f5e4ce44cc4146ddadbc7ee8d1f86230b9bce68bff78cd5de25332f33b",
+      "published_bytes": 373,
+      "published_sha256": "79db2f3fd5681d232c0b2d382105d74a45f87fca1310529582e8e45c5f1cf240",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-14.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-14.log",
+      "source_bytes": 1109,
+      "source_sha256": "728303b5dfb5bfc9a85ebb33fd015630fa3072306c027544fe713a98a481c219",
+      "published_bytes": 1109,
+      "published_sha256": "728303b5dfb5bfc9a85ebb33fd015630fa3072306c027544fe713a98a481c219",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-14.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-14.xml",
+      "source_bytes": 391,
+      "source_sha256": "d812b839ad1f28c1828b8628293856fce6959a4354e1c0708e7018ab4ec1e70b",
+      "published_bytes": 392,
+      "published_sha256": "16665d3d27fca419111d6863bbd5bb2947e7102a8b229952a515c945854bf57b",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-15.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-15.log",
+      "source_bytes": 3416,
+      "source_sha256": "d5f09998d07e8a610f467f54b2153135ba649c92d523c7912075f689757f5e9e",
+      "published_bytes": 3396,
+      "published_sha256": "d9be1b1995d462cba8974c865671306717b7c151b5821f198dca6e4855f1684a",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-15.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-15.xml",
+      "source_bytes": 2812,
+      "source_sha256": "4abb9ddab503fbfced8674c6b278fa6649d684ef4783a7ec15e7967c3e90c078",
+      "published_bytes": 2793,
+      "published_sha256": "1f40ab8d9c6549d74474da76f8cba9d29fce8932540b8232098a04268c00acf1",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-16.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-16.log",
+      "source_bytes": 3266,
+      "source_sha256": "79791ce11cb231f3b2aa613fad2adb674bf135935b765f24a3a37b83944392b4",
+      "published_bytes": 3266,
+      "published_sha256": "79791ce11cb231f3b2aa613fad2adb674bf135935b765f24a3a37b83944392b4",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-16.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-16.xml",
+      "source_bytes": 384,
+      "source_sha256": "03306056c57cb95daae537d2b84cfa33bc1acd2548f7cc7464fd3d3f7f489c92",
+      "published_bytes": 385,
+      "published_sha256": "84f11051636069fc9ea2455b1c0319a8eb44250fe0767fad9cc94a50d2b4b1a2",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-17.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-17.log",
+      "source_bytes": 1795,
+      "source_sha256": "23375043e7b6fb0a3a5fc0a96ae5e7b4e5abba7d00f4df731956f5af38d95604",
+      "published_bytes": 1791,
+      "published_sha256": "9250acc99de40b927816dfc2610c4264593fbc32f7cedf655dfb6fe8eed9ff82",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-17.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-17.xml",
+      "source_bytes": 1197,
+      "source_sha256": "f70ca72ca9363951be453a1769353ecd697d2766ca57baad7d8a9ab47c050ffa",
+      "published_bytes": 1194,
+      "published_sha256": "c45c4ffff5ce7636d6bce345981c80b1fb3a5a6a4191f2106644c014084be5c4",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-18.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-18.log",
+      "source_bytes": 1111,
+      "source_sha256": "6bd096883511219afc66485c866826d4fb5ad25c92364b9db9e1ecbaaad1e14d",
+      "published_bytes": 1111,
+      "published_sha256": "6bd096883511219afc66485c866826d4fb5ad25c92364b9db9e1ecbaaad1e14d",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-18.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-18.xml",
+      "source_bytes": 392,
+      "source_sha256": "a1de4089a47caa8e18c5ab9fc5fef7ba7c979c1a6e604c4d742755f9f2bebfcd",
+      "published_bytes": 393,
+      "published_sha256": "fef41ce0397b976da7eac048e22acc8ad2822756667274d0f1ae6139ffb9bd97",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/live-integration/case-19.txt",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-19.log",
+      "source_bytes": 1766,
+      "source_sha256": "7e2f6af0e8dbc7a183a7cd4f2e3dc1d94a28acb0e8d543f3f53859cfc9e3f5a7",
+      "published_bytes": 1762,
+      "published_sha256": "d48b2c5601d5bb02eb7c6cc24e8ea6847771f1f951e85f09520356b1212bed8f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/live-integration/case-19.xml",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration/case-19.xml",
+      "source_bytes": 1050,
+      "source_sha256": "721fe66ededa091120d725b28ec12a2ec4d9b20f0055cc5b811505c06f75bbbd",
+      "published_bytes": 1047,
+      "published_sha256": "8469e8f6d49527bb0c5cf92afee09c3e7179efa133b4a00d265f65843d13a201",
+      "transformation": "JUnit XML diagnostic trailing whitespace normalized; original raw XML hash retained"
+    },
+    {
+      "file": "logs/multiple-claim-replayed-v22.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/multiple-claim-replayed-v22.log",
+      "source_bytes": 1056,
+      "source_sha256": "5b5c42aada869d7b47dbdb32caaa507841b23a4e9d72ceabb15b88b6d50a4e24",
+      "published_bytes": 1056,
+      "published_sha256": "5b5c42aada869d7b47dbdb32caaa507841b23a4e9d72ceabb15b88b6d50a4e24",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/multiple-claim-v21.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/multiple-claim-v21.log",
+      "source_bytes": 1051,
+      "source_sha256": "77b85eb8c73efcc06b5314c8af2abdb315b020fe3f6c9f499d4b092a284a33a3",
+      "published_bytes": 1051,
+      "published_sha256": "77b85eb8c73efcc06b5314c8af2abdb315b020fe3f6c9f499d4b092a284a33a3",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/multiple-original-v21.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/multiple-original-v21.log",
+      "source_bytes": 3113,
+      "source_sha256": "a0793cb10dce6e2fa6a7fdeb3958a30851bd8d0a6808bc27cd6765e9f47da5cd",
+      "published_bytes": 3113,
+      "published_sha256": "a0793cb10dce6e2fa6a7fdeb3958a30851bd8d0a6808bc27cd6765e9f47da5cd",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-original-command-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-original-command-bundle.log",
+      "source_bytes": 1857,
+      "source_sha256": "7a6cf31576eb396fe82d8ae3c079d47cde85750c09a8a574c995468b70e92237",
+      "published_bytes": 1856,
+      "published_sha256": "ed81a49d6c4b2fe2f3b41f8a59118c117bce8622087a3ce69f87977419d23ac2",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-original-command-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-original-command-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-print-url-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-print-url-bundle.log",
+      "source_bytes": 1857,
+      "source_sha256": "c059c1ef55648c3ee4e9c013396d352b619c573c045abaf8923bf9f8f8347a08",
+      "published_bytes": 1856,
+      "published_sha256": "21ebfbcaa2ea9ab0f8cca2f890e29df29af83fef8f9b5d3f8dd779def7c96153",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-print-url-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-print-url-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-save-panel-refresh-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-save-panel-refresh-bundle.log",
+      "source_bytes": 1857,
+      "source_sha256": "57446b30839543d57c805bcc70ef98be516edd6406f47697dd9f6da1f2028176",
+      "published_bytes": 1856,
+      "published_sha256": "a035461eeafa7ece67c315d4758295fbb3d705a91f26824b4643c4a24a1b434f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v18-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v18-bundle.log",
+      "source_bytes": 1845,
+      "source_sha256": "115f190ed0f3ad7e458da8d69752dcbba18384d2a0023626d62a654b16beeb1e",
+      "published_bytes": 1844,
+      "published_sha256": "1ab6d48d10f10744b072d760239b8b3d504741d71080919906e10c18df1a6cd1",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v18-hardened-sidecar-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v18-hardened-sidecar-signature.log",
+      "source_bytes": 1001,
+      "source_sha256": "b05c6915d5463a4e93b8b83a0b6c1c28b1bea743af1aa79fe37ca6daaa98c60b",
+      "published_bytes": 1001,
+      "published_sha256": "b05c6915d5463a4e93b8b83a0b6c1c28b1bea743af1aa79fe37ca6daaa98c60b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v18-local-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v18-local-bundle.log",
+      "source_bytes": 1845,
+      "source_sha256": "a9369f43a77ad4a67aa435432eaa1619d27237ea22c84aba27c202bf05d08e9b",
+      "published_bytes": 1844,
+      "published_sha256": "ca7616b9f902da719a60db668b4833e525d32816500a1bc8fa18891ffca5873f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v18-local-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v18-local-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v18-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v18-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v20-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v20-bundle.log",
+      "source_bytes": 1857,
+      "source_sha256": "6d8a2c3957a3611fece0d87c351c24c35f621782a8962c329f02ba4b087e4ada",
+      "published_bytes": 1856,
+      "published_sha256": "4275dddfb87c0a479444676d1293afb8e199308075ee26c4c25d7b566958af89",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v20-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v20-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v21-literal-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v21-literal-bundle.log",
+      "source_bytes": 1857,
+      "source_sha256": "38285e96521b08249fbc468d1d14cc435048df99ff66388ee4fa595f5c612724",
+      "published_bytes": 1856,
+      "published_sha256": "ecdcf50d183fb451644802fb3b3445439bc41052c437dcdeb586aa99c5a41273",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v21-literal-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v21-literal-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v22-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v22-bundle.log",
+      "source_bytes": 1837,
+      "source_sha256": "31a400748e3363a2a6cce1a5dbb12ccdb058d4bebca57cd5656d905ddae5b7a4",
+      "published_bytes": 1836,
+      "published_sha256": "5b2c30dc4d4c6bc8ff841d222c3a813560ee2ddafff9dab91ceb414293b78e4f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-v22-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-v22-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-wiki-suggestion-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-wiki-suggestion-bundle.log",
+      "source_bytes": 1837,
+      "source_sha256": "10d249394c6eaa0f37e5b8dd79e04a5b7abe6c1829d24eff2ba7cc4a6a4ce781",
+      "published_bytes": 1836,
+      "published_sha256": "1ffde0d34d8faddfc01d8106baea0e44437a3f10938bf6eae0bc8d6d290a5f74",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/native-wiki-suggestion-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/native-wiki-suggestion-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/original-command-first-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/original-command-first-tests.log",
+      "source_bytes": 11172,
+      "source_sha256": "1eb3e7c8ff2e96f1f2688dbada6911f3010b6ae161a9308248f5e603b9000d84",
+      "published_bytes": 9409,
+      "published_sha256": "7d9382c2f2215955b2b812b113239431b1b815c46d46dc368cb4795d5af2b8e5",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/original-command-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/original-command-tests.log",
+      "source_bytes": 336,
+      "source_sha256": "5522638790cf608aa13e36c32746ebc7020ef1416147cd99b0f7bba352da9766",
+      "published_bytes": 335,
+      "published_sha256": "12efb468521b48a28a5ca3e41d566bdfcc2abff978b39c34e46a2e874ead07c8",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/production-holdout-v15.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/production-holdout-v15.log",
+      "source_bytes": 5529,
+      "source_sha256": "262dec1ee8368919ec4f29b69140ecb48121023c691721b1a6c62186711c0ba6",
+      "published_bytes": 5529,
+      "published_sha256": "262dec1ee8368919ec4f29b69140ecb48121023c691721b1a6c62186711c0ba6",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/reference-holdout-v18.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/reference-holdout-v18.log",
+      "source_bytes": 3556,
+      "source_sha256": "dbaa768f2b49c82964c9a8aa960ba3654ae6ff9d8297330c84c220813ff79bd0",
+      "published_bytes": 3556,
+      "published_sha256": "dbaa768f2b49c82964c9a8aa960ba3654ae6ff9d8297330c84c220813ff79bd0",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/save-panel-refresh-clippy.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/save-panel-refresh-clippy.log",
+      "source_bytes": 157,
+      "source_sha256": "444190c32b2c37113444218a47447dc926a5325e823063b81848af898a6ca39a",
+      "published_bytes": 154,
+      "published_sha256": "00b16d166467dc4c9999f512add24f2b1fc9e92ade015ac42b34daf63f0d500b",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/save-panel-refresh-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/save-panel-refresh-tests.log",
+      "source_bytes": 1492,
+      "source_sha256": "1b2bd98932bd124129791ab15b9472989c435c6660131d5c1b295dccc96c8d17",
+      "published_bytes": 1488,
+      "published_sha256": "22a362c3de7c9543a40b3062bff5667cfd00dfed736103234ad345c11f901cec",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/schema-holdout.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/schema-holdout.log",
+      "source_bytes": 2811,
+      "source_sha256": "59221606f71fbf58a5bfd2f7b7938356487aa220b89f70211b5957cbe1030be2",
+      "published_bytes": 2811,
+      "published_sha256": "59221606f71fbf58a5bfd2f7b7938356487aa220b89f70211b5957cbe1030be2",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/startup-probe.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/startup-probe.log",
+      "source_bytes": 1312,
+      "source_sha256": "21c15572cda06211c67128863e1dbf321deaf89b33024c598be5791a8a964c3a",
+      "published_bytes": 1312,
+      "published_sha256": "21c15572cda06211c67128863e1dbf321deaf89b33024c598be5791a8a964c3a",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/translation-controls-harness-failure.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/translation-controls-harness-failure.log",
+      "source_bytes": 319,
+      "source_sha256": "c9fb1f37db118faa8752f98b70d04e0b0d5db71699befd4b2683febd3a0d602f",
+      "published_bytes": 319,
+      "published_sha256": "c9fb1f37db118faa8752f98b70d04e0b0d5db71699befd4b2683febd3a0d602f",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/translation-controls-v19.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/translation-controls-v19.log",
+      "source_bytes": 2763,
+      "source_sha256": "8fc5ce5408fb8df5cc0fec43ea05ec6d42b1c695f3de1b10601147ddd854fd13",
+      "published_bytes": 2763,
+      "published_sha256": "8fc5ce5408fb8df5cc0fec43ea05ec6d42b1c695f3de1b10601147ddd854fd13",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/transport-canary.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/transport-canary.log",
+      "source_bytes": 3541,
+      "source_sha256": "82989ecf3e97df0bf1b112d20559e121bd54c2297e223691f785bde9368e8b66",
+      "published_bytes": 3541,
+      "published_sha256": "82989ecf3e97df0bf1b112d20559e121bd54c2297e223691f785bde9368e8b66",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-collection.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-collection.log",
+      "source_bytes": 452,
+      "source_sha256": "cf43f1e14f78ffc15e3b8fadb43a78eab8ed13f1d7ac3f03f06714ebe33f80a9",
+      "published_bytes": 452,
+      "published_sha256": "cf43f1e14f78ffc15e3b8fadb43a78eab8ed13f1d7ac3f03f06714ebe33f80a9",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-comparison.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-comparison.log",
+      "source_bytes": 703,
+      "source_sha256": "e213f599902adbc2fa139ac288f325631a9f1e51d2c7317471f658be23995982",
+      "published_bytes": 703,
+      "published_sha256": "e213f599902adbc2fa139ac288f325631a9f1e51d2c7317471f658be23995982",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-empty.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-empty.log",
+      "source_bytes": 469,
+      "source_sha256": "2ef7f30001d3d758b718bd68581f5b373e044c501713850aab7cc869e55a1e66",
+      "published_bytes": 469,
+      "published_sha256": "2ef7f30001d3d758b718bd68581f5b373e044c501713850aab7cc869e55a1e66",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-partial.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-partial.log",
+      "source_bytes": 704,
+      "source_sha256": "902f8776048fc341011e6e93b0d2de44f557024e891675e0716e43daf5d99c9e",
+      "published_bytes": 704,
+      "published_sha256": "902f8776048fc341011e6e93b0d2de44f557024e891675e0716e43daf5d99c9e",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-regressions.log",
+      "source_bytes": 2011,
+      "source_sha256": "96a2e9c268fa8f234e3f0322e6364fb3144ef3c9b3afe07f3fd105d89096c001",
+      "published_bytes": 2011,
+      "published_sha256": "96a2e9c268fa8f234e3f0322e6364fb3144ef3c9b3afe07f3fd105d89096c001",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v16-report.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v16-report.log",
+      "source_bytes": 437,
+      "source_sha256": "5d57558706e0b15157664a69c8a2c2ebb2c9ab25edb0ff64b4e1f1071212052c",
+      "published_bytes": 437,
+      "published_sha256": "5d57558706e0b15157664a69c8a2c2ebb2c9ab25edb0ff64b4e1f1071212052c",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v17-first-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v17-first-regressions.log",
+      "source_bytes": 1932,
+      "source_sha256": "23cfe1073c61b1e5273583a996cd139aca43663b65ea5b7ba2907611c04096af",
+      "published_bytes": 1932,
+      "published_sha256": "23cfe1073c61b1e5273583a996cd139aca43663b65ea5b7ba2907611c04096af",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v17-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v17-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "d4220756d41a5c69865800e464dabfd07104a8dc8d2e9ff7467f122ec3a58468",
+      "published_bytes": 2012,
+      "published_sha256": "d4220756d41a5c69865800e464dabfd07104a8dc8d2e9ff7467f122ec3a58468",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-collection.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-collection.log",
+      "source_bytes": 501,
+      "source_sha256": "9fa0379f962cd1ef30908407065afa1d12e854087f543980463adf37ccf38b38",
+      "published_bytes": 501,
+      "published_sha256": "9fa0379f962cd1ef30908407065afa1d12e854087f543980463adf37ccf38b38",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-comparison.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-comparison.log",
+      "source_bytes": 691,
+      "source_sha256": "444bc4d258b4688f210badbcaa5d82b405f440eac7551a0eafad8194a6475296",
+      "published_bytes": 691,
+      "published_sha256": "444bc4d258b4688f210badbcaa5d82b405f440eac7551a0eafad8194a6475296",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-empty.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-empty.log",
+      "source_bytes": 469,
+      "source_sha256": "6e866f1cf0e53a96e003e033f3f9863d0317a595a7d4350086c3bed3cbd279b0",
+      "published_bytes": 469,
+      "published_sha256": "6e866f1cf0e53a96e003e033f3f9863d0317a595a7d4350086c3bed3cbd279b0",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-partial.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-partial.log",
+      "source_bytes": 638,
+      "source_sha256": "67ba96cb1a4846776ab67d3dde3a7d45a559447170d5755d05008c35b4930445",
+      "published_bytes": 638,
+      "published_sha256": "67ba96cb1a4846776ab67d3dde3a7d45a559447170d5755d05008c35b4930445",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "2222b3118ab44a2ae6886cfa825035787ed0c4b54b235e4a563e489168701d04",
+      "published_bytes": 2012,
+      "published_sha256": "2222b3118ab44a2ae6886cfa825035787ed0c4b54b235e4a563e489168701d04",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v18-report.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v18-report.log",
+      "source_bytes": 470,
+      "source_sha256": "c283413f4a1ca29e5bc8de7cb8a56ecb53033362da0e979ea5f5bb57c82253ac",
+      "published_bytes": 470,
+      "published_sha256": "c283413f4a1ca29e5bc8de7cb8a56ecb53033362da0e979ea5f5bb57c82253ac",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v19-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v19-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "0e25b8c90174add92834b6af4da30748adcfcb7d3dffe276656ea04af4033dac",
+      "published_bytes": 2012,
+      "published_sha256": "0e25b8c90174add92834b6af4da30748adcfcb7d3dffe276656ea04af4033dac",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-candidates-replayed-v21.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-candidates-replayed-v21.log",
+      "source_bytes": 719,
+      "source_sha256": "f1250e57a295f7fccae2b0ff416356e8430667f362814ec34c53dce0751f3f6a",
+      "published_bytes": 719,
+      "published_sha256": "f1250e57a295f7fccae2b0ff416356e8430667f362814ec34c53dce0751f3f6a",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-collection.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-collection.log",
+      "source_bytes": 445,
+      "source_sha256": "cb2c8db5567f3cde9f56660e909455f262f9bb7ec71bd599cb8e8af0c153e452",
+      "published_bytes": 445,
+      "published_sha256": "cb2c8db5567f3cde9f56660e909455f262f9bb7ec71bd599cb8e8af0c153e452",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-comparison.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-comparison.log",
+      "source_bytes": 657,
+      "source_sha256": "4ce8c861b4f679bedace5320a903763f132605a885d79e01ede4f0d0acedea49",
+      "published_bytes": 657,
+      "published_sha256": "4ce8c861b4f679bedace5320a903763f132605a885d79e01ede4f0d0acedea49",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-empty.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-empty.log",
+      "source_bytes": 469,
+      "source_sha256": "aeea986d7f8d7a6280cb4316bb74402cae2dab51e7af289a1fba9bc28f01c8b2",
+      "published_bytes": 469,
+      "published_sha256": "aeea986d7f8d7a6280cb4316bb74402cae2dab51e7af289a1fba9bc28f01c8b2",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-partial.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-partial.log",
+      "source_bytes": 605,
+      "source_sha256": "8476912a5ab32fdce084594bb09d806bcc38b4850df9ca450efb5f8b3b43cea6",
+      "published_bytes": 605,
+      "published_sha256": "8476912a5ab32fdce084594bb09d806bcc38b4850df9ca450efb5f8b3b43cea6",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "929f9a4c079217a0080adf4ff7c69572687d6a400f9dec6a456fc4b44dc04cb9",
+      "published_bytes": 2012,
+      "published_sha256": "929f9a4c079217a0080adf4ff7c69572687d6a400f9dec6a456fc4b44dc04cb9",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v20-report.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v20-report.log",
+      "source_bytes": 437,
+      "source_sha256": "e1527ea809616a0552bdcfdcfd9052e80bc5f2ad871192bd05dfa4199592da53",
+      "published_bytes": 437,
+      "published_sha256": "e1527ea809616a0552bdcfdcfd9052e80bc5f2ad871192bd05dfa4199592da53",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v21-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v21-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "bce3342b8cfe3ec12bd0a228e9976b0526b46d8bbe5d9c92b46a23f5424266df",
+      "published_bytes": 2012,
+      "published_sha256": "bce3342b8cfe3ec12bd0a228e9976b0526b46d8bbe5d9c92b46a23f5424266df",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/v22-regressions.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/v22-regressions.log",
+      "source_bytes": 2012,
+      "source_sha256": "477ba2175a27782fae0891500f3d101a6c4108dac7164dcee2d0bc947d3d208a",
+      "published_bytes": 2012,
+      "published_sha256": "477ba2175a27782fae0891500f3d101a6c4108dac7164dcee2d0bc947d3d208a",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "logs/wiki-suggestion-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261016/outputs/wiki-suggestion-tests.log",
+      "source_bytes": 322,
+      "source_sha256": "2d41148b8f5ee8eb060d76f8c77f3c388e620734c21737e57fd0b8d395157352",
+      "published_bytes": 321,
+      "published_sha256": "add919d4dd408ab1b1b11eccf71aeb5c30d605468a3251656e8ebe8179e547bf",
+      "transformation": "ANSI/CR/trailing whitespace normalized; 0 ephemeral control token redactions"
+    },
+    {
+      "file": "methods/audit-diagnostic.py",
+      "source": "/private/tmp/noye-phase8-20261016/audit-diagnostic.py",
+      "source_bytes": 5861,
+      "source_sha256": "fc3360bf49858aef10a259d543511997f9c183552ee06d117d86f5cf21d1ad2f",
+      "published_bytes": 5861,
+      "published_sha256": "fc3360bf49858aef10a259d543511997f9c183552ee06d117d86f5cf21d1ad2f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/build-v22-native.py",
+      "source": "/private/tmp/noye-phase8-20261016/build-v22-native.py",
+      "source_bytes": 2261,
+      "source_sha256": "c6a623af79b25cb53815d868262548bca07b5a875502609c3c100f0c9fa65d8a",
+      "published_bytes": 2261,
+      "published_sha256": "c6a623af79b25cb53815d868262548bca07b5a875502609c3c100f0c9fa65d8a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/chat-thinking-diagnostic.py",
+      "source": "/private/tmp/noye-phase8-20261016/chat-thinking-diagnostic.py",
+      "source_bytes": 2101,
+      "source_sha256": "52d26a5d6bd4a2aec24b9ccd5163afdf46d65f8906bcbcc5ad316ab95e062f0e",
+      "published_bytes": 2101,
+      "published_sha256": "52d26a5d6bd4a2aec24b9ccd5163afdf46d65f8906bcbcc5ad316ab95e062f0e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/document-scenarios-v18.py",
+      "source": "/private/tmp/noye-phase8-20261016/document-scenarios-v18.py",
+      "source_bytes": 2031,
+      "source_sha256": "834cf93522c92588b011e3811eca3bd756fa03fe9b78c65dc8b86addaa66956c",
+      "published_bytes": 2031,
+      "published_sha256": "834cf93522c92588b011e3811eca3bd756fa03fe9b78c65dc8b86addaa66956c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/document-scenarios-v20.py",
+      "source": "/private/tmp/noye-phase8-20261016/document-scenarios-v20.py",
+      "source_bytes": 2031,
+      "source_sha256": "2328d9915812f92d86f4f33564f4947bca616e152eacbd889a98582c219c2bdc",
+      "published_bytes": 2031,
+      "published_sha256": "2328d9915812f92d86f4f33564f4947bca616e152eacbd889a98582c219c2bdc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/document-scenarios.py",
+      "source": "/private/tmp/noye-phase8-20261016/document-scenarios.py",
+      "source_bytes": 2023,
+      "source_sha256": "e15669d25884aed82511a1d1bcfcc0d9dc9115ae6596f1d3380c60299ed4da56",
+      "published_bytes": 2023,
+      "published_sha256": "e15669d25884aed82511a1d1bcfcc0d9dc9115ae6596f1d3380c60299ed4da56",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/inspect-literal-final.py",
+      "source": "/private/tmp/noye-phase8-20261016/inspect-literal-final.py",
+      "source_bytes": 2791,
+      "source_sha256": "2797d8478036ad79891e23b9d424fa74ffadec7b230e239534065b721f0ee51d",
+      "published_bytes": 2791,
+      "published_sha256": "2797d8478036ad79891e23b9d424fa74ffadec7b230e239534065b721f0ee51d",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/inspect-native-print.py",
+      "source": "/private/tmp/noye-phase8-20261016/inspect-native-print.py",
+      "source_bytes": 2276,
+      "source_sha256": "41a308b2b4f8361ea3caee8d54b63a888101d33886342a5c14732428b9d0efa0",
+      "published_bytes": 2276,
+      "published_sha256": "41a308b2b4f8361ea3caee8d54b63a888101d33886342a5c14732428b9d0efa0",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/isolated-evidence-controls.json",
+      "source": "/private/tmp/noye-phase8-20261016/isolated-evidence-controls.json",
+      "source_bytes": 2138,
+      "source_sha256": "e4b84ba2c8301c094e87f7b5d58d06208d3adbf80d6539dc2c505106d6845079",
+      "published_bytes": 2138,
+      "published_sha256": "e4b84ba2c8301c094e87f7b5d58d06208d3adbf80d6539dc2c505106d6845079",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/isolated-evidence-controls.py",
+      "source": "/private/tmp/noye-phase8-20261016/isolated-evidence-controls.py",
+      "source_bytes": 4069,
+      "source_sha256": "7ed1010bf2f18926a97a52edafe2c6f800d5c87af99c7270d1d795c2d528c52a",
+      "published_bytes": 4069,
+      "published_sha256": "7ed1010bf2f18926a97a52edafe2c6f800d5c87af99c7270d1d795c2d528c52a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/known-calibration-cases.py",
+      "source": "/private/tmp/noye-phase8-20261014/support-holdout.py",
+      "source_bytes": 4258,
+      "source_sha256": "4ee42d4e955169ce8cbdf35c3efd0eb1f5017afb50ec08bfeb0f1a6554340a1a",
+      "published_bytes": 4258,
+      "published_sha256": "4ee42d4e955169ce8cbdf35c3efd0eb1f5017afb50ec08bfeb0f1a6554340a1a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/live-integration-nodeids.json",
+      "source": "/private/tmp/noye-phase8-20261016/live-integration-nodeids.json",
+      "source_bytes": 1593,
+      "source_sha256": "61d2d091b054bb8c84772a2a645b56269e786daf08e93451274f44176740fa45",
+      "published_bytes": 1593,
+      "published_sha256": "61d2d091b054bb8c84772a2a645b56269e786daf08e93451274f44176740fa45",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/multiple-claim-controls.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-controls.json",
+      "source_bytes": 2771,
+      "source_sha256": "48530344ac5711ade1b8a26d31f55549daed343d88cd43fecabaea178b8eeede",
+      "published_bytes": 2771,
+      "published_sha256": "48530344ac5711ade1b8a26d31f55549daed343d88cd43fecabaea178b8eeede",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/multiple-claim-controls.py",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-controls.py",
+      "source_bytes": 4074,
+      "source_sha256": "30d722ae132f75ba27c04f01fac36f2913967971fac85a85be8360f406d2705e",
+      "published_bytes": 4074,
+      "published_sha256": "30d722ae132f75ba27c04f01fac36f2913967971fac85a85be8360f406d2705e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/multiple-original-controls.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-original-controls.json",
+      "source_bytes": 4031,
+      "source_sha256": "d66ba5c78e72f0f39478b54fcb6c754056025bf8ac6a3963fe00c9cee6846f68",
+      "published_bytes": 4031,
+      "published_sha256": "d66ba5c78e72f0f39478b54fcb6c754056025bf8ac6a3963fe00c9cee6846f68",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/production-holdout.py",
+      "source": "/private/tmp/noye-phase8-20261016/production-holdout.py",
+      "source_bytes": 4678,
+      "source_sha256": "169eca5a19ae88304f7bec88e0cdb642755a11bd11f46252181f454773aae1a8",
+      "published_bytes": 4678,
+      "published_sha256": "169eca5a19ae88304f7bec88e0cdb642755a11bd11f46252181f454773aae1a8",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/production_holdout_client.py",
+      "source": "/private/tmp/noye-phase8-20261016/production_holdout_client.py",
+      "source_bytes": 416,
+      "source_sha256": "0b1f683156768176e612d06b59b2911931c5f4d522d6b0d74145996e8ba32c9b",
+      "published_bytes": 416,
+      "published_sha256": "0b1f683156768176e612d06b59b2911931c5f4d522d6b0d74145996e8ba32c9b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/publish-evidence.py",
+      "source": "/private/tmp/noye-phase8-20261016/publish-current.py",
+      "source_bytes": 13560,
+      "source_sha256": "1f0c12c428584ebb442285bc7cb304f9e2426e7bdaa4a9a3ceec9e3a76b5192e",
+      "published_bytes": 13560,
+      "published_sha256": "1f0c12c428584ebb442285bc7cb304f9e2426e7bdaa4a9a3ceec9e3a76b5192e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/recorded-documents-current.py",
+      "source": "/private/tmp/noye-phase8-20261016/recorded-documents-current.py",
+      "source_bytes": 499,
+      "source_sha256": "ef0a10d2ab1281165bce707296e29e6427d44d044652e57f939588fe0895a9c0",
+      "published_bytes": 499,
+      "published_sha256": "ef0a10d2ab1281165bce707296e29e6427d44d044652e57f939588fe0895a9c0",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/recorded-documents-v16-pinned.py",
+      "source": "/private/tmp/noye-phase8-20261016/recorded-documents.py",
+      "source_bytes": 790,
+      "source_sha256": "e46c04aedf643d626948bd97429a65df8acf8e7c530dec95b83ac76801f05473",
+      "published_bytes": 790,
+      "published_sha256": "e46c04aedf643d626948bd97429a65df8acf8e7c530dec95b83ac76801f05473",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/recorded-documents.py",
+      "source": "/private/tmp/noye-phase8-20261016/recorded-documents-initial.py",
+      "source_bytes": 489,
+      "source_sha256": "15d94d40a0f3ce9d02ce804843679183124f30d8061f13dcd44ca8ebca2ca236",
+      "published_bytes": 489,
+      "published_sha256": "15d94d40a0f3ce9d02ce804843679183124f30d8061f13dcd44ca8ebca2ca236",
+      "transformation": "Byte-for-byte copy",
+      "source_original_path": "/private/tmp/noye-phase8-20261016/recorded-documents.py",
+      "source_retention_note": "Initial recorder bytes retained before the later v16 snapshot pin; both recorder versions are published."
+    },
+    {
+      "file": "methods/reference-holdout-cases.json",
+      "source": "/private/tmp/noye-phase8-20261016/reference-holdout-cases.json",
+      "source_bytes": 4110,
+      "source_sha256": "34c65e09ebc65bf7d2bd5005ada59fb868862d3bc5601279d9dca4f64b8503f8",
+      "published_bytes": 4110,
+      "published_sha256": "34c65e09ebc65bf7d2bd5005ada59fb868862d3bc5601279d9dca4f64b8503f8",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/replay-v20-candidates.py",
+      "source": "/private/tmp/noye-phase8-20261016/replay-v20-candidates.py",
+      "source_bytes": 4073,
+      "source_sha256": "32c3f58d8636d41dd4b96974b04bef833cee984c58d30eecf4e2ed2596b65377",
+      "published_bytes": 4073,
+      "published_sha256": "32c3f58d8636d41dd4b96974b04bef833cee984c58d30eecf4e2ed2596b65377",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/review-multiple-original-v21.py",
+      "source": "/private/tmp/noye-phase8-20261016/review-multiple-original-v21.py",
+      "source_bytes": 2018,
+      "source_sha256": "49e9d31f5d3cd9c73221e5552b431a188d5e46535b090d2d341c5bfd07ef9783",
+      "published_bytes": 2018,
+      "published_sha256": "49e9d31f5d3cd9c73221e5552b431a188d5e46535b090d2d341c5bfd07ef9783",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/review-translation-controls.py",
+      "source": "/private/tmp/noye-phase8-20261016/review-translation-controls.py",
+      "source_bytes": 4394,
+      "source_sha256": "6bff8f14d13c38b318b10cd374b2be2ba9e9526d69e05d059ca336add0378350",
+      "published_bytes": 4394,
+      "published_sha256": "6bff8f14d13c38b318b10cd374b2be2ba9e9526d69e05d059ca336add0378350",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/run-live-integration-corrected.py",
+      "source": "/private/tmp/noye-phase8-20261016/run-live-integration-corrected.py",
+      "source_bytes": 3582,
+      "source_sha256": "f32d0f269349af9e94fa315ed766fc8eef2079a11baa3586bab266fd8a65c4ba",
+      "published_bytes": 3582,
+      "published_sha256": "f32d0f269349af9e94fa315ed766fc8eef2079a11baa3586bab266fd8a65c4ba",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/run-live-integration.py",
+      "source": "/private/tmp/noye-phase8-20261016/run-live-integration.py",
+      "source_bytes": 3395,
+      "source_sha256": "bc7e42c4268f93df0a2e2f5e3b3572f8d85f6b77446879740920ad4a737b1b4a",
+      "published_bytes": 3395,
+      "published_sha256": "bc7e42c4268f93df0a2e2f5e3b3572f8d85f6b77446879740920ad4a737b1b4a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/schema-holdout.py",
+      "source": "/private/tmp/noye-phase8-20261016/schema-holdout.py",
+      "source_bytes": 1038,
+      "source_sha256": "4ab8cbb3eacb61df07df3e7cad921639fe6840f4d50c4baf63f6ab30cc969313",
+      "published_bytes": 1038,
+      "published_sha256": "4ab8cbb3eacb61df07df3e7cad921639fe6840f4d50c4baf63f6ab30cc969313",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/startup-probe.py",
+      "source": "/private/tmp/noye-phase8-20261016/startup-probe.py",
+      "source_bytes": 4034,
+      "source_sha256": "9fe7305e1557c8a2753bccbd0f3c113e3a1497f55106c9eb9396c20796cf0045",
+      "published_bytes": 4034,
+      "published_sha256": "9fe7305e1557c8a2753bccbd0f3c113e3a1497f55106c9eb9396c20796cf0045",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/translation-controls.py",
+      "source": "/private/tmp/noye-phase8-20261016/translation-controls.py",
+      "source_bytes": 4664,
+      "source_sha256": "0adf9814d9f4a0950a5c8c361cfe8ed359fe7fa31e6f01b14d00a9a284276751",
+      "published_bytes": 4664,
+      "published_sha256": "0adf9814d9f4a0950a5c8c361cfe8ed359fe7fa31e6f01b14d00a9a284276751",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/translation-reference-cases.json",
+      "source": "/private/tmp/noye-phase8-20261016/translation-reference-cases.json",
+      "source_bytes": 2633,
+      "source_sha256": "02f968b88d7d53193bb666f576f42981b6909e9b437e4ace1d1b2bcd96ec0efd",
+      "published_bytes": 2633,
+      "published_sha256": "02f968b88d7d53193bb666f576f42981b6909e9b437e4ace1d1b2bcd96ec0efd",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/transport-canary.py",
+      "source": "/private/tmp/noye-phase8-20261016/transport-canary.py",
+      "source_bytes": 1542,
+      "source_sha256": "032a1cfe52ebe579739975fcf964d7e746fff9128dae3f72122c354dcc8223ff",
+      "published_bytes": 1542,
+      "published_sha256": "032a1cfe52ebe579739975fcf964d7e746fff9128dae3f72122c354dcc8223ff",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/unseen-audit-cases.json",
+      "source": "/private/tmp/noye-phase8-20261016/unseen-audit-cases.json",
+      "source_bytes": 5966,
+      "source_sha256": "73ef8c3b44ffba23f19652cec8d1bda044121dc94ac991928433839fbcd5e5e8",
+      "published_bytes": 5966,
+      "published_sha256": "73ef8c3b44ffba23f19652cec8d1bda044121dc94ac991928433839fbcd5e5e8",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/v20-candidate-replay-cases.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-candidate-replay-cases.json",
+      "source_bytes": 4219,
+      "source_sha256": "c56bbd488202858c48adbe7bf0b7c0b283923dd5a286b81f244145ef3c887184",
+      "published_bytes": 4219,
+      "published_sha256": "c56bbd488202858c48adbe7bf0b7c0b283923dd5a286b81f244145ef3c887184",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/validate-evidence.py",
+      "source": "/private/tmp/noye-phase8-20261016/validate-evidence.py",
+      "source_bytes": 1951,
+      "source_sha256": "e524015b5d0cac0bfbf41d970d6a13d21699692a136c30cb84cf44106f1e8724",
+      "published_bytes": 1951,
+      "published_sha256": "e524015b5d0cac0bfbf41d970d6a13d21699692a136c30cb84cf44106f1e8724",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/verify-v21-single-wire-v22.py",
+      "source": "/private/tmp/noye-phase8-20261016/verify-v21-single-wire-v22.py",
+      "source_bytes": 2464,
+      "source_sha256": "7041b22f14e4384fddfaa7757e0c1c6ee909cc8b47e9a8489ad431ec97344d06",
+      "published_bytes": 2464,
+      "published_sha256": "7041b22f14e4384fddfaa7757e0c1c6ee909cc8b47e9a8489ad431ec97344d06",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model-memory-after-holdout.json",
+      "source": "/private/tmp/noye-phase8-20261016/model-memory-after-holdout.json",
+      "source_bytes": 118,
+      "source_sha256": "352fe3240111093bb6447e10591e56d6d7ab13076817b42e3f4161dba8d9496c",
+      "published_bytes": 118,
+      "published_sha256": "352fe3240111093bb6447e10591e56d6d7ab13076817b42e3f4161dba8d9496c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model-memory-before.json",
+      "source": "/private/tmp/noye-phase8-20261016/model-memory-before.json",
+      "source_bytes": 19,
+      "source_sha256": "c8cdda2058dfad73596cb9baef30bb2a825485859ad54c8d9cf5a10a457b0c8c",
+      "published_bytes": 19,
+      "published_sha256": "c8cdda2058dfad73596cb9baef30bb2a825485859ad54c8d9cf5a10a457b0c8c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/audit-calibration.json",
+      "source": "/private/tmp/noye-phase8-20261016/audit-calibration.json",
+      "source_bytes": 352704,
+      "source_sha256": "4461a4a75d454bbf075f074fc9613c99e159eff4d3cf32e0d945e0db5aed5969",
+      "published_bytes": 61677,
+      "published_sha256": "266410c94b1555ff0fbf14e2b887566ce658554c321e2b820639784e5cf1f4c2",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/chat-thinking-diagnostic.json",
+      "source": "/private/tmp/noye-phase8-20261016/chat-thinking-diagnostic.json",
+      "source_bytes": 5229,
+      "source_sha256": "5fe72a55ab59b556bfb266192d4eeba9041c7e124ca6c3864acd9e9807482548",
+      "published_bytes": 5229,
+      "published_sha256": "5fe72a55ab59b556bfb266192d4eeba9041c7e124ca6c3864acd9e9807482548",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/comparison-v15.json",
+      "source": "/private/tmp/noye-phase8-20261016/comparison/comparison-cabb6192-5962-426c-96de-0363df989318.json",
+      "source_bytes": 145798,
+      "source_sha256": "25910dccd11de01af272fde4c7d0e2bbe34e6dd9960960593323e61c9cf7673e",
+      "published_bytes": 39970,
+      "published_sha256": "de8f6c24407b39279133273e525be2d3e63ad087ac160a59d079a72f431cfc11",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/isolated-evidence-v22.json",
+      "source": "/private/tmp/noye-phase8-20261016/isolated-evidence-v22.json",
+      "source_bytes": 272861,
+      "source_sha256": "df7e1bf15240436abfa9ac2cfcc893649b4922cb73ef230542632066cdc9bb46",
+      "published_bytes": 87662,
+      "published_sha256": "569fd414ee3d6cc3ed9af6bfd49701158c7cb96bd9ab15ed543560ac3e1e909d",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/model-metadata.json",
+      "source": "/private/tmp/noye-phase8-20261016/model-metadata.json",
+      "source_bytes": 378,
+      "source_sha256": "cbe144575415839394bed8075d60622537a439f5e17a1a4fd6bce14787ccaabd",
+      "published_bytes": 378,
+      "published_sha256": "cbe144575415839394bed8075d60622537a439f5e17a1a4fd6bce14787ccaabd",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/multiple-claim-replayed-v22.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-replayed-v22.json",
+      "source_bytes": 424962,
+      "source_sha256": "fbbad649bbf97e5e397880b68774b965ea800594d140e63d1d0015e2f4012eb2",
+      "published_bytes": 133935,
+      "published_sha256": "310b6c67f8a1dcc616b9064dca5bbe9a2841e7cb3b03dbb717c27ced0f2ea862",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/multiple-claim-v21.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-v21.json",
+      "source_bytes": 241434,
+      "source_sha256": "8bcdb7590928654bde8623e130db7a9579622062a04c655072653bc3944ecbb1",
+      "published_bytes": 82692,
+      "published_sha256": "b271d5ed4ec7b6ba119bc5013146da858baaecaa42f661136d7fcd4ce3db40cf",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/multiple-original-v21.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-original-v21.json",
+      "source_bytes": 546876,
+      "source_sha256": "2c4112a633beac2d2e3b00ac4f0b210c7afe696c78116b6f4b54664ab36c1023",
+      "published_bytes": 176478,
+      "published_sha256": "4c27a176cb54400a21ea99b9c31016419d1a5d36dde14192cab3241d44955adc",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/production-holdout-v15.json",
+      "source": "/private/tmp/noye-phase8-20261016/production-holdout-v15.json",
+      "source_bytes": 876678,
+      "source_sha256": "b5bbe959439fb8202d2845578f37fda4ed949fb87d6d21147c1f07c4f0cdcd25",
+      "published_bytes": 268167,
+      "published_sha256": "205aba7d3de7ec59a6b481dd6449a66f87510b34f2c67dba3d784166af288415",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/reference-holdout-v18.json",
+      "source": "/private/tmp/noye-phase8-20261016/reference-holdout-v18.json",
+      "source_bytes": 607688,
+      "source_sha256": "193df5e7ba3264a1f239af01bad8272c6175be820a1689da3e459215ddb10e40",
+      "published_bytes": 184376,
+      "published_sha256": "de44061e85744f430dcc5c08ee1effc7c39dfe42ea263cdc14e08d11ebb522d2",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/schema-holdout.json",
+      "source": "/private/tmp/noye-phase8-20261016/schema-holdout.json",
+      "source_bytes": 341897,
+      "source_sha256": "7b337bfbdffc608b86081ec87e99878bc6b3c211b100aeac17444c6b62f9b832",
+      "published_bytes": 50870,
+      "published_sha256": "3355868db044c6c03ee566e0b96c3ad6c3df5f5d7b3f35e3edcd2533a64a4c9c",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/translation-controls-v19.json",
+      "source": "/private/tmp/noye-phase8-20261016/translation-controls-v19.json",
+      "source_bytes": 323596,
+      "source_sha256": "f44c2aaad40c98640acf857ead08b4d3d934752dce81c0e94a0be7f0248fe623",
+      "published_bytes": 111940,
+      "published_sha256": "b68709e602f39ebc25b415241131193d8143fe335e0d4c9ce966e3854848dc35",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/transport-canary.json",
+      "source": "/private/tmp/noye-phase8-20261016/transport-canary.json",
+      "source_bytes": 5725,
+      "source_sha256": "f304414222b74f161d50fbe9df4b5b9c95a2bc4841c7a6baa2a941d826c6286d",
+      "published_bytes": 5725,
+      "published_sha256": "f304414222b74f161d50fbe9df4b5b9c95a2bc4841c7a6baa2a941d826c6286d",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v16-scenarios.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-scenarios.json",
+      "source_bytes": 1265,
+      "source_sha256": "66935e5a1e7f7cc97313cd80126778eef8e408d78c2fa2a242a7f529db262886",
+      "published_bytes": 1265,
+      "published_sha256": "66935e5a1e7f7cc97313cd80126778eef8e408d78c2fa2a242a7f529db262886",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/v16/collection-8e5a3be0-9158-4edd-af0c-f1045b86622d.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-documents/collection-8e5a3be0-9158-4edd-af0c-f1045b86622d.json",
+      "source_bytes": 124946,
+      "source_sha256": "69589b32c1ba40161c73b11ab6962b1723e873a8703d6afd6572bde12a66b4ca",
+      "published_bytes": 45575,
+      "published_sha256": "fb08422d769a29658c323a7878c0664c10af03954ae6d31aea91622804c3c6b3",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v16/comparison-3274e9f7-24fe-41f7-92de-ae0a661ee0c5.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-documents/comparison-3274e9f7-24fe-41f7-92de-ae0a661ee0c5.json",
+      "source_bytes": 296909,
+      "source_sha256": "e5b3829fd4001fd804aebb4893664116639b6b6cd82a7d7ecc942713deda6409",
+      "published_bytes": 111710,
+      "published_sha256": "752331fbc805a88fa81ad8faa8a33cf3ef045915b83cd922311bdb6abf1352ef",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v16/empty-1906f671-0e04-4117-a18f-077a9b311725.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-documents/empty-1906f671-0e04-4117-a18f-077a9b311725.json",
+      "source_bytes": 3286,
+      "source_sha256": "683b15022cc4ab88302cbce52eff6c5e346032024ca74469df23c992ac354d3b",
+      "published_bytes": 3286,
+      "published_sha256": "683b15022cc4ab88302cbce52eff6c5e346032024ca74469df23c992ac354d3b",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v16/partial-1565204f-35a7-43bc-bc5e-8e37b188a99f.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-documents/partial-1565204f-35a7-43bc-bc5e-8e37b188a99f.json",
+      "source_bytes": 133747,
+      "source_sha256": "3a6cf134f4e77a0b38c277bee8dbead4a49c094779aaf06b807e400854a4ee58",
+      "published_bytes": 54376,
+      "published_sha256": "5aa54fea61aee62ce395f5c0b02532ec3c7916c6f9d72249f37e8623a5395919",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v16/report-3d5721d3-8a39-4a3d-963f-11efd87e135a.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-documents/report-3d5721d3-8a39-4a3d-963f-11efd87e135a.json",
+      "source_bytes": 584028,
+      "source_sha256": "a13241b1b27791409157db265f92e27ce5627d1c5d585ce3e8de1103194ca50c",
+      "published_bytes": 187173,
+      "published_sha256": "ab88fe3393e2002df4497d430e1af55c790ee7e1bf358188f95e0764e1069ccc",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v18-scenarios.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-scenarios.json",
+      "source_bytes": 1264,
+      "source_sha256": "c55b4550ffec3ac421ef2c4a0087c91508997935f44800b8724208184c9a70dc",
+      "published_bytes": 1264,
+      "published_sha256": "c55b4550ffec3ac421ef2c4a0087c91508997935f44800b8724208184c9a70dc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/v18/collection-b7a9dde4-ddcf-4ef8-b883-b64d7354b007.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-documents/collection-b7a9dde4-ddcf-4ef8-b883-b64d7354b007.json",
+      "source_bytes": 121962,
+      "source_sha256": "6168764b4e5c0fc6d469415a4d78f482d94bb8b848c51a404f7f7e6b3f83a632",
+      "published_bytes": 42591,
+      "published_sha256": "11147ba59b1b01e1043703baad533dc5c010098da338247f948837059346bb96",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v18/comparison-59085104-6180-4a45-8ca4-605ead65dace.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-documents/comparison-59085104-6180-4a45-8ca4-605ead65dace.json",
+      "source_bytes": 244602,
+      "source_sha256": "6a19d33af2871ba96c6bd390093101d722362c8b3039e84c4cc68861d14b5428",
+      "published_bytes": 85860,
+      "published_sha256": "ac447d8d04992c1253179198460d06a7e5a3f0efb9f45f93000b7b7dbb0890f7",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v18/empty-0853652b-e10c-4d32-bd38-e2a6387c3a71.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-documents/empty-0853652b-e10c-4d32-bd38-e2a6387c3a71.json",
+      "source_bytes": 3286,
+      "source_sha256": "41c8c9f7fd6f98612eebcb9c6a7ace99bc305fcef433533671974193aa3e2982",
+      "published_bytes": 3286,
+      "published_sha256": "41c8c9f7fd6f98612eebcb9c6a7ace99bc305fcef433533671974193aa3e2982",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v18/partial-919b9806-e566-4517-8308-08753b4d4ea1.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-documents/partial-919b9806-e566-4517-8308-08753b4d4ea1.json",
+      "source_bytes": 208907,
+      "source_sha256": "58e77b5bb94acf8c49e80f3798a7823167c44a1210323d39dae798cd7ba1c014",
+      "published_bytes": 76622,
+      "published_sha256": "90f76824c0f6210e1adf7582fe9b83e4309ad470633739e233eb7e6434ae6e86",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v18/report-c6797d1e-353b-41eb-8aeb-42a243c2a044.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-documents/report-c6797d1e-353b-41eb-8aeb-42a243c2a044.json",
+      "source_bytes": 245159,
+      "source_sha256": "2e6239112fb482eac119a594238c7da3f90419633a499a2d12d99fc42df27050",
+      "published_bytes": 86417,
+      "published_sha256": "c860b5acb58fae62312502b1565123dc7f4628e0eecc08d0487f9b41bd43f7f5",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20-candidates-replayed-v21.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-candidates-replayed-v21.json",
+      "source_bytes": 161837,
+      "source_sha256": "3d9563ee32116c068c006d03c74cf6c9e657bbee5035235e3bde1af3b57dbcb2",
+      "published_bytes": 56009,
+      "published_sha256": "6d73642f00c54da8e8b2dd374bb8feb328a15649f56cc0e91840c7043df556c3",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20-scenarios.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-scenarios.json",
+      "source_bytes": 1265,
+      "source_sha256": "a41c0833dec8f5e7220f6d3d0c830ec0fabbf6b0d2fe94e425c7b31dcccc452c",
+      "published_bytes": 1265,
+      "published_sha256": "a41c0833dec8f5e7220f6d3d0c830ec0fabbf6b0d2fe94e425c7b31dcccc452c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/v20/collection-e69ebb80-0db3-46e2-977e-19eaf56687a4.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-documents/collection-e69ebb80-0db3-46e2-977e-19eaf56687a4.json",
+      "source_bytes": 535212,
+      "source_sha256": "72fbd3bec7629bcb2789f7ba7cc375b99cf4243582ba20f9992bbf1ecb3e29d6",
+      "published_bytes": 191271,
+      "published_sha256": "a691ab5b24b87ac6d1ad7d18c6ec0b8a5e07e9d2ed678018ef58a3b9bfcf7be9",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20/comparison-13075f70-515e-4474-98af-a4a17a8d6a62.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-documents/comparison-13075f70-515e-4474-98af-a4a17a8d6a62.json",
+      "source_bytes": 680113,
+      "source_sha256": "7a9035ae8c2ebaf596dca3f29b3f3a93825efa9ba08e8883a2d95a099c71be13",
+      "published_bytes": 230344,
+      "published_sha256": "ab4aaec2faa303542dd3caeff8214410f57e1ca2d906cd3570a3a168f9da79cd",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20/empty-4f6a7bd1-f05c-42e2-9b1e-1710e6164a64.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-documents/empty-4f6a7bd1-f05c-42e2-9b1e-1710e6164a64.json",
+      "source_bytes": 3288,
+      "source_sha256": "4a8e31bf6c9e42231a6b88a50880bc585e1a76d74c57e270393e2759830a7036",
+      "published_bytes": 3288,
+      "published_sha256": "4a8e31bf6c9e42231a6b88a50880bc585e1a76d74c57e270393e2759830a7036",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20/partial-1de62803-59ec-47ef-858c-dc7499a590e5.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-documents/partial-1de62803-59ec-47ef-858c-dc7499a590e5.json",
+      "source_bytes": 509162,
+      "source_sha256": "ba71d7692202e6849e46ad92bdef67f587832b0633e592bbf27b869a2f012572",
+      "published_bytes": 191678,
+      "published_sha256": "4d809400e4da79d5d23216a3a48724a0050924831ec6ca9e2c6db162167da3a1",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "model/v20/report-c9549e2c-ac6a-4165-9994-f3ba5ce49659.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-documents/report-c9549e2c-ac6a-4165-9994-f3ba5ce49659.json",
+      "source_bytes": 680830,
+      "source_sha256": "fc8b2abb7b74a7378d47115f221bbe428527a55965afb5f2c5c3f300ac51d54f",
+      "published_bytes": 231061,
+      "published_sha256": "94d397acf94b3e12526751ad5700df0178f043638a2b54244ad2787cc1865e06",
+      "transformation": "Repeated model-preflight raw metadata omitted with hash; generation inputs/outputs unchanged"
+    },
+    {
+      "file": "multiple-claim-v21-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-v21-manual.json",
+      "source_bytes": 1147,
+      "source_sha256": "c6394d908c92051ca7a66ebbb8637b4f1eec12d405b23d7505be94cacc072006",
+      "published_bytes": 1147,
+      "published_sha256": "c6394d908c92051ca7a66ebbb8637b4f1eec12d405b23d7505be94cacc072006",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "multiple-claim-v22-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-claim-v22-manual.json",
+      "source_bytes": 1183,
+      "source_sha256": "c3debe5c403cc8fbb5ad5ed5bbab9b0c0a12b821ee75db98b1be2ceef2dac636",
+      "published_bytes": 1183,
+      "published_sha256": "c3debe5c403cc8fbb5ad5ed5bbab9b0c0a12b821ee75db98b1be2ceef2dac636",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "multiple-original-v21-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/multiple-original-v21-manual.json",
+      "source_bytes": 4633,
+      "source_sha256": "147c6953a4b9b8af04d2199b1622428560440f209d58b3f24cda55a157ffbd38",
+      "published_bytes": 4633,
+      "published_sha256": "147c6953a4b9b8af04d2199b1622428560440f209d58b3f24cda55a157ffbd38",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-folder-wiki-observations.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-folder-wiki-observations.json",
+      "source_bytes": 2802,
+      "source_sha256": "187308758fa06d6b3c6aab9aa6f8d27eeb20d06b1c0bff5814100ebed9f73c07",
+      "published_bytes": 2802,
+      "published_sha256": "187308758fa06d6b3c6aab9aa6f8d27eeb20d06b1c0bff5814100ebed9f73c07",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-literal-final-initial-checks.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-final-initial-checks.json",
+      "source_bytes": 12268,
+      "source_sha256": "6c5a303798f7f317054be940e0065d3dcbde573a95abc558d5963312b64ff252",
+      "published_bytes": 12268,
+      "published_sha256": "6c5a303798f7f317054be940e0065d3dcbde573a95abc558d5963312b64ff252",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-literal-final-review.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-final-review.json",
+      "source_bytes": 12529,
+      "source_sha256": "1d370f73071c159511c5e7ea3d7ee5082aa16bbecc46c72e22f0dfdda0b37e8b",
+      "published_bytes": 12529,
+      "published_sha256": "1d370f73071c159511c5e7ea3d7ee5082aa16bbecc46c72e22f0dfdda0b37e8b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-original-command-build.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-original-command-build.json",
+      "source_bytes": 1059,
+      "source_sha256": "175ebc294b109a6d0c708635696b7ee098abf49ce5938e216d1958d428783a85",
+      "published_bytes": 1059,
+      "published_sha256": "175ebc294b109a6d0c708635696b7ee098abf49ce5938e216d1958d428783a85",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-original-command-observation.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-original-command-observation.json",
+      "source_bytes": 1070,
+      "source_sha256": "ec3f39852de05c3833a4769085d98384de96bd03a0eb156a861cae4e823eb293",
+      "published_bytes": 1070,
+      "published_sha256": "ec3f39852de05c3833a4769085d98384de96bd03a0eb156a861cae4e823eb293",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-original-observation.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-original-observation.json",
+      "source_bytes": 1298,
+      "source_sha256": "7c4debb0f91f2f62469bad4ed983d169ad9ca3ddd90a9483797399916ff6b564",
+      "published_bytes": 1298,
+      "published_sha256": "7c4debb0f91f2f62469bad4ed983d169ad9ca3ddd90a9483797399916ff6b564",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-original-print-check.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-original-print-check.json",
+      "source_bytes": 1981,
+      "source_sha256": "9c0c43454ef4bdd6a5a706d745bf24088200498ea335804d38d69c2d082c8494",
+      "published_bytes": 1981,
+      "published_sha256": "9c0c43454ef4bdd6a5a706d745bf24088200498ea335804d38d69c2d082c8494",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-original-print-fixed-check.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-original-print-fixed-check.json",
+      "source_bytes": 1786,
+      "source_sha256": "4fff220b10aea81fcce2cac8eae152c11e4fb07d9070211b3e0602c6ea1a8a0a",
+      "published_bytes": 1786,
+      "published_sha256": "4fff220b10aea81fcce2cac8eae152c11e4fb07d9070211b3e0602c6ea1a8a0a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-print-fixture-fixed.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-print-fixture-fixed.json",
+      "source_bytes": 1147,
+      "source_sha256": "a73c008881c24a5675ac95406dd7614c7bdcdd126f253e23231f6247282ed47c",
+      "published_bytes": 1147,
+      "published_sha256": "a73c008881c24a5675ac95406dd7614c7bdcdd126f253e23231f6247282ed47c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-print-fixture.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-print-fixture.json",
+      "source_bytes": 1147,
+      "source_sha256": "c6cb0c525550e385769796fddb623711c3174697bfd3784a1f0f67191f5311db",
+      "published_bytes": 1147,
+      "published_sha256": "c6cb0c525550e385769796fddb623711c3174697bfd3784a1f0f67191f5311db",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-save-panel-refresh-observation.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-save-panel-refresh-observation.json",
+      "source_bytes": 1471,
+      "source_sha256": "560f2c4bc7e85e5be0c31f272d7fcae6d9b99d7e65b8755d2c9beafe7e9e541a",
+      "published_bytes": 1471,
+      "published_sha256": "560f2c4bc7e85e5be0c31f272d7fcae6d9b99d7e65b8755d2c9beafe7e9e541a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-v21-literal-build.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-v21-literal-build.json",
+      "source_bytes": 463,
+      "source_sha256": "db9cdfd4c1bed4f4d323726705eeb5777af5ba4d9965221460be957acd0344ee",
+      "published_bytes": 463,
+      "published_sha256": "db9cdfd4c1bed4f4d323726705eeb5777af5ba4d9965221460be957acd0344ee",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "native-v22-build-review.json",
+      "source": "/private/tmp/noye-phase8-20261016/native-v22-build-review.json",
+      "source_bytes": 1871,
+      "source_sha256": "37608a2a854d67edca0e8f63f3bdb65c2dd64226d836faf6a763b1ac5f7d9c0e",
+      "published_bytes": 1871,
+      "published_sha256": "37608a2a854d67edca0e8f63f3bdb65c2dd64226d836faf6a763b1ac5f7d9c0e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "original-port-observation.json",
+      "source": "/private/tmp/noye-phase8-20261016/original-port-observation.json",
+      "source_bytes": 14432,
+      "source_sha256": "05fd8aa8010a85a7599a80bee01cea02ad5ff0c85a8e38d4d4855813b1104f7c",
+      "published_bytes": 14432,
+      "published_sha256": "05fd8aa8010a85a7599a80bee01cea02ad5ff0c85a8e38d4d4855813b1104f7c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/Phase 8 original command print QA.pdf",
+      "source": "/private/tmp/noye-phase8-20261016/exports/Phase 8 original command print QA.pdf",
+      "source_bytes": 17856,
+      "source_sha256": "7c33cd4619a866f683b0a62fe3c0daf62b408a7d1ac06e7ed6b8ab22bd25b8a6",
+      "published_bytes": 17856,
+      "published_sha256": "7c33cd4619a866f683b0a62fe3c0daf62b408a7d1ac06e7ed6b8ab22bd25b8a6",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/Phase 8 original command print fixed QA.pdf",
+      "source": "/private/tmp/noye-phase8-20261016/exports/Phase 8 original command print fixed QA.pdf",
+      "source_bytes": 19570,
+      "source_sha256": "082911d23289eabe10b1b88c03479f0b37acd680cecd030df092b496c4d338a3",
+      "published_bytes": 19570,
+      "published_sha256": "082911d23289eabe10b1b88c03479f0b37acd680cecd030df092b496c4d338a3",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/Phase8 generated AT-201.pdf",
+      "source": "/private/tmp/noye-phase8-20261016/exports/Phase8 generated AT-201.pdf",
+      "source_bytes": 21946,
+      "source_sha256": "46e7b753bc32a0196527455da08318fe97e8929e4b0430aaab5d44077e578c4a",
+      "published_bytes": 21946,
+      "published_sha256": "46e7b753bc32a0196527455da08318fe97e8929e4b0430aaab5d44077e578c4a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/Phase 8 complex PDF QA.pdf",
+      "source": "/private/tmp/noye-phase8-20261016/exports/literal-final/Phase 8 complex PDF QA.pdf",
+      "source_bytes": 57833,
+      "source_sha256": "2479f5757813928169e9a8a14785c1c73c654a08ef23ec69b90cb58325c7f7f3",
+      "published_bytes": 57833,
+      "published_sha256": "2479f5757813928169e9a8a14785c1c73c654a08ef23ec69b90cb58325c7f7f3",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/Phase8 generated AT-201.pdf",
+      "source": "/private/tmp/noye-phase8-20261016/exports/literal-final/Phase8 generated AT-201.pdf",
+      "source_bytes": 20639,
+      "source_sha256": "5f748d1573d32fb760a72a8dd00d352982bb829664012302b467c7098ec89aff",
+      "published_bytes": 20639,
+      "published_sha256": "5f748d1573d32fb760a72a8dd00d352982bb829664012302b467c7098ec89aff",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-1.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-1.png",
+      "source_bytes": 133608,
+      "source_sha256": "2e86641c4af662a4e33eef36867ac26492dacc980ec89c66c9f57de38cc18efc",
+      "published_bytes": 133608,
+      "published_sha256": "2e86641c4af662a4e33eef36867ac26492dacc980ec89c66c9f57de38cc18efc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-2.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-2.png",
+      "source_bytes": 123114,
+      "source_sha256": "c7dc3719c531637176be8cf08af1ee5de356ee0afd655d4b25299ee1db5c366e",
+      "published_bytes": 123114,
+      "published_sha256": "c7dc3719c531637176be8cf08af1ee5de356ee0afd655d4b25299ee1db5c366e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-3.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-3.png",
+      "source_bytes": 108919,
+      "source_sha256": "85a5de23ae445e4d7bc3e869f82384e6a7d614887c28e8d74dc84f61416c4d45",
+      "published_bytes": 108919,
+      "published_sha256": "85a5de23ae445e4d7bc3e869f82384e6a7d614887c28e8d74dc84f61416c4d45",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-4.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-4.png",
+      "source_bytes": 106827,
+      "source_sha256": "7c05615b6dc8d3f9e21a6b10bf87ec360c3823843633e00f83444e5cee0b761b",
+      "published_bytes": 106827,
+      "published_sha256": "7c05615b6dc8d3f9e21a6b10bf87ec360c3823843633e00f83444e5cee0b761b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-5.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-5.png",
+      "source_bytes": 48650,
+      "source_sha256": "f6a5f57a7bf68312123e5f659984444f8d71ee666ac4d77394884e2fbed7013f",
+      "published_bytes": 48650,
+      "published_sha256": "f6a5f57a7bf68312123e5f659984444f8d71ee666ac4d77394884e2fbed7013f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-6.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-6.png",
+      "source_bytes": 21130,
+      "source_sha256": "fd90587ca9158e96157bed9312dd0570269f4dd7976b5a9198bf6b7aff5568e2",
+      "published_bytes": 21130,
+      "published_sha256": "fd90587ca9158e96157bed9312dd0570269f4dd7976b5a9198bf6b7aff5568e2",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-complex-page-7.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-complex-page-7.png",
+      "source_bytes": 80716,
+      "source_sha256": "2fffd958336b30ca94cac3a661515740fedcd71701515dcb54407bad4eb4a295",
+      "published_bytes": 80716,
+      "published_sha256": "2fffd958336b30ca94cac3a661515740fedcd71701515dcb54407bad4eb4a295",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/literal-final/native-literal-short-page-1.png",
+      "source": "/private/tmp/noye-phase8-20261016/native-literal-short-page-1.png",
+      "source_bytes": 31477,
+      "source_sha256": "d05c422ab147c12563565a0b6e0c2c416bdc7613a18011c9012772c3d2a851db",
+      "published_bytes": 31477,
+      "published_sha256": "d05c422ab147c12563565a0b6e0c2c416bdc7613a18011c9012772c3d2a851db",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/original-command-fixed-page-1.png",
+      "source": "/private/tmp/noye-phase8-20261016/exports/original-command-fixed-page-1.png",
+      "source_bytes": 27993,
+      "source_sha256": "ddc89ecfe89fdf55da0603615ca6f1706793669df71781d00e8eb0c4993977c0",
+      "published_bytes": 27993,
+      "published_sha256": "ddc89ecfe89fdf55da0603615ca6f1706793669df71781d00e8eb0c4993977c0",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/original-command-page-1.png",
+      "source": "/private/tmp/noye-phase8-20261016/exports/original-command-page-1.png",
+      "source_bytes": 28296,
+      "source_sha256": "9a0b04f08d3a7dedb29dbc5947647ed738897903572d91434cc3684f7a61333f",
+      "published_bytes": 28296,
+      "published_sha256": "9a0b04f08d3a7dedb29dbc5947647ed738897903572d91434cc3684f7a61333f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "pdf/save-panel-refresh-page-1.png",
+      "source": "/private/tmp/noye-phase8-20261016/exports/save-panel-refresh-page-1.png",
+      "source_bytes": 31446,
+      "source_sha256": "1b4a23beb96924d5c9954647224711818b3c4772d4f15995358143c7314e4d29",
+      "published_bytes": 31446,
+      "published_sha256": "1b4a23beb96924d5c9954647224711818b3c4772d4f15995358143c7314e4d29",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "signing-argument-contract.json",
+      "source": "/private/tmp/noye-phase8-20261016/signing-argument-contract.json",
+      "source_bytes": 2999,
+      "source_sha256": "fd243b3f299a46f9f6b1bb3e8f500e7d383d572f2887fa62cb91366856575a3b",
+      "published_bytes": 2999,
+      "published_sha256": "fd243b3f299a46f9f6b1bb3e8f500e7d383d572f2887fa62cb91366856575a3b",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "startup/measurements.json",
+      "source": "/private/tmp/noye-phase8-20261016/startup/measurements.json",
+      "source_bytes": 2381,
+      "source_sha256": "ab8926460a40767dcd327c339b4192dd97d537b205fea56efd7e7640f43d181f",
+      "published_bytes": 2381,
+      "published_sha256": "ab8926460a40767dcd327c339b4192dd97d537b205fea56efd7e7640f43d181f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "tauri-qa-hardened-failure.json",
+      "source": "/private/tmp/noye-phase8-20261016/tauri-qa-hardened-failure.json",
+      "source_bytes": 417,
+      "source_sha256": "2dfbe0d1fcfa78ecd44150f33545bfb8a367ac7634bea58a6a0a9909ef879687",
+      "published_bytes": 417,
+      "published_sha256": "2dfbe0d1fcfa78ecd44150f33545bfb8a367ac7634bea58a6a0a9909ef879687",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "tauri-qa.json",
+      "source": "/private/tmp/noye-phase8-20261016/tauri-qa.json",
+      "source_bytes": 449,
+      "source_sha256": "c87058c721c42c1c1262a262be408f5b86a1de7c1acba625ea214f3f50993992",
+      "published_bytes": 449,
+      "published_sha256": "c87058c721c42c1c1262a262be408f5b86a1de7c1acba625ea214f3f50993992",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "translation-controls-review-v20.json",
+      "source": "/private/tmp/noye-phase8-20261016/translation-controls-review-v20.json",
+      "source_bytes": 6313,
+      "source_sha256": "1f6188c46a1d377afcb669cf50527d4d3e40bee90972f21366316c688ed19318",
+      "published_bytes": 6313,
+      "published_sha256": "1f6188c46a1d377afcb669cf50527d4d3e40bee90972f21366316c688ed19318",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v16-manual-review.json",
+      "source": "/private/tmp/noye-phase8-20261016/v16-manual-review.json",
+      "source_bytes": 1923,
+      "source_sha256": "a47dc711d7b30a167c815e3b9dd1f5011e18f5d6f37c99ffc33cb0ef7d9a4184",
+      "published_bytes": 1923,
+      "published_sha256": "a47dc711d7b30a167c815e3b9dd1f5011e18f5d6f37c99ffc33cb0ef7d9a4184",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v18-bundled-payload.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-bundled-payload.json",
+      "source_bytes": 44300,
+      "source_sha256": "b60c51d2069b1f5ee04a15910284ef75c1857fb9be824a0244187c9c0d9c986a",
+      "published_bytes": 44300,
+      "published_sha256": "b60c51d2069b1f5ee04a15910284ef75c1857fb9be824a0244187c9c0d9c986a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v18-code-hashes.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-code-hashes.json",
+      "source_bytes": 563,
+      "source_sha256": "229b6645b249fd02749e686e6da75b1fcde5e6b79061d5f98be0c2bc551e1c11",
+      "published_bytes": 563,
+      "published_sha256": "229b6645b249fd02749e686e6da75b1fcde5e6b79061d5f98be0c2bc551e1c11",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v18-sidecar.json",
+      "source": "/private/tmp/noye-phase8-20261016/v18-sidecar.json",
+      "source_bytes": 273,
+      "source_sha256": "bd02e1b04bc277271c3fb677c2991456c88dea50aee9723a2e7649ef70191fb5",
+      "published_bytes": 273,
+      "published_sha256": "bd02e1b04bc277271c3fb677c2991456c88dea50aee9723a2e7649ef70191fb5",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-code-hashes.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-code-hashes.json",
+      "source_bytes": 692,
+      "source_sha256": "abebd2efdac81fbe0ea744024e716c146099959add4d8872d1662671cac0756c",
+      "published_bytes": 692,
+      "published_sha256": "abebd2efdac81fbe0ea744024e716c146099959add4d8872d1662671cac0756c",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-collection-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-collection-manual.json",
+      "source_bytes": 2225,
+      "source_sha256": "70c8bc2d1515887900ed82e7859520c7cd8f26f5ef443f4af2e17172d232b654",
+      "published_bytes": 2225,
+      "published_sha256": "70c8bc2d1515887900ed82e7859520c7cd8f26f5ef443f4af2e17172d232b654",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-comparison-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-comparison-manual.json",
+      "source_bytes": 2418,
+      "source_sha256": "08bb906a16f3bf67e5dc63d16953f53aac8b3aa0dc9aab844a3fabed71f60c5d",
+      "published_bytes": 2418,
+      "published_sha256": "08bb906a16f3bf67e5dc63d16953f53aac8b3aa0dc9aab844a3fabed71f60c5d",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-final-sidecar-equality.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-final-sidecar-equality.json",
+      "source_bytes": 238,
+      "source_sha256": "4c2e55b88e3b62a65640f60eafce473639c7c750ef6932fc5e83e05e9dbe6538",
+      "published_bytes": 238,
+      "published_sha256": "4c2e55b88e3b62a65640f60eafce473639c7c750ef6932fc5e83e05e9dbe6538",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-partial-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-partial-manual.json",
+      "source_bytes": 1407,
+      "source_sha256": "f2130869b8cc93cb7f3f125d59370445f348a650f1c4a2b5133f2d1b0a34addd",
+      "published_bytes": 1407,
+      "published_sha256": "f2130869b8cc93cb7f3f125d59370445f348a650f1c4a2b5133f2d1b0a34addd",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-report-manual.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-report-manual.json",
+      "source_bytes": 1536,
+      "source_sha256": "bdd1c5f4fd119730786fbb21f166bf0a507113e57aa2cd5018c786279b249783",
+      "published_bytes": 1536,
+      "published_sha256": "bdd1c5f4fd119730786fbb21f166bf0a507113e57aa2cd5018c786279b249783",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-runtime-bindings.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-runtime-bindings.json",
+      "source_bytes": 744,
+      "source_sha256": "d9d180415e4c0a818ed81588cdd64e498cd5254745fc38d775135920edde5d0e",
+      "published_bytes": 744,
+      "published_sha256": "d9d180415e4c0a818ed81588cdd64e498cd5254745fc38d775135920edde5d0e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v20-tested-bundled-sidecar.json",
+      "source": "/private/tmp/noye-phase8-20261016/v20-tested-bundled-sidecar.json",
+      "source_bytes": 239,
+      "source_sha256": "340deae92f328ba7c6c15ab6a7dfd833b8001a1c6a02110aac8016c25d1caffc",
+      "published_bytes": 239,
+      "published_sha256": "340deae92f328ba7c6c15ab6a7dfd833b8001a1c6a02110aac8016c25d1caffc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v21-code-hashes.json",
+      "source": "/private/tmp/noye-phase8-20261016/v21-code-hashes.json",
+      "source_bytes": 692,
+      "source_sha256": "4dd489fff8da43cd9b4bd100d6356999bdf5369457c9b2ae06f970c64ebf9541",
+      "published_bytes": 692,
+      "published_sha256": "4dd489fff8da43cd9b4bd100d6356999bdf5369457c9b2ae06f970c64ebf9541",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v21-single-wire-v22-equality.json",
+      "source": "/private/tmp/noye-phase8-20261016/v21-single-wire-v22-equality.json",
+      "source_bytes": 2849,
+      "source_sha256": "42c39729dfc5b5e5afac94a286ef6e173883794bdb368b3022ce5bc6a9e8d5b0",
+      "published_bytes": 2849,
+      "published_sha256": "42c39729dfc5b5e5afac94a286ef6e173883794bdb368b3022ce5bc6a9e8d5b0",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "v22-code-hashes.json",
+      "source": "/private/tmp/noye-phase8-20261016/v22-code-hashes.json",
+      "source_bytes": 684,
+      "source_sha256": "85fde57400a12eb95145174dca637d333bd90e916e70e67daedf83ea280a9968",
+      "published_bytes": 684,
+      "published_sha256": "85fde57400a12eb95145174dca637d333bd90e916e70e67daedf83ea280a9968",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "verifier-wire-stability.json",
+      "source": "/private/tmp/noye-phase8-20261016/verifier-wire-stability.json",
+      "source_bytes": 3506,
+      "source_sha256": "976d3421e5bada2534dc7e2ef58fff2514520979f786893b363b2658ba6ed38f",
+      "published_bytes": 3506,
+      "published_sha256": "976d3421e5bada2534dc7e2ef58fff2514520979f786893b363b2658ba6ed38f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "wiki-suggestion-sidecar-equality.json",
+      "source": "/private/tmp/noye-phase8-20261016/wiki-suggestion-sidecar-equality.json",
+      "source_bytes": 346,
+      "source_sha256": "48811648ea9502443fd3bfd6b0185698912474a8c00fb46a9d6c2029e46395b0",
+      "published_bytes": 346,
+      "published_sha256": "48811648ea9502443fd3bfd6b0185698912474a8c00fb46a9d6c2029e46395b0",
+      "transformation": "Byte-for-byte copy"
+    }
+  ],
+  "pre_commit_normalization": {
+    "reason": "Staged diff validation exposed trailing spaces in JUnit failure-trace text. Regenerated XML copies normalize only trailing whitespace; original XML source bytes/hashes and model inputs/outputs are unchanged. Publisher and validator methods now state/verify that normalization. No prior Git commit was rewritten.",
+    "former_derived_hashes": [
+      {
+        "file": "logs/live-integration-corrected/case-15.xml",
+        "previous_derived_sha256": "495216e97ec022fb3752ee8a8ae026e4629e136bb5ad3416f8bc70310feac113"
+      },
+      {
+        "file": "logs/live-integration-corrected/case-17.xml",
+        "previous_derived_sha256": "a87882968c1625174d91d0a6d3321a216ca1d8e4b7e7ffc775ba59738a7d858b"
+      },
+      {
+        "file": "logs/live-integration-corrected/case-18.xml",
+        "previous_derived_sha256": "4aaa6f79c6661906cf5acf438d6de589cfa983c30081a839c7eefff981828101"
+      },
+      {
+        "file": "logs/live-integration-corrected/case-19.xml",
+        "previous_derived_sha256": "7f2267a5811349b13ff46bbd082fb06b0e20c7613a98576e3fb0280ca636359d"
+      },
+      {
+        "file": "logs/live-integration/case-01.xml",
+        "previous_derived_sha256": "64120491b725bf52726dd1bca876814f952afd6119e61120583af13f8e146a10"
+      },
+      {
+        "file": "logs/live-integration/case-02.xml",
+        "previous_derived_sha256": "83f370cc1bf2d36a789d3fc9083703413c201e71893e1b90dd042c64657fbe2e"
+      },
+      {
+        "file": "logs/live-integration/case-03.xml",
+        "previous_derived_sha256": "8c31f13817cae5601ecbaac311084deecfe14d36b92df291beb06f638d643492"
+      },
+      {
+        "file": "logs/live-integration/case-04.xml",
+        "previous_derived_sha256": "c38fa24d167119f2aacc12d9a0470f1fd6423471c06114b8487a680ba2b18eb5"
+      },
+      {
+        "file": "logs/live-integration/case-05.xml",
+        "previous_derived_sha256": "5691940b76e3cd4222bc032946136babf94a7a89bc778421d40dde95fb3afd21"
+      },
+      {
+        "file": "logs/live-integration/case-06.xml",
+        "previous_derived_sha256": "f33662ddc6380fa11addb1abc90c8357d17240c37f03395630fff3108cf2b6a8"
+      },
+      {
+        "file": "logs/live-integration/case-07.xml",
+        "previous_derived_sha256": "89372a97d708aa12b5ec2a41c754da453f48e6348969ff7051fce4e376b588da"
+      },
+      {
+        "file": "logs/live-integration/case-08.xml",
+        "previous_derived_sha256": "319d62a6c3b5fac09005d67067f357bec6510d60c2cbbfee050b17404f2d256c"
+      },
+      {
+        "file": "logs/live-integration/case-09.xml",
+        "previous_derived_sha256": "8e582b2aff5cfcb0e1a8d428028cd71296e73b54657c566af4a7def22df9824c"
+      },
+      {
+        "file": "logs/live-integration/case-10.xml",
+        "previous_derived_sha256": "b254287131ec6fd5872664bbe6d1548971ae40a394a1e5b3ce1c85a5f78c5bbe"
+      },
+      {
+        "file": "logs/live-integration/case-11.xml",
+        "previous_derived_sha256": "57cc30ef9eb1991ffe6673c603bf37e39e009c1b8641c2fe20b3e6601d1857ff"
+      },
+      {
+        "file": "logs/live-integration/case-12.xml",
+        "previous_derived_sha256": "728a095e2d45a4bee96785e58753ca9776f6f6d48250eae2256745f773667e3a"
+      },
+      {
+        "file": "logs/live-integration/case-13.xml",
+        "previous_derived_sha256": "1f0450f5e4ce44cc4146ddadbc7ee8d1f86230b9bce68bff78cd5de25332f33b"
+      },
+      {
+        "file": "logs/live-integration/case-14.xml",
+        "previous_derived_sha256": "d812b839ad1f28c1828b8628293856fce6959a4354e1c0708e7018ab4ec1e70b"
+      },
+      {
+        "file": "logs/live-integration/case-15.xml",
+        "previous_derived_sha256": "4abb9ddab503fbfced8674c6b278fa6649d684ef4783a7ec15e7967c3e90c078"
+      },
+      {
+        "file": "logs/live-integration/case-16.xml",
+        "previous_derived_sha256": "03306056c57cb95daae537d2b84cfa33bc1acd2548f7cc7464fd3d3f7f489c92"
+      },
+      {
+        "file": "logs/live-integration/case-17.xml",
+        "previous_derived_sha256": "f70ca72ca9363951be453a1769353ecd697d2766ca57baad7d8a9ab47c050ffa"
+      },
+      {
+        "file": "logs/live-integration/case-18.xml",
+        "previous_derived_sha256": "a1de4089a47caa8e18c5ab9fc5fef7ba7c979c1a6e604c4d742755f9f2bebfcd"
+      },
+      {
+        "file": "logs/live-integration/case-19.xml",
+        "previous_derived_sha256": "721fe66ededa091120d725b28ec12a2ec4d9b20f0055cc5b811505c06f75bbbd"
+      },
+      {
+        "file": "methods/publish-evidence.py",
+        "previous_derived_sha256": "7247ce835b33a219b96c3f0c229166f06172599902b468aaebc05bd7b67a82af"
+      },
+      {
+        "file": "methods/validate-evidence.py",
+        "previous_derived_sha256": "e082ce670d9abe25f3fb6f34ef80d91a16fe4974a70242a57e625e30f81c69a2"
+      }
+    ]
+  }
+}

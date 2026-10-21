@@ -1,0 +1,4 @@
+{"ingestion": "02-English.txt", "state": "READY", "seconds": 1.761}
+{"ingestion": "01-\ud55c\uad6d\uc5b4.md", "state": "READY", "seconds": 0.067}
+{"ingestion": "Unrelated.txt", "state": "READY", "seconds": 0.045}
+{"state": "failed", "error": {"source_id": "69550a24-b1df-4ed5-83f7-bf1c3dbea443", "type": "WikiError", "message": "A generated claim changes capacity into an amount stored, or vice versa. No Wiki revision was published."}, "seconds": 88.417, "report": "/private/tmp/noye-phase8-20261021/v9-wiki/wiki-a02587ca-90e8-40d9-8975-19c5f6892246.json"}

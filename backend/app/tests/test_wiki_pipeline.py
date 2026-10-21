@@ -4,9 +4,9 @@ import httpx
 import pytest
 
 from app.config import Settings
-from app.models.wiki import Passage, SectionSummary, SourceRef, WikiScope
+from app.models.wiki import Passage, RelationsOutput, SectionSummary, SourceRef, WikiScope
 from app.services.wiki import pipeline
-from app.services.wiki.local import WikiError, structured
+from app.services.wiki.local import RELATION_SYSTEM, SYSTEM, WikiError, request_size, structured
 
 
 def passage(text, page=None):
@@ -71,6 +71,68 @@ def test_invalid_model_schema_rejected(value):
         structured(
             "Test", SectionSummary, client=mock_client(value), settings=Settings(_env_file=None)
         )
+
+
+def test_wiki_model_sees_the_constrained_schema_with_original_fields_and_exact_budget():
+    prompt = json.dumps({"task": "verify_relation", "origin": {"text": "원문 조건입니다."}})
+    constraints = {"target_id": ["known-target"], "origin_evidence_id": ["known-original"]}
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        body = json.loads(request.content)
+        sent.append(body)
+        return httpx.Response(200, json={"done": True, "response": '{"relations":[]}'})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        structured(
+            prompt,
+            RelationsOutput,
+            client=client,
+            constraints=constraints,
+            settings=Settings(_env_file=None),
+        )
+    body = sent[0]
+    visible = json.loads(body["prompt"])
+    assert visible["origin"]["text"] == "원문 조건입니다."
+    assert visible["output_schema"] == body["format"]
+    fields = visible["output_schema"]["$defs"]["RelationProposal"]["properties"]
+    assert fields["target_id"]["enum"] == ["known-target"]
+    assert fields["origin_evidence_id"]["enum"] == ["known-original"]
+    assert "comparable conditions" in fields["kind"]["description"]
+    assert list(fields) == [
+        "target_id",
+        "origin_evidence_id",
+        "target_evidence_id",
+        "reason",
+        "kind",
+        "confidence",
+    ]
+    assert body["system"] == RELATION_SYSTEM
+    assert request_size(prompt, RelationsOutput, constraints) == len(
+        (body["system"] + body["prompt"]).encode("utf-8")
+    )
+
+
+@pytest.mark.parametrize(
+    "prompt", ["Test", "[]", '{"task":"summarize_section"}', '{"task":"revise_section"}']
+)
+def test_summary_and_wording_revision_keep_their_own_system_and_budget(prompt):
+    sent = []
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        body = json.loads(request.content)
+        sent.append(body)
+        return httpx.Response(200, json={"done": True, "response": json.dumps(summary())})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        structured(prompt, SectionSummary, client=client, settings=Settings(_env_file=None))
+    body = sent[0]
+    assert body["system"] == SYSTEM
+    assert request_size(prompt, SectionSummary) == len((SYSTEM + body["prompt"]).encode("utf-8"))
 
 
 def test_remote_local_url_never_receives_evidence():
@@ -202,3 +264,196 @@ def test_taxonomy_hints_are_in_every_complete_bounded_prompt():
         assert prompt["existing_topics"] == topics
         assert "language" in prompt
         assert all(p["text"] for p in prompt["passages"])
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Project Beta stores 92 litres.", ["Project Beta", "Beta"]),
+        ("Ｐｒｏｊｅｃｔ Ｂｅｔａ stores 92 litres.", ["Project Beta", "Beta"]),
+        ("Beta는 92리터를 저장합니다.", ["Beta"]),
+        ("Project Betamax stores 92 litres.", []),
+    ],
+)
+def test_source_generation_does_not_receive_another_subjects_topic_hints(text, expected):
+    sent = []
+    topics = [
+        {"kind": "project", "title": title}
+        for title in ["저수지 Alpha", "Project Beta", "Beta", "---"]
+    ]
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        sent.append(payload)
+        p = payload["passages"][0]
+        return httpx.Response(
+            200, json={"done": True, "response": json.dumps(summary(p["evidence_id"], p["text"]))}
+        )
+
+    with httpx.Client(transport=httpx.MockTransport(reply)) as client:
+        pipeline.summarize(
+            [passage(text)],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+            topics=topics,
+        )
+    assert sent
+    assert all([t["title"] for t in p["existing_topics"]] == expected for p in sent)
+    assert "".join(p["text"] for call in sent for p in call["passages"]) == text
+
+
+@pytest.mark.parametrize("second", ["correct", "quantity_again", "forged_quote", "unavailable"])
+def test_numeric_wording_gets_one_validated_local_revision(second):
+    original = "Project Beta stores 92 litres. Beta uses append-only log files."
+    sent = []
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        sent.append(payload)
+        if len(sent) == 2 and second == "unavailable":
+            return httpx.Response(503)
+        p = payload["passages"][0]
+        value = summary(p["evidence_id"], p["text"])
+        value["summary"]["text"] = (
+            original
+            if len(sent) == 2 and second != "quantity_again"
+            else "Project Beta has a storage capacity of 92 litres."
+        )
+        if len(sent) == 2 and second == "forged_quote":
+            value["summary"]["quote"] = "A fabricated original quotation."
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with httpx.Client(transport=httpx.MockTransport(reply)) as client:
+        if second == "correct":
+            result, evidence = pipeline.summarize(
+                [passage(original)], categories=[], settings=Settings(_env_file=None), client=client
+            )
+            assert result["sections"][0]["summary"]["text"] == original
+            assert result["wording_repairs"] == [{"batch": 1, "reason": "quantity_property"}]
+            assert evidence[0].text == original
+        else:
+            with pytest.raises(WikiError):
+                pipeline.summarize(
+                    [passage(original)],
+                    categories=[],
+                    settings=Settings(_env_file=None),
+                    client=client,
+                )
+    assert [p["task"] for p in sent] == ["summarize_section", "revise_section"]
+    assert sent[0]["passages"] == sent[1]["passages"]
+    assert "storage capacity" in sent[1]["rejected_wording"]
+
+
+def test_forged_original_quote_does_not_enter_wording_revision():
+    calls = []
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        calls.append(payload)
+        value = summary(payload["passages"][0]["evidence_id"], "fabricated original")
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(reply)) as client,
+        pytest.raises(WikiError, match="unknown"),
+    ):
+        pipeline.summarize(
+            [passage("Project Beta stores 92 litres.")],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+        )
+    assert len(calls) == 1
+
+
+def test_cancellation_before_wording_revision_prevents_the_second_call():
+    calls, checkpoints = [], []
+
+    def checkpoint():
+        checkpoints.append(True)
+        if len(checkpoints) == 2:
+            raise RuntimeError("Cancelled before revision")
+
+    def reply(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        payload = json.loads(json.loads(request.content)["prompt"])
+        calls.append(payload)
+        p = payload["passages"][0]
+        value = summary(p["evidence_id"], p["text"])
+        value["summary"]["text"] = "The capacity is 92 litres."
+        return httpx.Response(200, json={"done": True, "response": json.dumps(value)})
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(reply)) as client,
+        pytest.raises(RuntimeError, match="Cancelled"),
+    ):
+        pipeline.summarize(
+            [passage("Project Beta stores 92 litres.")],
+            categories=[],
+            settings=Settings(_env_file=None),
+            client=client,
+            checkpoint=checkpoint,
+        )
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("field", ["summary", "key_points"])
+@pytest.mark.parametrize(
+    "original,generated",
+    [
+        ("Project Beta stores 92 litres.", "The system has a storage capacity of 92 litres."),
+        ("용량은 43리터입니다.", "It stores 43 litres."),
+        ("It stores 16 litres.", "저장 용량은 16리터입니다."),
+        ("It stores 92 litres.", "92리터의 용량을 저장합니다."),
+        ("29리터의 용량입니다.", "It stores 29 litres."),
+    ],
+)
+def test_quantity_property_drift_cannot_pass_literal_wiki_evidence(field, original, generated):
+    data = summary(quote=original)
+    claim = {"text": generated, "quote": original, "evidence_id": "verified"}
+    if field == "summary":
+        data[field] = claim
+    else:
+        data["summary"]["text"] = original
+        data[field] = [claim]
+
+    def response(request):
+        if request.url.path == "/api/show":
+            return httpx.Response(200, json={"model_info": {"general.architecture": "synthetic"}})
+        identifier = json.loads(json.loads(request.content)["prompt"])["passages"][0]["evidence_id"]
+        for value in [data["summary"], *data["key_points"]]:
+            value["evidence_id"] = identifier
+        return httpx.Response(200, json={"done": True, "response": json.dumps(data)})
+
+    with httpx.Client(transport=httpx.MockTransport(response)) as client:
+        with pytest.raises(WikiError, match="capacity into an amount stored"):
+            pipeline.summarize(
+                [passage(original)], categories=[], settings=Settings(_env_file=None), client=client
+            )
+
+
+def test_quantity_property_guard_uses_only_the_claims_cited_original():
+    first = passage("It stores 27 litres.")
+    second = first.model_copy(update={"id": "other", "text": "Capacity is 27 litres."})
+    claim = SectionSummary.model_validate(
+        {
+            **summary(quote=first.text),
+            "summary": {
+                "text": "Capacity is 27 litres.",
+                "quote": first.text,
+                "evidence_id": first.id,
+            },
+        }
+    ).summary
+    with pytest.raises(WikiError, match="capacity into an amount stored"):
+        pipeline.verify_claim(claim, {p.id: p for p in [first, second]})
+    claim.evidence_id, claim.quote = second.id, second.text
+    pipeline.verify_claim(claim, {p.id: p for p in [first, second]})

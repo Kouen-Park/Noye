@@ -1,0 +1,8 @@
+{"starting": "wiki-support-probe"}
+{"name": "wiki-support-probe", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "/private/tmp/noye-phase8-20261017/probe-wiki-support.py"], "seconds": 48.819, "exit_code": 0}
+{"starting": "backend-final"}
+{"name": "backend-final", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "-m", "pytest", "-q", "--cov=app", "--cov-branch", "--cov-config=/private/tmp/noye-phase8-20261017/coverage.ini", "--cov-report=json:/private/tmp/noye-phase8-20261017/backend-product-coverage.json", "--cov-report=term"], "seconds": 24.6, "exit_code": 0}
+{"starting": "backend-lint"}
+{"name": "backend-lint", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/ruff", "check", "app"], "seconds": 0.071, "exit_code": 0}
+{"starting": "packaging-checks"}
+{"name": "packaging-checks", "argv": ["/Users/gavinpark/Projects/Noye/backend/.venv/bin/python", "/private/tmp/noye-phase8-20261017/build-native.py"], "seconds": 99.042, "exit_code": 0}

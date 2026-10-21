@@ -1,0 +1,47 @@
+{
+  "method": "Primary-agent review of recorded synthetic QA outputs against originals; no independent review and no full acceptance.",
+  "production_source_prompt": "source-document-v23",
+  "production_wiki_prompt": "wiki-grounded-v7",
+  "source_verifier": {
+    "valid": 14,
+    "correct": 12,
+    "fresh_correct": 7,
+    "fresh_total": 8
+  },
+  "wiki_relation_v6": {
+    "valid": 12,
+    "correct": 7,
+    "false_contradictions": 4,
+    "missed_required_relation": 1,
+    "v7_wire_identical_requests": 12
+  },
+  "v7_whole": {
+    "method": "Primary-agent manual review of the exact final v7 whole Wiki output and original text; no independent review.",
+    "source_report": "wiki-aab65f2a-024d-4154-9d96-30820f64a54a.json",
+    "source_sha256": "ff73e5b5128b9756550f3bd71e1426949986d24c93a934652c4b13cf862ece40",
+    "prompt_version": "wiki-grounded-v7",
+    "state": "failed",
+    "processing_seconds": 84.772,
+    "accepted_complete_generation": false,
+    "quantity_protection": "Actual model changed Beta stored amount into The system stores a capacity of 92 litres. v7 refused it before Beta revision publication. This is protection acceptance, not delivery.",
+    "saved_revisions": 1,
+    "p1_remaining": [
+      "The saved Alpha summary still adds an instrumental SQLite-to-capacity relationship absent from the original.",
+      "Beta model output also incorrectly selected the existing Alpha project topic; this output was refused before publication."
+    ],
+    "generation_calls": 2,
+    "relation_calls": 0,
+    "no_automatic_retry": true
+  },
+  "experiments_not_adopted": [
+    "presence_penalty_zero",
+    "typed_stance_protocol",
+    "additional_same-model_Wiki_support_audit"
+  ],
+  "known_p1_remaining": [
+    "Source-document auditor approves an unsupported instrumental relationship in the saved English comparison.",
+    "Wiki Alpha summary invents a SQLite-to-capacity relationship.",
+    "Unchanged relation inference retains false contradiction classifications."
+  ],
+  "conditional_merge_satisfied": false
+}

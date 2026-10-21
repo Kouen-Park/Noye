@@ -1,0 +1,208 @@
+{
+  "method": "Run the nineteen availability-skipped integration cases against isolated real services.\n\nEach test gets a unique SQLite/files root and Qdrant collection. This also keeps\narbitrary-vector server tests separate from genuine embedding-identity tests.\nNo cloud credentials, personal collections, model pulls or model deletion.\n",
+  "service_settings": {
+    "OLLAMA_BASE_URL": "http://127.0.0.1:11439",
+    "OLLAMA_MODEL": "qwen3.5:4b",
+    "OLLAMA_EMBEDDING_MODEL": "embeddinggemma",
+    "QDRANT_URL": "http://127.0.0.1:16339",
+    "QDRANT_VECTOR_SIZE": "768",
+    "GENERATION_CONTEXT_TOKENS": "8192",
+    "GENERATION_OUTPUT_TOKENS": "2048",
+    "OLLAMA_THINKING": "false",
+    "LOG_TO_FILE": "false",
+    "NO_PROXY": "127.0.0.1,localhost"
+  },
+  "rows": [
+    {
+      "number": 1,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_finds_the_relevant_page",
+      "exit_code": 0,
+      "seconds": 2.82,
+      "collection": "noye_phase8_live_20261016_01",
+      "log_sha256": "4e0903b6772b03457a1272b9025bcb16822d245ba177a6ed156fb2ee9d2998d3",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 2,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_matches_by_meaning_not_keywords",
+      "exit_code": 0,
+      "seconds": 1.01,
+      "collection": "noye_phase8_live_20261016_02",
+      "log_sha256": "f9a28d7c48ec085a4f089418105c22b479c306a3a71990a21f8ec12a13cecd61",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 3,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_answers_a_korean_question_about_english_text",
+      "exit_code": 0,
+      "seconds": 0.981,
+      "collection": "noye_phase8_live_20261016_03",
+      "log_sha256": "75e68ed84a195e10587f7b22f5ea3c8676cc0726b1b6e885cff5467e3612e172",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 4,
+      "nodeid": "app/tests/test_retrieval.py::test_real_search_ranks_the_unrelated_passage_last",
+      "exit_code": 0,
+      "seconds": 1.008,
+      "collection": "noye_phase8_live_20261016_04",
+      "log_sha256": "93516d016cf44c1d57a20805f18b1af1d480b7a6dbbdf5c6a41698d93a5e0540",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 5,
+      "nodeid": "app/tests/test_search_api.py::test_search_finds_a_real_passage_end_to_end",
+      "exit_code": 0,
+      "seconds": 1.268,
+      "collection": "noye_phase8_live_20261016_05",
+      "log_sha256": "d2d1a88bdd8305d8fba2caf3f3457eac5bd851a9e7cccfd6d7ac6b8acc44682e",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 6,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_returns_the_configured_dimension",
+      "exit_code": 0,
+      "seconds": 0.475,
+      "collection": "noye_phase8_live_20261016_06",
+      "log_sha256": "9f01dc36131300819af958186854dcaaaf7a1f111d1428e018bdb65c3519abfb",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 7,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_embeds_korean_text",
+      "exit_code": 0,
+      "seconds": 0.457,
+      "collection": "noye_phase8_live_20261016_07",
+      "log_sha256": "e891140471f30762e60741c4c5e4a8ef55c3a1e96c3f399c863c4350631cc3a7",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 8,
+      "nodeid": "app/tests/test_embeddings.py::test_related_texts_are_closer_than_unrelated_ones",
+      "exit_code": 0,
+      "seconds": 0.49,
+      "collection": "noye_phase8_live_20261016_08",
+      "log_sha256": "77b4600c9cf3e9a83c5d126f79a54109b94c2e300b59b1498b7db0fa449c2b68",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 9,
+      "nodeid": "app/tests/test_embeddings.py::test_real_ollama_matches_korean_question_to_korean_passage",
+      "exit_code": 0,
+      "seconds": 0.509,
+      "collection": "noye_phase8_live_20261016_09",
+      "log_sha256": "4a6d6297e1082eaf8faae5550a95c632f294910ca947794e4563079aa26a7e96",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 10,
+      "nodeid": "app/tests/test_documents_api.py::test_a_real_draft_is_markdown_and_editable",
+      "exit_code": 0,
+      "seconds": 22.1,
+      "collection": "noye_phase8_live_20261016_10",
+      "log_sha256": "acd86589ef8f6f858f7c5a03bc4519fc9fb9dc0514bb2c813dcec4037285e369",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 11,
+      "nodeid": "app/tests/test_indexing.py::test_real_server_round_trip",
+      "exit_code": 0,
+      "seconds": 2.173,
+      "collection": "noye_phase8_live_20261016_11",
+      "log_sha256": "efe1e1d788dfb16b4b9d3a7041439712dc86f1d460bf3ee3c8dd762cb8c0eddc",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 12,
+      "nodeid": "app/tests/test_indexing.py::test_real_server_delete_is_scoped_to_the_file",
+      "exit_code": 0,
+      "seconds": 2.001,
+      "collection": "noye_phase8_live_20261016_12",
+      "log_sha256": "44378965e7066dca09c59b5c8c21d9fbd08d0e97b4e26cb37650c5fdd89f4c29",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 13,
+      "nodeid": "app/tests/test_files_api.py::test_real_upload_ingests_and_becomes_ready",
+      "exit_code": 0,
+      "seconds": 4.095,
+      "collection": "noye_phase8_live_20261016_13",
+      "log_sha256": "8efe7e791f9797c6542a8277a1c481498e700cf2f91b6940cf0bf3e07917fe49",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 14,
+      "nodeid": "app/tests/test_ingestion.py::test_real_ingestion_makes_a_document_searchable_and_citable",
+      "exit_code": 0,
+      "seconds": 19.544,
+      "collection": "noye_phase8_live_20261016_14",
+      "log_sha256": "728303b5dfb5bfc9a85ebb33fd015630fa3072306c027544fe713a98a481c219",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 15,
+      "nodeid": "app/tests/test_citations.py::test_full_pipeline_cites_the_page_the_fact_was_written_on",
+      "exit_code": 1,
+      "seconds": 7.286,
+      "collection": "noye_phase8_live_20261016_15",
+      "log_sha256": "d5f09998d07e8a610f467f54b2153135ba649c92d523c7912075f689757f5e9e"
+    },
+    {
+      "number": 16,
+      "nodeid": "app/tests/test_chat_api.py::test_a_real_question_is_answered_and_cited_end_to_end",
+      "exit_code": 0,
+      "seconds": 14.641,
+      "collection": "noye_phase8_live_20261016_16",
+      "log_sha256": "79791ce11cb231f3b2aa613fad2adb674bf135935b765f24a3a37b83944392b4",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 17,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_uses_the_retrieved_passage",
+      "exit_code": 1,
+      "seconds": 4.418,
+      "collection": "noye_phase8_live_20261016_17",
+      "log_sha256": "23375043e7b6fb0a3a5fc0a96ae5e7b4e5abba7d00f4df731956f5af38d95604"
+    },
+    {
+      "number": 18,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_declines_when_the_excerpts_do_not_contain_it",
+      "exit_code": 0,
+      "seconds": 1.479,
+      "collection": "noye_phase8_live_20261016_18",
+      "log_sha256": "6bd096883511219afc66485c866826d4fb5ad25c92364b9db9e1ecbaaad1e14d",
+      "cleanup_http_status": 200
+    },
+    {
+      "number": 19,
+      "nodeid": "app/tests/test_generation.py::test_real_answer_replies_in_korean_to_a_korean_question",
+      "exit_code": 1,
+      "seconds": 1.118,
+      "collection": "noye_phase8_live_20261016_19",
+      "log_sha256": "7e2f6af0e8dbc7a183a7cd4f2e3dc1d94a28acb0e8d543f3f53859cfc9e3f5a7"
+    }
+  ],
+  "preflight": [
+    {
+      "url": "http://127.0.0.1:11439/api/version",
+      "status": 200,
+      "body": {
+        "version": "0.34.2"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:16339/",
+      "status": 200,
+      "body": {
+        "title": "qdrant - vector search engine",
+        "version": "1.19.1",
+        "commit": "6ab21cac18ebb6f4ae29102c7f8f5cc11affd5de"
+      }
+    }
+  ],
+  "unload_http_status": 200,
+  "unload_embedding_http_status": 200,
+  "remaining_loaded_models": {
+    "models": []
+  }
+}

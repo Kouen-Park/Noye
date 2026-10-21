@@ -44,7 +44,7 @@ def test_generation_options_are_bounded(monkeypatch):
 
     with httpx.Client(transport=httpx.MockTransport(handle)) as client:
         assert generate("synthetic instruction", client=client) == "Saved answer."
-    assert captured[0]["options"] == {"num_ctx": 4096, "num_predict": 512}
+    assert captured[0]["options"] == {"num_ctx": 4096, "num_predict": 512, "temperature": 0}
 
 
 @pytest.mark.parametrize("text", ["x" * 4000, "한" * 1400])

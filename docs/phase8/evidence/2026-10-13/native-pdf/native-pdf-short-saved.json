@@ -1,0 +1,28 @@
+{
+  "native_saved_notice": true,
+  "path": "/private/tmp/noye-phase8-20261012/native-folder/exports/Phase8 generated AT-201.pdf",
+  "bytes": 21946,
+  "sha256": "1df58232a4834d277e3396fa24bcf7655a6d3426835712ea3de50271bb074593",
+  "pages": 1,
+  "text": "AT-201 Experiment Results\nMeasured Runtime: 12 milliseconds\nMemory Usage: 37 megabytes\nPhase8 generated document edit · 생성 문서 편집 검증.\n<!-- Phase8 Markdown ﬁdelity !\nLiteral tokens: --, \"quoted\", -> , 37 litres.\nPhase8 native export · 저장 창에서 내보내기.\n",
+  "page_rects": [
+    [
+      0.0,
+      0.0,
+      595.0,
+      842.0
+    ]
+  ],
+  "checks": {
+    "pdf_opens": true,
+    "one_page": true,
+    "runtime_value": true,
+    "memory_value": true,
+    "korean_marker": true,
+    "korean_export_marker": true,
+    "no_app_navigation": true,
+    "no_leftover_staging": true
+  },
+  "visual_review": "Primary-agent inspection of the PyMuPDF rendered page: readable Korean, intact measured values, no clipping/overlap or app chrome. Geist renders the plain paragraph comment terminator as an arrow ligature; Markdown bytes remain unchanged. Bundled Poppler lacks Adobe-Korea1 mapping.",
+  "renderer_observation": "Bundled Poppler emitted missing Adobe-Korea1 mapping and omitted Korean glyphs. PyMuPDF fallback rendered for visual inspection; extraction contains the Korean markers."
+}
