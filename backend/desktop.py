@@ -2,7 +2,8 @@
 
 Stdout is a newline-delimited readiness protocol. Logging goes to stderr/files.
 The parent keeps stdin open: a shutdown line or EOF (parent exit/crash) asks
-uvicorn to stop gracefully. No fixed port, no killing processes by port or name.
+uvicorn to stop gracefully, with a parent-only deadline for blocked handlers.
+No fixed port, no killing processes by port or name.
 """
 
 from __future__ import annotations
@@ -17,6 +18,19 @@ import threading
 from pathlib import Path
 
 _protocol_lock = threading.Lock()
+PARENT_SHUTDOWN_SECONDS = 15
+
+
+def finish_parent_shutdown() -> None:
+    # asyncio.run can still wait for a blocked executor after uvicorn's grace
+    # period. Match the native parent's 16-second fallback even if it crashed
+    # and cannot enforce that bound. Exit this sidecar only; SQLite rolls back
+    # open transactions and durable jobs recover at the next startup.
+    # A daemon deadline disappears with a clean process exit. Do not cancel it
+    # when asyncio.run returns: AnyIO worker threads can keep Python alive even
+    # after the event loop has closed.
+    threading.Event().wait(PARENT_SHUTDOWN_SECONDS)
+    os._exit(0)
 
 
 def protocol_message(value):
@@ -117,6 +131,7 @@ async def serve() -> None:
                         # Never log stdin or validation errors: they contain keys.
                         protocol_message({"event": "configuration_failed"})
             finally:
+                threading.Thread(target=finish_parent_shutdown, daemon=True).start()
                 if not loop.is_closed():
                     loop.call_soon_threadsafe(request_shutdown)
 
