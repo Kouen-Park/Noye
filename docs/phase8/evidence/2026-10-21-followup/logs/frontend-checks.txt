@@ -1,0 +1,3 @@
+{"name": "frontend-tests", "argv": ["npm", "test"], "exit_code": 0, "seconds": 10.682, "log_sha256": "9750df0a62dfb7a707e6161a42588831730f93bbced3058bd453349be2821872"}
+{"name": "frontend-types", "argv": ["npx", "tsc", "--noEmit"], "exit_code": 0, "seconds": 1.88, "log_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36"}
+{"name": "frontend-lint", "argv": ["npm", "run", "lint"], "exit_code": 1, "seconds": 4.244, "log_sha256": "d70083bfb52efa63f468623842139570b1d4ffdbe841cb55caf7a188d047e90c"}

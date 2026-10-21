@@ -1,0 +1,356 @@
+{
+  "method": "Bounded synthetic follow-up publication. Exact completed final answers/requests and interrupted events are retained. Separate reasoning/token context and repeated successful preflight details are omitted with hashes. No DB, backup, model weight, credential or environment file is included.",
+  "files": [
+    {
+      "file": "checks/approval-block.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/approval-block.json",
+      "source_bytes": 833,
+      "source_sha256": "6aee158d8a1eb7e1db8e76bc700f5b4f107613fa3d75daf04b47a4ab1f12f2ef",
+      "published_bytes": 833,
+      "published_sha256": "6aee158d8a1eb7e1db8e76bc700f5b4f107613fa3d75daf04b47a4ab1f12f2ef",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/frontend-checks-corrected.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-checks-corrected.json",
+      "source_bytes": 1252,
+      "source_sha256": "edf2e69601991192f4a4c11ab6edcf9df462b0864a23651837f79871028b2e09",
+      "published_bytes": 1252,
+      "published_sha256": "edf2e69601991192f4a4c11ab6edcf9df462b0864a23651837f79871028b2e09",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/frontend-checks.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-checks.json",
+      "source_bytes": 995,
+      "source_sha256": "cbec8a8ed50e2b04a78c82bf1e7561d178af426480c51d7645a6add4b418b4aa",
+      "published_bytes": 995,
+      "published_sha256": "cbec8a8ed50e2b04a78c82bf1e7561d178af426480c51d7645a6add4b418b4aa",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/native-first-attempt.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-first-attempt.json",
+      "source_bytes": 809,
+      "source_sha256": "f3431e097b3ac52c38511c858e5805414dd03376f3c2c912e9e9d6febe5d81ee",
+      "published_bytes": 809,
+      "published_sha256": "f3431e097b3ac52c38511c858e5805414dd03376f3c2c912e9e9d6febe5d81ee",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/native-recovery-review.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-recovery-review.json",
+      "source_bytes": 1128,
+      "source_sha256": "5c6138443a2100a2a256f7b8ddfb5906b37dcce7bb68e0ac4eca2ab1e88cc2e7",
+      "published_bytes": 1128,
+      "published_sha256": "5c6138443a2100a2a256f7b8ddfb5906b37dcce7bb68e0ac4eca2ab1e88cc2e7",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/native-ui-build.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-ui-build.json",
+      "source_bytes": 902,
+      "source_sha256": "1245ad43215408081ce377d3256d9e9644eba30512dc7c0dbd153b74434710cc",
+      "published_bytes": 902,
+      "published_sha256": "1245ad43215408081ce377d3256d9e9644eba30512dc7c0dbd153b74434710cc",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/relay-transition.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/relay-transition.json",
+      "source_bytes": 301,
+      "source_sha256": "40b4fcd2a25196d0b251cb3d1720ebe3c4c1a58b7ca931275c8f0a5379dc8091",
+      "published_bytes": 301,
+      "published_sha256": "40b4fcd2a25196d0b251cb3d1720ebe3c4c1a58b7ca931275c8f0a5379dc8091",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "checks/saved-doc-before.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/saved-doc-before.json",
+      "source_bytes": 1002,
+      "source_sha256": "7616b005c7ff08b66618d797fe196c99ca955221c67aa1e4200cf6587895d260",
+      "published_bytes": 1002,
+      "published_sha256": "7616b005c7ff08b66618d797fe196c99ca955221c67aa1e4200cf6587895d260",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "events/baseline.jsonl",
+      "source": "/private/tmp/noye-phase8-20261021-followup/baseline-events.jsonl",
+      "source_bytes": 41030,
+      "source_sha256": "415a796388c6cddaba90ae930d99b18dd86cb0dbe35d8a6c18265470b7ef28aa",
+      "published_bytes": 41030,
+      "published_sha256": "415a796388c6cddaba90ae930d99b18dd86cb0dbe35d8a6c18265470b7ef28aa",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "events/candidate.jsonl",
+      "source": "/private/tmp/noye-phase8-20261021-followup/candidate-events.jsonl",
+      "source_bytes": 94688,
+      "source_sha256": "d20d6cc8dcd2a81512c4a3f79ea436da314636331abdb8b9230c63c6f7577373",
+      "published_bytes": 94688,
+      "published_sha256": "d20d6cc8dcd2a81512c4a3f79ea436da314636331abdb8b9230c63c6f7577373",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "logs/baseline.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/baseline.log",
+      "source_bytes": 3652,
+      "source_sha256": "1b2f538641bb62b056a5756840f40a86f3c81c865b705450ce29587c3cccc808",
+      "published_bytes": 3652,
+      "published_sha256": "1b2f538641bb62b056a5756840f40a86f3c81c865b705450ce29587c3cccc808",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/build-native-ui.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/build-native-ui.log",
+      "source_bytes": 294,
+      "source_sha256": "8c8c26447a114fea6b1a7768e81fda904269163134e2cb7c3e509204b6611321",
+      "published_bytes": 294,
+      "published_sha256": "8c8c26447a114fea6b1a7768e81fda904269163134e2cb7c3e509204b6611321",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/candidate.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/candidate.log",
+      "source_bytes": 12629,
+      "source_sha256": "e9507eac1858948954afa24c03c872261c2e6e9abc86a735b014b3e9de2160ee",
+      "published_bytes": 12629,
+      "published_sha256": "e9507eac1858948954afa24c03c872261c2e6e9abc86a735b014b3e9de2160ee",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/desktop-ui-build-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/desktop-ui-build-corrected.log",
+      "source_bytes": 869,
+      "source_sha256": "4591265bf34187df2e2ed12b38cecee434a810924e1253064e8932de89081982",
+      "published_bytes": 865,
+      "published_sha256": "c6a44a78740c1d7541d08456fbc55ef26a2a2b286bb5c877233bbc9e97c97de1",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/documents-focus-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/documents-focus-corrected.log",
+      "source_bytes": 362,
+      "source_sha256": "beb4e733267bb723aba77c85f8d20cd7070d3b1660f241cd354d2ad177bc5246",
+      "published_bytes": 361,
+      "published_sha256": "f66ebef60c8cb92838f2b1c1d7b843b0f21437003cd465eef290b67963229ef4",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/documents-focus.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/documents-focus.log",
+      "source_bytes": 362,
+      "source_sha256": "35eeb26903484fd74b4f71057239ce15ba8c6f29dd78d72630f82bd1ba2eb993",
+      "published_bytes": 361,
+      "published_sha256": "78ac54d3240492ad854accf87919a219f4b20ac934ed69578cdca7ae5f4b8ed7",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-checks-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-checks-corrected.log",
+      "source_bytes": 705,
+      "source_sha256": "d664f4bdfee2bfef50823c5e829b5c6daf20c184d2535fefe102d089a90e1286",
+      "published_bytes": 705,
+      "published_sha256": "d664f4bdfee2bfef50823c5e829b5c6daf20c184d2535fefe102d089a90e1286",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-checks.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-checks.log",
+      "source_bytes": 521,
+      "source_sha256": "08f06863ab3643314754a9161a1d6b98f3e7ddcafd9c29db7f01e5e1c686bae2",
+      "published_bytes": 521,
+      "published_sha256": "08f06863ab3643314754a9161a1d6b98f3e7ddcafd9c29db7f01e5e1c686bae2",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-lint-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-lint-corrected.log",
+      "source_bytes": 62,
+      "source_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "published_bytes": 62,
+      "published_sha256": "0145e0b7de9833b71c3e420425055aae843be1d22460c58620e6b25ac87cfa69",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-lint.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-lint.log",
+      "source_bytes": 1203,
+      "source_sha256": "d70083bfb52efa63f468623842139570b1d4ffdbe841cb55caf7a188d047e90c",
+      "published_bytes": 1202,
+      "published_sha256": "f843ffd5e1cf00d1cd2acc8efeaa08f0b3377f42ff5aa72733413412fcb91ee4",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-tests-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-tests-corrected.log",
+      "source_bytes": 598,
+      "source_sha256": "2acd60c1a4cccc66ddade5832351f735d10948b4af1f19b73a8d14f5aaa8e27e",
+      "published_bytes": 597,
+      "published_sha256": "445ab24da115b21a9fbe816f34d4d5526b94dc7cd06c9815979bbc3ab07b2261",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-tests.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-tests.log",
+      "source_bytes": 588,
+      "source_sha256": "9750df0a62dfb7a707e6161a42588831730f93bbced3058bd453349be2821872",
+      "published_bytes": 587,
+      "published_sha256": "ffd4b5f363410e06a1f69649a1c2d134591e06dc5be0417b4da2d66ca2fe7d27",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-types-corrected.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-types-corrected.log",
+      "source_bytes": 69,
+      "source_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "published_bytes": 69,
+      "published_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/frontend-types.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/frontend-types.log",
+      "source_bytes": 69,
+      "source_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "published_bytes": 69,
+      "published_sha256": "4ff35062c90237a67a6c3e911e63267acd3498b8b302c27403e818a86ec53b36",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/native-token-excerpt.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-token-excerpt.txt",
+      "source_bytes": 1263,
+      "source_sha256": "8566ebf4d1c469547b618df9279d72e5ea880f3a78a8df6c9ff7c82373dc7989",
+      "published_bytes": 1263,
+      "published_sha256": "8566ebf4d1c469547b618df9279d72e5ea880f3a78a8df6c9ff7c82373dc7989",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "logs/native-ui-bundle.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-ui-bundle.log",
+      "source_bytes": 1837,
+      "source_sha256": "2a1c5bd8aa96651416550cd78ed5dc71b407c30e75dcaabe3d0461a6e7f01f4a",
+      "published_bytes": 1836,
+      "published_sha256": "70e1c7aa13f46b3c30b24852b3184907a8dc250cab5cba118ebbff2362863589",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "logs/native-ui-signature.txt",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-ui-signature.log",
+      "source_bytes": 0,
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published_bytes": 1,
+      "published_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "transformation": "ANSI, carriage returns and trailing whitespace normalized"
+    },
+    {
+      "file": "methods/build-native-ui.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/build-native-ui.py",
+      "source_bytes": 2088,
+      "source_sha256": "5032c47e542fe562aee067ad3be461225f490b9595921371ba3740541b8069b1",
+      "published_bytes": 2088,
+      "published_sha256": "5032c47e542fe562aee067ad3be461225f490b9595921371ba3740541b8069b1",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/check-frontend-corrected.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/check-frontend-corrected.py",
+      "source_bytes": 1524,
+      "source_sha256": "3d744455c3d49770b0970a985f4c47461235f0a1ec801ce0e841ec634511e10f",
+      "published_bytes": 1524,
+      "published_sha256": "3d744455c3d49770b0970a985f4c47461235f0a1ec801ce0e841ec634511e10f",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/check-frontend.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/check-frontend.py",
+      "source_bytes": 1504,
+      "source_sha256": "46119761de75bec2eb3ba5e3f25f3a1548f3c0de251fdd7bf8911137c2608e8e",
+      "published_bytes": 1504,
+      "published_sha256": "46119761de75bec2eb3ba5e3f25f3a1548f3c0de251fdd7bf8911137c2608e8e",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/native-proxy-observed.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-proxy-observed.py",
+      "source_bytes": 3338,
+      "source_sha256": "0d0fc5adee14140f9541b458c1ca65750977319e289ecbd3d62d65bc710abc13",
+      "published_bytes": 3338,
+      "published_sha256": "0d0fc5adee14140f9541b458c1ca65750977319e289ecbd3d62d65bc710abc13",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/native-proxy.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/native-proxy.py",
+      "source_bytes": 3141,
+      "source_sha256": "6b57f5c16272e117c4f4af6f46b7c85a1334a581c7f3a2009e1858912a4ea051",
+      "published_bytes": 3141,
+      "published_sha256": "6b57f5c16272e117c4f4af6f46b7c85a1334a581c7f3a2009e1858912a4ea051",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/probe-relations.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/probe-relations.py",
+      "source_bytes": 6331,
+      "source_sha256": "3195938e42e0b5726ed6eec1bd5fad3166992dd34300283572d70f93b8bb317a",
+      "published_bytes": 6331,
+      "published_sha256": "3195938e42e0b5726ed6eec1bd5fad3166992dd34300283572d70f93b8bb317a",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/publish.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/publish.py",
+      "source_bytes": 5190,
+      "source_sha256": "c6f138f06955e4cc77a025b595f71ff1b8dd3b8459c34fb44437557fdd93cf48",
+      "published_bytes": 5190,
+      "published_sha256": "c6f138f06955e4cc77a025b595f71ff1b8dd3b8459c34fb44437557fdd93cf48",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/relation-fresh-controls.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/relation-fresh-controls.json",
+      "source_bytes": 2806,
+      "source_sha256": "9f8495dcd397881bd9ceba5c8dea82f87eab0045476efdb15d5945fb6a341382",
+      "published_bytes": 2806,
+      "published_sha256": "9f8495dcd397881bd9ceba5c8dea82f87eab0045476efdb15d5945fb6a341382",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "methods/watch-native-token.py",
+      "source": "/private/tmp/noye-phase8-20261021-followup/watch-native-token.py",
+      "source_bytes": 1016,
+      "source_sha256": "5303023433b5696fa60c7ffdb7695b1587eeb49e8c0ee97260ba7781c5c03b27",
+      "published_bytes": 1016,
+      "published_sha256": "5303023433b5696fa60c7ffdb7695b1587eeb49e8c0ee97260ba7781c5c03b27",
+      "transformation": "Byte-for-byte copy"
+    },
+    {
+      "file": "model/baseline.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/baseline.json",
+      "source_bytes": 262741,
+      "source_sha256": "e1da253daa619fff33431ee1b72b8b7cc10a3da55cc3941b910b4447eb863f6d",
+      "published_bytes": 72626,
+      "published_sha256": "90ff5fd3b9f6ce7cb6f19b0d0240e3c79750c468463c31a364fe17919b817b74",
+      "transformation": "Separate reasoning/token context and repeated successful preflight metadata omitted with hashes; exact requests and final answer strings preserved"
+    },
+    {
+      "file": "model/candidate-decision.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/candidate-decision.json",
+      "source_bytes": 1206,
+      "source_sha256": "58599111007827da7e415253c9fa30909f009cbbbfcaa492e093e1e495dc2c2e",
+      "published_bytes": 1206,
+      "published_sha256": "58599111007827da7e415253c9fa30909f009cbbbfcaa492e093e1e495dc2c2e",
+      "transformation": "Separate reasoning/token context and repeated successful preflight metadata omitted with hashes; exact requests and final answer strings preserved"
+    },
+    {
+      "file": "model/candidate.json",
+      "source": "/private/tmp/noye-phase8-20261021-followup/candidate.json",
+      "source_bytes": 541152,
+      "source_sha256": "43547c4e114e1c5a02b751529e6c7f7c598f960b438cfd9bb7c700ff47ccfbd5",
+      "published_bytes": 155618,
+      "published_sha256": "91befafee626b144326eac9f016107b69e66212ca1c50f8752018e4685b3dcb1",
+      "transformation": "Separate reasoning/token context and repeated successful preflight metadata omitted with hashes; exact requests and final answer strings preserved"
+    }
+  ]
+}

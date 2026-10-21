@@ -1,0 +1,21 @@
+{
+  "method": "Rebundle the changed frontend with the unchanged verified v27/v13 sidecar. Uses cached Rust dependencies offline, local ad-hoc QA signing, and no new model calls.",
+  "source_commit": "1521748425abbc785371d847a8478bc10dae5624",
+  "sidecar_before_sha256": "dd6450e6a7ac9d3122612ae8ef0e4a0400de03fd3a477786d9f99fb295a597aa",
+  "stages": [
+    {
+      "name": "native-ui-bundle",
+      "exit_code": 0,
+      "seconds": 21.883,
+      "log_sha256": "2a1c5bd8aa96651416550cd78ed5dc71b407c30e75dcaabe3d0461a6e7f01f4a"
+    },
+    {
+      "name": "native-ui-signature",
+      "exit_code": 0,
+      "seconds": 0.045,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sidecar_after_sha256": "dd6450e6a7ac9d3122612ae8ef0e4a0400de03fd3a477786d9f99fb295a597aa",
+  "native_sha256": "ff71892baa4c274e48c71b5e26f22cef2b93eb4df80b921d28f7e7330079a0f6"
+}

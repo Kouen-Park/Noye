@@ -1,0 +1,17 @@
+{
+  "method": "Native UI observations after force quit and updated rebundle. Literal rendered content and Saved status are verified; post-relaunch API byte/hash equality is not claimed because the sandbox rejected the read-only loopback connection.",
+  "document_id": "98af4d13-dd6a-4cdd-a840-2fec53d76e06",
+  "native_visible_title": "Phase 8 native interruption QA",
+  "native_visible_content": [
+    "# 보존 확인",
+    "이 문서는 네이티브 종료·복구 검증용입니다.",
+    "원문 그대로: `x -> y`, 37 리터, café, [문장](literal).",
+    "SENTINEL-NATIVE-INTERRUPTION-20261021"
+  ],
+  "native_saved_state": "All changes saved",
+  "latest_ui_commit": "1521748",
+  "prior_api_snapshot_sha256": "7616b005c7ff08b66618d797fe196c99ca955221c67aa1e4200cf6587895d260",
+  "post_api_hash_check": "blocked: sandbox ConnectError [Errno 1] Operation not permitted",
+  "active_generation_kill": "not accepted: model completed before OS shortcut",
+  "new_package_start": "Initial AX returned shell only; subsequent AX/screenshot showed the real chat UI. No permanent blank-window reproduction on the new package."
+}

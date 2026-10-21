@@ -3719,6 +3719,20 @@ Default thinking remains off. General model-audit false approvals, incomplete
 relationship recall and remaining native/cloud/calibration/trusted-distribution
 checks keep Phase 8/MVP and the conditional final merge open.
 
+**October 21 follow-up:**
+[`docs/phase8/acceptance-2026-10-21-followup.md`](docs/phase8/acceptance-2026-10-21-followup.md)
+records `1521748`: honest document loading/failure/retry feedback, opening status,
+stale-list protection and pending-creation deduplication. All 393 frontend tests,
+types, lint, desktop build and local native signature checks passed. Native saved
+writing survived an OS force quit and rebundle in the UI, but generation had
+already finished before the shortcut; active-token native termination remains
+unvalidated. A six-case fresh relation control set exposed an incidental shared
+fact hiding a true contradiction. The candidate corrected that and the known
+omission but reintroduced an exception false contradiction; it was rejected after
+12 completed judgments. Automatic approval review then failed on usage limits,
+blocking the revised QA relay launch; reviewed execution and QA-service cleanup
+remain pending. No quality/merge acceptance condition is waived.
+
 Start after Phase 6 desktop milestones, all twelve Phase 7 items and Phase 7.5's
 implementation milestones are delivered. The owner's 2026-10-08 instruction moves
 remaining Phase 7.5 native/model/PDF verification here; it is not a prerequisite

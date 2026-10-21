@@ -1,0 +1,38 @@
+{
+  "decision": "rejected",
+  "reason": "Introduced a false contradiction on the retained compatible-exception control, despite correcting common-fact omission and the new incidental-common-fact contradiction case. Do not adopt a prompt that trades recall for an unsafe false contradiction.",
+  "completed": 12,
+  "matched": 11,
+  "unload_status": 200,
+  "loaded_after": {
+    "models": []
+  },
+  "not_completed": [
+    "fresh-v6-compatible-exception",
+    "fresh-v6-distinct-properties",
+    "fresh-condition-in-original",
+    "fresh-same-condition-opposite",
+    "fresh-separate-subjects",
+    "different-subject-rules",
+    "absence-is-not-denial",
+    "same-subject-opposite-condition",
+    "exception-in-original",
+    "different-property",
+    "translated-same-rule"
+  ],
+  "started_without_completed_judgment": [
+    "fresh-v6-compatible-exception"
+  ],
+  "not_started": [
+    "fresh-v6-distinct-properties",
+    "fresh-condition-in-original",
+    "fresh-same-condition-opposite",
+    "fresh-separate-subjects",
+    "different-subject-rules",
+    "absence-is-not-denial",
+    "same-subject-opposite-condition",
+    "exception-in-original",
+    "different-property",
+    "translated-same-rule"
+  ]
+}
