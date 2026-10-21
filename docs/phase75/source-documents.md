@@ -101,6 +101,10 @@ narrow: it does not establish subject attribution or cover every unit and phrasi
 Property matching stops at the preceding quantity so a capacity label cannot leak
 into an independently phrased current amount later in the sentence. A later
 explicit property swap still fails; unknown phrasing still needs semantic review.
+Since v26, a property noun following the quantity also counts, such as
+`92리터의 용량을 저장` or `92 litres of capacity`. An explicit following property
+takes precedence over a preceding verb. Its label is consumed with its quantity,
+so it cannot carry into a later value or be borrowed from the next line.
 Generated missing-evidence assertions are also refused unless the exact statement
 occurs in an original; a bounded model batch cannot establish collection-wide
 absence. Actual read failures belong to application coverage. These checks apply
@@ -209,7 +213,12 @@ proof that every fact or scanned image was covered.
 scope, frozen inventory, stage events and explicit cancellation/retry. Successful
 bounded model stages are checkpointed in the request cache for interrupted retries.
 Invalid evidence removes unsafe cached stages so a retry can obtain a new response.
-Rejected-claim feedback guides an explicit retry; verified stages can be reused. Cancellation
+Rejected-claim feedback guides an explicit retry; verified stages can be reused.
+Since v26, numeric rejections also identify their exact source/synthesis stage;
+only that stage and its verification cache are discarded. Its rejected wording
+guides an explicit retry only if every original from that rejection is still
+visible in the current batch. Feedback is untrusted correction data, never new
+evidence. Other source batches do not receive it. Cancellation
 is checked before/after model calls; an in-flight request can take up to its timeout.
 Startup marks interrupted work and does not silently replay it.
 

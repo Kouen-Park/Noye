@@ -383,6 +383,8 @@ def test_cancellation_before_wording_revision_prevents_the_second_call():
         ("Project Beta stores 92 litres.", "The system has a storage capacity of 92 litres."),
         ("용량은 43리터입니다.", "It stores 43 litres."),
         ("It stores 16 litres.", "저장 용량은 16리터입니다."),
+        ("It stores 92 litres.", "92리터의 용량을 저장합니다."),
+        ("29리터의 용량입니다.", "It stores 29 litres."),
     ],
 )
 def test_quantity_property_drift_cannot_pass_literal_wiki_evidence(field, original, generated):

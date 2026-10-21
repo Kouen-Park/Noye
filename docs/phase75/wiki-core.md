@@ -63,7 +63,7 @@ confidence/consensus threshold. Existing folder/manual categories are preferred.
 code never moves originals. A's filing service independently validates organization opt-in,
 expected source version, manual locks, relative destination, collision and move journal.
 
-Prompt `wiki-grounded-v11` retains reusable subject tags, source-language
+Prompt `wiki-grounded-v12` retains reusable subject tags, source-language
 summaries and reuse of at most 32 existing topic labels from eligible pages in the same
 root and frozen scope. Since v10, reuse hints must also occur as names in this source's
 original text, with Unicode/case/spacing normalization and Latin word boundaries.
@@ -85,6 +85,9 @@ Original passages are not trimmed to make a revision fit. Cancellation checkpoin
 surround the additional call, and successful repairs are counted in revision metadata.
 This is a bounded draft stage inside the current job; job retry remains explicit.
 This is the same check used by source documents, not a general entailment proof.
+v12 also recognizes property nouns after a litre quantity, including Korean
+`92리터의 용량` and English `92 litres of capacity`; following labels cannot
+leak into the next quantity or across a line break.
 The v7-and-later cache identity prevents reusing a prior generated result without this check;
 existing historical revisions and user writing are preserved.
 The model sees that same constrained output schema in the prompt, including the

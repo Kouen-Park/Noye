@@ -17,6 +17,11 @@ from app.tests.test_source_documents import enqueue, model, run, workspace
         ("Capacity is 92 litres.", "It stores 92 litres."),
         ("Alpha stores 37 litres.", "Alpha의 저장 용량은 37리터입니다."),
         ("용량은 92리터입니다.", "It stores 92 litres."),
+        ("프로젝트 베타는 92 리터의 용량을 저장합니다.", "Project Beta stores 92 litres."),
+        ("It stores 92 litres of capacity.", "It stores 92 litres."),
+        ("It has 92 litres capacity.", "It stores 92 litres."),
+        ("29리터를 저장합니다.", "29리터의 용량입니다."),
+        ("It stores 29 litres.", "It has 29 litres of storage capacity."),
     ],
 )
 def test_volume_property_swaps_are_rejected_even_when_the_number_matches(text, original):
@@ -35,6 +40,9 @@ def test_volume_property_swaps_are_rejected_even_when_the_number_matches(text, o
             ["Capacity: 37 litres.", "Beta stores 92 litres."],
         ),
         ("It stores 37 litres.", ["Capacity is 37 litres. It stores 37 litres."]),
+        ("37리터의 용량입니다.", ["Its capacity is 37 litres."]),
+        ("37 litres capacity.", ["용량은 37리터입니다."]),
+        ("37 litres stored.", ["It stores 37 litres."]),
     ],
 )
 def test_recorded_and_translated_volume_properties_remain_available(text, originals):
@@ -54,6 +62,18 @@ def test_recorded_and_translated_volume_properties_remain_available(text, origin
         ),
         (
             "It stores 6 litres, and the rated limit is 20 litres.",
+            "It stores 6 litres. Capacity is 20 litres.",
+        ),
+        (
+            "37리터의 용량이며 8리터를 저장합니다.",
+            "Capacity is 37 litres. It stores 8 litres.",
+        ),
+        (
+            "37리터 저장 용량, 8리터 저장량.",
+            "Capacity is 37 litres. It stores 8 litres.",
+        ),
+        (
+            "It stores 6 litres\nCapacity is 20 litres.",
             "It stores 6 litres. Capacity is 20 litres.",
         ),
     ],

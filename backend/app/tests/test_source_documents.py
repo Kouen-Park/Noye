@@ -324,6 +324,90 @@ def test_comparison_with_only_one_source_remains_partial(workspace):
     assert any(p["code"] == "comparison_unresolved" for p in coverage["presentation_limits"])
 
 
+def test_explicit_quantity_retry_guides_only_the_rejected_original_stage(workspace, monkeypatch):
+    db, *_ = workspace
+    cedar = discover(workspace, "cedar.txt", "Cedar stores 18 litres.")
+    discover(workspace, "other.txt", "Other project makes daily backups.")
+    job = enqueue(db)
+    generate = pipeline.generate
+    bad = "Cedar stores 18 litres of capacity."
+
+    def invalid(payload, result):
+        if (
+            payload["task"] == "process_original_sections"
+            and "Cedar" in payload["passages"][0]["text"]
+        ):
+            result["claims"][0]["text"] = bad
+
+    monkeypatch.setattr(
+        pipeline, "generate", lambda context: generate(context, client=model(transform=invalid)[0])
+    )
+    jobs.register()
+    worker = knowledge_jobs.KnowledgeWorker()
+    worker.run_one(db, job["id"])
+    assert knowledge_jobs.get(db, job["id"])["state"] == "failed"
+    request = store.request(db, job["subject_id"])
+    stage = request["report"]["rejected_numeric_claim"]["stage"]
+    assert stage.startswith(f"source:{cedar.id}:")
+    assert any(k.startswith("outline:") for k in request["cache"])
+    assert not any(k.startswith(stage + ":") for k in request["cache"])
+    assert documents.count_documents(db) == 0
+
+    guided = []
+
+    def corrected(payload, result):
+        feedback = payload.get("validation_feedback")
+        if (
+            payload["task"] == "process_original_sections"
+            and "Cedar" in payload["passages"][0]["text"]
+        ):
+            guided.append(feedback)
+            assert feedback["previous_claims"] == [{"text": bad, "supported": False}]
+        else:
+            assert feedback is None
+
+    resumed = knowledge_jobs.resume(db, job["id"])
+    monkeypatch.setattr(
+        pipeline,
+        "generate",
+        lambda context: generate(context, client=model(transform=corrected)[0]),
+    )
+    worker.run_one(db, resumed["id"])
+    final = knowledge_jobs.get(db, resumed["id"])
+    assert final["state"] == "complete"
+    assert len(guided) == 1
+    assert bad not in store.current(db, final["artifact_id"])["content"]
+
+
+def test_numeric_retry_feedback_does_not_expose_an_original_outside_the_batch(workspace):
+    db, *_ = workspace
+    discover(workspace)
+    job = enqueue(db)
+    req = store.request(db, job["subject_id"])
+    req["report"] = {
+        "rejected_numeric_claim": {
+            "stage": "source:known:0",
+            "text": "PREVIOUS_BATCH_PRIVATE_CLAIM",
+            "originals": ["PREVIOUS_BATCH_PRIVATE_ORIGINAL"],
+        }
+    }
+    client, calls = model()
+    pipeline._call(
+        knowledge_jobs.WorkContext(db, job),
+        req,
+        "source:known:0",
+        {
+            "task": "process_original_sections",
+            "passages": [{"evidence_id": "known", "text": "A safe fact."}],
+        },
+        Extraction,
+        Settings(_env_file=None),
+        client,
+    )
+    assert "PREVIOUS_BATCH_PRIVATE" not in json.dumps(calls)
+    assert all("validation_feedback" not in call for call in calls)
+
+
 def test_unverified_per_source_gap_is_not_a_published_collection_conclusion(workspace):
     db, *_ = workspace
     original = discover(workspace)
