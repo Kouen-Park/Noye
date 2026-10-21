@@ -89,8 +89,9 @@ cache, coverage and authored schema are described in [document contract](source-
 
 The presentation follow-up adds optional `coverage.presentation_limits[]` entries
 `{code, section_id?, reason}` and `metadata.output_contract` with requested language,
-script-check scope and comparison-check limits. Prompt `source-document-v5` and
-render `source-document-markdown-v3` apply to new drafts. `verify_heading` uses
+script-check scope and comparison-check limits. Prompt `source-document-v26` and
+render `source-document-markdown-v4` apply to new drafts, including source-attributed
+comparison tables without a factual rewrite. `verify_heading` uses
 existing bounded local calls, cached stages and cancellation checkpoints. Invalid
 language/shape fails without publishing; explicit retry keeps the frozen inventory.
 Neutral/omitted unsupported headings and unresolved comparisons remain partial.

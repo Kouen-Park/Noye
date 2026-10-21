@@ -1087,13 +1087,16 @@ def generate(context, *, settings=None, client=None):
         "uncertainties": gaps,
         "model": settings.ollama_model,
         "prompt_version": local.PROMPT_VERSION,
-        "render_version": "source-document-markdown-v3",
+        "render_version": "source-document-markdown-v4",
         "output_contract": {
             "requested_language": intent["language"],
             "language_check": "script_only"
             if intent["language"] in {"English", "Korean"}
             else "unchecked",
-            "comparison_check": "multiple-source references, not proof of reasoning quality",
+            "comparison_check": "verified source notes in shared topical tables, "
+            "not proof of reasoning quality"
+            if comparison_requested
+            else "not_requested",
         },
         "parameters": {
             "context_tokens": settings.generation_context_tokens,

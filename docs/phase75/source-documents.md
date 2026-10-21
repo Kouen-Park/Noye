@@ -88,7 +88,7 @@ Each original-processing call sees only one source batch; it must not draw
 collection-wide conclusions about other sources being absent. Unverified model
 observations are retained only in audit metadata with source/batch/evidence IDs.
 They are excluded from published document prose. `render_version`
-`source-document-markdown-v3` distinguishes this rendering from older artifacts;
+`source-document-markdown-v4` identifies new drafts with source-comparison tables;
 completed artifacts and user revisions are never rewritten.
 The entailment pass is a model check, not independent proof; source review remains
 necessary. The numeral guard checks verified cited original passages and recognizes explicit

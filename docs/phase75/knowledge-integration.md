@@ -67,10 +67,11 @@ checks to generated prose. A mismatch fails without a new artifact; explicit ret
 clears unsafe cached stages. Source quotes and literal fallback retain their own
 language. Bounded/cached heading checks plus application numeral/absence guards
 replace unsupported titles with neutral labels and partial reasons, omit empty
-sections, and mark comparisons without supported multi-source synthesis unresolved.
+sections, and mark comparisons without a shared topical table of verified
+multi-source notes unresolved.
 The document and chat card display these additive `coverage.presentation_limits`;
-`metadata.output_contract` records what was checked. Prompt `source-document-v5`
-and render `source-document-markdown-v3` apply to new drafts only. Existing saved
+`metadata.output_contract` records what was checked. Prompt `source-document-v26`
+and render `source-document-markdown-v4` apply to new drafts only. Existing saved
 artifacts, revisions and user edits retain their prior bodies and metadata.
 
 A's integration review found a source/output-language parsing error: “Write the
